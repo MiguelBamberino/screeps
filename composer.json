@@ -1,0 +1,19 @@
+{
+    "name": "maddokmike/screeps",
+    "description": "my screeps code",
+    "type": "project",
+    "require": {
+        "guzzlehttp/guzzle": "^7.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Maddokmike\\Screeps\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mike Bamber",
+            "email": "mikebamber@live.com"
+        }
+    ]
+}
