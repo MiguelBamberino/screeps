@@ -60,60 +60,71 @@ var roleTanker = {
 	        }
 	        
             if(!target){
-               target = creep.getUpgradeStoreToFill([config.coreRoomName]);
+                let roomNames = config.funnelRoomName==undefined?[config.coreRoomName]:[config.coreRoomName,config.funnelRoomName];
+              //  if(config.funnelRoomName=='W13N17')clog(roomNames,creep.name)
+               target = creep.getUpgradeStoreToFill(roomNames);
+               //if(config.funnelRoomName=='W13N17' && target)clog(target.pos.target.id)
             }
-	        /*
+	        
 	        if(!target){
     	        let terminal = mb.getTerminalForRoom(config.coreRoomName);
                 if(terminal && terminal.storingLessThan(10000)){
                     target = creep.reserveTransferToTerminal(config.coreRoomName);
                 }
 	        }
-	        */
 	        
-	        if(!target){
+	    
+	        if(!target && creep.memory.lastWithdrewFrom!==STRUCTURE_STORAGE){
 
 	            target = creep.reserveTransferToStorage(config.coreRoomName);
 	        }
 	       
             if(target){
+                creep.memory.lastTransferTo=target.structureType;
                 let res = creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
               //  creep.say("tx:"+res);
+            }else{
+                creep.say('bored')
+                creep.moveToPos(config.retreatSpot)
             }
             
 	    }
 	    else if(creep.isCollecting()){
 	        
 	        let target = Game.getObjectById(creep.memory.reserve_id);
-	        //if(creep.name=='At2')clog(target.id);
-	        
-	       // collect from centre link in this room first            
-            if(!target){
-                
-              //  target = creep.reserveWithdrawalFromStorageLink(config.coreRoomName);
-               // clog(creep.memory.reserve_id,creep.name)
-            }
+
             
 	        // collect from MINES in this room next
 	        if(!target){
-	            target = creep.getFullestMineStore(config.allRoomNames);   
+	            target = creep.getFullestMineStore(config.allRoomNames);
+	            if(target){
+                    creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
+                }
             }
-           /*
-            let terminal = mb.getTerminalForRoom(config.coreRoomName);
-            if(terminal && terminal.storingAtleast(15000)){
-                return creep.actOrMoveTo("withdraw",terminal,RESOURCE_ENERGY);
-            }*/
+
+            if(!target){
+    	        let terminal = mb.getTerminalForRoom(config.coreRoomName);
+                if(terminal && terminal.storingAtleast(15000)){
+                    target = creep.reserveWithdrawalFromTerminal(config.coreRoomName);
+                }
+	        }
             
             // if not enough E in the mines, then draw from storage
-             if(!target){
+             if(!target && creep.memory.lastTransferTo!==STRUCTURE_STORAGE){
                 target = creep.reserveWithdrawalFromStorage(config.coreRoomName);
+                if(target){
+                    creep.memory.lastWithdrewFrom=STRUCTURE_STORAGE
+                }
              }
             if(target){
-                
+                creep.memory.lastWithdrewFrom=target.structureType;
                  let res = creep.actOrMoveTo("withdrawX",target,RESOURCE_ENERGY);
                // creep.say("wx:"+res);
                 return
     
+            }else{
+                creep.say('bored')
+                creep.moveToPos(config.retreatSpot)
             }
             
             

@@ -43,6 +43,7 @@ var role = {
                 return creep.actOrMoveTo("repair",structure);
             }
             let controller = Game.getObjectById(config.controller_id);
+            creep.moveTo(controller)
             return creep.actOrMoveTo("upgradeController",controller);
             //creep.say("I'm bored!");
             

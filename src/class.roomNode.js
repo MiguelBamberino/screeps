@@ -13,16 +13,41 @@ var creepRoles ={
     };
     
 class RoomNode{
-    
-    constructor(name,coreRoomName,spawnFacing=TOP,extraFastFillSpots=[]){
-        if(!mb.hasRoom(coreRoomName))mb.scanRoom(coreRoomName)
+    /**
+     * name >> name of the town and what will be used for spawn names 
+     * coreRoomName >> the central room name, with spawns
+     * options:{
+            spawnFacing:TOP         >> which way the main spawn should spawn its creeps
+            retreatSpot:undefined   >> where creeps should flee if attack & where idle creeps park
+            extraFastFillSpots:[]   >> any extra positions to send fast filler creeps
+            logger:undefined        >> an object that allows this object to report messages to a log
+            funnelRoomName:false    >> if set, then haulers will funnel energy to this room
+            upgradeFast:false    >> if set, then the room will pipe as much energy as possible into the controller
+            buildFast:false    >> if set, then the room will pipe as much energy as possible into building
+     * }
+     **/
+    constructor(name,coreRoomName, options={}){
+
+        if(!mb.hasRoom(coreRoomName))mb.scanRoom(coreRoomName);
+        
         this.name = name;
-        this.spawnFacing = spawnFacing;
         this.coreRoomName = coreRoomName;
+        
+        let controller = mb.getControllerForRoom(this.coreRoomName);
+        if(controller){
+            this.controller_id = controller.id;
+        }
+        
+        
+        // options
+        this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
         this.inRecoveryMode=false;
         this.wallHeight = 300000;
-        this.extraFastFillSpots = extraFastFillSpots;
-        //this.remoteRoomNames = remoteRoomNames;
+        this.extraFastFillSpots = options.extraFastFillSpots===undefined?[]:options.extraFastFillSpots;
+        this.logger = options.logger;
+        this.retreatSpot = options.retreatSpot;
+        this.upgradeFast = options.upgradeFast===undefined?false:options.upgradeFast;
+        this.buildFast = options.buildFast===undefined?false:options.buildFast;
         
         this.readInStore();
 
@@ -42,13 +67,7 @@ class RoomNode{
     
     setupStore(){
         let store = {};
-        mb.scanRoom(this.coreRoomName);
-        let objs = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTROLLER]});
-        if(objs.length>0){
-            store.controller_id = objs[0].id;
-        }else{
-            clog("Room-node has no controller",this.name);
-        }
+        
         store.creepNames = [];
         
         store.workforce_quota={
@@ -63,7 +82,7 @@ class RoomNode{
     }
     saveStore(){
         let newStore={};
-        for(let attrName of ['controller_id','creepNames','workforce_quota']){
+        for(let attrName of ['creepNames','workforce_quota']){
             newStore[attrName] = this[attrName];
         }
         Memory['roomNodes'][this.name] = newStore;
@@ -85,9 +104,10 @@ class RoomNode{
         this.saveStore();
     }
     safeToRun(){
-        if(!this.controller_id)return false;
+        
+        if(!this.controller_id){clog("Room-node has no controller",this.name);return false;}
         if(!this.controller().getStandingSpot()){clog("no controller standing spot",this.name);return false}
-        if(!Game.spawns[this.name])return false;
+        if(!Game.spawns[this.name]){clog("Room-node has no spawn",this.name);return false;}
         
         return true;
     }
@@ -99,7 +119,13 @@ class RoomNode{
         // safety repair, in case some event kills normal repair creeps and room is collapsing
     	let decay_structs = mb.getStructures({types:[STRUCTURE_RAMPART,STRUCTURE_CONTAINER],roomNames:[this.coreRoomName]} );
         
-        var hostiles = Game.rooms[this.coreRoomName].find(FIND_HOSTILE_CREEPS);
+        var hostiles = Game.rooms[this.coreRoomName].getHostiles();
+        
+        let fighters = hostiles.filter(function(hostile){return (hostile.partCount(ATTACK)>0||hostile.partCount(RANGED_ATTACK)>0) });
+
+        if(towers.length<2 && hostiles.length>=3){
+            this.controller().activateSafeMode();
+        }
         
     	let target = false;
         for(var ref in hostiles){
@@ -142,7 +168,7 @@ class RoomNode{
 	                tower.repair(obj);
 	            }
 	        }
-
+ 
 	        if(target){
 	            clog("ATTACK"," Shooting Hostile "+target.name+ "at: "+target.pos+". . Pew pew!" );
 	            let res = tower.attack(target);
@@ -157,6 +183,7 @@ class RoomNode{
 	    }
     }
     runCreeps(){
+       // if(this.name=='Delta'){clog(this.controller_id,this.name); this.controller_id = '646e72de071eb8276c0a65a6'}
         if(this.controller().level>1){
             this.runFiller(this.name,this.name.charAt(0)+ 'FF0');
             this.runFiller(this.name,this.name.charAt(0)+'FF1');
@@ -201,7 +228,9 @@ class RoomNode{
     }
     runFiller(spawnName,creepName,moveToSpot=false){
         
-        
+        // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
+        // nob heads!
+        Game.spawns[spawnName].forceDirectionHack = this.getMainSpawnSpots();
                
         if(!Game.creeps[creepName]){
             let bodyPlan = creepRoles['filler'].getParts(0,this.getConfig());
@@ -287,7 +316,10 @@ class RoomNode{
                     remoteRoomNames:this.remoteRoomNames,
                     allRoomNames:this.allRoomNames(),
                     inRecoveryMode:this.inRecoveryMode,
-                    wallHeight:this.wallHeight
+                    wallHeight:this.wallHeight,
+                    retreatSpot:this.retreatSpot,
+                    funnelRoomName:this.funnelRoomName,
+                    upgradeFast:this.upgradeFast
                     
                 };
     }
@@ -338,11 +370,12 @@ class RoomNode{
                 this.workforce_quota.worker.required = 4;
                 
             }
-            
+            // base level upgraders before any boosting
+            this.workforce_quota.upgrader.required = 1;
 
-            if(exts.length >=5  && this.controller().haveContainer() ){
+            if(exts.length >=5  && this.controller().haveContainer()){
                 this.workforce_quota.worker.required = 1;
-                this.workforce_quota.builder.required = 1;
+                this.workforce_quota.builder.required = (this.buildFast)?4:1;
                 
                 if(totalEnergyAtSources > 0){
                     this.workforce_quota.tanker.required = 1;
@@ -355,20 +388,19 @@ class RoomNode{
                 }
                 let readyToSpend = this.controller().getContainer().storedAmount();
                
-                if(readyToSpend==2000){
-                    this.workforce_quota.upgrader.required = 5;
-                }else if(readyToSpend>=1800){
-                    this.workforce_quota.upgrader.required = 4;
-                }else if(readyToSpend>1500){
-                    this.workforce_quota.upgrader.required = 3;
-                }else if(readyToSpend>800){
-                    this.workforce_quota.upgrader.required = 2;
-                }else{
-                    this.workforce_quota.upgrader.required = 1;
-                }
-                
-            }else{
-                this.workforce_quota.upgrader.required = 1;
+               if(this.upgradeFast){
+                    if(readyToSpend==2000){
+                        this.workforce_quota.upgrader.required = 5;
+                    }else if(readyToSpend>=1800){
+                        this.workforce_quota.upgrader.required = 4;
+                    }else if(readyToSpend>1500){
+                        this.workforce_quota.upgrader.required = 3;
+                    }else if(readyToSpend>800){
+                        this.workforce_quota.upgrader.required = 2;
+                    }else{
+                        this.workforce_quota.upgrader.required = 1;
+                    }
+               }
             }
             
             

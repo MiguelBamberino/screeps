@@ -76,8 +76,6 @@ var role = {
                     return creep.actOrMoveTo("pickup",drop);
                 }
             }
-            
-
                 
            return creep.getEnergy([config.coreRoomName]);
 

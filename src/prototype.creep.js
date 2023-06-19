@@ -19,12 +19,14 @@
         }
         
     }
-    Creep.prototype.checkAndUpdateState=function(){
+    Creep.prototype.checkAndUpdateState=function(config=undefined){
 	    
 	    if( (this.hitsMax - this.hits) > 100 ){
-	        
-	        //this.recycle();
-	        //this.log("attack","took too much damage. recycling: "+this.name);
+	        if(config && config.retreatSpot){
+	            this.moveToPos(config.retreatSpot);
+	            this.goFlee();
+	            clog("I'm hurt. Fleeing to "+config.retreatSpot,this.name);
+	        }
 	        return;
 	    }
 	    
@@ -47,10 +49,7 @@
         }
         
 	}
-	Creep.prototype.fleeToSpawn = function(){
-	    creep.say("run away!");
-	    
-	}
+
 	Creep.prototype.recycle = function(){
 	    if(this.memory.role=='harvester'){
 	        this.spawn().mines()[this.memory.mine_id].creep_id="";
@@ -72,11 +71,17 @@
 	Creep.prototype.isCollecting = function(){
 	    return (this.memory.state === this.STATE_COLLECTING );
 	}
+	Creep.prototype.isFleeing = function(){
+	    return (this.memory.state === this.STATE_FLEEING );
+	}
 	Creep.prototype.goWork = function(){
 	    this.memory.state = this.STATE_WORKING;
 	}
 	Creep.prototype.goCollect= function(){
 	    this.memory.state = this.STATE_COLLECTING;
+	}
+		Creep.prototype.goFlee= function(){
+	    this.memory.state = this.STATE_FLEEING;
 	}
 
 
@@ -227,10 +232,12 @@
                             mb.addConstruction(standingSpot, STRUCTURE_CONTAINER);
                         }
                     }
+                    this.pickupResourcesAtMyFeet(resourceType,false);
                     // Is there a construction site and we have plenty of energy to build it ?
                     // if we are still level 1 room, then just drop the E for workers to collect
                     // && source.room.controller.level >1
                     if (constructionSite && this.isFull(resourceType) ) {
+                        
                         return this.build(constructionSite);
                     }
                 }
@@ -556,19 +563,18 @@
         if(target){
             return target;
         }
-        target = mb.getNearestStructure(
-                    this.pos,
-                    [STRUCTURE_CONTAINER],
-                    roomNames,
-                    [
+        let targets = mb.getStructures({
+                    
+                    types:[STRUCTURE_CONTAINER],
+                    roomNames:roomNames,
+                    filters:[
                          {attribute:'isUpgraderStore',operator:'fn',value:[]},
                           {attribute:'canReserveTransfer',operator:'fn',value:[this.storedAmount()]}
-                        /*{attribute:'canReserveTransfer',operator:'fn',value:[100]}*/// 100 so we dont waste driving over to fill 20e
-                    ])
-        if(target){
+                    ]})
+        if(targets.length){
 
-            if( this.reserveTransfer(target)===OK){
-                return target;
+            if( this.reserveTransfer(targets[0])===OK){
+                return targets[0];
             }
         }
         return false;
@@ -576,6 +582,15 @@
     }
     Creep.prototype.reserveWithdrawalFromStorage=function(searchRoom,amount=null){
         let obj = mb.getStorageForRoom(searchRoom);
+        if(obj){
+            if(this.reserveWithdraw(obj,amount)===OK){
+                return obj;
+            }
+        }
+        return false;
+    }
+    Creep.prototype.reserveWithdrawalFromTerminal=function(searchRoom,amount=null){
+        let obj = mb.getTerminalForRoom(searchRoom);
         if(obj){
             if(this.reserveWithdraw(obj,amount)===OK){
                 return obj;

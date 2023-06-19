@@ -12,11 +12,33 @@ module.exports = {
                 tid = id;
             }
         }
+        
+        this.scoutRoom('Alpha','bill','W12N18');
+        //constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:38,y:21} )
+      if(Game.creeps['Atilla'])this.constantGuardRoom('Alpha','Atilla','W15N15','10a10m1h1m',{x:39,y:27} );
+       // this.constantGuardRoom('Gamma','Genghis','W14N15','20a20m1r1m1h1m',{x:39,y:10} );
+       // this.constantGuardRoom('Gamma','Hannibal','W15N15','10a10m1h1m',{x:39,y:27});
+       // this.constantGuardRoom('Alpha','Bob','W13N17','10a10m1h1m',{x:26,y:17});
+       // this.defendRoom('Alpha','Bob','W13N17');
+        //this.killCreepsBreakTarget('Alpha','Bob1','W13N19','1a1m2r2m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
+        //this.killCreepsBreakTarget('Alpha','Bob2','W12N19','1a1m2r2m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
+        //this.killCreepsBreakTarget('Alpha','Bob3','W12N18','1a1m2r2m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
+        //this.killCreepsBreakTarget('Alpha','Bob4','W12N17','1a1m2r2m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
+      //  this.killCreepsBreakTarget('Alpha','Bob5','W11N18','1a1m2r2m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
+        
+       // this.killCreepsBreakTarget('Gamma','Bob6','W12N13','1a1m2r2m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
+        //this.killCreepsBreakTarget('Gamma','Bob7','W12N13','1a1m2r2m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
+        //this.killCreepsBreakTarget('Alpha','Bob','W11N19','5a5m1r1m',['64883998a1ad774b97e7e5f1','64884475ea93d5423f0548e5']);
         //this.killCreepsBreakTarget('Beta','Atilla','W15N19','10a10m1h1m',tid );
         //this.killCreepsBreakTarget('Alpha','Punchy','W15N19','10a10m',tid );
         //this.killCreepsBreakTarget('Alpha','Atilla','W11N17','3a3m','6483bdf792092ca1e24f2ec4' );
-     //   this.breakStructures('Gamma','Slammy', 'W13N16',['647931db535ff40426caa0a2','647931df535ff44db6caa0a4','64793a58535ff45a8bcaa2a4','64792ce0a59895148f611e10','64792cde2d6d180b2b4d119a'],'5w5m');
-       // this.reserverRoom('Alpha','nabby',{id:'646e735f071eb8276c0a6a07',pos:{x:28,y:28,roomName:'W11N17'}},'3cl3m');
+       // this.breakStructures('Alpha-2','Slammy', 'W13N17',['6488aca47817373c94ef80b5','648882ccb2d65b6ef7fb7256','648766bd781737207eef01bc','648766a4bf048851a153b0d6'],'15w15m');
+        if(Game.creeps['Punchy'])this.breakStructures('Gamma','Punchy', 'W12N13',['648766a4bf048851a153b0d6','64876732cb559355db622725','648766bd781737207eef01bc','648766a4bf048851a153b0d6'],'15w15m');
+       // this.breakStructures('Gamma','demo-boi', 'W12N13',['648765c3a38d046d1f4648f4','64873840133a09843bb4e404'],'15w15m');
+        
+        this.emptyOutStoresAndRetrieve('Alpha','salvage','W13N17','647a92e8655cd29697596191')
+      
+        //this.reserverRoom('Alpha','nabby',{id:'646e735e071eb8276c0a6a02',pos:{x:7,y:36,roomName:'W11N19'}},'3cl3m');
         
         /*
         let cname = false;
@@ -48,10 +70,35 @@ module.exports = {
         //#####################################################################################
         // Season - Alpha Tasks
         //#####################################################################################
+        let storage = gob('647a92e8655cd29697596191'); 
+        let terminal =  gob('648140f8676bfd1d7f18d344');
+        if(terminal.storingAtleast(15000)){
+            this.haulResources('Alpha','Aty','10c1m',terminal,storage,[RESOURCE_ENERGY],[],4000,3);
+        }
+        if(storage.storingAtleast(15000)){
+            if(Game.creeps['feeder'])
+            this.haulResources('Alpha','feeder','20c20m',storage, gob('648cda8182eac70612650cdd'), [RESOURCE_ENERGY],[],4000,3);
+            if(Game.creeps['AuX'])
+            this.withdrawThenUpgrade('Alpha-2','AuX','648cda8182eac70612650cdd','646e72de071eb8276c0a65a6','25W1C13M',true,rp(34,10,'W14N19'));
+            if(Game.creeps['AuX2'])
+                this.withdrawThenUpgrade('Alpha-2','AuX2','648cda8182eac70612650cdd','646e72de071eb8276c0a65a6','25W1C13M',true,rp(34,9,'W14N19'));
+            if(Game.creeps['feeder2'])
+            this.haulResources('Alpha','feeder2','20c20m',storage, gob('648cda8182eac70612650cdd'), [RESOURCE_ENERGY],[],4000,3);
+            if(Game.creeps['feeder3'])
+            this.haulResources('Alpha','feeder3','20c20m',storage, gob('648cda8182eac70612650cdd'), [RESOURCE_ENERGY],[],4000,3);
+            if(Game.creeps['feeder3'])
+            this.haulResources('Alpha','feeder4','20c20m',storage, gob('648cda8182eac70612650cdd'), [RESOURCE_ENERGY],[],4000,3);
+            if(Game.creeps['feeder5'])
+            this.haulResources('Alpha','feeder5','20c20m',storage, gob('648cda8182eac70612650cdd'), [RESOURCE_ENERGY],[],4000,3);
+           // this.haulResources('Alpha','feeder6','20c20m',storage, gob('648cda8182eac70612650cdd'), [RESOURCE_ENERGY],[],4000,3);
+        }
         
-        //this.startupRoomNoVision('Alpha','W15N19')
+        //this.constantGuardRoom('Alpha','Hannibal','W14N19','10a10m1h1m',{x:24,y:6});
+        //this.startupNewRoomWithVision('W14N19','Alpha-2',{workerCount:6,harvestSources:false})
+       
+        
        // this.harvestAndCollectMineral(spawnName,mineral_id,container_id,store_id,mineral_type)
-        this.harvestAndCollectMineral('Alpha','64765074d6ad5e002e061938','6484f6fab2d65ba2f7fa148b','647a92e8655cd29697596191',RESOURCE_ZYNTHIUM,'4m4c')
+       // this.harvestAndCollectMineral('Alpha','64765074d6ad5e002e061938','6484f6fab2d65ba2f7fa148b','647a92e8655cd29697596191',RESOURCE_ZYNTHIUM,'4m4c')
         let smallBody = '4*1c1m';
         let mediumBody = '6*1c1m';
         let bigBody = '8*1c1m';
@@ -61,21 +108,7 @@ module.exports = {
         let alphaReturnTo = (controllerW14N18.haveContainer() && storageW14N18.storedAmount()>5000)?controllerW14N18.getContainer():storageW14N18;
 
                 
-        for(let i=0;i<10;i++){
-            let cname = 'At'+AlphaHaulerN
-            if(!Game.creeps[cname]){
-                if(Game.spawns['Alpha-2'].spawnCreepX(bigBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
-                    if(Game.spawns['Alpha-2'].spawnCreepX(mediumBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
-                        Game.spawns['Alpha-2'].spawnCreepX(smallBody,cname);
-                
-            }
-            if(Game.creeps[cname] && !Game.creeps[cname].spawning){
-                let creep = Game.creeps[cname];
-                tankerRole.run(creep,{coreRoomName:'W14N18',allRoomNames:['W13N18','W15N18','W14N19','W14N18']});
-            }
-            
-            AlphaHaulerN++;
-        } 
+
       
         /////  Alpha Remotes  ///////////////////////////////////////////////////////////////////////////////////////////////////////  
         this.defendRoom('Alpha','Adx','W14N18',true);
@@ -87,20 +120,49 @@ module.exports = {
             this.reserverRoom('Alpha','Ar0',{id:'646e7309071eb8276c0a676a',pos:{x:38,y:23,roomName:'W13N18'}},'2cl2m');
             this.harvestPoint('Alpha','Ahr1','6w1c3m',{id:'646e7309071eb8276c0a6769',pos:{x:23,y:20,roomName:'W13N18'}});
 
-        // >>    W14N19
-        this.harvestPoint('Alpha','Ahr2','4w1c2m',{id:'646e72de071eb8276c0a65a7',pos:{x:26,y:41,roomName:'W14N19'}},'4m4c');
-
         // >>     W15N18
             this.reserverRoom('Alpha','Ar1',{id:'646e72b3071eb8276c0a63d5',pos:{x:12,y:9,roomName:'W15N18'}},'2cl2m');
             this.harvestPoint('Alpha','Ahr3','6w1c3m',{id:'646e72b3071eb8276c0a63d7',pos:{x:42,y:31,roomName:'W15N18'}});
             this.harvestPoint('Alpha','Ahr4','6w1c3m',{id:'646e72b3071eb8276c0a63d6',pos:{x:10,y:22,roomName:'W15N18'}});
-
+            this.keepRoomClearOfLv0InvaderCores('Alpha','Aa1','W15N18','3a3m');
+            this.keepRoomClearOfLv0InvaderCores('Alpha','Aa2','W15N18','3a3m');
+        
+        
+        // >>  W14N17   
+        
+        this.harvestPoint('Alpha','Ahr5','4w1c2m',{id:'646e72df071eb8276c0a65ae',pos:{x:18,y:45,roomName:'W14N17'}});
+        
+        // W12N18 
+         this.harvestPoint('Alpha','Ahr6','4w1c2m',{id:'646e7334071eb8276c0a68b7',pos:{x:4,y:10,roomName:'W12N18'}});
+         
+        // haulers
+        for(let i=0;i<15;i++){
+            let cname = 'At'+AlphaHaulerN
+            if(!Game.creeps[cname]){
+                if(Game.spawns['Alpha-2'].spawnCreepX(bigBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                    if(Game.spawns['Alpha-2'].spawnCreepX(mediumBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                        Game.spawns['Alpha-2'].spawnCreepX(smallBody,cname);
+                
+            }
+            if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+                let creep = Game.creeps[cname];
+                tankerRole.run(creep,{coreRoomName:'W14N18',allRoomNames:['W13N18','W15N18','W14N18','W14N17','W12N18'],retreatSpot:rp(18,45,'W14N18'),funnelRoomName:'W14N19'});
+            }
+            
+            AlphaHaulerN++;
+        } 
         
         //#####################################################################################
         // Season - Beta Tasks
         //#####################################################################################
+        this.streamResource('W17N18','Beta','Bty','10c1m','W13N15',RESOURCE_ENERGY,400000,50000)
+        //if(Game.creeps['Bty'])
+      /*  this.haulResources('Beta','Bty','10c1m',
+            {id:'647f1026358260669e2fd981',pos:{x:29,y:23,roomName:'W17N18'}}, // storage
+            {id:'6482024bb7e50830ad046a96',pos:{x:15,y:22,roomName:'W17N18'}}, // terminal
+            [RESOURCE_ENERGY],[],4000,3);*/
         this.defendRoom('Beta','Bdx','W17N18',true);
-        this.harvestAndCollectMineral('Beta','64765074d6ad5e002e06186f','6484f53ccb559300ce613087','647f1026358260669e2fd981',RESOURCE_HYDROGEN)
+        this.harvestAndCollectMineral('Beta','64765074d6ad5e002e06186f','648821705bdc7e37c336f881','647f1026358260669e2fd981',RESOURCE_HYDROGEN)
         // >>>>> W17N19  ////////////////////////////////////////////////////////////
         let invadersInW17N19 = this.defendRoom('Beta','Bd0','W17N19');
         let controllerW17N18 = Game.getObjectById('646e725d071eb8276c0a6079');
@@ -108,23 +170,9 @@ module.exports = {
         let BetaHaulerN = 0;
         let betaReturnTo = (controllerW17N18.haveContainer() && storageW17N18.storedAmount()>5000)?controllerW17N18.getContainer():storageW17N18;
    
-        for(let i=0;i<10;i++){
-            let cname = 'Bt'+BetaHaulerN
-            if(!Game.creeps[cname]){
-                if(Game.spawns['Beta'].spawnCreepX(bigBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
-                    if(Game.spawns['Beta'].spawnCreepX(mediumBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
-                        Game.spawns['Beta'].spawnCreepX(smallBody,cname);
-                
-            }
-            if(Game.creeps[cname] && !Game.creeps[cname].spawning){
-                let creep = Game.creeps[cname];
-                tankerRole.run(creep,{coreRoomName:'W17N18',allRoomNames:['W17N18','W17N19','W16N18','W16N19']});
-            }
+
             
-            BetaHaulerN++;
-        } 
-            
-        this.reserverRoom('Beta','Br0',{id:'646e725c071eb8276c0a6075',pos:{x:28,y:28,roomName:'W17N19'}},'1cl1m');
+        this.reserverRoom('Beta','Br0',{id:'646e725c071eb8276c0a6075',pos:{x:28,y:28,roomName:'W17N19'}},'2cl2m');
         
         this.harvestPoint('Beta','Bhr0','6w1c3m',{id:'646e725c071eb8276c0a6076',pos:{x:36,y:35,roomName:'W17N19'}});
 
@@ -141,31 +189,39 @@ module.exports = {
         // >>>>> W16N18  ////////////////////////////////////////////////////////////
         this.harvestPoint('Beta','Bhr3','4w1c2m',{id:'646e7288071eb8276c0a61f4',pos:{x:29,y:38,roomName:'W16N19'}});          
 
-        
-        //#####################################################################################
-        // Season - Gamma Tasks
-        //#####################################################################################
-        //let controllerW13N15 = Game.rooms['W13N15'].controller;
-        let storageW13N15 = false;
-        let GammaHaulerN = 0;
-                
-        for(let i=0;i<8;i++){
-            let cname = 'Gt'+GammaHaulerN
+        for(let i=0;i<9;i++){
+            let cname = 'Bt'+BetaHaulerN
             if(!Game.creeps[cname]){
-                if(Game.spawns['Gamma'].spawnCreepX(bigBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
-                    if(Game.spawns['Gamma'].spawnCreepX(mediumBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
-                        Game.spawns['Gamma'].spawnCreepX(smallBody,cname);
+                if(Game.spawns['Beta-2'].spawnCreepX(bigBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                    if(Game.spawns['Beta-2'].spawnCreepX(mediumBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                        Game.spawns['Beta-2'].spawnCreepX(smallBody,cname);
                 
             }
             if(Game.creeps[cname] && !Game.creeps[cname].spawning){
                 let creep = Game.creeps[cname];
-                tankerRole.run(creep,{coreRoomName:'W13N15',allRoomNames:['W13N15','W12N15','W13N16','W13N14']});
+                tankerRole.run(creep,{coreRoomName:'W17N18',allRoomNames:['W17N18','W17N19','W16N18','W16N19'],retreatSpot:rp(18,45,'W17N18')});
             }
             
-            GammaHaulerN++;
+            BetaHaulerN++;
         } 
+        //#####################################################################################
+        // Season - Gamma Tasks
+        //#####################################################################################
+        let storageG = gob('648483965bdc7e637d357f8f'); 
+        let terminalG =  gob('6487f218a38d042a92467fce');
         
+        this.scoreThorium(true);
         
+        this.startupRoomNoVision('Gamma-2','W12N13',{workerCount:4,harvestSources:true,reserve:true,defend:true})
+        
+        if(terminal.storingAtleast(15000)){
+            this.haulResources('Gamma','Gty','10c1m',terminalG,storageG,[RESOURCE_ENERGY],[],4000,3);
+        }
+        
+        let storageW13N15 = false;
+        let GammaHaulerN = 0;
+
+       this.harvestAndCollectMineral('Gamma','64765074d6ad5e002e061980','6488f92acb55935aba62c50a','6487f218a38d042a92467fce',RESOURCE_LEMERGIUM,'2m2c')         
         /////// W13N16  ////////////////////////////////////////
         this.scoutRoom('Gamma','Gsc1','W13N16');
         let invadersInW13N16 = this.defendRoom('Gamma','Gd0','W13N16');
@@ -191,63 +247,136 @@ module.exports = {
 
         /////// W13N14 ////////////////////////////////////////
         let invadersInW12N15 = this.defendRoom('Gamma','Gd2','W13N14');
-        
+        this.reserverRoom('Gamma','Gr2',{id:'646e730b071eb8276c0a6779',pos:{x:7,y:26,roomName:'W13N14'}},'2cl2m');
         this.keepRoomClearOfLv0InvaderCores('Gamma','Ga3','W13N14','3a3m');
         this.keepRoomClearOfLv0InvaderCores('Gamma','Ga4','W13N14','3a3m');
         //this.scoutRoom('Gamma','Gsc1','W12N15');
         this.harvestPoint('Gamma','Ghr5','4w1c2m',{id:'646e730b071eb8276c0a6778',pos:{x:7,y:5,roomName:'W13N14'}});
         
-        
-        
-        /////   Harass Default0 ///////////////////////////////////////////////////////////////////////////////////////////////////////    
-          let attackPlans={
-            'W12N13':['W14N18','W13N18','W13N17','W12N17','W12N16','W11N16','W11N15','W12N15','W12N14','W12N13'],
-            'W12N16':['W14N18','W13N18','W13N17','W12N17','W12N16'],
-            'W13N14':['W14N18','W13N18','W13N17','W12N17','W12N16','W11N16','W11N15','W12N15','W12N14','W13N14'],
-            'W13N12':[ 'W13N15','W13N14','W12N14','W12N13','W12N12','W13N12'],
+        for(let i=0;i<8;i++){
+            let cname = 'Gt'+GammaHaulerN
+            if(!Game.creeps[cname]){
+                if(Game.spawns['Gamma'].spawnCreepX(bigBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                    if(Game.spawns['Gamma'].spawnCreepX(mediumBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                        Game.spawns['Gamma'].spawnCreepX(smallBody,cname);
+                
+            }
+            if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+                let creep = Game.creeps[cname];
+                tankerRole.run(creep,{coreRoomName:'W13N15',allRoomNames:['W13N15','W12N15','W13N16','W13N14'],retreatSpot:rp(22,24,'W13N15')});
+            }
             
-            'W14N13':['W13N15','W13N14','W14N14','W14N13']
-        }
-       let directPaths={
+            GammaHaulerN++;
+        } 
+        //#####################################################################################
+        // Season - Delta Tasks
+        //#####################################################################################
+        gob('648cda8182eac70612650cdd').allowOverBooking(2000);
+        rp(27,21,'W14N19').createConstructionSite(STRUCTURE_EXTRACTOR)
+        
+        rp(27,19,'W14N19').createConstructionSite(STRUCTURE_TERMINAL)
+        //this.streamResource('W13N17','Delta','Dty','20c1m','W13N15',RESOURCE_ENERGY,1,0)
+        //this.streamResource('W13N17','Delta','Dty2','20c1m','W13N15',RESOURCE_ENERGY,1,5000)
+        let thorium = gob('646f55ff9bdd4e00083016df')
+       this.harvestMineralAndTransfer('Delta','Dhx1','10w1c3m',thorium,'6490143e1656f395e372359a',RESOURCE_THORIUM);
+       this.harvestMineralAndTransfer('Delta','Dhx2','10w1c3m',thorium,'6490143e1656f395e372359a',RESOURCE_THORIUM);
+       this.harvestMineralAndTransfer('Delta','Dhx3','10w1c3m',thorium,'6490143e1656f395e372359a',RESOURCE_THORIUM);
+       //this.harvestAndCollectMineral('Delta','646f56009bdd4e0008301726','648ce4701fec425fdc90664d','64899f6b133a0947a6b5d157',RESOURCE_THORIUM,'1c1m','10w2m',2);
 
-            'W13N15':['W14N18','W13N18','W13N17','W12N17','W12N16','W12N15','W13N15']
-        }
-        //this.emptyContainersInEnemyRemote('Gamma','mosquito-1',{id:'648046bff0fb90889f92b167',pos:{x:1,y:1,roomName:'W13N15'}},directPaths['W13N15']  )
         
-       // this.emptyContainersInEnemyRemote('Alpha','mosquito-1',{id:'64804180f1970a121868fd90',pos:{x:1,y:1,roomName:'W12N16'} }  )
-        //this.emptyContainersInEnemyRemote('Alpha','mosquito-2',{id:'64804220f1970a588868fdcd',pos:{x:1,y:1,roomName:'W12N15'}} )
-       // this.emptyContainersInEnemyRemote('Alpha','mosquito-2',{id:'6480431098bc22dcec84e645',pos:{x:1,y:1,roomName:'W12N15'}} )
+        // >>  W15N19   
+        this.defendRoom('Delta','Dd1','W15N19');
+        this.harvestPoint('Delta','Dhr1','6w1c3m',{id:'646e72b2071eb8276c0a63d3',pos:{x:34,y:35,roomName:'W15N19'}});
+        this.harvestPoint('Delta','Dhr2','6w1c3m',{id:'646e72b2071eb8276c0a63d1',pos:{x:7,y:16,roomName:'W15N19'}});
+        this.reserverRoom('Delta','Dr1',{id:'646e72b2071eb8276c0a63d2',pos:{x:27,y:29,roomName:'W15N19'}},'1cl1m');
+        this.reserverRoom('Delta','Dr2',{id:'646e72b2071eb8276c0a63d2',pos:{x:27,y:29,roomName:'W15N19'}},'1cl1m');
+        // >>  W13N19   
+        this.defendRoom('Delta','Dd2','W13N19');
+        this.harvestPoint('Delta','Dhr3','6w1c3m',{id:'646e7309071eb8276c0a6764',pos:{x:34,y:35,roomName:'W13N19'}});
+        this.harvestPoint('Delta','Dhr4','6w1c3m',{id:'646e7309071eb8276c0a6765',pos:{x:7,y:16,roomName:'W13N19'}});
+        this.reserverRoom('Delta','Dr3',{id:'646e7309071eb8276c0a6766',pos:{x:27,y:29,roomName:'W13N19'}},'1cl1m');
+        this.reserverRoom('Delta','Dr4',{id:'646e7309071eb8276c0a6766',pos:{x:27,y:29,roomName:'W13N19'}},'1cl1m');
         
-        let activeTarget = 'W13N14';
         
-       // if(Game.creeps['bob'])
-       // this.killCreepsBreakTarget('Alpha','bob',activeTarget,'1a1r2m','647d9be797b75f3f9db03958',attackPlans[activeTarget] );
-       // if(Game.creeps['bob2'])
-        //this.killCreepsBreakTarget('Alpha','bob2','W12N13','1a1r2m','647d9be797b75f3f9db03958',attackPlans['W12N13'] ); 
-   
-        //this.killCreepsBreakTarget('Gamma','Bob','W13N12','2a2m','6484ab96c9ed295560327710',attackPlans['W13N12']); 
-        //this.killCreepsBreakTarget('Gamma','Bob2','W13N12','2a2m','6482e3b0f1157bfec9d48f0d',attackPlans['W13N12']);
-        
-        //this.killCreepsBreakTarget('Gamma','Bob3','W13N12','2a2m','6482e3b0f1157bfec9d48f0d',attackPlans['W13N12']);
-        
-        //
-
-          
-            /*
-        if(tower && tower.isEmpty()){
+            let DeltaHaulerN=0;
+        for(let i=0;i<10;i++){
+            let cname = 'Dt'+DeltaHaulerN
+            if(!Game.creeps[cname]){
+                if(Game.spawns['Delta'].spawnCreepX(bigBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                    if(Game.spawns['Delta'].spawnCreepX(mediumBody,cname)==ERR_NOT_ENOUGH_RESOURCES)
+                        Game.spawns['Delta'].spawnCreepX(smallBody,cname);
+                
+            }
+            if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+                let creep = Game.creeps[cname];
+                tankerRole.run(creep,{coreRoomName:'W14N19',allRoomNames:['W14N19','W15N19','W13N19'],retreatSpot:rp(28,10,'W14N19')});
+            }
             
-            this.killCreepsBreakTarget('Alpha','Atilla','W14N16','10*1a1m+','648026c9c37dd4c36822c97d'); 
-            this.healBuddy('Alpha','Dr0','Atilla','3*1t1m + 6*1h1m')
-        }else{
-            this.drainRoomBounce('Alpha','Dr0',new RoomPosition(36,48,'W14N17'),'3*1t1m + 6*1h1m');
-        }*/
-        
-        
-        //
+            DeltaHaulerN++;
+        } 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
             
         
         return;
+       },
+       scoreThorium: function(withAlly=true,guard=false){
+           let thoriumStorage = gob('6487f218a38d042a92467fce');
+           let reactor = gob('646f55e99bdd4e0008300cf9');
+           let scoutName = 'Barry';
+           let allyName = 'GT500';
+           let scoutMessage = withAlly?'w/ '+allyName:'';
+           let haulersReq=0;
+           let haulerCount=0;
+           let haulerNames = [];
+           let haulerMax=6;
+           for(let i=0;i<haulerMax;i++){ 
+               let cname = 'thor-'+i;
+               haulerNames.push(cname) 
+               if(Game.creeps[cname]){
+                    Game.creeps[cname].memory.riskyBiscuits=true;
+                    haulerCount++;
+                }
+           }
+                       
+           
+           //this.scoutRoom('Gamma-2',scoutName,'W15N15',{x:34,y:26});
+           scoutName=this.rotateScouts('Gamma-2','W15N15','Barry',{x:34,y:26});
+           
+           if(reactor){
+               
+               if(reactor.store.getUsedCapacity(RESOURCE_THORIUM)<350){
+                    haulersReq=6;
+                } 
+                
+                if(!withAlly){
+                   if(reactor.owner.username!=='MadDokMike'){
+                       
+                        this.claimReactor('Gamma-2','bob',reactor);
+                        scoutMessage='claiming..';
+                        
+                    }else{
+                        haulersReq=4;
+                    }
+                }
+                
+                
+                if(haulersReq>0 || haulerCount>0){
+                    for(let cname of haulerNames){
+                        
+                        if(Game.creeps[cname] || haulerCount < haulersReq)
+                            this.haulResources('Gamma-2',cname,'1c1m',thoriumStorage,reactor,[RESOURCE_THORIUM],['W15N15','W14N15','W13N15'],4000,1);
+                        
+                        if(haulersReq==0 && reactor.store.getUsedCapacity(RESOURCE_THORIUM)>900 && Game.creeps[cname] && Game.creeps[cname].storedAmount(RESOURCE_THORIUM)==0 )Game.creeps[cname].suicide();
+                        
+                    }
+                    scoutMessage= haulerCount+'/'+haulersReq+' haulrs';
+                }
+                
+           }
+           
+            if(Game.creeps[scoutName])Game.creeps[scoutName].say(scoutMessage,true)
+            
+            if(guard)this.constantGuardRoom('Gamma','Thor-guard','W15N15','10a10m1h1m',{x:37,y:26},allyName);
        },
     runAllRemotesFor: function(spawnName,remoteRoomNames){
         
@@ -286,46 +415,60 @@ module.exports = {
         let config={
             defend:conf.defend===undefined?true:conf.defend,
             reserve:conf.reserve===undefined?false:conf.reserve,
+            reserverBody:conf.reserverBody===undefined?'1cl1m':conf.reserverBody,
             
         }
+        let controller = false;
+        let structures = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_CONTROLLER]});
+        if(structures.length>0){
+            controller = structures[0];
+        }
+        
         
         //// Vision /////////////////////////////////////////
         let room = Game.rooms[roomName];
         if(room && !mb.hasRoom(roomName))mb.scanRoom(roomName);
         let scoutName = spawnName.charAt(0)+'-ob-'+roomName;
         if(!room || Game.creeps[scoutName])this.scoutRoom(spawnName,scoutName,roomName);
+        let belongsToInvader = (controller && controller.reservation && controller.reservation.username=='Invader')
         
         //// Defence /////////////////////////////////////////
         
         if(config.defend){
             let invaders = this.defendRoom(spawnName,spawnName.charAt(0)+'-de-'+roomName,roomName);
             
-            
-        this.keepRoomClearOfLv0InvaderCores(spawnName,spawnName.charAt(0)+'at1-'+roomName,roomName,'3a3m');
-        this.keepRoomClearOfLv0InvaderCores(spawnName,spawnName.charAt(0)+'at2-'+roomName,roomName,'3a3m');
+            this.keepRoomClearOfLv0InvaderCores(spawnName,spawnName.charAt(0)+'at1-'+roomName,roomName,'3a3m');
+            this.keepRoomClearOfLv0InvaderCores(spawnName,spawnName.charAt(0)+'at2-'+roomName,roomName,'3a3m');
+            if(belongsToInvader){
+                this.reserverRoom(spawnName,spawnName.charAt(0)+'rex-'+roomName,controller,config.reserverBody);
+            }
         }
         
+        //// Reserving /////////////////////////////////////////
         if(config.reserve){
-            
-            this.reserverRoom(spawnName,spawnName.charAt(0)+'re-'+roomName,{id:'646e730a071eb8276c0a6770',pos:{x:7,y:26,roomName:'W13N16'}},'1cl1m');
+            if(controller){
+                this.reserverRoom(spawnName,spawnName.charAt(0)+'re-'+roomName,controller,reserverBody);    
+            }
         }
-        
-        let controllerW13N16 = Game.getObjectById('646e730a071eb8276c0a6770');
-        if(controllerW13N16 && controllerW13N16.reservation && controllerW13N16.reservation.username=='Invader'){
-            this.reserverRoom('Gamma','Gr0-x',{id:'646e730a071eb8276c0a6770',pos:{x:7,y:26,roomName:'W13N16'}},'1cl1m');
-        }else{
-            this.harvestPoint('Gamma','Ghr1','4w1c2m',{id:'646e730a071eb8276c0a6772',pos:{x:6,y:38,roomName:'W13N16'}});
-            this.harvestPoint('Gamma','Ghr2','4w1c2m',{id:'646e730a071eb8276c0a6771',pos:{x:4,y:38,roomName:'W13N16'}});
-        
+        //// Reserving /////////////////////////////////////////
+        if(!belongsToInvader){
+            let sources = mb.getSources({roomNames:[roomName]});
+            for(let s in sources){
+                
+            this.harvestPoint(spawnName,spawnName.charAt(0)+'hr-'+roomName+'-'+s,'4w1c2m',sources[s]);
+            }
         }
     },
-    harvestAndCollectMineral:function(spawnName,mineral_id,container_id,store_id,mineral_type,haulerBody){
+    harvestAndCollectMineral:function(spawnName,mineral_id,container_id,store_id,mineral_type,haulerBody='1m1c',harvesterBody='10W2m',creep_suffix=''){
         
         let roomName = Game.spawns[spawnName].pos.roomName;
         
-        if(Game.getObjectById(container_id))this.harvestMineral(spawnName,spawnName.charAt(0)+'hx','10W2m',{id:mineral_id,pos:{x:1,y:1,roomName:roomName}},RESOURCE_THORIUM);
+        if(gob(container_id)){
+            this.harvestMineral(spawnName,spawnName.charAt(0)+'hx'+creep_suffix,harvesterBody,{id:mineral_id,pos:{x:1,y:1,roomName:roomName}},RESOURCE_THORIUM);
+            if(Game.creeps[spawnName.charAt(0)+'hx'+creep_suffix])Game.creeps[spawnName.charAt(0)+'hx'+creep_suffix].moveTo(gob(container_id));
+        }
         
-        this.haulResources(spawnName,spawnName.charAt(0)+'tx',haulerBody,
+        this.haulResources(spawnName,spawnName.charAt(0)+'tx'+creep_suffix,haulerBody,
             {id:container_id,pos:{x:1,y:1,roomName:roomName}},
             {id:store_id,pos:{x:1,y:1,roomName:roomName}},[mineral_type] );
     },
@@ -462,15 +605,11 @@ module.exports = {
         let storage = mb.getStorageForRoom(srcRoomName);
         let terminal = mb.getTerminalForRoom(srcRoomName);
         let sendEnergyCost = 5000;
+        // if we are sending energy, then we need enough to send it + what we want to send
+        if(resource_type==RESOURCE_ENERGY)
+            sendEnergyCost+=batchSize;
 
-        if(storage.getMeta().streaming && storage.storingLessThan(stopAt,resource_type)){
-            clog(storage.id+'='+storage.store.getUsedCapacity(resource_type),'streaming OFF setting:'+srcRoomName)
-            storage.setMetaAttr('streaming',false);
-        }
-        if(!storage.getMeta().streaming && storage.storingAtleast(startAt,resource_type)){
-            clog(storage.id+'='+storage.store.getUsedCapacity(resource_type),'streaming ON setting:'+srcRoomName)
-            storage.setMetaAttr('streaming',true);
-        }
+     
         
        // Game.creeps[creepName].say(stopAt)
         // we may need to stop piping data and set how much to always leave in the storage
@@ -482,6 +621,16 @@ module.exports = {
              }   
               this.haulResources(spawnName, creepName, bodyPlan, storage, terminal, [resource_type] );
             
+        }
+        
+        // now decide if we still want to stream. Do it after haul, incase we withdraw the last bit of that resource
+        if(storage.getMeta().streaming && storage.storingLessThan(stopAt,resource_type)){
+            clog(storage.id+'='+storage.store.getUsedCapacity(resource_type),'streaming ['+resource_type+'] OFF setting:'+srcRoomName)
+            storage.setMetaAttr('streaming',false);
+        }
+        if(!storage.getMeta().streaming && storage.storingAtleast(startAt,resource_type)){
+            clog(storage.id+'='+storage.store.getUsedCapacity(resource_type),'streaming ['+resource_type+'] ON setting:'+srcRoomName)
+            storage.setMetaAttr('streaming',true);
         }
 
     },
@@ -502,7 +651,7 @@ module.exports = {
     haulResources:function(spawnName,cname,parts,sourceStore,targetStore,resource_types,roomTraversal=[],cpuBucketBreak=4000,tickToLiveTo=1,minDrawSize=1){
        
         let creep = Game.creeps[cname]?Game.creeps[cname]:false;
-        
+        //if(creep && cname=='Dty')clog(resource_types,creep.name)
         let resource_type = false;
         let drawFromTarget = Game.getObjectById(sourceStore.id);
         //clog(drawFromTarget)
@@ -521,12 +670,12 @@ module.exports = {
             }
         }
        // if(creep && creep.name=='At0')clog(sourceStore,'At0')
-        //clog(resource_type)
-        if(!resource_type)return;
+        
+        if(!resource_type){return};
         
         //if(tickToLiveTo===3)clog(resource_type,'yo')
         if(!Game.creeps[cname] && Game.cpu.bucket>cpuBucketBreak ){
-            Game.spawns[spawnName].spawnCreepX(parts,cname);
+            clog(Game.spawns[spawnName].spawnCreepX(parts,cname),cname);
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning ){
             
@@ -537,10 +686,11 @@ module.exports = {
             if(creep.store.getUsedCapacity(resource_type)==0){
                 
                 if(roomTraversal.length>0 && creep.pos.roomName!=sourceStore.pos.roomName){
-                    this.traverseRooms(creep,roomTraversal);
+                    let res =  this.traverseRooms(creep,roomTraversal);
+                   // creep.say("w-r:"+res);
                 }else{
                     let res = this.actOrMove2(creep,sourceStore,"withdraw",resource_type);
-                    creep.say("w:"+res);
+                   // creep.say("w:"+res);
                 }
                 
             }else{
@@ -557,13 +707,11 @@ module.exports = {
                 if(roomTraversal.length>0 && creep.pos.roomName!=targetStore.pos.roomName){
                     
                     let res = this.traverseRooms(creep,roomTraversal.reverse());
-                  //  creep.say("t:"+resource_type.charAt(0)+":"+res);
+                  //  creep.say("t-r:"+resource_type.charAt(0)+":"+res);
                 }else{
                       let res =  this.actOrMove2(creep,targetStore,"transfer",resource_type);
-                      if(res==-2){
-                          delete creep.memory._move;
-                      }
-                      //creep.say("t:"+res);
+           
+                   //   creep.say("t:"+res);
                 }
                 
             }
@@ -571,25 +719,40 @@ module.exports = {
 
         }
     },
-    
+    rotatingScouts:{},
+    rotateScouts: function(spawnName,roomName,scoutPrefix,waitingSpot){
+        // handle global reset, we need to figure which creep is active
+        if(Game.creeps[ scoutPrefix+'0' ])this.rotatingScouts[scoutPrefix]= scoutPrefix+'0';
+        if(Game.creeps[ scoutPrefix+'1' ])this.rotatingScouts[scoutPrefix]= scoutPrefix+'1';
+        
+        // setup with given creep. will break on global reset...but oh well. its a 1m creep.
+        if(!this.rotatingScouts[scoutPrefix])this.rotatingScouts[scoutPrefix]=scoutPrefix+'0';
+        // if the active creep is near dead, then start bringing in the new one
+        if(Game.creeps[this.rotatingScouts[scoutPrefix]] && Game.creeps[this.rotatingScouts[scoutPrefix]].ticksToLive<200)
+            this.rotatingScouts[scoutPrefix] = this.rotatingScouts[scoutPrefix]==scoutPrefix+'0'?scoutPrefix+'1':scoutPrefix+'0';
+        // move the scout in   
+        this.scoutRoom(spawnName,this.rotatingScouts[scoutPrefix],roomName,waitingSpot);
+        // return the active scout name
+        return this.rotatingScouts[scoutPrefix];
+    },
     // ############################################################################################
     // Starting a new room functions
     // ############################################################################################
     activeRoomOverseer:Game.creeps['Xs0']?'Xs0':'Xs1',
-    startupRoomNoVision: function(spawnName,roomName,config){
+    startupRoomNoVision: function(spawnName,roomName,config={}){
         // setup with given creep. will break on global reset...but oh well. its a 1m creep.
         if(!this.activeRoomOverseer)this.activeRoomOverseer='Xs0';
         // if the active creep is near dead, then start bringing in the new one
         if(Game.creeps[this.activeRoomOverseer] && Game.creeps[this.activeRoomOverseer].ticksToLive<200)
             this.activeRoomOverseer=this.activeRoomOverseer=='Xs0'?'Xs1':'Xs0';
         // move the scout in   
-        this.scoutRoom(spawnName,this.activeRoomOverseer,roomName);
+        this.scoutRoom(spawnName,this.activeRoomOverseer,roomName,{x:12,y:45});
         // can not we see the room, then wait for scout
         if(!Game.rooms[roomName])return; 
         
         if(!mb.hasRoom(roomName))mb.scanRoom(roomName);
             
-        return;   
+       // return;   
         this.startupNewRoomWithVision(roomName,spawnName,config);
        
     },
@@ -600,7 +763,7 @@ module.exports = {
      * var spawnName
      * var config >> see startupNewRoomWithVision() for config docs
      */ 
-    startupNewRoomWithObserver: function(observer_id,roomName,spawnName,config){
+    startupNewRoomWithObserver: function(observer_id,roomName,spawnName,config={}){
     
         
         Game.getObjectById(observer_id).observeRoom(roomName);
@@ -618,10 +781,11 @@ module.exports = {
                 drawFromStructures:false,   >> withdraw E from any existing enemy structures
                 harvestSources:true,        >> send in harvesters to mine sources
                 dismantleStructures:false,  >> destroy any existing enemy structures
-                buildUpSites:false          >> build any construction sites
+                buildUpSites:true          >> build any construction sites
+                reserve:false               >> instead of claim, keep it rerserved in prep of GCL++
             }
      */ 
-    startupNewRoomWithVision: function(roomName,spawnName, conf){
+    startupNewRoomWithVision: function(roomName,spawnName, conf={}){
         
         let config={
             workerCount:conf.workerCount===undefined?4:conf.workerCount,
@@ -629,21 +793,40 @@ module.exports = {
             drawFromRuins:conf.drawFromRuins===undefined?false:conf.drawFromRuins,
             drawFromStructures:conf.drawFromStructures===undefined?false:conf.drawFromStructures,
             harvestSources:conf.harvestSources===undefined?true:conf.harvestSources,
-            dismantleStructures:conf.dismantleStructures===undefined?true:conf.dismantleStructures,
+            dismantleStructures:conf.dismantleStructures===undefined?false:conf.dismantleStructures,
             buildUpSites:conf.buildUpSites===undefined?true:conf.buildUpSites,
+            reserve:conf.reserve===undefined?false:conf.reserve,
+            defend:conf.defend===undefined?false:conf.defend,
+            defenderSpot:conf.defenderSpot===undefined?false:conf.defenderSpot,
         }
         
         let room = Game.rooms[roomName];
+  
         if(!mb.hasRoom(roomName))mb.scanRoom(roomName);
         let container_ids=[];
         let dismantle_ids=[];
-        let repair_ids = [];
+        let wall_ids = [];
         if(room){
             
             // Firstly, lets go make a claim on the room
-            if(!room.controller.owner){
+            if(!room.controller.owner && !config.reserve){
+               
                 this.claimRoom(spawnName,roomName+'-cl',room.controller);
             }
+            if(config.reserve){
+                this.reserverRoom(spawnName,roomName+'-cl',room.controller);
+            }
+            
+            if(config.defend){
+                 this.constantGuardRoom(spawnName,roomName+'-guard',roomName,'10a10m1h1m', {x:18,y:13} );
+            }
+            
+            
+            if(room.controller.haveContainer()){
+                room.controller.getContainer().allowOverBooking(2500)
+            }
+            
+            
             if(config.dismantleStructures){
                 let structures = mb.getStructures({
                     roomNames:[roomName],
@@ -682,7 +865,7 @@ module.exports = {
             if(config.harvestSources){
                 let sources  = mb.getAllSourcesForRoom(roomName);
                 for(let s in sources){
-                    this.harvestPoint(spawnName,roomName+'-h'+s,'6w6m1c',sources[s].id);
+                    this.harvestPoint(spawnName,roomName+'-h'+s,'6w6m1c',sources[s]);
                     let srcCont = sources[s].getContainer();
                     if(srcCont && srcCont.storingAtleast(50))container_ids.push(srcCont.id);
                 } 
@@ -694,22 +877,15 @@ module.exports = {
                      types:[STRUCTURE_RAMPART,STRUCTURE_WALL],
                     filters:[{attribute:'hits',operator:'<',value:[50000]}]
                 });
-                if(walls.length>0)repair_ids.push(walls[0].id);
+                if(walls.length>0)wall_ids.push(walls[0].id);
                 
-                let roads = mb.getStructures({
-                    roomNames:[roomName],
-                     types:[STRUCTURE_ROAD],
-                    filters:[{attribute:'hits',operator:'<',value:[4000]}]
-                });
-                if(roads.length>0)repair_ids.push(roads[0].id);
-                 
             }
             
 
             // now lets deploy the workers to draw from all containers
             if(container_ids.length>0){
                 
-                for(let c=0; c < workerCount;c++){
+                for(let c=0; c < config.workerCount;c++){
                     let bodyPlan = config.workerBody;
                     let creepName = roomName+'-w'+c;
                     if(dismantle_ids.length>0){
@@ -722,10 +898,14 @@ module.exports = {
                         
                         let container = Game.getObjectById(id);
                         let conSite = mb.getNearestConstruction(container.pos, [roomName]);
+                        let fixable = mb.getNearestRepairTarget(container.pos, [roomName]);
+                        if( fixable && (!conSite || fixable.hits < 3000 ) ){
+                            wall_ids.push(fixable.id);
+                        }
                         
-                        if(config.buildUpSites  && (conSite || repair_ids.length>0)){
-                            if(repair_ids.length>0){
-                                this.withdrawThenRepair(spawnName,creepName,id,repair_ids[0],bodyPlan);
+                        if(config.buildUpSites  && (conSite || wall_ids.length>0)){
+                            if(wall_ids.length>0){
+                                this.withdrawThenRepair(spawnName,creepName,id,wall_ids[0],bodyPlan);
                             }else{
                                 this.withdrawThenBuild(spawnName,creepName,id,conSite.id,bodyPlan);
                             }
@@ -752,7 +932,7 @@ module.exports = {
             if(target.pos.roomName===creep.pos.roomName){
                 let source =  Game.getObjectById(target.id)
                 let res = creep.actOrMoveTo('dropHarvest',source);
-                creep.say("dh:"+res)
+               // creep.say("dh:"+res)
             }else{
                 this.actOrMove2(creep,target,"harvest");
             }
@@ -760,12 +940,28 @@ module.exports = {
         }
     },
     harvestMineral:function(spawnName,cname,bodyPlan,target,resource_type){
-        if(!Game.creeps[cname]){
-            Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
+        let mineral = gob(target.id);
+        //clog(mineral)
+        if(!Game.creeps[cname] && mineral && (mineral.amount>0 || mineral.mineralAmount>0) ){
+            clog(Game.spawns[spawnName].spawnCreepX(bodyPlan,cname),cname);
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
             this.actOrMove2(creep,target,"harvest",resource_type);
+        }
+    },
+    harvestMineralAndTransfer:function(spawnName,cname,bodyPlan,target,transfer_id,resource_type){
+        let mineral = gob(target.id);
+        //clog(mineral)
+        if(!Game.creeps[cname] && mineral && (mineral.amount>0 || mineral.mineralAmount>0) ){
+            clog(Game.spawns[spawnName].spawnCreepX(bodyPlan,cname),cname);
+        }
+        if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+            let creep = Game.creeps[cname];
+            if(creep.isFull()){
+                creep.transfer(gob(transfer_id),resource_type);
+            }
+            creep.actOrMoveTo("harvest",target,resource_type);
         }
     },
 
@@ -790,7 +986,20 @@ module.exports = {
             }
         }
     },
-    reserverRoom:function(spawnName,cname,target,bodyPlan='2c2m'){
+    claimReactor:function(spawnName,cname,target,bodyPlan='1cl1m'){
+        
+        let controller = Game.getObjectById(target.id);
+        if(!Game.creeps[cname]){
+            clog(Game.spawns[spawnName].spawnCreepX(bodyPlan,cname),cname);
+        }
+        if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+            let creep = Game.creeps[cname];
+            
+                let res = this.actOrMove2(creep,target,"claimReactor");
+            
+        }
+    },
+    reserverRoom:function(spawnName,cname,target,bodyPlan='2cl2m'){
         
         let controller = Game.getObjectById(target.id);
         if(!Game.creeps[cname]){
@@ -809,7 +1018,7 @@ module.exports = {
             }
         }
     },
-    scoutRoom:function(spawnName,cname,roomName, bodyPlan='1m'){
+    scoutRoom:function(spawnName,cname,roomName,watchSpot={x:25,y:25}, bodyPlan='1m'){
        // clog(spawnName)
         if(!Game.creeps[cname]){
             Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
@@ -818,8 +1027,12 @@ module.exports = {
             let creep = Game.creeps[cname];
        
             creep.moveOffRoomEdge();
-            creep.moveToPos(new RoomPosition(25,25,roomName));
-                
+            
+            let target = new RoomPosition(watchSpot.x,watchSpot.y,roomName);
+            if(!creep.pos.isEqualTo(target))
+                creep.moveToPos(target);
+            
+               
            
         }
     },
@@ -838,43 +1051,60 @@ module.exports = {
         }
     },
 
-    emptyOutOldStoresAndUpgrade: function(spawnName,cname,roomName,bodyPlan){
+    emptyOutStoresAndRetrieve: function(spawnName,cname,roomName,transfer_id,bodyPlan='10*1c1m'){
         
-        let room = Game.rooms[roomName]
-        if(!Game.creeps[cname]){
+        let room = Game.rooms[roomName];
+        if(!Game.creeps[cname] && Memory.stuffToSalvage==true){
      
             Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
-            if(creep.pos.roomName === roomName){
+            creep.checkAndUpdateState();
+            
+            if(creep.isWorking()){
                 
-                let ruins = room.find(FIND_RUINS);
-                let container_id = '';
-                for(let r in ruins){
-                    if(ruins[r].store.getUsedCapacity(RESOURCE_ENERGY)>0){
-                       
-                        container_id = ruins[r].id;
-                        break;
-                    }
-                }
-                
-                if(!container_id){
-                   let obj = mb.getNearestStructure(
-                        creep.pos,
-                        [STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_SPAWN,STRUCTURE_CONTAINER],
-                        [roomName],
-                        [{attribute:'storingAtleast',operator:'fn',value:[1]}]);
-                    
-                    if(obj){
-                        container_id = obj.id;
-                    }
-                }
-                this.withdrawThenUpgrade(spawnName,cname,container_id,room.controller.id,bodyPlan);
-                
-            }else{
                 creep.moveOffRoomEdge();
-                creep.moveToPos(new RoomPosition(25,25,roomName));
+                creep.actOrMoveTo('transfer',gob(transfer_id),RESOURCE_ENERGY);
+            }
+            
+            
+            if(creep.isCollecting()){
+                
+                 if( creep.pos.roomName === roomName){
+                    
+                    let ruins = room.find(FIND_RUINS);
+                    let container_id = '';
+                    for(let r in ruins){
+                        if(ruins[r].store.getUsedCapacity(RESOURCE_ENERGY)>0){
+                           
+                            container_id = ruins[r].id;
+                            break;
+                        }
+                    }
+                    
+                    if(!container_id){
+                       let obj = mb.getNearestStructure(
+                            creep.pos,
+                            [STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_SPAWN,STRUCTURE_CONTAINER,STRUCTURE_STORAGE,STRUCTURE_TERMINAL,STRUCTURE_LINK],
+                            [roomName],
+                            [{attribute:'storingAtleast',operator:'fn',value:[1]}]);
+                        
+                        if(obj){
+                            container_id = obj.id;
+                        }
+                    }
+                    if(container_id){
+                        Memory.stuffToSalvage=true;
+                        creep.actOrMoveTo('withdraw',gob(container_id),RESOURCE_ENERGY);
+                    }else{
+                        Memory.stuffToSalvage=false;
+                    }
+                    
+                }else{
+                    creep.moveOffRoomEdge();
+                    creep.moveToPos(new RoomPosition(25,25,roomName));
+                }
             }
         }
         
@@ -916,24 +1146,24 @@ module.exports = {
         
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
-            creep.say('r:')
+            //creep.say('r:')
             creep.checkAndUpdateState();
             
             if(creep.isWorking()) {
                 
                 if(target){
-                    creep.say(creep.actOrMoveTo('repair',target));
+                    creep.actOrMoveTo('repair',target);
                 }
                 
             }else if(creep.isCollecting()) {
                 
                  if(container){
-                    creep.say(creep.actOrMoveTo('withdraw',container,RESOURCE_ENERGY));
+                    creep.actOrMoveTo('withdraw',container,RESOURCE_ENERGY);
                 }
             }
         }
     },
-    withdrawThenUpgrade: function(spawnName,cname,container_id,controller_id,parts,turbo=false){
+    withdrawThenUpgrade: function(spawnName,cname,container_id,controller_id,parts,turbo=false,standingSpot=false){
          let container = Game.getObjectById(container_id);
         if(!container){
             clog(container_id,cname+' missing container')
@@ -952,8 +1182,8 @@ module.exports = {
                 
                let controller = Game.getObjectById(controller_id);
                //clog(controller_id)
-                if(!creep.pos.isEqualTo(container)){
-                   // creep.moveTo(container);
+                if(standingSpot && !creep.pos.isEqualTo(standingSpot)){
+                    creep.moveTo(standingSpot);
                 }
                 if(controller){
                     if(turbo)creep.actOrMoveTo('withdraw',container,RESOURCE_ENERGY);
@@ -1264,16 +1494,16 @@ module.exports = {
         //this.breakStructures('Alpha','Slammy','W13N16',['647931b5eee8b9f9546ccb9f','64793a5aa59895345961216c','647931d7eee8b9ed946ccbab'],'10w10m')
         //this.breakStructures('Alpha','Punchy','W13N16',['647931b5eee8b9f9546ccb9f','64793a5aa59895345961216c','647931d7eee8b9ed946ccbab'],'10w10m')
     },
-    constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:25,y:25} ){
+    constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:25,y:25},allyName ){
         if(!Game.creeps[cname]){
 
             Game.spawns[spawnName].spawnCreepX(parts,cname);
         }
         
-        let hostiles = Game.rooms[roomName].getHostiles();
+        let hostiles = (Game.rooms[roomName])?Game.rooms[roomName].getHostiles():[];
         let fighters = hostiles.filter(function(hostile){return (hostile.partCount(ATTACK)>0||hostile.partCount(RANGED_ATTACK)>0) });
 
-        if(fighters.length>=3){
+        if(fighters.length>=3 && Game.rooms[roomName].controller){
             Game.rooms[roomName].controller.activateSafeMode();
         }
         
@@ -1286,15 +1516,19 @@ module.exports = {
             if(creep.pos.roomName===roomName){
                 
                 
-                if(hostiles.length>0){
-                    creep.rangedAttack(hostiles[0])
-                     creep.actOrMoveTo("attack",hostiles[0]);
+                if(fighters.length>0){
+                    if(fighters[0].owner.username!==allyName){
+                        creep.rangedAttack(fighters[0])
+                        creep.actOrMoveTo("attack",fighters[0]);
+                    }else{
+                        creep.moveToPos( new RoomPosition(waitingSpot.x,waitingSpot.y,roomName) );
+                    }
                 }else{
                     creep.moveToPos( new RoomPosition(waitingSpot.x,waitingSpot.y,roomName) );
                 }
                
             }else{
-                creep.moveToPos( new RoomPosition(25,25,roomName) );
+                creep.moveToPos( new RoomPosition(waitingSpot.x,waitingSpot.y,roomName) );
             }
             
 
@@ -1385,7 +1619,7 @@ module.exports = {
         return Memory.invaderSeen[roomName];
         
     },
-    killCreepsBreakTarget:function(spawnName,cname,roomName,parts,target_id,roomTraversal=[], killCreeps=true){
+    killCreepsBreakTarget:function(spawnName,cname,roomName,parts,target_ids,roomTraversal=[], killCreeps=true){
         if(!Game.creeps[cname]){
 
             clog(Game.spawns[spawnName].spawnCreepX(parts,cname),cname);
@@ -1451,7 +1685,11 @@ module.exports = {
     	            creep.say('raiding');
             
     	        }else{
-    	            let target =Game.getObjectById(target_id);
+    	            let target = false;
+    	            for(let id of target_ids){
+    	                target =Game.getObjectById(id);
+    	                if(target)break;
+    	            }
     	           // clog(target,creep.name)  
     	            if(!target){
     	                target = mb.getNearestStructure(creep.pos,[STRUCTURE_CONTAINER,STRUCTURE_ROAD],[roomName]);
@@ -2080,19 +2318,25 @@ module.exports = {
         // IF curr+1 references a valid next room, then we try to move to that room
         // IF we don't get a room, then we assume we are at the end.
         let next = curr+1;
-        console.log(creep.pos)
-        console.log(roomNames[next])
-        creep.moveOffRoomEdge();
+        //if(creep.name=='thor-0')console.log(creep.pos)
+       // if(creep.name=='thor-0')console.log(roomNames)
+        //if(creep.name=='thor-0')console.log(roomNames[next])
+       
         if(roomNames[next]){
-            let res = creep.moveToPos(new RoomPosition(25,25,roomNames[next]));
-            if(creep.name=='Bob3')clog(res,creep.name)
+            let res = creep.moveOffRoomEdge();
+            //if(creep.name=='thor-0')clog(res,creep.name+'fff')
+            if(res!==OK)
+                res = creep.moveToPos(new RoomPosition(25,25,roomNames[next]));
+            
+             
+            //if(creep.name=='thor-0')clog(res,creep.name)
             //creep.say(res);
             return res;
         }else{
             return 200;
         }
     },
-    
+
     // act or move to an object plan, assuming we may not have sight of the room
     actOrMove2: function(creep,target,action,param2){
         creep.moveOffRoomEdge();

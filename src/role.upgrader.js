@@ -51,7 +51,12 @@ var role = {
         let controller = Game.getObjectById(config.controller_id);
         let container = controller.getContainer();
         if(container){
-            container.allowOverBooking(1000)
+            
+            if(config.upgradeFast){
+                container.allowOverBooking(1000)
+            }else{ 
+                container.allowOverBooking(0)
+            }
         }
         
         let link = controller.getLink();

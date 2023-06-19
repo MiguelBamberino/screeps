@@ -128,9 +128,11 @@ Structure.prototype.canReserveWithdraw=function(amount){
 /**
  * Check there is space to make a reservation to transfer X amount
  */ 
-Structure.prototype.canReserveTransfer=function(amount){
+Structure.prototype.canReserveTransfer=function(amount,l=false){
     amount = amount===null?1:amount;// if called empty, lets check if there is ANY space
+    
     let limit = this.getTransferReserveLimit();
+    if(l)clog(amount,limit)
     if(limit===0|| amount===0)return false;
     return (limit >=amount);
 }
@@ -225,8 +227,10 @@ Structure.prototype.canFulfillTransfer=function(ref){
  * Release reservation of a given withdrawal
  */ 
 Structure.prototype.fulfillWithdraw = function(creepName){
+    
     let reservations = this.getReservations();
     let amount = reservations.withdraw.reserves[creepName];
+    if(this.id=='647d9486f71e27059f5c0ca9')clog(creepName,amount)
     if(!amount)return false;
     reservations.withdraw.totalPending+=amount;
     reservations.withdraw.totalReserved-=amount;

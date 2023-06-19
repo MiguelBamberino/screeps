@@ -127,14 +127,14 @@ global.gui = {
         //mines
          this.renderReserveBookFor('6482e5a8f6bdc8409b943e88');
           this.renderReserveBookFor('6482e31fd597e75632544fe0');
-          this.renderReserveBookFor('6482e817982e994583c24f57');
+
            this.renderReserveBookFor('6482e930b7e508806504c1b0');
             this.renderReserveBookFor('6482e95070bfded1f196de62');
         //////// Gamma //////////////////////
         // controller
         this.renderReserveBookFor('64859cff9a94182509bc4b0f',rp(28,25,'W13N15'));
         // storage
-        this.renderReserveBookFor('648483965bdc7e637d357f8f',rp(7,20,'W13N15'));
+        this.renderReserveBookFor('64899f6b133a0947a6b5d157',rp(7,20,'W13N15'));
         //mines
         this.renderReserveBookFor('6481d3e19e4145825aac41ce')
         this.renderReserveBookFor('6481d3fea439d4c258488ab9')
@@ -142,10 +142,20 @@ global.gui = {
         this.renderReserveBookFor('64839d839a94185a6dbb7a36')
         
         this.renderReserveBookFor('6483bc59cb55931e0760b5ee')
-        this.renderReserveBookFor('6483bc7578173741efed8796',rp(0,37,'W13N16'))
+        //this.renderReserveBookFor('64899f6b133a0947a6b5d157',rp(0,37,'W13N17'))
         
         this.renderReserveBookFor('64822902f1157b0b6cd44aa7')
         this.renderReserveBookFor('6486cfbbeb2a545b91527bac')
+
+        //////// Delta //////////////////////
+        //controller
+       
+        this.renderReserveBookFor('648cda8182eac70612650cdd',rp(39,8,'W14N19'))
+        
+        //mines
+        this.renderReserveBookFor('648c2437da11ad1afe127320',rp(38,1,'W14N19'))
+        this.renderReserveBookFor('6482e817982e994583c24f57')
+
 
         let u = Game.cpu.getUsed()-st;
         //console.log("GUI-CPU-used: "+u);  
@@ -174,7 +184,7 @@ global.gui = {
     renderRoomNodeStats:function(){
         let y=8;
         //let nodes = ['Alpha','Beta','Gamma','Delta','Epsilon','Zeta','Eta','Theta'];
-        let nodes = ['Alpha','Beta','Gamma'];
+        let nodes = ['Alpha','Beta','Gamma','Delta'];
         if(Game.rooms['sim'])nodes=['Spawn1'];
         let roles = ['worker','harvester','tanker','builder','upgrader'];
            

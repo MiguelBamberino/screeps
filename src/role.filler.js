@@ -14,21 +14,44 @@ var role = {
     /** @param {Creep} creep **/
     run: function(creep,config) {
         
+        // lock 2k on container/storage
+        // want lock, so filler is able to reserveWithdraw more under its name
+        
         // if dropped E at feet
             // pickup
         
-        // if spawn needs filling || any extension needs a fill
-            // draw ANY energy
-            // fill up spawn & exts
-            
+        // if link
+            // reserve/lock additional 800 withdraw on storage
         
-        // if link has E
-            // draw from link
+        
+        // if spawn needs filling || any extension needs a fill
+            // withdraw ANY energy
+            // fill up spawn & exts
+            // toggler link to receiver. it will stay R until a storage filler has enough E to send to storage
+        
+        
+        // if link has E && container/storage < 2k
+            // withdraw from link
             // put in container/storage
         
-        // if terminal > 10k E
-            // withdraw
-            // put in container
+        // if controller link wants E && storage E > 2k+creep capacity 
+            // if link full
+                // toggle link to sender
+            // else
+                // reserve-withdraw from storage
+                // put in link
+        
+        // if terminal > 11k E
+            // reserve withdraw from terminal
+            // if storage < 2k 
+                // put in storage
+            // if link < 800
+                // put in link
+            //put in storage
+        
+        // if terminal < 10k E && storage > 2k 
+            // reserve withdraw from storage
+            //put in terminal
         
         // if terminal has delivery
             // if creep has E

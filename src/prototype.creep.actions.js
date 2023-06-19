@@ -3,7 +3,10 @@ module.exports = function(){
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//// ACTION CORE FUNCS
 	//////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
+	Creep.prototype.swapPositions=function(them){
+	    this.moveTo(them)
+	    them.moveTo(this);
+	}
     Creep.prototype.actOrMoveTo=function(action,target,param2){
         let result = this.act(action,target,param2);
         if(result == ERR_NOT_IN_RANGE) {
@@ -254,7 +257,7 @@ module.exports = function(){
 
         let result = false;
         //let isCivillian = ( this.partCount(ATTACK)===0 && this.partCount(RANGED_ATTACK)===0);
-        
+        if(target.name)this.say(target.name)
         if(useMapBook){
           result= this.moveToUsingMap(target);
         }else{
@@ -262,12 +265,15 @@ module.exports = function(){
             let creep = this;// so callback works
             let hostiles = this.room.getHostiles().filter(function(hostile){return (hostile.partCount(ATTACK)>0||hostile.partCount(RANGED_ATTACK)>0) });
          //   if(this.name=='Slammy')clog(hostiles,'moveToPos:hostiles')
-            let reUse = 50; 
-            let ignoreNoobs = true;
+           // let reUse = 50; 
+          // let ignoreNoobs = true;
             let opts = {
                 maxOps:7000,reusePath:50,ignoreCreeps:true,
                 visualizePathStyle: {stroke: '#ffffff'}
                  
+            }
+            if(Game.shard.name =='shardSeason'){
+                opts.reusePath = 5;
             }
             // if we're  still on the same space as last tick, then lets try move around the noobs
             if(this.memory.last_pos == this.pos.x+"-"+this.pos.y){
@@ -280,11 +286,14 @@ module.exports = function(){
                 
                 
                 for(let hostile of hostiles){
-                    
-                    if(this.pos.getRangeTo(hostile) < 4){
+                    let theirTotalFightParts = hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
+                    let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
+                    if(this.pos.getRangeTo(hostile) < 4 && myTotalFightyParts < theirTotalFightParts){
                         // if the creep is too close, then flee, before repathing
                         let r = target.pos?target.pos.roomName:target.roomName;
                         target = new RoomPosition(25,25,r);
+                        creep.memory.riskyBiscuits = true;
+                        clog(hostile.name+" stronger than "+creep.name ,'fleeing')
                     }
                     
                 }
@@ -297,11 +306,18 @@ module.exports = function(){
                     if (!room) return costMatrix;
                     for(let hostile of hostiles){
                         let range = 2;
-                        // only avoid creep that we are not targetting
-                        if(target.id !== hostile.id){
+                        let theirTotalFightParts= hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
+                        let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
+
+                        // only avoid creep that are stronger
+                        if(myTotalFightyParts < theirTotalFightParts){
                             if(hostile.partCount(RANGED_ATTACK)>0)range=4;
                             let avoids = hostile.pos.getPositionsInRange(range);
-                            for(let a of avoids)costMatrix.set(a.x, a.y, 255);
+                            clog(hostile.name+" stronger than "+creep.name ,'avoiding')
+                            for(let a of avoids){
+                                if(!creep.memory.riskyBiscuits)costMatrix.set(a.x, a.y, 255);
+                               // a.colourIn();
+                            }
                         }
                     }
                     return costMatrix;
@@ -322,8 +338,9 @@ module.exports = function(){
        let badSpots=[];
             for(let hostile of hostiles){
                 let range = 1;
+                let colour = this.memory.riskyBiscuits?'yellow':'red';
                 if(hostile.partCount(RANGED_ATTACK)>0)range=4;
-                let avoid = hostile.pos.drawPolyAround(range,'red');
+                let avoid = hostile.pos.drawPolyAround(range,colour);
 
             }
             

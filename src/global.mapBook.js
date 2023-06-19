@@ -81,15 +81,16 @@ global.mb = {
             let srcCache={};
             for(let s in srcObjs){
                 srcCache[srcObjs[s].id]={ 
-                    id:srcObjs[s].id, 
-                    x:srcObjs[s].pos.x,
-                    y: srcObjs[s].pos.y,
-                    roomName:srcObjs[s].pos.roomName 
+                    id:srcObjs[s].id,
+                    coords:{
+                        x:srcObjs[s].pos.x,
+                        y: srcObjs[s].pos.y
+                    }
                 };
             }
             let c = Game.rooms[roomName].controller;
             //console.log(c);
-            let controllerStruct =(c)?{x:c.pos.x,y:c.pos.y,id:c.id,container_id:''}:{};
+            let controllerStruct =(c)?{id:c.id,coords:{x:c.pos.x,y:c.pos.y}}:{};
             Memory.mapBook.rooms[roomName]={
                 constructionSites:{},
                 structures:{},
@@ -114,16 +115,41 @@ global.mb = {
         return false;
        
     },
+    deleteRoom: function(name){
+        if(Memory.mapBook.rooms[name])delete Memory.mapBook.rooms[name];
+    },
     hasRoom: function(name){
         return (Memory.mapBook.rooms[name])?true:false;
     },
     allRooms: function(){
         return Memory.mapBook.rooms;
     },
+    createNoVisionObject: function(data,roomName){
+        
+        return {
+            id:data.id,
+            pos: new RoomPosition(data.coords.x,data.coords.y,roomName),
+            haveVision:false
+        };
+    },
     //////////////////////////////////////////////////////////////////////////////////////////
     // Typed Structure Functions
     //////////////////////////////////////////////////////////////////////////////////////////
-
+    getControllerForRoom: function(roomName,requireVision=true){
+        let room = this.getRoom(roomName);
+        if(room){
+            let obj = Game.getObjectById(room.controller.id);
+            if(obj){
+                obj.haveVision=true;
+                return obj;
+            }
+            if(!requireVision){
+                return this.createNoVisionObject(room.controller,roomName);
+            }
+            return false;
+        }
+        return false;
+    },
     getStorageForRoom: function(roomName){
         let room = this.getRoom(roomName);
         if(room){
@@ -140,16 +166,7 @@ global.mb = {
         }
         return false;
     },
-/*
-    setAsFillerStore: function(roomName,id){
-        let room = this.getRoom(roomName);
-        if(room){
-            if(room.struct_id_cache[STRUCTURE_FILLER_STORE]===undefined)room.struct_id_cache[STRUCTURE_FILLER_STORE]={};
-            let l = Object.keys(room.struct_id_cache[STRUCTURE_FILLER_STORE]).length+1;
-            room.struct_id_cache[STRUCTURE_FILLER_STORE][id]=l;
-            room.structures[id].meta = {derrivedType:STRUCTURE_FILLER_STORE};
-        }
-    },*/
+
     //////////////////////////////////////////////////////////////////////////////////////////
     // Source Functions
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -182,10 +199,17 @@ global.mb = {
     getAllSources: function () {
         return this.getSources();
     },
-    getSources: function (query) {
+    getSources: function (query,debug=false) {
         const allRooms = this.allRooms();
         let sources = [];
-    
+        
+        if(query.requireVision===undefined)
+            query.requireVision=true;
+        
+        if(query.filters===undefined)
+            query.filters=[];
+        
+        if(debug)clog(query)
         for (const roomName in allRooms) {
             // Check if the filter is set and roomNames is provided, then filter the rooms
             if (query && query.roomNames && query.roomNames.length > 0) {
@@ -199,6 +223,7 @@ global.mb = {
                 for (const id in room.sources) {
                     const source = Game.getObjectById(id);
                     if (source) {
+                        source.haveVision=true;
                         // Check if the filter is set and filters is provided, then filter the sources using _matchObjectFilters
                         if (query && query.filters) {
                             if (this._matchObjectFilters(source, query.filters)) {
@@ -207,6 +232,9 @@ global.mb = {
                         } else {
                             sources.push(source);
                         }
+                    }else if(!query.requireVision && query.filters.length==0){
+                        
+                        sources.push( this.createNoVisionObject(room.sources[id],roomName) );
                     }
                 }
             }
@@ -219,54 +247,11 @@ global.mb = {
     getAllSourcesForRoom: function(roomName){
         return this.getSources({roomNames:[roomName]});
     },
-    // >> Retrieve the stored data for a given source in a given room
-   /* getSourceMeta: function(roomName,id){
-        let room = this.getRoom(roomName);
-        if(room){
-            if(room.sources[id]){
-                return room.sources[id];
-            }
-        }
-        return false;
-    },
-    // >> Retrieve the stored data for a given source in a given room
-    updateSourceMeta: function(roomName,id,data){
-        let room = this.getRoom(roomName);
-        if(room){
-            if(room.sources[id]){
-                room.sources[id] = data;
-                return room.sources[id];
-            }
-        }
-        return false;
-    },*/
+
     //////////////////////////////////////////////////////////////////////////////////////////
     // Structure Functions
     //////////////////////////////////////////////////////////////////////////////////////////
-    // >> Retrieve any extra stored data for a given structure in a given room
-   /* getStructureMeta: function(roomName,id){
-        let room = this.getRoom(roomName);
-        if(room){
-            if(room.structures[id]){
-                if(!room.structures[id].meta){
-                    room.structures[id].meta = {};
-                }
-                return room.structures[id].meta;
-            }
-        }
-        return false;
-    },*/
-    // >> Retrieve the stored data for a given source in a given room
-    /*setStructureMeta: function(roomName,id,data){
-        let room = this.getRoom(roomName);
-        if(room){
-            if(room.structures[id]){
-                room.structures[id].meta = data;
-                return room.structures[id].meta;
-            }
-        }
-        return false;
-    },*/
+
     cleanMissingStructures: function(){
         console.log("Cleaning MapBook...");
         for(let name in this.allRooms()){
@@ -332,58 +317,14 @@ global.mb = {
                 let l = Object.keys(room.struct_id_cache[obj.structureType]).length+1;
                 room.struct_id_cache[obj.structureType][obj.id]=l;
             }
-            
-            // classify my custom types
-            /*
-            let dt = this.classifyDerrivedStructureType(obj);
-            if(dt){
-                
-                room.structures[obj.id].meta = {derrivedType:dt};
-                
-                if(!room.struct_id_cache[dt]){
-                    room.struct_id_cache[dt]={};
-                }
-                room.struct_id_cache[dt][obj.id]=true;
-            }
-            */
+
             
             
         }else{
             return ERR_ROOM_NOT_SCANNED;
         }
     },
-    /*
-    classifyDerrivedStructureType: function(obj){
-        
-        if(obj.structureType===STRUCTURE_CONTAINER){
-            
-            let source = this.getNearestSource(obj.pos,[obj.room.name]);
-            if(source && obj.pos.getRangeTo(source)<=2){
-                return STRUCTURE_MINE_STORE;
-            }
-            
-            if(obj.pos.getRangeTo(obj.room.controller)<=3){
-                this.setRoomControllerContainer(obj);
-                return STRUCTURE_UPGRADER_STORE;
-            }
-            
-        }
-        if(obj.structureType===STRUCTURE_CONTAINER || obj.structureType===STRUCTURE_STORAGE){
-            let spawn = this.getNearestStructure(obj.pos,[STRUCTURE_SPAWN],[obj.room.name]);
-            // not fool proof, should really check based on positional offset
-            if(spawn && obj.pos.getRangeTo(spawn)<=2){
-                return STRUCTURE_FILLER_STORE;
-            }
-            // if its a bit further, then lets assume its a generic depot dump
-            if(spawn && obj.pos.getRangeTo(spawn)<=5){
-                return STRUCTURE_DEPOT;
-            }
-        }
-        
-        return false;
-        
-    },
-    */
+
     haveStructures: function(roomNames){
         if(!roomNames){
             roomNames = Object.keys(this.allRooms());
@@ -768,12 +709,19 @@ global.mb = {
         }
         let target = false;
         let shortestDistance=9999999;
+        let priorityTypes = [STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TOWER]
         for(let name of roomNames){
             let room = this.getRoom(name);
             if(room){
                 for(let s in room.constructionSites){
                     let obj = Game.getObjectById(room.constructionSites[s].id);
                     if(obj){
+                        
+                        if(priorityTypes.indexOf(obj.structureType)!==-1){
+                            //clog(obj,'prioritising')
+                            return obj;
+                        }
+                            
                         let dist = pos.getRangeTo(obj.pos);
                         if(dist=='Infinity'){dist=50}
                         if(dist < shortestDistance){

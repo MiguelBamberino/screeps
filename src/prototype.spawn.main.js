@@ -57,7 +57,14 @@ module.exports = function(){
         return false;
         
     },
-    Structure.prototype.spawnCreepX= function(parts, name, options){
+    Structure.prototype.spawnCreepX= function(parts, name, options={}){
+        
+        if( options.directions==undefined && this.forceDirectionHack){
+            // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
+            // nob heads!
+            options.directions =this.forceDirectionHack; 
+        }
+        
         if(this.spawningStarted!==false){
             return -50;
         }
