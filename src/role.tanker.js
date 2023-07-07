@@ -6,22 +6,22 @@ var roleTanker = {
  
  
         if(budget >= 1500 ){ // RCL 5 - 1000 + 500 = 1500/1800 30 ext
-            return '20c10m';
+            return '10*2c1m';
             
         }
         else if(budget >= 1300 ){ // RCL 4 - 600 + 300 = 900/1300 20 ext
-            return '12c6m';
+            return '6*2c1m';
 
         }
         else if(budget >= 800 ){ // RCL 3 - 400 + 200 = 600/800 10 ext
-            return '8c4m';
+            return '4*2c1m';
         }
         else if(budget >= 550 ){ // RCL 2 - 300 + 150 = 450/550 5 ext
-            return '6c3m';
+            return '3*2c1m';
 
         }
         else if(budget >= 300 ){ // RCL 1 - 200 + 100 = 300/300
-            return '4c2m';
+            return '2*2c1m';
         }else{ // RCL fucked
             return '2c1m';
         }
@@ -33,9 +33,6 @@ var roleTanker = {
         creep.checkAndUpdateState();
 
 	    if(creep.isWorking()) {
-	        
-	        
-	        
 	        
 	        let targget = false;
             let hostiles = Game.rooms[config.coreRoomName].find(FIND_HOSTILE_CREEPS)
@@ -78,11 +75,11 @@ var roleTanker = {
 
 	            target = creep.reserveTransferToStorage(config.coreRoomName);
 	        }
-	       
+	        //if(creep.name==='Et4')clog(target.pos)
             if(target){
                 creep.memory.lastTransferTo=target.structureType;
                 let res = creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
-              //  creep.say("tx:"+res);
+                //creep.say("tx:"+res);
             }else{
                 creep.say('bored')
                 creep.moveToPos(config.retreatSpot)
@@ -96,13 +93,15 @@ var roleTanker = {
             
 	        // collect from MINES in this room next
 	        if(!target){
-	            target = creep.getFullestMineStore(config.allRoomNames);
+	            let roomRange = creep.ticksToLive>100?config.allRoomNames:config.coreRoomName
+	            target = creep.getFullestMineStore(roomRange);
 	            if(target){
                     creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
                 }
             }
-
-            if(!target){
+            
+            let storage = mb.getStorageForRoom(config.coreRoomName)
+            if(!target && storage && !storage.getMeta().streaming){
     	        let terminal = mb.getTerminalForRoom(config.coreRoomName);
                 if(terminal && terminal.storingAtleast(15000)){
                     target = creep.reserveWithdrawalFromTerminal(config.coreRoomName);
@@ -110,7 +109,7 @@ var roleTanker = {
 	        }
             
             // if not enough E in the mines, then draw from storage
-             if(!target && creep.memory.lastTransferTo!==STRUCTURE_STORAGE){
+             if(!target /*&& creep.memory.lastTransferTo!==STRUCTURE_STORAGE*/){
                 target = creep.reserveWithdrawalFromStorage(config.coreRoomName);
                 if(target){
                     creep.memory.lastWithdrewFrom=STRUCTURE_STORAGE

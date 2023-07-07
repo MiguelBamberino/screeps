@@ -6,8 +6,8 @@ module.exports = function(){
     StructureSpawn.prototype.waller_boost = 1;//2
     StructureSpawn.prototype.spawningStarted = false;
 
-    StructureSpawn.prototype.createCreep = function(parts,memory,nameOveride,directions=[TOP_LEFT,TOP,TOP_RIGHT]){
-        
+    StructureSpawn.prototype.createCreep = function(parts,memory,nameOveride,directions=[]){
+       // if(this.name=='Alpha-3'){clog(nameOveride,'createCreep'+Game.time);clog(directions,'directions')}
         if(this.spawningStarted!==false){
             return -50;
         }
@@ -30,7 +30,7 @@ module.exports = function(){
         
         //memory.spawn_name = this.name;
         delete Memory.creeps[name]; // clear out old crap
-    
+        
         let result = this.spawnCreepX(parts, name, {memory:memory,directions:directions});
         this.memory.spawn_result = name+": "+result;
         if(result ===OK){
@@ -57,7 +57,9 @@ module.exports = function(){
         return false;
         
     },
-    Structure.prototype.spawnCreepX= function(parts, name, options={}){
+    Structure.prototype.spawnCreepX= function(parts, name, options={},highPriority=false){
+        
+       // if(this.name=='Alpha-3'){clog(name,'spawnCreepX '+Game.time);clog(options,'options')}
         
         if( options.directions==undefined && this.forceDirectionHack){
             // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
@@ -65,12 +67,13 @@ module.exports = function(){
             options.directions =this.forceDirectionHack; 
         }
         
-        if(this.spawningStarted!==false){
+        if(this.spawningStarted!==false && !highPriority){
             return -50;
         }
         if(typeof parts ==='string'){
             parts =  this.parseBody(parts);
         }
+        
         let res = this.spawnCreep(parts,name,options);
         if(res===OK){
             this.spawningStarted = name;

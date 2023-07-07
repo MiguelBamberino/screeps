@@ -24,6 +24,8 @@ var role = {
     run: function(creep,config){
         creep.checkAndUpdateState();
         let controller = Game.getObjectById(config.controller_id);
+        
+        
         if(creep.isWorking()){
             
             
@@ -45,7 +47,7 @@ var role = {
                     
                 let spawns = mb.getStructures({roomNames:[config.coreRoomName],types:[STRUCTURE_SPAWN]});
                 if(spawns.length>0){
-                   //creep.say("2")
+ 
                     if(spawns[0].haveSpaceFor(50)){
                         return creep.actOrMoveTo("transfer",spawns[0],RESOURCE_ENERGY);
                     }

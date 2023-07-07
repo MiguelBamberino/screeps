@@ -58,6 +58,20 @@ var role = {
             if(drop){
                 return creep.actOrMoveTo("pickup",drop);
             }
+            /*
+            let dismantleTarget = Game.getObjectById(creep.memory.dismantle_id);
+            if(!dismantleTarget){
+                let structures = mb.getStructures({roomNames:[config.coreRoomName],filters:[{attribute:'isMarkedForDismantle',operator:'fn',value:[]}]})
+                if(structures.length>0){
+                    creep.memory.dismantle_id = structures[0].id;
+                    dismantleTarget=structures[0];
+                }
+            }
+            
+            if(dismantleTarget){
+                return creep.actOrMoveTo("dismantle",dismantleTarget);
+            }
+            */
 
 	        creep.getEnergy([config.coreRoomName]);
 	    }else{

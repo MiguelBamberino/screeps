@@ -117,6 +117,16 @@ var role = {
 
             }
             
+            let tower = Game.getObjectById(creep.memory.tower_id);
+            
+            if(tower){
+                let res = creep.act("transfer",tower,RESOURCE_ENERGY);
+                if(res===OK){
+                   return ;
+                }
+            }
+            
+            
             if(blobs.length>0){
                 let resStatus = creep.reserveTransfer(container);
                 if( resStatus===OK){
@@ -130,7 +140,8 @@ var role = {
             }
             
             let link = Game.getObjectById(creep.memory.link_id);
-            // if we have a link and its not empty, then lets try transfer into the container
+            let terminal = Game.getObjectById(creep.memory.terminal_id);
+            // if we have a link thats not empty || a terminal with an import, then lets try transfer into the container
             if(link && !link.isEmpty()){
                 let resStatus = creep.reserveTransfer(container);
                 if( resStatus===OK){
@@ -138,9 +149,15 @@ var role = {
                     if(r===OK){
                        return ;
                     }
-                    //else{creep.say(r);}
-                }else{
-                    //creep.say(resStatus);
+                }
+            }
+            if(terminal && terminal.storingAtleast(15000,RESOURCE_ENERGY)){
+                let resStatus = creep.reserveTransfer(container);
+                if( resStatus===OK){
+                    let r = creep.act("transferX",container,RESOURCE_ENERGY);
+                    if(r===OK){
+                       return ;
+                    }
                 }
             }
             
@@ -154,6 +171,10 @@ var role = {
 	            let link = Game.getObjectById(creep.memory.link_id);
                 if(link && !link.isEmpty()){
                     return creep.act("withdraw",link,RESOURCE_ENERGY);
+                }
+                let terminal = Game.getObjectById(creep.memory.terminal_id);
+                if(terminal && terminal.storingAtleast(15000,RESOURCE_ENERGY)){
+                    return creep.act("withdraw",terminal,RESOURCE_ENERGY);
                 }
 	            
 	            if(creep.act("withdraw",container,RESOURCE_ENERGY)===OK){
@@ -175,7 +196,7 @@ var role = {
         }
 	    
 	    let structures = mb.getStructures({
-	        types:[STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_CONTAINER,STRUCTURE_STORAGE,STRUCTURE_LINK],
+	        types:[STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_CONTAINER,STRUCTURE_STORAGE,STRUCTURE_LINK,STRUCTURE_TERMINAL,STRUCTURE_TOWER],
 	        roomNames:[creep.pos.roomName]
 	    });
 	   creep.memory.extension_ids=[];
@@ -186,8 +207,15 @@ var role = {
 	                structure.reserveTransfer(creep.name,150,true);
 	                //structure.lockFillSites();
 	            }
+	            if(structure.structureType===STRUCTURE_TOWER){
+	                creep.memory.tower_id = structure.id;
+	                structure.reserveTransfer(creep.name,250,true);
+	            }
 	            if(structure.structureType===STRUCTURE_LINK){
 	                creep.memory.link_id = structure.id;
+	            }
+	            if(structure.structureType===STRUCTURE_TERMINAL){
+	                creep.memory.terminal_id = structure.id;
 	            }
 	            if(structure.structureType===STRUCTURE_CONTAINER){
 	                creep.memory.container_id = structure.id;

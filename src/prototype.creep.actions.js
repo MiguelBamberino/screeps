@@ -202,7 +202,7 @@ module.exports = function(){
             
             let cutPath = path.slice(this.memory._path.progress);
             let r =  this.moveByPath(  cutPath );
-            this.say(r);
+            //this.say(r);
             if(r===ERR_NOT_FOUND){
                 this.memory._path.attempts=100;
             }
@@ -257,7 +257,7 @@ module.exports = function(){
 
         let result = false;
         //let isCivillian = ( this.partCount(ATTACK)===0 && this.partCount(RANGED_ATTACK)===0);
-        if(target.name)this.say(target.name)
+        //if(target.name)this.say(target.name)
         if(useMapBook){
           result= this.moveToUsingMap(target);
         }else{
@@ -288,12 +288,17 @@ module.exports = function(){
                 for(let hostile of hostiles){
                     let theirTotalFightParts = hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
                     let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
-                    if(this.pos.getRangeTo(hostile) < 4 && myTotalFightyParts < theirTotalFightParts){
+                    creep.memory.fleeZoneOfControl = false;
+                    if(
+                        creep.memory.dontFlee===undefined &&
+                        this.pos.getRangeTo(hostile) < 4 
+                        && myTotalFightyParts < theirTotalFightParts 
+                        && hostile.owner.username!='GT500' && hostile.owner.username!='NeomCamouflage'){
                         // if the creep is too close, then flee, before repathing
                         let r = target.pos?target.pos.roomName:target.roomName;
                         target = new RoomPosition(25,25,r);
-                        creep.memory.riskyBiscuits = true;
-                        clog(hostile.name+" stronger than "+creep.name ,'fleeing')
+                        creep.memory.fleeZoneOfControl = true;
+                       // clog(hostile.name+" stronger than "+creep.name ,'fleeing')
                     }
                     
                 }
@@ -310,12 +315,16 @@ module.exports = function(){
                         let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
 
                         // only avoid creep that are stronger
-                        if(myTotalFightyParts < theirTotalFightParts){
+                        if(myTotalFightyParts < theirTotalFightParts && hostile.owner.username!='GT500'&& hostile.owner.username!='NeomCamouflage'){
                             if(hostile.partCount(RANGED_ATTACK)>0)range=4;
+                            
+                            if(creep.memory.touchingCloth)range = range-1;
+                            
                             let avoids = hostile.pos.getPositionsInRange(range);
-                            clog(hostile.name+" stronger than "+creep.name ,'avoiding')
+                            //if(creep.name=='Gt19')clog(avoids,'Gt19')
+                            //clog(hostile.name+" stronger than "+creep.name ,'avoiding')
                             for(let a of avoids){
-                                if(!creep.memory.riskyBiscuits)costMatrix.set(a.x, a.y, 255);
+                                if(!creep.memory.riskyBiscuits && !creep.memory.fleeZoneOfControl)costMatrix.set(a.x, a.y, 255);
                                // a.colourIn();
                             }
                         }
@@ -338,9 +347,13 @@ module.exports = function(){
        let badSpots=[];
             for(let hostile of hostiles){
                 let range = 1;
-                let colour = this.memory.riskyBiscuits?'yellow':'red';
+                let colour = this.memory.riskyBiscuits?'red':'orange';
                 if(hostile.partCount(RANGED_ATTACK)>0)range=4;
-                let avoid = hostile.pos.drawPolyAround(range,colour);
+                if(this.memory.touchingCloth){
+                    range = range-1;
+                    colour='purple';
+                }
+              //  let avoid = hostile.pos.drawPolyAround(range,colour);
 
             }
             

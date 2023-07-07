@@ -18,6 +18,7 @@ checkDeletedObjects()
 //#######################################################
 // RoomObject Object Metas
 //#######################################################
+/*
 RoomObject.prototype.getMeta=function(){
     let meta = objectMeta.get(this.id);
    // clog(meta,'meta')
@@ -25,7 +26,7 @@ RoomObject.prototype.getMeta=function(){
         return {};
     }
     return meta;
-} 
+} */
 RoomObject.prototype.setMeta=function(data){
     let meta = objectMeta.get(this.id);
     if(meta){
@@ -44,6 +45,32 @@ RoomObject.prototype.setMetaAttr=function(name,value){
     return false;
 }
 
+
+extraFunctions={
+    getMeta:function(){
+        let meta = objectMeta.get(this.id);
+       // clog(meta,'meta')
+        if(!meta){
+            return {};
+        }
+        return meta;
+    },
+    bob:function(name){clog(name,'bob1')},
+    bob2:function(name){clog(this.id,'bob2')}
+}
+for(let funcName in extraFunctions){
+    RoomObject.prototype[funcName] = extraFunctions[funcName]
+}
+//#######################################################
+// RoomObject isActive Metas
+//#######################################################
+RoomObject.prototype.isActive=function(){
+    let meta = this.getMeta();
+    return (meta.isActive)?true:false;
+}
+RoomObject.prototype.setActive=function(val=true){
+    return this.setMetaAttr('isActive',val);
+}
 //#######################################################
 // RoomObject Container/Link Metas
 //#######################################################

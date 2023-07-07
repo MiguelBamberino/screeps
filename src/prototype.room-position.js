@@ -1,42 +1,15 @@
-
-/**
- * Find a given object type at a location
- * this function will search and filter results
- */ 
-RoomPosition.prototype.lookForStructure = function(type){
-    let results = this.lookFor(LOOK_STRUCTURES);
-    for(let r in results){
-        if(results[r].structureType ===type){
-            return results[r]; 
-        }
-    }
-    return false;
+RoomPosition.prototype.getReverseDirectionTo = function(obj){
+    let dir = this.getDirectionTo(obj);
+    if(dir===TOP)return BOTTOM;
+    if(dir===TOP_RIGHT)return BOTTOM_LEFT;
+    if(dir===RIGHT)return LEFT;
+    if(dir===BOTTOM_RIGHT)return TOP_LEFT;
+    if(dir===BOTTOM)return TOP;
+    if(dir===BOTTOM_LEFT)return TOP_RIGHT;
+    if(dir===LEFT)return RIGHT;
+    if(dir===TOP_LEFT)return BOTTOM_RIGHT;
 }
-/**
- * Find a list of given objects by type in all adjacent squares 
- * this function will search and filter results
- * string type = a valid STRUCTURE_* constant
- * bool includeSelf=false, if set to true, will also look at this position too
- */ 
-RoomPosition.prototype.lookForNearStructures = function(type,includeSelf=false){
-    
-    let positions = this.getNearbyPositions();
-    if(includeSelf){
-        positions.push(this);
-    }
-    
-    let found = [];
-    for(let p in positions){
-        let results = positions[p].lookFor(LOOK_STRUCTURES);
-        for(let r in results){
-            if(results[r].structureType ===type){
-                found.push(results[r]); 
-            }
-        }
-    }
 
-    return found;
-}
 RoomPosition.prototype.isWalkable = function(checkForCreeps = false) {
     const terrain = Game.map.getRoomTerrain(this.roomName);
     if (terrain.get(this.x, this.y) & TERRAIN_MASK_WALL) {
@@ -131,7 +104,48 @@ RoomPosition.prototype.findNearbyBuildableSpot = function () {
     }
     return null;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Game Object Search functions
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Find a given object type at a location
+ * this function will search and filter results
+ */ 
+RoomPosition.prototype.lookForStructure = function(type){
+    let results = this.lookFor(LOOK_STRUCTURES);
+    for(let r in results){
+        if(results[r].structureType ===type){
+            return results[r]; 
+        }
+    }
+    return false;
+}
+/**
+ * Find a list of given objects by type in all adjacent squares 
+ * this function will search and filter results
+ * string type = a valid STRUCTURE_* constant
+ * bool includeSelf=false, if set to true, will also look at this position too
+ */ 
+RoomPosition.prototype.lookForNearStructures = function(type,includeSelf=false){
+    
+    let positions = this.getNearbyPositions();
+    if(includeSelf){
+        positions.push(this);
+    }
+    
+    let found = [];
+    for(let p in positions){
+        let results = positions[p].lookFor(LOOK_STRUCTURES);
+        for(let r in results){
+            if(results[r].structureType ===type){
+                found.push(results[r]); 
+            }
+        }
+    }
+
+    return found;
+}
 /**
  * Find a list of given construction sites in all adjacent squares 
  * bool includeSelf=false, if set to true, will also look at this position too
@@ -173,6 +187,20 @@ RoomPosition.prototype.lookForConstruction = function(){
     }
     return false;
 }
+RoomPosition.prototype.lookForNearbyResource = function(resource_type,includeSelf=true){
+    let found = false;
+    if(includeSelf){
+         found = this.lookForResource(resource_type);
+         //clog(found.pos,resource_type)
+         if(found)return found;
+    }
+    
+    for(let pos of this.getNearbyPositions()){
+         found = pos.lookForResource(resource_type);
+        if(found)return found;
+    }
+    return false;
+}
 /**
  * Find a given resource at this location
  */ 
@@ -181,7 +209,9 @@ RoomPosition.prototype.lookForResource = function (resource_type) {
     return resources.length > 0 ? resources[0] : false;
 };
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Render functions
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 RoomPosition.prototype.colourIn = function(colour){
      Game.rooms[this.roomName].visual.circle(this,{fill: colour, radius: 0.55, stroke: colour});
 }

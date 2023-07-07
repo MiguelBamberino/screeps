@@ -21,13 +21,21 @@
     }
     Creep.prototype.checkAndUpdateState=function(config=undefined){
 	    
+	    // kill self, if they could not complete another job and not currently doing a job
+        // this avoids lots of dropped E
+        if(this.ticksToLive<25 && this.isEmpty()){
+            this.say("TTL<25:🪦")
+            this.suicide()
+        }
+	    
 	    if( (this.hitsMax - this.hits) > 100 ){
 	        if(config && config.retreatSpot){
 	            this.moveToPos(config.retreatSpot);
 	            this.goFlee();
 	            clog("I'm hurt. Fleeing to "+config.retreatSpot,this.name);
+	            return;
 	        }
-	        return;
+	        
 	    }
 	    
 	    if( !this.isWorking() && this.store.getFreeCapacity(RESOURCE_ENERGY)==0){
@@ -180,7 +188,7 @@
     }
 
     Creep.prototype.dropHarvest = function (source,resourceType = RESOURCE_ENERGY) {
-        //return;
+        if(!source)return -404;
         let standingSpot = source.getStandingSpot();
         let container = source.getContainer();
        // if(container)container.setAsMineStore();
@@ -714,10 +722,12 @@
     }
     Creep.prototype.transferX=function(target){
         let reservations = target.getReservations();
-        
+       // if(this.name==='Et4')clog(target.pos,"here")
         if(!reservations.transfer.reserves[this.name]){
+            this.memory.reserve_id = false; // drop reservation ?
             return ERR_NO_BOOKING;
         }
+        
         if(target.canFulfillTransfer(this.name)){
             let amount = reservations.transfer.reserves[this.name];
             // if creep no longer has what it promised, just transfer what left
@@ -726,12 +736,14 @@
                 amount = used;
             }
             let res = this.transfer(target,RESOURCE_ENERGY,amount);
+            
             if(res ===OK){
                 this.memory.reserve_id= false;
                 target.fulfillTransfer(this.name);
             }
             return res;
         }else{
+            
             this.memory.reserve_id = false; // drop reservation ?
             target.fulfillTransfer(this.name);// drop the reservation?
             return ERR_OVER_BOOKED;
@@ -751,6 +763,9 @@
     }
     Creep.prototype.isFull = function(type=RESOURCE_ENERGY){
         return ( this.store.getFreeCapacity(type) == 0);
+    }
+    Creep.prototype.isEmpty = function(type=RESOURCE_ENERGY){
+        return ( this.store.getUsedCapacity(type) == 0);
     }
     Creep.prototype.carryingAtleast = function(amount,type=RESOURCE_ENERGY){
         return this.storingAtleast(amount,type);

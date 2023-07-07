@@ -2,31 +2,34 @@ const AbstractRoom = require('class.abstractRoom')
 
 class RemoteRoom extends AbstractRoom{
     // 
-    constructor(supportSpawn,roomName,defend=true){
-        super(supportSpawn+'-West',roomName);
+    constructor(supportSpawn,roomName,direction,defend=true){
+        super(supportSpawn+'-'+direction,roomName);
         this.supportSpawn = supportSpawn;
         this.defend = defend;
         this.maxDistanceFromSpawn = 100;
+        this.sources=[];
         
-    }
-    
-    runTick(){
-        if(!this.safeToRun())return false;
-        
-        if(!mb.hasRoom(this.roomName)){
-            this.scoutRoom();
-            return;
+        if(mb.hasRoom(this.roomName)){
+            this.buildMetaData();
         }
     }
-    safeToRun(){
-        if(!Game.spawns[this.supportSpawn]){clog("cannot run. Support spawn is gone",this.roomName);return false;}
-    }
+    
+    
+
     planOnFirstVision(){
         clog(mb.getControllerForRoom(this.roomName),'controller');
         clog(mb.getSources({roomNames:[this.roomName]}),'sources')
     }
-    planOutRoom(){
-        
+    buildMetaData(){
+        let srcs = mb.getSources({roomNames:[this.roomName],requireVision:false});
+        for(let src of srcs){
+            // let work out the path length and decide with its worth collecting
+            let result = PathFinder.search(Game.spawns[this.supportSpawn].pos, new RoomPosition(src.pos.x,src.pos.y,src.pos.roomName) ,{swampCost:1});
+            
+            clog( result.path.length,src.pos )
+            
+            //clog( Game.creeps[this.name+'-scout'].pos.findPathTo(src).length,src.pos )
+        }
     }
     scoutRoom(){
        let cname = this.name+'-scout';
@@ -47,6 +50,42 @@ class RemoteRoom extends AbstractRoom{
                 this.planOnFirstVision();
             }
         }
+    }
+    ////////////////////////////////////////////////////////////
+    // Override functions - that configure templates
+    ////////////////////////////////////////////////////////////
+    runTickBody(){
+        
+       
+        
+        if(!mb.hasRoom(this.roomName)){
+            this.scoutRoom();
+            return;
+        }
+        
+        // if supportspawn < RCL3 
+            // override reserving to false
+        
+        // if invaderCoure && !reserving
+            // abandon room for X ticks
+        
+        // if reserving
+            // run reserver
+            // if invaderCore
+                // dispatch attackers
+        
+        // for each active source
+            // run harvesters
+        
+        // 
+        
+    }
+    workForceRoleNames(){
+        return ['harvester','reserver'];
+    }
+    safeToRun(){
+        if(!Game.spawns[this.supportSpawn]){clog("cannot run. Support spawn is gone",this.roomName);return false;}
+        return true;
     }
 }
 

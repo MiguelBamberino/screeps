@@ -15,6 +15,9 @@ var role = {
                 budget=800;
             }
         }
+        if(config.upgradeRate===RATE_VERY_SLOW){
+            return '1w1c1m';
+        }
 
         // !! WARNING!! Don't have >15 WORK parts, because thats max upgrade amount at RCL 8
        if(depotE>200000 && budget >=2450){
@@ -52,8 +55,8 @@ var role = {
         let container = controller.getContainer();
         if(container){
             
-            if(config.upgradeFast){
-                container.allowOverBooking(1000)
+            if(config.upgradeRate===RATE_FAST){
+                container.allowOverBooking(2000)
             }else{ 
                 container.allowOverBooking(0)
             }
@@ -102,9 +105,9 @@ var role = {
                 }
             }
             
-            if(container.hits<5000){
-                return creep.repair(container);
-            }
+             if( (container.hitsMax-container.hits) > 1000){
+                creep.repair(container);
+             }
             
             creep.upgradeController(controller);
             

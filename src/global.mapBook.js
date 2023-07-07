@@ -703,13 +703,13 @@ global.mb = {
         }
         return false;
     },
-    getNearestConstruction: function(pos,roomNames){
+    getNearestConstruction: function(pos,roomNames,priorityTypes = [STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TOWER]){
         if(!roomNames){
             roomNames = Object.keys(this.allRooms());
         }
         let target = false;
         let shortestDistance=9999999;
-        let priorityTypes = [STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TOWER]
+       
         for(let name of roomNames){
             let room = this.getRoom(name);
             if(room){

@@ -6,6 +6,7 @@ global.gui = {
     creeptrack:false,
     mb:false,
     rb:false,
+    nodes:[],
     on: function(){
         this.display=true;
         console.log("GUI loading. Please wait...");
@@ -26,11 +27,16 @@ global.gui = {
     debugSay:function(val=true){
         this.displayCreepDebugSay = val;
     },
-    init:function(){
+    init:function(roomNodes){
         this.on();
         
+        this.nodes = roomNodes;
+        
         //let roomsToRender = ['W42N53','W45N51','W41N53'];
-        let roomsToRender = ['W14N18','W17N18','W13N15'];
+        let roomsToRender = [];
+        for(let node of this.nodes)
+            roomsToRender.push(node.coreRoomName);
+        
         if(Game.rooms['sim'])roomsToRender=['sim'];
         
         this.summary = Object.create( require('global.GUI.partial'));
@@ -119,7 +125,7 @@ global.gui = {
         
         this.renderReserveBookFor('647a7245535ff46892cadb5e');
         
-        this.renderReserveBookFor('647a92e8655cd29697596191',new RoomPosition(0,31,'W14N18'));
+        this.renderReserveBookFor('647a92e8655cd29697596191',new RoomPosition(17,17,'W14N18'));
       
         
         this.renderReserveBookFor('6478f4cd8ccbad57a487413a',new RoomPosition(0,40,'W14N18'));
@@ -134,7 +140,7 @@ global.gui = {
         // controller
         this.renderReserveBookFor('64859cff9a94182509bc4b0f',rp(28,25,'W13N15'));
         // storage
-        this.renderReserveBookFor('64899f6b133a0947a6b5d157',rp(7,20,'W13N15'));
+        this.renderReserveBookFor('648483965bdc7e637d357f8f',rp(0,20,'W13N15'));
         //mines
         this.renderReserveBookFor('6481d3e19e4145825aac41ce')
         this.renderReserveBookFor('6481d3fea439d4c258488ab9')
@@ -149,15 +155,27 @@ global.gui = {
 
         //////// Delta //////////////////////
         //controller
+ 
+        this.renderReserveBookFor('64a2bee3eb0b42d0921e2dd6')
        
-        this.renderReserveBookFor('648cda8182eac70612650cdd',rp(39,8,'W14N19'))
+
+        //////// Epsilon //////////////////////
+        //controller
+       
+        this.renderReserveBookFor('649b8be0fb058c6394ee5c2f',rp(23,7,'W12N14'))
         
-        //mines
-        this.renderReserveBookFor('648c2437da11ad1afe127320',rp(38,1,'W14N19'))
-        this.renderReserveBookFor('6482e817982e994583c24f57')
-
-
+        
+        //////// Epsilon //////////////////////
+        //controller
+       
+        this.renderReserveBookFor('6499c8c6654a803d497d0b3a',rp(24,18,'W12N19'))
         let u = Game.cpu.getUsed()-st;
+        
+        ///// Strip mine ////////////////
+        
+        this.renderReserveBookFor('64a6bf93cadd0597d786979e')
+        
+        
         //console.log("GUI-CPU-used: "+u);  
     },
 
@@ -183,56 +201,47 @@ global.gui = {
      */ 
     renderRoomNodeStats:function(){
         let y=8;
-        //let nodes = ['Alpha','Beta','Gamma','Delta','Epsilon','Zeta','Eta','Theta'];
-        let nodes = ['Alpha','Beta','Gamma','Delta'];
-        if(Game.rooms['sim'])nodes=['Spawn1'];
-        let roles = ['worker','harvester','tanker','builder','upgrader'];
-           
-        
-        for(let s of nodes){
+
+        for(let node of this.nodes){
             let lines=[];
-            let sp = Game.spawns[s];
+            let sp = Game.spawns[node.name];
             if(!sp)continue;
-          //  lines.push({ role:'E2Collect', value:sp.memory.totalContainerE });
-          //  lines.push({ role:'remoteE', value:sp.memory.totalRemoteE });
+            lines.push({ key:'E2Collect', value:node.totalEnergyAtSources });
+            lines.push({ key:'upgr rate', value:node.upgradeRate });
+            lines.push({ key:'build rate', value:node.buildFast?'fast':'slow' });
             
             if(sp ){
                 let val=sp.memory.spawn_result;
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ role:s, value:val });
+                lines.push({ key:node.name, value:val });
             }
-            sp = Game.spawns[s+'-2'];
+            sp = Game.spawns[node.name+'-2'];
             if(sp){
                 let val='...';
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ role:s+'-2', value: val});
+                lines.push({ key:node.name+'-2', value: val});
             }
-            sp = Game.spawns[s+'-3'];
+            sp = Game.spawns[node.name+'-3'];
             if(sp){
                 let val='...';
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ role:s+'-3', value: val});
+                lines.push({ key:node.name+'-3', value: val});
             }
             
             
-            for(let r of roles){
-                let quota = Memory.roomNodes[s].workforce_quota[r];
-                lines.push({ role:r, value: quota.count+"/"+quota.required});
+            for(let role in node.workforce_quota){
+                let quota = node.workforce_quota[role];
+                lines.push({ key:role, value: quota.count+"/"+quota.required});
             }
-            let renderPos = new RoomPosition(41,20,Game.spawns[s].pos.roomName);
-            if(s=='Beta'){
-                renderPos = new RoomPosition(10,20,Game.spawns[s].pos.roomName);
-            }
-            if(s=='Epsilon'){
-                renderPos = new RoomPosition(2,30,Game.spawns[s].pos.roomName);
-            }
-            Game.rooms[Game.spawns[s].pos.roomName].renderGUITable(renderPos,lines,s,true,{role:3,value:3});
+            let renderPos = new RoomPosition(41,10,node.coreRoomName);
+
+            Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name,true,{key:3,value:3});
             y+=15;
         }
     },
