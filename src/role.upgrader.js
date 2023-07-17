@@ -51,10 +51,12 @@ var role = {
         
         creep.checkAndUpdateState();
         
+         
+        
         let controller = Game.getObjectById(config.controller_id);
         let container = controller.getContainer();
         if(container){
-            
+            //container.allowOverBooking(0)
             if(config.upgradeRate===RATE_FAST){
                 container.allowOverBooking(2000)
             }else{ 
@@ -94,6 +96,13 @@ var role = {
           
         if(creep.isWorking()){
            
+            if(creep.storingAtleast(50)){
+                let ext = this.getExtToCharge(creep);
+                if(ext){
+                    creep.transfer(ext,RESOURCE_ENERGY);
+                } 
+            }          
+
            
            if(!creep.pos.isEqualTo(container)){
                creep.moveTo(container);
@@ -126,6 +135,9 @@ var role = {
                 creep.say(413);
             }
         }
+        if(creep.pos.isEqualTo( rp(40,28,'W18N17')) ){
+             creep.move(LEFT)
+         }
         
     },
     siteToBuild: function(creep,config){
@@ -139,6 +151,26 @@ var role = {
         creep.memory.construction_site_id=obj.id;
 	    return obj;
 	},
+	
+	getExtToCharge:function(creep){
+       
+       if(creep.memory.extension_ids===undefined){
+           let exts = creep.pos.lookForNearStructures(STRUCTURE_EXTENSION);
+           creep.memory.extension_ids = [];
+           for(let e in exts){
+               creep.memory.extension_ids.push(exts[e].id);
+               //exts[e].lockReservations();
+           }
+       }
+       
+       for(let id of creep.memory.extension_ids){
+           let obj = Game.getObjectById(id);
+           if(obj && obj.store.getUsedCapacity(RESOURCE_ENERGY)< obj.store.getCapacity(RESOURCE_ENERGY)){
+               return obj;
+           }
+       }
+       
+   }
 };
 
 module.exports = role;

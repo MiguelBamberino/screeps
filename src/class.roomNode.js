@@ -110,11 +110,11 @@ class RoomNode{
         if(!this.controller_id){clog("Room-node has no controller",this.name);return false;}
         
         let controller = this.controller();
-        if(!controller.haveContainer()){
+        if(!controller.haveContainer() && this.upgradeRate!==RATE_OFF){
             clog('Searching for container...',this.coreRoomName); 
             let containers = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER]})
             for(let container of containers){
-                if(controller.pos.getRangeTo(container)<5){
+                if(controller.pos.getRangeTo(container)<4){
                     controller.setContainer(container);
                     controller.setStandingSpot(container.pos);
                     container.setAsUpgraderStore();
@@ -446,7 +446,9 @@ class RoomNode{
                     if(this.name=='Alpha'){
                         dirs=[TOP_LEFT,LEFT,BOTTOM_LEFT];
                     }
-                    
+                    if(this.name=='Gamma'){
+                        dirs=[TOP_LEFT,TOP,TOP_RIGHT];
+                    }
                     cname = Game.spawns[this.name+'-3'].createCreep(bodyPlan,{role:roleName},false,dirs);
               
                 }
@@ -478,6 +480,8 @@ class RoomNode{
             this.totalEnergyAtSources+= source.energyAwaitingCollection();
         }
         this.workforce_quota.harvester.required = coreRoomSourcesCount;
+        this.workforce_quota.builder.required = 1;
+        
         
         if(controller.level===1){
             this.workforce_quota.worker.required = 4;
@@ -488,10 +492,11 @@ class RoomNode{
                 
             }
            
+            if(this.name=='Strip-W16N17')this.workforce_quota.worker.required=1;
             
             let storage = this.storage();
             // if we have too much energy stored, then try to burn some of it off
-            if(this.upgradeRate!=RATE_OFF && !this.funnelRoomName && storage && !storage.haveSpaceFor(50000)){
+            if(this.upgradeRate!=RATE_VERY_FAST && this.upgradeRate!=RATE_OFF && !this.funnelRoomName && storage && !storage.haveSpaceFor(50000)){
                 this.upgradeRate=RATE_FAST;
             }
             
@@ -537,8 +542,8 @@ class RoomNode{
                     }
                  }
                 let readyToSpend = controller.getContainer().storedAmount();
-               
-               if(this.upgradeRate===RATE_FAST){
+              
+               if(this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST){
                     if(readyToSpend==2000){
                         this.workforce_quota.upgrader.required = 5;
                     }else if(readyToSpend>=1800){
@@ -551,6 +556,11 @@ class RoomNode{
                         this.workforce_quota.upgrader.required = 1;
                     }
                }
+               if(this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.upgrader.required>4){
+                   this.workforce_quota.upgrader.required=7;
+                   
+               }
+               
                
                if(Game.cpu.bucket<5000 ){
                    this.workforce_quota.upgrader.required = 1;

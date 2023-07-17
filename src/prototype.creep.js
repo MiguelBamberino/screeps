@@ -1,6 +1,7 @@
     Creep.prototype.STATE_WORKING = 'STATE_WORKING';
     Creep.prototype.STATE_COLLECTING = 'STATE_COLLECTING';
     Creep.prototype.STATE_FLEEING = 'STATE_FLEEING'; // not used yet
+    Creep.prototype.STATE_BOOSTING = 'STATE_BOOSTING'; 
     
 
      Creep.prototype.getDefaultParts = function(budget){
@@ -33,12 +34,15 @@
 	            this.moveToPos(config.retreatSpot);
 	            this.goFlee();
 	            clog("I'm hurt. Fleeing to "+config.retreatSpot,this.name);
-	            return;
+	            return;// return so we keep fleeing until healed, then can go back to work
 	        }
 	        
 	    }
 	    
-	    if( !this.isWorking() && this.store.getFreeCapacity(RESOURCE_ENERGY)==0){
+	  //  this.runBoostPlan();
+	    
+	 
+	     if( !this.isWorking() && this.store.getFreeCapacity(RESOURCE_ENERGY)==0){
             this.memory.state = this.STATE_WORKING;
              this.memory.reserve_id=false;
              this.memory.source_id="";
@@ -57,7 +61,57 @@
         }
         
 	}
-
+	/**
+	 * read the boostplan from creep memory and go to the planned labs for boosts
+	 * plan is deleted after all boosts have applied
+	 * boostplan = array of these {resource_type:RESOURCE_ZYN_HYRDIDE,lab_id:'25vj9nv8noi'}
+	 */ 
+    Creep.prototype.runBoostPlan = function(){
+        
+	    if(this.memory.boostPlans){
+	        let completedCount = 0;
+	        //this.goBoosting();
+	        for(let plan of this.memory.boostPlans){
+	            
+	            if(plan.completed){
+	                completedCount++; continue;
+	            }
+	            
+	            let lab = Game.getObjectById(plan.lab_id);
+	            if(!lab){
+	                this.say('!lab'); plan.completed= true;continue;
+	            }
+	            if(lab && !plan.completed){
+	                if(this.pos.isNearTo(lab)){
+	                    
+	                    //this.say(this.boostCount(plan.resource_type))
+	                    if(this.boostCount(plan.resource_type,true)>0){
+	                         plan.completed= true;this.say("rawwr")
+	                    }else{
+	                        let res = lab.boostCreep(this);
+	                        clog(res,this.name)
+	                        if(res===ERR_NOT_ENOUGH_RESOURCES){
+	                            plan.completed= true;this.say("OOR!")
+	                        }
+	                        if(res===ERR_NOT_FOUND){
+	                            plan.completed= true;this.say("NBP!")
+	                        }
+	                    }
+	                }else{
+	                    this.moveToPos(lab);
+	                }
+	                
+	            }
+	        }
+	        clog(completedCount,this.name+' completedCount')
+	        clog(this.memory.boostPlans.length,this.name+' boostPlans.length')
+	        if(completedCount==this.memory.boostPlans.length){
+	            delete this.memory.boostPlans;
+	            //this.goWork();
+	        }
+	        return; // return so we boost before going to work
+	    }
+    }
 	Creep.prototype.recycle = function(){
 	    if(this.memory.role=='harvester'){
 	        this.spawn().mines()[this.memory.mine_id].creep_id="";
@@ -81,6 +135,12 @@
 	}
 	Creep.prototype.isFleeing = function(){
 	    return (this.memory.state === this.STATE_FLEEING );
+	}
+	Creep.prototype.isBoosting = function(){
+	    return (this.memory.state === this.STATE_BOOSTING );
+	}
+	Creep.prototype.goBoosting = function(){
+	    this.memory.state = this.STATE_BOOSTING;
 	}
 	Creep.prototype.goWork = function(){
 	    this.memory.state = this.STATE_WORKING;
@@ -419,6 +479,8 @@
         return false;
 	    
     }
+    
+        
     Creep.prototype.getMostEmptyDepot=function(roomNames, maxEnergy=null){
         
         var storage = Game.getObjectById(this.memory.reserve_id);
@@ -546,6 +608,26 @@
         return false;
          
     }
+    Creep.prototype.getLabToCharge=function(searchRooms){
+        let lab = Game.getObjectById(this.memory.reserve_id);
+       
+        if(lab){
+            return lab;
+        }
+
+        lab = mb.getNearestStructure(
+                    this.pos,
+                    [STRUCTURE_LAB],
+                    searchRooms,
+                    [{attribute:'canReserveTransfer',operator:'fn',value:[1]}])
+        if(lab){
+           
+            if( this.reserveTransfer(lab)===OK){
+                return lab;
+            }
+        }
+        return false;
+    }
     Creep.prototype.getTowerToCharge=function(searchRooms){
         let target = Game.getObjectById(this.memory.reserve_id);
         if(target){
@@ -557,6 +639,7 @@
                     [STRUCTURE_TOWER],
                     searchRooms,
                     [{attribute:'canReserveTransfer',operator:'fn',value:[200]}])// 200 so we dont waste driving over to fill 20e
+        //clog(target.id,this.name)
         if(target){
 
             if( this.reserveTransfer(target)===OK){

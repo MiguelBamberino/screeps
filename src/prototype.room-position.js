@@ -10,6 +10,7 @@ RoomPosition.prototype.getReverseDirectionTo = function(obj){
     if(dir===TOP_LEFT)return BOTTOM_RIGHT;
 }
 
+
 RoomPosition.prototype.isWalkable = function(checkForCreeps = false) {
     const terrain = Game.map.getRoomTerrain(this.roomName);
     if (terrain.get(this.x, this.y) & TERRAIN_MASK_WALL) {

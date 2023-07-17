@@ -1,3 +1,4 @@
+global.RATE_VERY_FAST='very-fast';
 global.RATE_FAST='fast';
 global.RATE_SLOW='slow';
 global.RATE_VERY_SLOW='very-slow';

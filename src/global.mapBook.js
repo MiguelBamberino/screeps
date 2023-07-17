@@ -88,6 +88,12 @@ global.mb = {
                     }
                 };
             }
+            let minerals = Game.rooms[roomName].find(FIND_MINERALS);
+            let mineralID = '';
+            for(let mineral of minerals)
+                if(mineral.mineralType!==RESOURCE_THORIUM)
+                    mineralID=mineral.id;
+            
             let c = Game.rooms[roomName].controller;
             //console.log(c);
             let controllerStruct =(c)?{id:c.id,coords:{x:c.pos.x,y:c.pos.y}}:{};
@@ -99,7 +105,8 @@ global.mb = {
                 sources:srcCache,
                 controller:controllerStruct,
                 storage_id:'',
-                terminal_id:''
+                terminal_id:'',
+                mineral_id:mineralID
             };
             this.scanRoomForStructures(roomName)
             this.scanRoomForConstructions(roomName);
@@ -170,6 +177,15 @@ global.mb = {
     //////////////////////////////////////////////////////////////////////////////////////////
     // Source Functions
     //////////////////////////////////////////////////////////////////////////////////////////
+    getMineralForRoom: function(roomName){
+        let room = this.getRoom(roomName);
+        if(room){
+            let obj = Game.getObjectById(room.mineral_id);
+            return (obj)?obj:false;
+        }
+        return false;
+    },
+    
     getNearestSource: function(pos,roomNames){
         if(!roomNames){
             roomNames = Object.keys(this.allRooms());
@@ -703,7 +719,7 @@ global.mb = {
         }
         return false;
     },
-    getNearestConstruction: function(pos,roomNames,priorityTypes = [STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TOWER]){
+    getNearestConstruction: function(pos,roomNames,priorityTypes = [STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TOWER,STRUCTURE_TERMINAL]){
         if(!roomNames){
             roomNames = Object.keys(this.allRooms());
         }

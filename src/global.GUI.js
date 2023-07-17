@@ -109,15 +109,8 @@ global.gui = {
         
         ///////////// Beta ///////////////////////////
         // upgrade
-        this.renderReserveBookFor('64807a9098bc226dd884f711')
-        // mine store 
-        this.renderReserveBookFor('647e742ef8eda707686d3fd0');
-        this.renderReserveBookFor('647d1cbd981909eb87a4a892');
-        
-        // > Filler
-        this.renderReserveBookFor('647dfa4a2d6d18c4ed4e132c');
-        // > storage
-        this.renderReserveBookFor('647f1026358260669e2fd981',new RoomPosition(8,34,'W17N18'));
+        this.renderReserveBookFor('64ab1d1f5ca6fb3d0f098c28',rp(28,25,'W18N17'))
+  
         
         ///////////// Alpha //////////////
         this.renderReserveBookFor('647d9486f71e27059f5c0ca9');
@@ -156,7 +149,7 @@ global.gui = {
         //////// Delta //////////////////////
         //controller
  
-        this.renderReserveBookFor('64a2bee3eb0b42d0921e2dd6')
+        this.renderReserveBookFor('64a95a7283849663edff8c48',rp(7,37,'W12N23'))
        
 
         //////// Epsilon //////////////////////
@@ -240,7 +233,10 @@ global.gui = {
                 lines.push({ key:role, value: quota.count+"/"+quota.required});
             }
             let renderPos = new RoomPosition(41,10,node.coreRoomName);
-
+            
+            if(node.coreRoomName=='W18N17')renderPos=rp(15,28,'W18N17')
+            
+            
             Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name,true,{key:3,value:3});
             y+=15;
         }

@@ -5,7 +5,11 @@ module.exports = function(){
     StructureSpawn.prototype.fixer_boost = 1;//2
     StructureSpawn.prototype.waller_boost = 1;//2
     StructureSpawn.prototype.spawningStarted = false;
-
+    
+    StructureSpawn.prototype.pauseSpawningUntil = function(gameTime){
+        this.memory.pausedUntil= gameTime;
+    }
+    
     StructureSpawn.prototype.createCreep = function(parts,memory,nameOveride,directions=[]){
        // if(this.name=='Alpha-3'){clog(nameOveride,'createCreep'+Game.time);clog(directions,'directions')}
         if(this.spawningStarted!==false){
@@ -58,6 +62,8 @@ module.exports = function(){
         
     },
     Structure.prototype.spawnCreepX= function(parts, name, options={},highPriority=false){
+        
+        if(!highPriority && this.memory.pausedUntil && this.memory.pausedUntil > Game.time)return -60;
         
        // if(this.name=='Alpha-3'){clog(name,'spawnCreepX '+Game.time);clog(options,'options')}
         

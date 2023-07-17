@@ -40,9 +40,49 @@ var roleHarvester = {
         
     },
     run: function(creep,config){
-       
+    
        let src =  this.getSource(creep,config);
+       
+       
+       
+       
+       
+        if(creep.memory.rampart_ids===undefined && creep.pos.isNearTo(src)){
+            let ramps = creep.pos.lookForNearStructures(STRUCTURE_RAMPART);
+            
+            creep.memory.rampart_ids = [];
+            for(let ramp of ramps){
+                creep.memory.rampart_ids.push(ramp.id)
+            }
+        }
+        if(creep.storingAtleast(50) && creep.memory.rampart_ids){
+            for(let id of creep.memory.rampart_ids){
+                let rampart = Game.getObjectById(id);
+                if(rampart && rampart.hits<config.wallHeight){
+                    
+                    let res= creep.repair(rampart)
+                    creep.say(res)
+                    return res;
+                }
+            }
+        }
+       
+       
+       
+       
+       
        if(!src){
+           
+           src = mb.getNearestSource(creep.pos,[config.coreRoomName])
+           
+           if(src ){
+               let container = src.getContainer();
+               creep.actOrMoveTo('harvest',src)
+               if(creep.isFull() && container){
+                   creep.actOrMoveTo('transfer',container,RESOURCE_ENERGY)
+               }
+               return
+           }
            clog("no source",creep.name)
            return -500;
        }
@@ -61,14 +101,18 @@ var roleHarvester = {
        }else{
            creep.actOrMoveTo('dropHarvest',src);
        }
-
-
+        
+        if(creep.pos.lookForNearStructures(STRUCTURE_RAMPART))
+        
         if(creep.storingAtleast(50)){
             let ext = this.getExtToCharge(creep);
             if(ext){
                 creep.transfer(ext,RESOURCE_ENERGY);
             } 
         }
+        
+
+ 
  
        return;
 

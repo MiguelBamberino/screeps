@@ -56,6 +56,10 @@ var roleTanker = {
 	            target = creep.getTowerToCharge([config.coreRoomName]);
 	        }
 	        
+	        if(!target){
+	            target = creep.getLabToCharge([config.coreRoomName]);
+	        }
+	        
             if(!target){
                 let roomNames = config.funnelRoomName==undefined?[config.coreRoomName]:[config.coreRoomName,config.funnelRoomName];
               //  if(config.funnelRoomName=='W13N17')clog(roomNames,creep.name)
@@ -75,7 +79,7 @@ var roleTanker = {
 
 	            target = creep.reserveTransferToStorage(config.coreRoomName);
 	        }
-	        //if(creep.name==='Et4')clog(target.pos)
+	        //if(creep.name==='B-ta-5')clog(target.pos)
             if(target){
                 creep.memory.lastTransferTo=target.structureType;
                 let res = creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);

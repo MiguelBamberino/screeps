@@ -21,6 +21,9 @@ global.rp = function(x,y,r){
 global.gob = function(id){
     return Game.getObjectById(id)
 }
+StructureTerminal.prototype.sendX=function(resource,amount,clusterName){
+    return this.send(resource,amount,Game.spawns[clusterName].pos.roomName)
+}
 global.util = {
     
     setupSim:function(){
@@ -134,7 +137,17 @@ global.util = {
                 link.setPriority(2);
                 controller.setLink(link);
                 receivers.push(link);
+                found=true;
                 clog(link.pos+'','set as Receiver- Priority-2 - Controller')
+            }
+            
+            if (!found){
+                link.setAsReceiver();
+                link.setPriority(1);
+                receivers.push(link);
+                clog(link.pos+'','set as Receiver - Priority-1 - Assumed Filler')
+                found=true;
+                   
             }
         }
        
