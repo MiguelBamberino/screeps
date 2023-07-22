@@ -18,9 +18,6 @@ global.reservationBook = {
                 }else{
                     
                     Memory.reservationBook[id][type].totalPending=0;
-                    // patch in new feature
-                    if(Memory.reservationBook[id][type].overBookAllowance==undefined)Memory.reservationBook[id][type].overBookAllowance=0;
-                    
                     for(let cname in Memory.reservationBook[id][type].reserves){
                         if(cname==='lock')continue;
                         if(!Game.creeps[cname]){
@@ -38,8 +35,8 @@ global.reservationBook = {
     getPage:function(id){
         if(!Memory.reservationBook[id]){
             Memory.reservationBook[id]={
-                withdraw:{totalPending:0,overBookAllowance:0,totalReserved:0,reserves:{}},
-                transfer:{totalPending:0,overBookAllowance:0,totalReserved:0,reserves:{}}
+                withdraw:{totalPending:0,totalReserved:0,reserves:{}},
+                transfer:{totalPending:0,totalReserved:0,reserves:{}}
                 
             };
         }
@@ -79,11 +76,6 @@ Structure.prototype.lockReservations=function(dirs=['withdraw','transfer']){
         reservations[dir].totalReserved = this.store.getCapacity(RESOURCE_ENERGY);
     }
 }
-Structure.prototype.allowOverBooking= function(amount){
-    let reservations = this.getReservations();
-    reservations.transfer.overBookAllowance = amount;
-    reservations.withdraw.overBookAllowance = amount;
-}
 Structure.prototype.isWithdrawLocked=function(){
     let reservations = this.getReservations();
     return reservations['withdraw'].reserves["lock"]?true:false;
@@ -96,8 +88,7 @@ Structure.prototype.getWithdrawReserveLimit=function(type=RESOURCE_ENERGY){
         this.reservations = this.getReservations();
         let stored = this.store.getUsedCapacity(type);
         let claimed = this.reservations.withdraw.totalReserved + this.reservations.withdraw.totalPending;
-        let balance = stored - claimed;
-        return (balance>0)?balance:0;
+        return (stored - claimed);
     }else{
         return 0;
     }
@@ -108,10 +99,9 @@ Structure.prototype.getWithdrawReserveLimit=function(type=RESOURCE_ENERGY){
 Structure.prototype.getTransferReserveLimit=function(type=RESOURCE_ENERGY){
     if(this.store){
         this.reservations = this.getReservations();
-        let free = this.store.getFreeCapacity(RESOURCE_ENERGY)+ this.reservations.transfer.overBookAllowance;
+        let free = this.store.getFreeCapacity(RESOURCE_ENERGY);
         let claimed = this.reservations.transfer.totalReserved + this.reservations.transfer.totalPending;
-        let balance = (free - claimed);
-        return (balance>0)?balance:0;
+        return (free - claimed);
     }else{
         return 0;    
     }
@@ -128,25 +118,23 @@ Structure.prototype.canReserveWithdraw=function(amount){
 /**
  * Check there is space to make a reservation to transfer X amount
  */ 
-Structure.prototype.canReserveTransfer=function(amount,l=false){
+Structure.prototype.canReserveTransfer=function(amount){
     amount = amount===null?1:amount;// if called empty, lets check if there is ANY space
-    
     let limit = this.getTransferReserveLimit();
-    if(l)clog(amount,limit)
     if(limit===0|| amount===0)return false;
     return (limit >=amount);
 }
 /**
  * Check there is space and then attempt to make a reservation to withdraw X amount
  */ 
-Structure.prototype.reserveWithdraw=function(ref,amount,force=false){
+Structure.prototype.reserveWithdraw=function(ref,amount){
     if(amount===0){
         return ERR_RESERVE_ZERO_INVALID;
     }
     if(this.store){
         this.reservations = this.getReservations();
         if(this.reservations.withdraw.reserves[ref]===undefined){
-           if(this.canReserveWithdraw(amount)  || force){
+           if(this.canReserveWithdraw(amount)){
                 if(!this.reservations.withdraw.reserves[ref]){
                     this.reservations.withdraw.reserves[ref]=amount;
                     this.reservations.withdraw.totalReserved+=amount;
@@ -165,7 +153,7 @@ Structure.prototype.reserveWithdraw=function(ref,amount,force=false){
 /**
  * Check there is space and then attempt to make a reservation to transfer X amount
  */ 
-Structure.prototype.reserveTransfer=function(ref,amount,force=false){
+Structure.prototype.reserveTransfer=function(ref,amount){
     if(amount===0){
         return ERR_RESERVE_ZERO_INVALID;
     }
@@ -175,7 +163,7 @@ Structure.prototype.reserveTransfer=function(ref,amount,force=false){
             if(!this.canReserveTransfer(amount)){
                 amount = this.store.getFreeCapacity(RESOURCE_ENERGY);
             }
-            if(this.canReserveTransfer(amount) || force){
+            if(this.canReserveTransfer(amount)){
                 
                 if(!reservations.transfer.reserves[ref]){
                     reservations.transfer.reserves[ref]=amount;
@@ -227,10 +215,8 @@ Structure.prototype.canFulfillTransfer=function(ref){
  * Release reservation of a given withdrawal
  */ 
 Structure.prototype.fulfillWithdraw = function(creepName){
-    
     let reservations = this.getReservations();
     let amount = reservations.withdraw.reserves[creepName];
-    if(this.id=='647d9486f71e27059f5c0ca9')clog(creepName,amount)
     if(!amount)return false;
     reservations.withdraw.totalPending+=amount;
     reservations.withdraw.totalReserved-=amount;

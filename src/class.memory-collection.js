@@ -1,3 +1,4 @@
+let compressor = require('_packRat');
 class MemoryCollection{
     
     /**

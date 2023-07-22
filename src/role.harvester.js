@@ -1,93 +1,75 @@
+var STATE_APPROACHING="STATE_APPROACHING";
+var STATE_STORING="STATE_STORING";
+var STATE_BUILDING="STATE_BUILDING";
+var STATE_COLLECTING="STATE_COLLECTING";
 
 var roleHarvester = {
     
+    create: function(spawn,mine_id=false){
+        
+        let memory = this.getMemory(spawn,mine_id);
 
-    getParts: function(budget,config){
         
-        if(true || config.optimiseFor=='CPU'){
-            if(budget>=1250){
-                // We want a harvester with 10W (x2 more than needed), so we harvester quicker and use less CPU
-                // we also want 10W2C so that we can neatly harvest and transfer into the link without dropping any
-                return "10W2C3M";
-                
-                // if we can afford bigger Harvesters, lets harvest source X2 in 125 ticks, then idle for rest of time; saving CPU
-                // 12 + 1 + 6 = 1200+50+300 = 1550
-            }else  if(budget>=800){
-                // 6 - 1 - 3 = 600+50+150 = 800
-                // 800/800 = 12E/tick, draining source in 250 ticks
-                return '6w1c3m';
-    
-            }else if(budget>=550){
-                return '4w1c2m';
-                
-            }
-            return '2w1c1m'; // 300/300
-        }
+        if(!memory.mine_id)return -14;
+        let source = Game.getObjectById(memory.mine_id);
+        let res = spawn.createCreep(this.getParts(spawn,memory,source),memory);
+        return res;
+    },
+    getParts: function(spawn,memory,source){
+        let budget = spawn.getCreepBudget();
         
-        else{
-            if(budget>=800){
-                // 6 - 1 - 3 = 600+50+150 = 800
-                // 800/800 = 12E/tick, draining source in 250 ticks
-                return '6w1c3m';
-    
-            }else if(budget>=550){
-                return '4w1c2m';
-                
-            }
-            return '2w1c1m'; // 300/300
+        // if its low level mine, only send small harvester
+        if((source.energyCapacity==1500 && budget > 550)){
+            budget=550;
         }
 
+        
+        if(budget>=1250){
+            // We want a harvester with 10W (x2 more than needed), so we harvester quicker and use less CPU
+            // we also want 10W2C so that we can neatly harvest and transfer into the link without dropping any
+            return "10W2C3M";
+            
+            // if we can afford bigger Harvesters, lets harvest source X2 in 125 ticks, then idle for rest of time; saving CPU
+            // 12 + 1 + 6 = 1200+50+300 = 1550
+            return [
+                WORK,WORK,WORK,WORK,WORK,WORK,
+                WORK,WORK,WORK,WORK,WORK,WORK,
+                CARRY,  
+                MOVE,MOVE,MOVE,MOVE,MOVE,MOVE ]; 
+            
+        }else  if(budget>=800){
+            // 6 - 1 - 3 = 600+50+150 = 800
+            return [WORK,WORK,WORK,WORK,WORK,WORK, CARRY,  MOVE,MOVE,MOVE ]; // 800/800 = 12E/tick, draining source in 250 ticks
+            
+        }else if(budget>=550){
+            return [WORK,WORK, WORK,WORK,CARRY,MOVE, MOVE]; // 550/550
+            
+        }
+        return [WORK, WORK,CARRY, MOVE]; // 300/300
+        
+        
         
     },
-    run: function(creep,config){
-    
-       let src =  this.getSource(creep,config);
-       
-       
-       
-       
-       
-        if(creep.memory.rampart_ids===undefined && creep.pos.isNearTo(src)){
-            let ramps = creep.pos.lookForNearStructures(STRUCTURE_RAMPART);
-            
-            creep.memory.rampart_ids = [];
-            for(let ramp of ramps){
-                creep.memory.rampart_ids.push(ramp.id)
-            }
+    getMemory: function(spawn, mine_id){
+        
+        if(!mine_id){
+            let source = spawn.getAvailableMine2();
+            mine_id = source?source.id:false;
         }
-        if(creep.storingAtleast(50) && creep.memory.rampart_ids){
-            for(let id of creep.memory.rampart_ids){
-                let rampart = Game.getObjectById(id);
-                if(rampart && rampart.hits<config.wallHeight){
-                    
-                    let res= creep.repair(rampart)
-                    creep.say(res)
-                    return res;
-                }
-            }
+        if(mine_id)
+            return {role: "harvester", mine_id: mine_id};
+        else {
+            spawn.log("error","no free mine but require miner for source_id:"+mine_id);
+            return false;
         }
+
+    },
+    run: function(creep,spawn){
        
+       let src =  Game.getObjectById(creep.memory.mine_id);
        
-       
-       
-       
-       if(!src){
-           
-           src = mb.getNearestSource(creep.pos,[config.coreRoomName])
-           
-           if(src ){
-               let container = src.getContainer();
-               creep.actOrMoveTo('harvest',src)
-               if(creep.isFull() && container){
-                   creep.actOrMoveTo('transfer',container,RESOURCE_ENERGY)
-               }
-               return
-           }
-           clog("no source",creep.name)
-           return -500;
-       }
-       
-       if( src.haveLink()){
+       //if(['Beta','Epsilon','Delta'].indexOf(spawn.name)!==-1  && creep.pos.roomName===spawn.pos.roomName){
+       if(src.haveLink()){
            creep.actOrMoveTo('linkHarvest',src);
            
            let container = src.getContainer();
@@ -101,8 +83,7 @@ var roleHarvester = {
        }else{
            creep.actOrMoveTo('dropHarvest',src);
        }
-        
-        if(creep.pos.lookForNearStructures(STRUCTURE_RAMPART))
+       //creep.actOrMoveTo('dropHarvest',src);
         
         if(creep.storingAtleast(50)){
             let ext = this.getExtToCharge(creep);
@@ -110,41 +91,10 @@ var roleHarvester = {
                 creep.transfer(ext,RESOURCE_ENERGY);
             } 
         }
-        
-
- 
  
        return;
 
    },
-   getSource: function(creep,config){
-       let src =  Game.getObjectById(creep.memory.mine_id);
-       if(!src){
-           src = this.getAvailableMine(config);
-           creep.memory.mine_id = src.id;
-       }
-       return src;
-   },
-    getAvailableMine: function(config) {
-
-        let filters = [
-            {
-                operator: "fn",
-                attribute: "haveNoCreep",
-                value: []
-            }
-        ];
-    
-        let sources = mb.getSources({
-            roomNames: config.coreRoomName,
-            filters: filters
-        });
-        if(sources.length>0){
-            return sources[0];
-        }
-
-        return false;
-    },
    getExtToCharge:function(creep){
        
        if(creep.memory.extension_ids===undefined){

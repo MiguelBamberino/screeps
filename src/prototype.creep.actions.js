@@ -3,10 +3,7 @@ module.exports = function(){
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//// ACTION CORE FUNCS
 	//////////////////////////////////////////////////////////////////////////////////////////////////////	
-	Creep.prototype.swapPositions=function(them){
-	    this.moveTo(them)
-	    them.moveTo(this);
-	}
+	
     Creep.prototype.actOrMoveTo=function(action,target,param2){
         let result = this.act(action,target,param2);
         if(result == ERR_NOT_IN_RANGE) {
@@ -144,30 +141,7 @@ module.exports = function(){
     Creep.prototype.nearBottomRoomEdge = function(){
         return (this.pos.y==48);
     }
-    Creep.prototype.fleeFrom = function(enemy) {
-        // Calculate the direction to the enemy
-        let directionToEnemy = this.pos.getDirectionTo(enemy);
-        
-        // Calculate the opposite direction
-        let oppositeDirection = (directionToEnemy + 4) % 8;
-        if (oppositeDirection === 0) {
-            oppositeDirection = 8;
-        }
     
-        // Try to move in the opposite direction
-        let result = this.move(oppositeDirection);
-    
-        // If the way is blocked and the creep cannot move, 
-        // find an alternative path and move towards it
-        if (result === ERR_NO_PATH || result === ERR_INVALID_TARGET || result === ERR_NOT_FOUND) {
-            const fleePath = PathFinder.search(this.pos, {pos: enemy.pos, range: 5}, {
-                flee: true,
-                maxRooms: 1,
-            });
-            this.moveByPath(fleePath.path);
-        }
-    }
-
     Creep.prototype.moveToCoord=function(x,y,roomName){
         if(!roomName){
             roomName = this.room.name;
@@ -202,7 +176,7 @@ module.exports = function(){
             
             let cutPath = path.slice(this.memory._path.progress);
             let r =  this.moveByPath(  cutPath );
-            //this.say(r);
+            this.say(r);
             if(r===ERR_NOT_FOUND){
                 this.memory._path.attempts=100;
             }
@@ -255,101 +229,17 @@ module.exports = function(){
      */ 
     Creep.prototype.moveToPos=function(target,useMapBook=false){
 
-        let result = false;
-        //let isCivillian = ( this.partCount(ATTACK)===0 && this.partCount(RANGED_ATTACK)===0);
-        //if(target.name)this.say(target.name)
+         let result = false;
         if(useMapBook){
           result= this.moveToUsingMap(target);
         }else{
-            //  creep.pos.getRangeTo(hostile)<=10 && 
-            let creep = this;// so callback works
-            let hostiles = this.room.getHostiles().filter(function(hostile){return (hostile.partCount(ATTACK)>0||hostile.partCount(RANGED_ATTACK)>0) });
-         //   if(this.name=='Slammy')clog(hostiles,'moveToPos:hostiles')
-           // let reUse = 50; 
-          // let ignoreNoobs = true;
-            let opts = {
-                maxOps:7000,reusePath:50,ignoreCreeps:true,
-                visualizePathStyle: {stroke: '#ffffff'}
-                 
+            if(this.memory.last_pos != this.pos.x+"-"+this.pos.y){
+                result= this.moveTo(target,{maxOps:7000,ignoreCreeps:true,reusePath:50,visualizePathStyle: {stroke: '#ffffff'}});
+                this.debugSay("M:"+result)
+            }else{
+                result= this.moveTo(target,{maxOps:7000,ignoreCreeps:false,reusePath:5,visualizePathStyle: {stroke: '#ffffff'}}); 
+                this.debugSay("M:"+-301)
             }
-            if(Game.shard.name =='shardSeason'){
-                opts.reusePath = 10;
-            }
-            if(creep.memory.swampCost){
-                opts.swampCost = creep.memory.swampCost;
-            }
-            // if we're  still on the same space as last tick, then lets try move around the noobs
-            if(this.memory.last_pos == this.pos.x+"-"+this.pos.y){
-                opts.ignoreCreeps=false;
-                opts.reusePath = 2;
-            }
-            if(hostiles.length>0 && Game.cpu.bucket>4000){
-                
-                opts.reusePath=2;
-                
-                
-                for(let hostile of hostiles){
-                    let theirTotalFightParts = hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
-                    let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
-                    creep.memory.fleeZoneOfControl = false;
-                    if(
-                        creep.memory.dontFlee===undefined &&
-                        this.pos.getRangeTo(hostile) < 5 
-                        && myTotalFightyParts < theirTotalFightParts 
-                        && hostile.owner.username!='GT500' && hostile.owner.username!='NeomCamouflage' && hostile.owner.username!='joethebarber' && hostile.owner.username!='Trepidimous'&& hostile.owner.username!='Dakryolith'  ){
-                        // if the creep is too close, then flee, before repathing
-                        let r = target.pos?target.pos.roomName:target.roomName;
-                        target = new RoomPosition(25,25,r);
-                        creep.memory.fleeZoneOfControl = true;
-                        creep.say('flee')
-                       // clog(hostile.name+" stronger than "+creep.name ,'fleeing')
-                    }
-                    
-                }
-                
-                
-                //this.renderAvoidance(hostiles);
-                
-                opts.costCallback = function(roomName,costMatrix){
-                    let room = Game.rooms[roomName];
-                    if (!room) return costMatrix;
-                    for(let hostile of hostiles){
-                        let range = 2;
-                        let theirTotalFightParts= hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
-                        let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
-                        
-                        if(creep.name=='Gt19'){
-                            clog(hostile.owner.username,'hostile.owner.username')
-                        }
-                        if(
-                            // only avoid creep that are stronger
-                            myTotalFightyParts < theirTotalFightParts
-                            // dont avoid if we opt in for risks or need to flee from an avoid area
-                             && !creep.memory.riskyBiscuits && !creep.memory.fleeZoneOfControl
-                             // ally list
-                            && hostile.owner.username!='GT500'&& hostile.owner.username!='NeomCamouflage' && hostile.owner.username!='joethebarber' && hostile.owner.username!='Trepidimous' && hostile.owner.username!='Dakryolith'
-                            //&& hostile.owner.username!='Trepidimous' 
-                            // if we are avoiding SKs, then add them to the avoid list
-                            || (creep.memory.avoidSkeepers && hostile.owner.username=='Source Keeper') 
-                            ){
-                            if(hostile.partCount(RANGED_ATTACK)>0)range=4;
-                            
-                            if(creep.memory.touchingCloth)range = range-1;
-                            
-                            let avoids = hostile.pos.getPositionsInRange(range);
-                           // if(creep.name=='Gt19')clog(hostile.name+" stronger than "+creep.name ,'avoiding')
-                            for(let a of avoids){
-                                costMatrix.set(a.x, a.y, 255);
-                               // a.colourIn();
-                            }
-                        }
-                    }
-                    return costMatrix;
-                };
-            }
-            
-            result= this.moveTo(target,opts);
-            this.debugSay("M:"+result)
             if(result===OK){
                 this.memory.last_pos = this.pos.x+"-"+this.pos.y;
             }
@@ -358,25 +248,6 @@ module.exports = function(){
         return result;
    }
    //////////////////////////////////////////////////////////////////////////////////////////////////////
-   Creep.prototype.renderAvoidance=function(hostiles,range){
-       let badSpots=[];
-            
-            for(let hostile of hostiles){
-                let range = 1;
-                let colour = this.memory.riskyBiscuits?'red':'orange';
-                if(hostile.partCount(RANGED_ATTACK)>0)range=4;
-                if(this.memory.touchingCloth){
-                    range = range-1;
-                    colour='purple';
-                }
-                if(Memory.allies.includes(hostile.owner.username))
-                    colour = 'blue';
-                let avoid = hostile.pos.drawPolyAround(range,colour);
-
-            }
-            
-   }
-
     Creep.prototype.debugSay=function(msg){
         if(gui.displayCreepDebugSay){
             this.say(msg);

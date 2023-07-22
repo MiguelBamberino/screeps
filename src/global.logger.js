@@ -10,7 +10,7 @@ global.logs = {
         }
     },
     log: function(category,msg){
-        //console.log("GT:"+Game.time+": "+category+" : "+msg);
+        console.log("GT:"+Game.time+": "+category+" : "+msg);
     },
     mainLoopStarted: function(){
         this.msSinceLastTick = Date.now() - this.lastTickAt;

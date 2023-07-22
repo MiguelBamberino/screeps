@@ -6,7 +6,6 @@ global.gui = {
     creeptrack:false,
     mb:false,
     rb:false,
-    nodes:[],
     on: function(){
         this.display=true;
         console.log("GUI loading. Please wait...");
@@ -27,21 +26,12 @@ global.gui = {
     debugSay:function(val=true){
         this.displayCreepDebugSay = val;
     },
-    init:function(roomNodes){
+    init:function(){
         this.on();
-        
-        this.nodes = roomNodes;
-        
-        //let roomsToRender = ['W42N53','W45N51','W41N53'];
-        let roomsToRender = [];
-        for(let node of this.nodes)
-            roomsToRender.push(node.coreRoomName);
-        
-        if(Game.rooms['sim'])roomsToRender=['sim'];
         
         this.summary = Object.create( require('global.GUI.partial'));
         this.summary.headingConfig("Overview",true,{cpu:2,tick:3,serverSpeed:3,bucket:2});
-        this.summary.setRooms(roomsToRender);
+        this.summary.setRooms(['W42N53','W45N51','W41N53']);
         
         this.summary.atCoords(34,1);
         this.summary.on();
@@ -49,22 +39,22 @@ global.gui = {
         this.cpu = Object.create( require('global.GUI.partial'));
         
         this.cpu.headingConfig("CPU-USAGE",false,{tag:2,usage:3});
-        this.cpu.setRooms(roomsToRender);
+        this.cpu.setRooms(['W42N53']);
         this.cpu.atCoords(41,6);
         //this.cpu.on();
         
         this.mb = Object.create( require('global.GUI.partial'));
         this.mb.headingConfig("MAP-BOOK",false,{col1:3,col2:3});
-        this.mb.setRooms(roomsToRender);
-       // this.mb.on();
+        this.mb.setRooms(['W42N53']);
+        //this.mb.on();
         
         this.rb = Object.create( require('global.GUI.partial'));
         this.rb.headingConfig("Reserve Book",true,{id:6,curr:2,ref:2,transfers:6,withdrawals:6});
-        this.rb.setRooms(roomsToRender);
+        this.rb.setRooms(['W41N54']);
         
         this.creeptrack = Object.create( require('global.GUI.partial'));
         this.creeptrack.headingConfig("Creep Track",true,{name:2,cpu:2,role:3});
-        this.creeptrack.setRooms(roomsToRender);
+        this.creeptrack.setRooms(['W42N53']);
        // this.creeptrack.on();
         
     },
@@ -91,7 +81,7 @@ global.gui = {
         
         this.renderMapBookStats();
 
-        this.renderRoomNodeStats();
+        //this.renderSpawnStats();
         
         //this.renderSourceStatTest();
 
@@ -106,69 +96,22 @@ global.gui = {
 
         //this.renderSourceStats('5bbcaab49099fc012e632090');
         //this.renderSourceStats('63de812d8ec3bb0b54708522');
+
+        //this.renderReserveBookFor('63de812d8ec3bb0b54708522');
+        //this.renderReserveBookFor('63d512a32cc72113319fd1fc');
+        //this.renderReserveBookFor('63d57d8c2dcf14861856a685');
+       // this.renderReserveBookFor('63ea53f6c136d01981747c72');
         
-        ///////////// Beta ///////////////////////////
-        // upgrade
-        this.renderReserveBookFor('64ab1d1f5ca6fb3d0f098c28',rp(28,25,'W18N17'))
-  
+        //this.renderReserveBookFor('63d58cb4affb4cc40a136721');
         
-        ///////////// Alpha //////////////
-        this.renderReserveBookFor('647d9486f71e27059f5c0ca9');
-        this.renderReserveBookFor('647910f41e06c862d53f8fb5');
-        
-        this.renderReserveBookFor('647a7245535ff46892cadb5e');
-        
-        this.renderReserveBookFor('647a92e8655cd29697596191',new RoomPosition(17,17,'W14N18'));
+        this.renderReserveBookFor('644253fa841862f67beae187');
       
         
-        this.renderReserveBookFor('6478f4cd8ccbad57a487413a',new RoomPosition(0,40,'W14N18'));
-        this.renderReserveBookFor('6478f61952c5bfe1b733b0ec',new RoomPosition(7,40,'W14N18'));
-        //mines
-         this.renderReserveBookFor('6482e5a8f6bdc8409b943e88');
-          this.renderReserveBookFor('6482e31fd597e75632544fe0');
+       // this.renderReserveBookFor('63b9a1f18ec3bb44706412c5',new RoomPosition(7,12,'W41N55'));
+        //this.renderReserveBookFor('63b9a0afd657ab3bad212a10',new RoomPosition(0,12,'W41N55'));
+        //this.renderReserveBookFor('641a283114993359865ee78e');
 
-           this.renderReserveBookFor('6482e930b7e508806504c1b0');
-            this.renderReserveBookFor('6482e95070bfded1f196de62');
-        //////// Gamma //////////////////////
-        // controller
-        this.renderReserveBookFor('64859cff9a94182509bc4b0f',rp(28,25,'W13N15'));
-        // storage
-        this.renderReserveBookFor('648483965bdc7e637d357f8f',rp(0,20,'W13N15'));
-        //mines
-        this.renderReserveBookFor('6481d3e19e4145825aac41ce')
-        this.renderReserveBookFor('6481d3fea439d4c258488ab9')
-        this.renderReserveBookFor('64839e27133a097c46b37d1f')
-        this.renderReserveBookFor('64839d839a94185a6dbb7a36')
-        
-        this.renderReserveBookFor('6483bc59cb55931e0760b5ee')
-        //this.renderReserveBookFor('64899f6b133a0947a6b5d157',rp(0,37,'W13N17'))
-        
-        this.renderReserveBookFor('64822902f1157b0b6cd44aa7')
-        this.renderReserveBookFor('6486cfbbeb2a545b91527bac')
-
-        //////// Delta //////////////////////
-        //controller
- 
-        this.renderReserveBookFor('64a95a7283849663edff8c48',rp(7,37,'W12N23'))
-       
-
-        //////// Epsilon //////////////////////
-        //controller
-       
-        this.renderReserveBookFor('649b8be0fb058c6394ee5c2f',rp(23,7,'W12N14'))
-        
-        
-        //////// Epsilon //////////////////////
-        //controller
-       
-        this.renderReserveBookFor('6499c8c6654a803d497d0b3a',rp(24,18,'W12N19'))
         let u = Game.cpu.getUsed()-st;
-        
-        ///// Strip mine ////////////////
-        
-        this.renderReserveBookFor('64a6bf93cadd0597d786979e')
-        
-        
         //console.log("GUI-CPU-used: "+u);  
     },
 
@@ -192,54 +135,55 @@ global.gui = {
     /**
      * 
      */ 
-    renderRoomNodeStats:function(){
+    renderSpawnStats:function(){
         let y=8;
-
-        for(let node of this.nodes){
+        let nodes = ['Alpha','Beta','Gamma','Delta','Epsilon','Zeta','Eta','Theta'];
+        let roles = ['worker','harvester','tanker','reserver','fixer','waller','builder','upgrader'];
+           
+        
+        for(let s of nodes){
             let lines=[];
-            let sp = Game.spawns[node.name];
-            if(!sp)continue;
-            
-            lines.push({ key:'E2Collect', value:node.totalEnergyAtSources });
-            lines.push({ key:'upgr rate', value:node.upgradeRate });
-            lines.push({ key:'build rate', value:node.buildFast?'fast':'slow' });
-            lines.push({ key:'recver mode', value:node.inRecoveryMode() });
+            let sp = Game.spawns[s];
+            lines.push({ role:'E2Collect', value:sp.memory.totalContainerE });
+            lines.push({ role:'remoteE', value:sp.memory.totalRemoteE });
             
             if(sp ){
                 let val=sp.memory.spawn_result;
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ key:node.name, value:val });
+                lines.push({ role:s, value:val });
             }
-            sp = Game.spawns[node.name+'-2'];
+            sp = Game.spawns[s+'-2'];
             if(sp){
                 let val='...';
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ key:node.name+'-2', value: val});
+                lines.push({ role:s+'-2', value: val});
             }
-            sp = Game.spawns[node.name+'-3'];
+            sp = Game.spawns[s+'-3'];
             if(sp){
                 let val='...';
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ key:node.name+'-3', value: val});
+                lines.push({ role:s+'-3', value: val});
             }
             
             
-            for(let role in node.workforce_quota){
-                let quota = node.workforce_quota[role];
-                lines.push({ key:role, value: quota.count+"/"+quota.required});
+            for(let r of roles){
+                let quota = Game.spawns[s].memory.workforce_quota[r];
+                lines.push({ role:r, value: quota.count+"/"+quota.required});
             }
-            let renderPos = new RoomPosition(41,10,node.coreRoomName);
-            
-            if(node.coreRoomName=='W18N17')renderPos=rp(15,28,'W18N17')
-            
-            
-            Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name,true,{key:3,value:3});
+            let renderPos = new RoomPosition(41,20,Game.spawns[s].pos.roomName);
+            if(s=='Beta'){
+                renderPos = new RoomPosition(10,20,Game.spawns[s].pos.roomName);
+            }
+            if(s=='Epsilon'){
+                renderPos = new RoomPosition(2,30,Game.spawns[s].pos.roomName);
+            }
+            Game.rooms[Game.spawns[s].pos.roomName].renderGUITable(renderPos,lines,s,true,{role:3,value:3});
             y+=15;
         }
     },
@@ -354,12 +298,8 @@ global.gui = {
             if(page.withdraw.totalPending>0 || page.transfer.totalPending>0){
                 data.push({ref:'intents',amount:'-'+page.withdraw.totalPending+'/+'+page.transfer.totalPending})
             }
-            // 
-            if(page.withdraw.overBookAllowance>0 || page.transfer.overBookAllowance>0){
-                data.push({ref:'ovrbook',amount:'-'+page.withdraw.overBookAllowance+'/+'+page.transfer.overBookAllowance})
-            }
             data.push({ref:stored,amount:'-'+page.withdraw.totalReserved+'/+'+page.transfer.totalReserved})
-            Game.rooms[obj.pos.roomName].renderGUITable(renderPos,data,false,true,{ref:2,amount:3});
+            Game.rooms[obj.pos.roomName].renderGUITable(renderPos,data,false,true,{ref:2,amount:2});
         }
 
     },
@@ -548,5 +488,6 @@ Room.prototype.renderGUITable =function(anchor,data,title=undefined,includeHeadi
         r++;
     }
 }
-
+    
+if(Game.rooms['sim']){gui.room('sim');gui.on()}
 module.exports = gui;
