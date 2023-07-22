@@ -26,9 +26,10 @@
         // this avoids lots of dropped E
         if(this.ticksToLive<25 && this.isEmpty()){
             this.say("TTL<25:🪦")
-            this.suicide()
+            this.suicide();
+            return;// return here, so we can't change state back to collect and pick up 1k E on the same tick we schedule a suicide
         }
-	    
+	    //if(this.name=='I-wo-0')clog(this.memory.reserve_id,'reserve_id in checkAndUpdateState')
 	    if( (this.hitsMax - this.hits) > 100 ){
 	        if(config && config.retreatSpot){
 	            this.moveToPos(config.retreatSpot);
@@ -479,7 +480,7 @@
         return false;
 	    
     }
-    
+
         
     Creep.prototype.getMostEmptyDepot=function(roomNames, maxEnergy=null){
         

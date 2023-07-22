@@ -22,6 +22,10 @@ Room.prototype.lookForConstructionAt = function(x,y){
     }
     return false;
 }
+////////////////////////////////////////////////////////////////////////////////////
+// Creeps Seen Cache
+////////////////////////////////////////////////////////////////////////////////////
+global.CREEPS_IN_ROOM_CACHE={};
 
 Room.prototype.getHostiles=function(){
     
@@ -36,21 +40,22 @@ Room.prototype.getHostiles=function(){
     }
    return this.baddies[Game.time];
 }
-Room.prototype._parseHostileCreeps=function(){
+Room.prototype._parseHostileCreeps=function(cacheSensitivity=5){
     
-    let cacheLength=10;
-    if(this.creep_lookup===undefined){
-        this.creep_lookup={};
+    clog(Game.time,'Game.time')
+    clog(CREEPS_IN_ROOM_CACHE,'CREEPS_IN_ROOM_CACHE[this.name]')
+    
+    if(CREEPS_IN_ROOM_CACHE[this.name] && CREEPS_IN_ROOM_CACHE[this.name].last_cache + cacheSensitivity < Game.time ){
+         delete CREEPS_IN_ROOM_CACHE[this.name];
+         clog(Game.time-cacheSensitivity,'Deleted hostile cache for '+this.name+' at :')
     }
 
-    if(this.creep_lookup[Game.time]===undefined){
+    if(CREEPS_IN_ROOM_CACHE[this.name]===undefined){
         
-        if(this.creep_lookup[Game.time-cacheLength]){
-            delete this.creep_lookup[Game.time-cacheLength];
-            clog(Game.time-cacheLength,'Deleted hostile cache for '+this.name+' at :')
-        }
-        
-        this.creep_lookup[Game.time]={
+        clog(Game.time,'Creating hostile cache for '+this.name+' at :')
+
+        CREEPS_IN_ROOM_CACHE[this.name]={
+            last_cache:Game.time,
             all:[],allies:[],
             skeepers:[],invaders:[],
             enemyPlayerCreeps:[],enemyPlayerFighters:[],enemyPlayerCivilians:[]
@@ -61,22 +66,29 @@ Room.prototype._parseHostileCreeps=function(){
         for(let creep of creeps){
             
             if( Memory.allies.includes(creep.owner.username) ){
-                this.creep_lookup[Game.time].allies.push(creep.name);
+                CREEPS_IN_ROOM_CACHE[this.name].allies.push(creep.name);
             }
             else if( creep.owner.username=='Source Keeper' ){
-                this.creep_lookup[Game.time].skeepers.push(creep.name);
+                CREEPS_IN_ROOM_CACHE[this.name].skeepers.push(creep.name);
             }
             else if( creep.owner.username=='Invader' ){
-                this.creep_lookup[Game.time].invaders.push(creep.name);
+                CREEPS_IN_ROOM_CACHE[this.name].invaders.push(creep.name);
             }else {
-                this.creep_lookup[Game.time].enemyPlayerCreeps.push(creep.name);
+                
+                CREEPS_IN_ROOM_CACHE[this.name].enemyPlayerCreeps.push(creep.name);
+                if(creep.isFighter()){
+                    CREEPS_IN_ROOM_CACHE[this.name].enemyPlayerFighters.push(creep.name);
+                }else if(creep.isCivilian()){
+                    CREEPS_IN_ROOM_CACHE[this.name].enemyPlayerCivilians.push(creep.name);
+                }
+                
             }
             
         }
-        
-       // clog(Game.time,this.name+":getHostiles")
+    }else{
+        clog(Game.time,'READ hostile cache for '+this.name+' at :')
     }
-   return this.creep_lookup[Game.time];
+   return CREEPS_IN_ROOM_CACHE[this.name];
 }
 
 
@@ -88,10 +100,10 @@ Room.prototype.getDangerousCreeps=function(){
     
 }
 Room.prototype.getEnemyPlayerFighters=function(){
-    
+    return this._parseHostileCreeps().enemyPlayerFighters;
 }
 Room.prototype.getEnemyPlayerCivilians=function(){
-    
+    return this._parseHostileCreeps().enemyPlayerCivilians;
 }
 Room.prototype.getSourceKeepers=function(){
     return this._parseHostileCreeps().skeepers;

@@ -85,8 +85,16 @@ var roleTanker = {
                 let res = creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
                 //creep.say("tx:"+res);
             }else{
-                creep.say('bored')
+                // if near death, put back in storage
+                if(creep.ticksToLive<40){
+                    creep.memory.lastWithdrewFrom=false;
+                }else if(Game.time%10==0){
+                    creep.memory.lastWithdrewFrom=false;
+                }else{
+                     creep.say('bored')
                 creep.moveToPos(config.retreatSpot)
+                }
+               
             }
             
 	    }
@@ -95,12 +103,19 @@ var roleTanker = {
 	        let target = Game.getObjectById(creep.memory.reserve_id);
 
             
-	        // collect from MINES in this room next
+	        // collect from local MINES in this room first
 	        if(!target){
-	            let roomRange = creep.ticksToLive>100?config.allRoomNames:config.coreRoomName
+	            target = creep.getFullestMineStore([config.coreRoomName]);
+	            if(target){
+                   // creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
+                }
+            }
+            // now look at remotes
+            if(!target){
+	            let roomRange = creep.ticksToLive>100?config.allRoomNames:[config.coreRoomName]
 	            target = creep.getFullestMineStore(roomRange);
 	            if(target){
-                    creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
+                    //creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
                 }
             }
             
@@ -116,7 +131,7 @@ var roleTanker = {
              if(!target /*&& creep.memory.lastTransferTo!==STRUCTURE_STORAGE*/){
                 target = creep.reserveWithdrawalFromStorage(config.coreRoomName);
                 if(target){
-                    creep.memory.lastWithdrewFrom=STRUCTURE_STORAGE
+                  //  creep.memory.lastWithdrewFrom=STRUCTURE_STORAGE
                 }
              }
             if(target){

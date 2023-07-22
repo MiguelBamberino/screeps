@@ -199,9 +199,11 @@ global.gui = {
             let lines=[];
             let sp = Game.spawns[node.name];
             if(!sp)continue;
+            
             lines.push({ key:'E2Collect', value:node.totalEnergyAtSources });
             lines.push({ key:'upgr rate', value:node.upgradeRate });
             lines.push({ key:'build rate', value:node.buildFast?'fast':'slow' });
+            lines.push({ key:'recver mode', value:node.inRecoveryMode() });
             
             if(sp ){
                 let val=sp.memory.spawn_result;

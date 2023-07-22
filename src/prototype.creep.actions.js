@@ -294,13 +294,14 @@ module.exports = function(){
                     creep.memory.fleeZoneOfControl = false;
                     if(
                         creep.memory.dontFlee===undefined &&
-                        this.pos.getRangeTo(hostile) < 4 
+                        this.pos.getRangeTo(hostile) < 5 
                         && myTotalFightyParts < theirTotalFightParts 
-                        && hostile.owner.username!='GT500' && hostile.owner.username!='NeomCamouflage' && hostile.owner.username!='joethebarber' ){
+                        && hostile.owner.username!='GT500' && hostile.owner.username!='NeomCamouflage' && hostile.owner.username!='joethebarber' && hostile.owner.username!='Trepidimous'&& hostile.owner.username!='Dakryolith'  ){
                         // if the creep is too close, then flee, before repathing
                         let r = target.pos?target.pos.roomName:target.roomName;
                         target = new RoomPosition(25,25,r);
                         creep.memory.fleeZoneOfControl = true;
+                        creep.say('flee')
                        // clog(hostile.name+" stronger than "+creep.name ,'fleeing')
                     }
                     
@@ -326,7 +327,7 @@ module.exports = function(){
                             // dont avoid if we opt in for risks or need to flee from an avoid area
                              && !creep.memory.riskyBiscuits && !creep.memory.fleeZoneOfControl
                              // ally list
-                            && hostile.owner.username!='GT500'&& hostile.owner.username!='NeomCamouflage' && hostile.owner.username!='joethebarber' 
+                            && hostile.owner.username!='GT500'&& hostile.owner.username!='NeomCamouflage' && hostile.owner.username!='joethebarber' && hostile.owner.username!='Trepidimous' && hostile.owner.username!='Dakryolith'
                             //&& hostile.owner.username!='Trepidimous' 
                             // if we are avoiding SKs, then add them to the avoid list
                             || (creep.memory.avoidSkeepers && hostile.owner.username=='Source Keeper') 

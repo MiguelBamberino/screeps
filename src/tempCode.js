@@ -18,23 +18,16 @@ module.exports = {
         
         if(!mb.hasRoom('W13N12'))mb.scanRoom('W13N12')
          
-         this.streamResource('Gamma','Beta',RESOURCE_ENERGY,500000,100000);  
-        //this.streamResource('Beta','Epsilon',RESOURCE_ENERGY,200000,10000)
-       // this.streamResource('Gamma','Strip-W16N17',RESOURCE_ENERGY,5000,2000)
-       // this.streamResource('Alpha','Beta',RESOURCE_ENERGY,500000,300000)
-        //this.streamResource('Zeta','Delta',RESOURCE_ENERGY,500000,300000)
-        //this.streamResource('Alpha','Strip-W16N17',RESOURCE_ENERGY,100000,5000,5000)
-       // this.streamResource('Alpha','Strip-W16N17',RESOURCE_ENERGY,800000,500000,5000)
-        
-      //  this.streamResource('Zeta','Gamma',RESOURCE_ENERGY,500000,300000)
-       // this.streamResource('Alpha','Epsilon',RESOURCE_ENERGY,600000,500000)
-        //this.streamResource('Epsilon','Zeta',RESOURCE_ENERGY,600000,300000,20000);
-        //this.streamResource('Epsilon','Delta',RESOURCE_ENERGY,700000,600000,5000);
+         this.streamResource('Gamma','Iota',RESOURCE_ENERGY,300000,100000);
+         
+         this.streamResource('Alpha','Zeta',RESOURCE_ENERGY,700000,600000);
+         this.streamResource('Beta','Zeta',RESOURCE_ENERGY,700000,600000);
+         this.streamResource('Delta','Zeta',RESOURCE_ENERGY,700000,600000);
 
  
     /**
      * manage the config of what resources different rooms want. This assumes they've already been hauled to the terminal.
-     * see manageMineralHauling()
+     * see manageMineralHauling()w
      * importerConfigs - array of objs with this template: {importer:'Alpha',resource_type:RESOURCE_OXYGEN,storageCap:50000}
      * exporters - an array of rooms who are exporting, such as ['Alpha','Beta'...]
      */
@@ -43,32 +36,31 @@ module.exports = {
                 {importer:'Gamma',resource_type:RESOURCE_ZYNTHIUM,storageCap:50000},
                 {importer:'Gamma',resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:50000},
                 
-               /* {importer:'Zeta',resource_type:RESOURCE_GHODIUM_ACID,storageCap:18000},*/
+                {importer:'Zeta',resource_type:RESOURCE_GHODIUM_ACID,storageCap:18000},
+                 {importer:'Zeta',resource_type:RESOURCE_UTRIUM_ALKALIDE,storageCap:18000},
                 
-                {importer:'Alpha',resource_type:RESOURCE_HYDROXIDE,storageCap:18000},
-                {importer:'Alpha',resource_type:RESOURCE_HYDROGEN,storageCap:18000},
-                {importer:'Alpha',resource_type:RESOURCE_GHODIUM,storageCap:24000},
-                {importer:'Alpha',resource_type:RESOURCE_UTRIUM_ALKALIDE,storageCap:24000},
+                {importer:'Alpha',resource_type:RESOURCE_HYDROXIDE,storageCap:6000},
+                {importer:'Alpha',resource_type:RESOURCE_HYDROGEN,storageCap:6000},
+                {importer:'Alpha',resource_type:RESOURCE_OXYGEN,storageCap:6000},
+                {importer:'Alpha',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 
-                {importer:'Beta',resource_type:RESOURCE_GHODIUM_ACID,storageCap:18000},
-                {importer:'Beta',resource_type:RESOURCE_UTRIUM_ALKALIDE,storageCap:18000},
+                {importer:'Beta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
+                {importer:'Beta',resource_type:RESOURCE_GHODIUM_HYDRIDE,storageCap:12000},
                 
-                {importer:'Delta',resource_type:RESOURCE_GHODIUM_ACID,storageCap:18000},
-                {importer:'Delta',resource_type:RESOURCE_OXYGEN,storageCap:18000},
-               
-                {importer:'Epsilon',resource_type:RESOURCE_HYDROXIDE,storageCap:18000}
+                /*{importer:'Delta',resource_type:RESOURCE_GHODIUM_ACID,storageCap:18000},*/
+                {importer:'Delta',resource_type:RESOURCE_OXYGEN,storageCap:18000}
             ],
-            ['Alpha','Zeta','Gamma','Epsilon','Delta']);
+            ['Alpha','Beta','Zeta','Gamma','Epsilon','Delta']);
 
 
         /////////// Alpha         /////////// 
         this.manageMineralHauling('Alpha',
             [
                 {id:'6487afae7817371e6cef1dd8',resource_type:RESOURCE_GHODIUM,action:'fill'},
-                {id:'648728193d915148ff1d3911',resource_type:RESOURCE_GHODIUM_HYDRIDE,action:'fill'},
+                {id:'648728193d915148ff1d3911',resource_type:RESOURCE_GHODIUM_HYDRIDE,action:'empty'},
 
-                {id:'64a53bff66e7669492b5b659',resource_type:RESOURCE_GHODIUM_ACID,action:'empty',phaseOut:true},                
-                {id:'64a53bff66e7669492b5b659',resource_type:RESOURCE_ZYNTHIUM_OXIDE,action:'fill'},
+                {id:'64a53bff66e7669492b5b659',resource_type:RESOURCE_GHODIUM_ACID,action:'empty'},                
+
                 {id:'6487d4aba1ad7797ace7c0a1',resource_type:RESOURCE_HYDROXIDE,action:'fill'},
                 {id:'64875c1d820c464f9e4a5774',resource_type:RESOURCE_GHODIUM_HYDRIDE,action:'fill'},
                 
@@ -78,45 +70,67 @@ module.exports = {
                 
                 
                 
-                {id:'64a55fad1f1cd7030d011b7f',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,action:'fill'},
-                {id:'64a54b8e66e766bad4b5bd88',resource_type:RESOURCE_GHODIUM_ACID,action:'empty',phaseOut:true},
-                {id:'64a54b8e66e766bad4b5bd88',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'fill'},
-                {id:'64a57747038fbe71ec1507b2',resource_type:RESOURCE_UTRIUM_ACID,action:'fill'},
+                {id:'64a55fad1f1cd7030d011b7f',resource_type:RESOURCE_GHODIUM_ACID,action:'fill'},
+                {id:'64a54b8e66e766bad4b5bd88',resource_type:RESOURCE_GHODIUM_ACID,action:'empty'},
+                {id:'64a57747038fbe71ec1507b2',resource_type:RESOURCE_ZYNTHIUM_OXIDE,action:'empty'},
+                
+                {id:'648140f8676bfd1d7f18d344',resource_type:RESOURCE_ZYNTHIUM_KEANITE,action:'fill'},
                 
              
             ],
-            [RESOURCE_HYDROXIDE,RESOURCE_GHODIUM,RESOURCE_OXYGEN,RESOURCE_HYDROGEN,RESOURCE_UTRIUM_ALKALIDE,RESOURCE_UTRIUM_ACID],
+            [RESOURCE_HYDROXIDE,RESOURCE_GHODIUM,RESOURCE_OXYGEN,RESOURCE_HYDROGEN,RESOURCE_UTRIUM_ACID],
             [
                 {resource_type:RESOURCE_LEMERGIUM,exportOver:0,batchSize:12000},
-                {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:12000},
+                {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:48000},
                 {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:0,batchSize:20000},
                 {resource_type:RESOURCE_UTRIUM_HYDRIDE,exportOver:300,batchSize:6000},
-                {resource_type:RESOURCE_GHODIUM_ACID,exportOver:6000,batchSize:6000},
-                {resource_type:RESOURCE_UTRIUM_ACID,exportOver:1,batchSize:6000},
-                {resource_type:RESOURCE_ENERGY,exportOver:100000,batchSize:50000}
+                {resource_type:RESOURCE_GHODIUM_ACID,exportOver:18000,batchSize:6000}
             ],
             rp(12,29,'W14N18'))
         // RESOURCE_GHODIUM_HYDRIDE
         this.runLabTrio('648728193d915148ff1d3911','6487afae7817371e6cef1dd8','648771d4ea93d5700d04f97d')
         this.runLabTrio('64875c1d820c464f9e4a5774','6487afae7817371e6cef1dd8','648771d4ea93d5700d04f97d')
         // RESOURCE_GHODIUM_ACID
-      // this.runLabTrio('64a53bff66e7669492b5b659','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
+       this.runLabTrio('64a53bff66e7669492b5b659','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
        this.runLabTrio('6487f21514b4db61c6d46a2b','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
-       // this.runLabTrio('64a54b8e66e766bad4b5bd88','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
+        this.runLabTrio('64a54b8e66e766bad4b5bd88','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
         
        // RESOURCE_HYDROXIDE
-       // this.runLabTrio('64a54b8e66e766bad4b5bd88','648771d4ea93d5700d04f97d','6487f21514b4db61c6d46a2b')
+        this.runLabTrio('6487d4aba1ad7797ace7c0a1','648771d4ea93d5700d04f97d','64a54b8e66e766bad4b5bd88')
        // this.runLabTrio('6487d4aba1ad7797ace7c0a1','648771d4ea93d5700d04f97d','6487f21514b4db61c6d46a2b')
        
        // RESOURCE_ZYNTHIUM_OXIDE
-        //this.runLabTrio('64a57747038fbe71ec1507b2','64a55fad1f1cd7030d011b7f','64a54b8e66e766bad4b5bd88')
+       // this.runLabTrio('64a57747038fbe71ec1507b2','64a55fad1f1cd7030d011b7f','64a54b8e66e766bad4b5bd88')
+        
+        //////////////////////////////////////////////////  
+        /////////// Beta         /////////// 
+                this.manageMineralHauling('Beta',
+            [
+                {id:'64af0a446a17e50e3d957795',resource_type:RESOURCE_GHODIUM_HYDRIDE,action:'fill'},
+                {id:'64aef6521a891b3946ff6928',resource_type:RESOURCE_HYDROXIDE,action:'fill'},
+                
+                {id:'64af17076d8f12a3e0ede1e2',resource_type:RESOURCE_GHODIUM_ACID,action:'empty'},
+                {id:'64b979d6f4bdbf40e16d46cd',resource_type:RESOURCE_GHODIUM_ACID,action:'empty'},
+                {id:'64b9a5e634b8839d320f1792',resource_type:RESOURCE_GHODIUM_ACID,action:'empty'},
+                {id:'64b9521328ee032896f4d593',resource_type:RESOURCE_GHODIUM_ACID,action:'empty'},
 
+            ],
+            [RESOURCE_HYDROXIDE,RESOURCE_UTRIUM_OXIDE,RESOURCE_GHODIUM_HYDRIDE],
+            [
+               {resource_type:RESOURCE_GHODIUM_ACID,exportOver:0,batchSize:6000},
+            ],
+            rp(42,22,'W18N17'))
+        // RESOURCE_GHODIUM_ACID
+        this.runLabTrio('64af17076d8f12a3e0ede1e2','64af0a446a17e50e3d957795','64aef6521a891b3946ff6928')
+        this.runLabTrio('64b979d6f4bdbf40e16d46cd','64af0a446a17e50e3d957795','64aef6521a891b3946ff6928')    
+        this.runLabTrio('64b9a5e634b8839d320f1792','64af0a446a17e50e3d957795','64aef6521a891b3946ff6928')    
+        this.runLabTrio('64b9521328ee032896f4d593','64af0a446a17e50e3d957795','64aef6521a891b3946ff6928')    
         //////////////////////////////////////////////////
         
         /////////// Gamma         ///////////
          this.manageMineralHauling('Gamma',
             [
-                {id:'64ab58f0838496a118005fef',resource_type:RESOURCE_GHODIUM,action:'empty'},
+                {id:'64ab58f0838496a118005fef',resource_type:RESOURCE_GHODIUM,action:'fill'},
                 
                 {id:'6498e6cc5990a50bdb4e9841',resource_type:RESOURCE_UTRIUM_LEMERGITE,action:'fill'},
                 {id:'6497ed17654a8057187c244e',resource_type:RESOURCE_UTRIUM,action:'fill'},
@@ -126,15 +140,17 @@ module.exports = {
                 {id:'64996ab5282181f1b707225d',resource_type:RESOURCE_ZYNTHIUM,action:'fill'},
                 {id:'649a30033e99bf8327e1a894',resource_type:RESOURCE_KEANIUM,action:'fill'},
                 
-                {id:'64ad7ca82cc0b6f6e5787555',resource_type:RESOURCE_LEMERGIUM_OXIDE,action:'empty',phaseOut:true},
-                {id:'64ab8de7b4e019a4313d9681',resource_type:RESOURCE_GHODIUM,action:'empty'},
-                {id:'64ab268b038fbe528e175e7b',resource_type:RESOURCE_GHODIUM,action:'empty'},
+                {id:'64ad7ca82cc0b6f6e5787555',resource_type:RESOURCE_GHODIUM_HYDRIDE,action:'empty'},
+                {id:'64ab8de7b4e019a4313d9681',resource_type:RESOURCE_GHODIUM_HYDRIDE,action:'empty'},
+                {id:'64ab268b038fbe528e175e7b',resource_type:RESOURCE_HYDROGEN,action:'fill'},
             ],
-            [RESOURCE_OXYGEN,RESOURCE_ZYNTHIUM,RESOURCE_UTRIUM],
+            [RESOURCE_OXYGEN,RESOURCE_ZYNTHIUM,RESOURCE_UTRIUM,RESOURCE_ZYNTHIUM_KEANITE],
             [
-                {resource_type:RESOURCE_HYDROGEN,exportOver:300,batchSize:6000},
-                {resource_type:RESOURCE_GHODIUM,exportOver:300,batchSize:6000},
-                {resource_type:RESOURCE_LEMERGIUM_OXIDE,exportOver:300,batchSize:6000}
+                {resource_type:RESOURCE_GHODIUM_HYDRIDE,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_GHODIUM,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_LEMERGIUM_OXIDE,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_UTRIUM_OXIDE,exportOver:0,batchSize:6000}
             ],
             rp(6,29,'W13N15'))
         // RESOURCE_UTRIUM_LEMERGITE
@@ -143,51 +159,39 @@ module.exports = {
         this.runLabTrio('649a8f82fb058c2ff9ede38f','64996ab5282181f1b707225d','649a30033e99bf8327e1a894')
         // GHODIUM
         this.runLabTrio('64ab58f0838496a118005fef','649a8f82fb058c2ff9ede38f','6498e6cc5990a50bdb4e9841')
-        this.runLabTrio('64ab268b038fbe528e175e7b','649a8f82fb058c2ff9ede38f','6498e6cc5990a50bdb4e9841')
-        this.runLabTrio('64ab8de7b4e019a4313d9681','649a8f82fb058c2ff9ede38f','6498e6cc5990a50bdb4e9841')
+        //RESOURCE_GHODIUM_HYDRIDE
+        this.runLabTrio('64ab8de7b4e019a4313d9681','64ab58f0838496a118005fef','64ab268b038fbe528e175e7b')
+         this.runLabTrio('64ad7ca82cc0b6f6e5787555','64ab58f0838496a118005fef','64ab268b038fbe528e175e7b')
+       
+        //this.runLabTrio('64ab8de7b4e019a4313d9681','649a8f82fb058c2ff9ede38f','6498e6cc5990a50bdb4e9841')
         // RESOURCE_LEMERGIUM_OXIDE
         //this.runLabTrio('64ad7ca82cc0b6f6e5787555','64ab8de7b4e019a4313d9681','64ab268b038fbe528e175e7b')
         //////////////////////////////////////////////////  
         /////////// Delta         /////////// 
                 this.manageMineralHauling('Delta',
             [
-                {id:'64b307ece8ddd4754fa5441f',resource_type:RESOURCE_GHODIUM_ACID,action:'fill'}
+                {id:'64b307ece8ddd4754fa5441f',resource_type:RESOURCE_HYDROXIDE,action:'empty'},
+                {id:'64b2aa1ac55cd6653aaa60d7',resource_type:RESOURCE_HYDROGEN,action:'fill'},
+                {id:'64b2e48d6759f465d5baee3d',resource_type:RESOURCE_OXYGEN,action:'fill'},
+                {id:'64adb7c1b4e019012a3e711a',resource_type:RESOURCE_HYDROXIDE,action:'empty'},
+                {id:'64adcbc7b0b0015398f43d30',resource_type:RESOURCE_HYDROXIDE,action:'empty'},
+                {id:'64ad9e0eb4e01927bc3e6747',resource_type:RESOURCE_HYDROXIDE,action:'empty'}
 
             ],
-            [RESOURCE_GHODIUM_ACID],
+            [RESOURCE_OXYGEN],
             [
-                {resource_type:RESOURCE_HYDROGEN,exportOver:6000,batchSize:6000}
+                {resource_type:RESOURCE_HYDROGEN,exportOver:24000,batchSize:6000},
+                {resource_type:RESOURCE_HYDROXIDE,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_GHODIUM_ACID,exportOver:0,batchSize:6000}
             ],
-            rp(12,29,'W12N23'))
+            rp(27,29,'W12N23'))
+            this.runLabTrio('64adb7c1b4e019012a3e711a','64b2e48d6759f465d5baee3d','64b2aa1ac55cd6653aaa60d7')
+            this.runLabTrio('64adcbc7b0b0015398f43d30','64b2e48d6759f465d5baee3d','64b2aa1ac55cd6653aaa60d7')
+            this.runLabTrio('64ad9e0eb4e01927bc3e6747','64b2e48d6759f465d5baee3d','64b2aa1ac55cd6653aaa60d7')
+            this.runLabTrio('64b307ece8ddd4754fa5441f','64b2e48d6759f465d5baee3d','64b2aa1ac55cd6653aaa60d7')
                     //////////////////////////////////////////////////  
         /////////// Epsilon         /////////// 
 
-        this.manageMineralHauling('Epsilon',
-            [
-                {id:'64a496cec3d595d17cfa0844',resource_type:RESOURCE_HYDROXIDE,action:'empty',phaseOut:true},
-                {id:'64a396d6a2b95a5fa4e4a02b',resource_type:RESOURCE_UTRIUM_OXIDE,action:'fill'},
-                {id:'64a4c1cec3d5957c2efa1ae5',resource_type:RESOURCE_HYDROGEN,action:'empty'},
-               
-                {id:'64a42fff5a7231fbc0e59d24',resource_type:RESOURCE_UTRIUM_ALKALIDE,action:'empty'},
-                
-                {id:'64a3e76fb0d622862949537d',resource_type:RESOURCE_UTRIUM_HYDRIDE,action:'fill'},
-                {id:'64a50bf066e7665a30b59fe4',resource_type:RESOURCE_UTRIUM_ACID,action:'empty'},
-                
-                {id:'64a42fff5a7231fbc0e59d24',resource_type:RESOURCE_ENERGY,action:'fill'},
-            ],
-            [RESOURCE_HYDROGEN,RESOURCE_HYDROXIDE,RESOURCE_UTRIUM_HYDRIDE,RESOURCE_OXYGEN],
-            [
-                {resource_type:RESOURCE_UTRIUM_ALKALIDE,exportOver:300,batchSize:6000},
-                 {resource_type:RESOURCE_UTRIUM_ACID,exportOver:300,batchSize:6000},
-                {resource_type:RESOURCE_UTRIUM,exportOver:50000,batchSize:12000},
-                {resource_type:RESOURCE_GHODIUM_ACID,exportOver:1,batchSize:6000}
-            ],
-            rp(41,6,'W12N13'))
-        // RESOURCE_HYDROXIDE
-       // this.runLabTrio('64a496cec3d595d17cfa0844','64a396d6a2b95a5fa4e4a02b','64a4c1cec3d5957c2efa1ae5')
-        // RESOURCE_UTRIUM_ACID
-       // this.runLabTrio('64a50bf066e7665a30b59fe4','64a3e76fb0d622862949537d','64a496cec3d595d17cfa0844')
-            
         //////////////////////////////////////////////////
         
         /////////// Zeta         ///////////     
@@ -196,24 +200,26 @@ module.exports = {
                 
                 {id:'64a8b19566e7660c53b73a87',resource_type:RESOURCE_OXYGEN,action:'fill'},
                 {id:'649eaebef77c6ef5f76803c3',resource_type:RESOURCE_HYDROGEN,action:'fill'},
+                {id:'649ea2cf0b6a4a65f03edc13',resource_type:RESOURCE_UTRIUM_ALKALIDE,action:'fill'},
                 {id:'64a85c6ec449d31ba1a8320a',resource_type:RESOURCE_GHODIUM_ACID,action:'fill'},
-                {id:'649ea2cf0b6a4a65f03edc13',resource_type:RESOURCE_HYDROXIDE,action:'empty'},
                 
-                {id:'64aee553a7a98d1b5bfd8da1',resource_type:RESOURCE_HYDROXIDE,action:'empty'},
+                {id:'64aee553a7a98d1b5bfd8da1',resource_type:RESOURCE_HYDROXIDE,action:'fill'},
                 {id:'64aeda006d8f126a99edc7de',resource_type:RESOURCE_HYDROXIDE,action:'empty'}
             ],
-            [RESOURCE_HYDROGEN],
+            [RESOURCE_HYDROGEN,RESOURCE_GHODIUM_ACID,RESOURCE_UTRIUM,RESOURCE_UTRIUM_ALKALIDE],
             [
+                /*{resource_type:RESOURCE_UTRIUM_ALKALIDE,exportOver:0,batchSize:6000},*/
                 {resource_type:RESOURCE_HYDROXIDE,exportOver:300,batchSize:18000},
-                {resource_type:RESOURCE_GHODIUM_ACID,exportOver:300,batchSize:6000},
+                /*{resource_type:RESOURCE_GHODIUM_ACID,exportOver:300,batchSize:6000},*/
                 {resource_type:RESOURCE_OXYGEN,exportOver:50000,batchSize:24000}
             ],
             rp(13,22,'W12N19'))
+            // RESOURCE_HYDROXIDE
         this.runLabTrio('64aee553a7a98d1b5bfd8da1','649eaebef77c6ef5f76803c3','64a8b19566e7660c53b73a87')
         this.runLabTrio('64aeda006d8f126a99edc7de','649eaebef77c6ef5f76803c3','64a8b19566e7660c53b73a87')
+        //this.runLabTrio('649ea2cf0b6a4a65f03edc13','649eaebef77c6ef5f76803c3','64a8b19566e7660c53b73a87')
         
-        //this.runLabTrio('64a85c6ec449d31ba1a8320a','649eaebef77c6ef5f76803c3','64a8b19566e7660c53b73a87')
-        this.runLabTrio('649ea2cf0b6a4a65f03edc13','649eaebef77c6ef5f76803c3','64a8b19566e7660c53b73a87')
+        //this.runLabTrio('649ea2cf0b6a4a65f03edc13','649eaebef77c6ef5f76803c3','64a8b19566e7660c53b73a87')
             
         let thing=this;
         
@@ -225,6 +231,7 @@ module.exports = {
         let mediumPeltastBody = '3m2a4r6m';
         let heavyPeltastBody = '4m2a6r10m1h';
         let superHeavyPeltastBody = '4m8r2a12m2h';
+        let heavyRanged = '19*1r1m+1m1a+5*1m1h';
         let spartanBody='14m6a10r18m2h';
         let hopliteBody='8m8a';
         let roomTraves = ['W14N18','W14N19','W14N20','W14N21','W15N21','W15N22','W15N23','W15N24','W15N25'];
@@ -233,25 +240,18 @@ module.exports = {
         let drainerBody = '3*1a1m + 6*1h1m';
        // this.claimReactor('Alpha-3','thor-ninja1',{id:'646f55e99bdd4e0008300cfc',pos:{x:12,y:16,roomName:'W15N25'}},'3m1cl');
       
-        this.scoutRoom('Theta','Tscout','W15N25')
-        if(!mb.hasRoom('W15N25'))mb.scanRoom('W15N25')
        // this.killCreepsBreakTarget('Gamma-3','feck','W14N15','25m20a5h',[],[], true,{x:40,y:9})
         
-        this.rotateCreep('SwampyJim-', function(activeCreepName){
-           // if(Game.creeps[activeCreepName])
+        this.rotateCreep('nope-', function(activeCreepName){
+            if(Game.creeps[activeCreepName])
             //thing.killCreepsBreakTarget('Alpha-2',activeCreepName,'W15N25','3m15m15a15m1h1m',[],roomTraves, true,{x:12,y:18})
-           // thing.constantGuardRoom('Alpha-2',activeCreepName,'W15N25','3m15m15a15m1h1m',{x:26,y:25},false,false,7,[]);
-           thing.maintainRoadsInRoom('Alpha-2',activeCreepName,'W15N25','4m4w4c4m',false)
-        },600)
-        this.rotateCreep('SwampyBob-', function(activeCreepName){
-           /// if(Game.creeps[activeCreepName])
-           // thing.killCreepsBreakTarget('Alpha-3',activeCreepName,'W15N25','3m15m15a15m1h1m',[],roomTraves, true,{x:12,y:18})
-           // thing.constantGuardRoom('Alpha-2',activeCreepName,'W15N25','3m15m15a15m1h1m',{x:25,y:25},false,false,7,[]);
-          // thing.maintainRoadsInRoom('Alpha-3',activeCreepName,'W15N25','4m4w4c4m')
-        },700)
-        this.rotateCreep('Peltast1-', function(activeCreepName){
-           // if(Game.creeps[activeCreepName])
-            thing.killCreepsBreakTarget('Zeta-2',activeCreepName,'W11N17',heavyPeltastBody,['64b475dfe8dc39bce3d688a2'],[], true,{x:23,y:20})
+            thing.constantGuardRoom('Alpha-3',activeCreepName,'W14N17','5m5a5a10m1h1m',{x:22,y:25},false,true);
+           //thing.maintainRoadsInRoom('Alpha-2',activeCreepName,'W15N25','4m4w4c4m',false)
+        },300)
+
+        this.rotateCreep('Skirmisher1-', function(activeCreepName){
+            if(Game.creeps[activeCreepName])
+            thing.killCreepsBreakTarget('Alpha-3',activeCreepName,'W14N27',heavyRanged,['64b6803de11f9805d48b8307'],[], true,{x:23,y:14})
            // thing.constantGuardRoom('Alpha-2',activeCreepName,'W15N25','3m15m15a15m1h1m',{x:26,y:25},false,false,7,[]);
            //thing.maintainRoadsInRoom('Alpha-2',activeCreepName,'W15N25','4m4w4c4m')
         },700)
@@ -259,20 +259,79 @@ module.exports = {
         this.rotateCreep('thor-ninja-', function(activeCreepName){
               //  thing.claimReactor('Alpha-3',activeCreepName,{id:'646f55e99bdd4e0008300cfc',pos:{x:12,y:16,roomName:'W15N25'}},'5m1cl');
         },700)
-        this.haulResources('Alpha-3','AfeX1','25*1c1m',gob('647a92e8655cd29697596191'),gob('64b557aee11f98f3318b0a56'),[RESOURCE_ENERGY],[],4000,500);
-        this.haulResources('Alpha-3','AfeX1','25*1c1m',gob('647a92e8655cd29697596191'),gob('64b557aee11f98f3318b0a56'),[RESOURCE_ENERGY],[],4000,500);
+      
+         this.harvestAndCollectMineral('Theta','646f56009bdd4e0008301720','64b800317d5bd2b206679503','64b7e39992a3fccf4e979958',RESOURCE_THORIUM,'5m10c','20w1c5m')
+      
+      
+      
+      
+            
+        let roomToStrip=false;
         
+        let currentRoom = 'W12N18';
+        let nextRoom = 'xxxx';
+        let currentRoomThoriumID = '646f56009bdd4e000830177f';
+        let currentRoomController = mb.getControllerForRoom(currentRoom);
+        let currentRoomTerminal = mb.getTerminalForRoom(currentRoom)
+        
+        
+        if( gob(currentRoomThoriumID) || (currentRoomTerminal && currentRoomTerminal.storingAtleast(1,RESOURCE_THORIUM)) ){
+            
+               roomToStrip=currentRoom;
+            this.stripMineRoomForThorium(
+                   // feeder node name & room to strip && bootupContainerId
+                   'Zeta',roomToStrip, '649f2a2c53140c3098ed13e8',
+                   // upgrader spots 
+                   [rp(5,22,roomToStrip),rp(4,22,roomToStrip),rp(4,21,roomToStrip),rp(5,21,roomToStrip),rp(6,21,roomToStrip),rp(5,20,roomToStrip)],
+                   // funneler-wait-spot & hauler count & upgraderContainerSpot && upgraderBoostPlans
+                   rp(13,23,roomToStrip),15, rp(5,21,roomToStrip),[{resource_type:RESOURCE_GHODIUM_ACID,lab_id:'64a85c6ec449d31ba1a8320a'}],
+                   // thorium id & terminal pos & thorium harvester spots & stripMineRoomForThorium
+                   '646f56009bdd4e000830177f',rp(22,30,roomToStrip),[rp(22,31,roomToStrip),rp(23,31,roomToStrip)],[{resource_type:RESOURCE_UTRIUM_ALKALIDE,lab_id:'649ea2cf0b6a4a65f03edc13'}],
+                   // spawn spot & storage build spot
+                   rp(23,22,roomToStrip),rp(22,29,roomToStrip))
+        }
+        if(currentRoomController.level > 5 ){
+            //clog('prepping next room',nextRoom)
+            
+               roomToStrip=nextRoom;
+               this.stripMineRoomForThorium(
+                   // feeder node name & room to strip && bootupContainerId
+                   'Zeta',roomToStrip, '649f2a2c53140c3098ed13e8',
+                   // upgrader spots 
+                   [rp(5,22,roomToStrip),rp(4,22,roomToStrip),rp(4,21,roomToStrip),rp(5,21,roomToStrip),rp(6,21,roomToStrip),rp(5,20,roomToStrip)],
+                   // funneler-wait-spot & hauler count & upgraderContainerSpot && upgraderBoostPlans
+                   rp(13,23,roomToStrip),15, rp(5,21,roomToStrip),[{resource_type:RESOURCE_GHODIUM_ACID,lab_id:''}],
+                   // thorium id & terminal pos & thorium harvester spots & stripMineRoomForThorium
+                   '646f56009bdd4e000830177f',rp(22,30,roomToStrip),[rp(22,31,roomToStrip),rp(23,31,roomToStrip)],[{resource_type:RESOURCE_UTRIUM_ALKALIDE,lab_id:'649ea2cf0b6a4a65f03edc13'}],
+                   // spawn spot & storage build spot
+                   rp(23,22,roomToStrip),rp(22,29,roomToStrip))
+        }
+      this.emptyOutStoresAndRetrieve('Zeta','W11N18-salvage','W11N18','649a9d4257f6b84692fe9d26','10*1c1m')
+      
+      
+      
         //#####################################################################################
         // Season - Iota Tasks
         //##################################################################################### 
-        
-        // >>     W13N18
+        this.harvestAndCollectMineral('Iota','646f55ff9bdd4e00083016e3','64b82b254979614a3a7e42bd','64b9d13bdec1636613e107c8',RESOURCE_THORIUM,'2m4c','20w5m1c')
+        this.emptyOutStoresAndRetrieve('Iota','W12N13-salvage','W12N13','64b65d93a75a99c942d9e467','10*1c1m')
+        // >>     W13N12
         this.defendRoom('Iota','Id0','W13N12');
-        this.maintainRoadsInRoom('Iota','Aw0','W13N12','1w3c1m');
+        this.maintainRoadsInRoom('Iota','Iw0','W13N12','1w3c1m');
         this.harvestPoint('Iota','Ihr0','6w1c3m',{id:'646e730c071eb8276c0a677f',pos:{x:11,y:19,roomName:'W13N12'}});
-        this.reserverRoom('Iota','Ir0',{id:'646e730c071eb8276c0a6780',pos:{x:38,y:23,roomName:'W13N12'}},'1cl11m');
+        this.reserverRoom('Iota','Ir0',{id:'646e730c071eb8276c0a6780',pos:{x:38,y:23,roomName:'W13N12'}},'2cl2m');
         this.harvestPoint('Iota','Ihr1','6w1c3m',{id:'646e730c071eb8276c0a6781',pos:{x:23,y:20,roomName:'W13N12'}});
-
+        // >>     W15N12
+        this.defendRoom('Iota','Id1','W15N12');
+        this.maintainRoadsInRoom('Iota','Iw1','W15N12','1w3c1m');
+        this.harvestPoint('Iota','Ihr2','6w1c3m',{id:'646e72b5071eb8276c0a63f8',pos:{x:11,y:19,roomName:'W15N12'}});
+        this.reserverRoom('Iota','Ir1',{id:'646e72b5071eb8276c0a63f7',pos:{x:38,y:23,roomName:'W15N12'}},'2cl2m');
+         // >>     W14N11
+        this.defendRoom('Iota','Id2','W14N11');
+        this.maintainRoadsInRoom('Iota','Iw2','W14N11','1w3c1m');
+        this.harvestPoint('Iota','Ihr3','6w1c3m',{id:'646e72e1071eb8276c0a65d3',pos:{x:11,y:19,roomName:'W14N11'}});
+        this.harvestPoint('Iota','Ihr4','6w1c3m',{id:'646e72e1071eb8276c0a65d4',pos:{x:11,y:19,roomName:'W14N11'}});
+        this.reserverRoom('Iota','Ir2',{id:'646e72e1071eb8276c0a65d2',pos:{x:38,y:23,roomName:'W14N11'}},'2cl2m');
    
         //#####################################################################################
         // Season - Alpha Tasks
@@ -281,7 +340,7 @@ module.exports = {
         let terminal =  gob('648140f8676bfd1d7f18d344');
 
  
-        this.harvestAndCollectMineral('Alpha','64765074d6ad5e002e061938','6484f6fab2d65ba2f7fa148b','647a92e8655cd29697596191',RESOURCE_ZYNTHIUM,'5m10c','39w10m1c')
+       // this.harvestAndCollectMineral('Alpha','64765074d6ad5e002e061938','6484f6fab2d65ba2f7fa148b','647a92e8655cd29697596191',RESOURCE_ZYNTHIUM,'5m10c','39w10m1c')
         let smallBody = '4*1c1m';
         let mediumBody = '6*1c1m';
         let bigBody = '8*1c1m';
@@ -313,14 +372,13 @@ module.exports = {
         
         
         // >>  W14N17 
-         this.defendRoom('Alpha','Ad2','W14N17');
+        // this.defendRoom('Alpha','Ad2','W14N17');
          
-        this.maintainRoadsInRoom('Alpha','Aw2','W14N17','2w6c2m');
-        this.reserverRoom('Alpha','Ar2',{id:'646e72df071eb8276c0a65ad',pos:{x:12,y:9,roomName:'W14N17'}},'2cl2m');
-        this.harvestPoint('Alpha','Ahr5','6w1c3m',{id:'646e72df071eb8276c0a65ae',pos:{x:18,y:45,roomName:'W14N17'}});
+        //this.maintainRoadsInRoom('Alpha','Aw2','W14N17','2w6c2m');
+        //this.reserverRoom('Alpha','Ar2',{id:'646e72df071eb8276c0a65ad',pos:{x:12,y:9,roomName:'W14N17'}},'2cl2m');
+       // this.harvestPoint('Alpha','Ahr5','6w1c3m',{id:'646e72df071eb8276c0a65ae',pos:{x:18,y:45,roomName:'W14N17'}});
         
-        this.keepRoomClearOfLv0InvaderCores('Alpha','Aa1','W14N17','3a3m');
-        this.keepRoomClearOfLv0InvaderCores('Alpha','Aa2','W14N17','3a3m');
+
          
           // W14N19 
           this.defendRoom('Alpha','Ad3','W14N19');
@@ -341,28 +399,20 @@ module.exports = {
         //#####################################################################################
         // Season - Beta Tasks
         //#####################################################################################
-        this.harvestAndCollectMineral('Beta','646f55fc9bdd4e00083015be','64af223e48c225e71506e03d','64aed2b229eec8241264b69a',RESOURCE_THORIUM,'2m4c','20w5m1c')
+        //
+       // this.emptyOutStoresAndRetrieve('Beta','W17N17-salvage','W17N17','64aed2b229eec8241264b69a','10*1c1m')
+
         
+        /////// Remotes  ////////////////////////////////////////
+
         
-        
-        /////// W18N18  ////////////////////////////////////////
-         this.defendRoom('Beta','Bd1','W18N18');
+        this.runRemoteRoom('Beta','W18N18',false)
+        this.runRemoteRoom('Beta-2','W17N16')
+        this.runRemoteRoom('Beta-2','W17N17')
+        this.runRemoteRoom('Beta','W19N17')
         this.maintainRoadsInRoom('Beta','Bw1',['W18N18','W18N17'],'1w3c1m');
-        this.harvestPoint('Beta','Bhr1','4w1c2m',{id:'646e7231071eb8276c0a5f38',pos:{x:14,y:17,roomName:'W18N18'}});
-        /////// W17N17  ////////////////////////////////////////
-         this.defendRoom('Beta','Bd2','W17N17');
         this.maintainRoadsInRoom('Beta','Bw2',['W17N17','W17N16'],'2w6c1m');
-        this.reserverRoom('Beta','Br1',{id:'646e725d071eb8276c0a607d',pos:{x:30,y:31,roomName:'W17N17'}},'2cl2m');
-        this.harvestPoint('Beta','Bhr2','6w1c3m',{id:'646e725d071eb8276c0a607e',pos:{x:14,y:17,roomName:'W17N17'}});
-        /////// W17N16  ////////////////////////////////////////
-         this.defendRoom('Beta','Bd2','W17N16');
-        this.reserverRoom('Beta','Br2',{id:'646e725e071eb8276c0a6081',pos:{x:30,y:4,roomName:'W17N16'}},'2cl2m');
-        this.harvestPoint('Beta','Bhr3','6w1c3m',{id:'646e725e071eb8276c0a6080',pos:{x:30,y:4,roomName:'W17N16'}});
-        /////// W19N17  ////////////////////////////////////////
-         this.defendRoom('Beta','Bd3','W19N17');
          this.maintainRoadsInRoom('Beta','Bw1',['W19N17','W18N17'],'1w3c1m');
-        //this.reserverRoom('Beta','Br2',{id:'646e725e071eb8276c0a6081',pos:{x:30,y:4,roomName:'W17N16'}},'2cl2m');
-        this.harvestPoint('Beta','Bhr4','4w1c2m',{id:'646e7205071eb8276c0a5df9',pos:{x:30,y:4,roomName:'W19N17'}});
 
         //#####################################################################################
         // Season - Gamma Tasks
@@ -371,7 +421,7 @@ module.exports = {
         let terminalG =  gob('6487f218a38d042a92467fce');
         //398
         
-         this.emptyOutStoresAndRetrieve('Gamma-3','W12N16-salvage','W12N16','648483965bdc7e637d357f8f','10*1c1m')
+         
       
         this.harvestAndCollectCentreSectorMineral('Gamma','64765074d6ad5e002e062c85',rp(11,9,'W15N15'),'648483965bdc7e637d357f8f',RESOURCE_KEANIUM,'8*1c1m','10*2w1c1m','-k-W15N15',2)
         this.harvestAndCollectCentreSectorMineral('Gamma-2','64765074d6ad5e002e061980',rp(41,31,'W13N15'),'648483965bdc7e637d357f8f',RESOURCE_LEMERGIUM,'4*2c1m','10*2w1c1m','-L-W13N15')
@@ -404,26 +454,31 @@ module.exports = {
         /////// W12N15 ////////////////////////////////////////
         this.defendRoom('Gamma','Gd1','W12N15');
        // this.scoutRoom('Gamma','Gsc2','W12N15');
-        this.maintainRoadsInRoom('Gamma-2','Gw1',['W12N15'],'2w6c2m');
+        this.maintainRoadsInRoom('Gamma-2','Gw1',['W12N15','W12N16'],'2w6c2m');
         this.reserverRoom('Gamma','Gr1',{id:'646e7335071eb8276c0a68c3',pos:{x:30,y:31,roomName:'W12N15'}},'2cl2m');
         this.harvestPoint('Gamma','Ghr3','6w1c3m',{id:'646e7335071eb8276c0a68c2',pos:{x:14,y:17,roomName:'W12N15'}});
         this.harvestPoint('Gamma','Ghr4','6w1c3m',{id:'646e7335071eb8276c0a68c1',pos:{x:14,y:17,roomName:'W12N15'}});
         /////// W12N16 ////////////////////////////////////////
-       if(Game.creeps['Ghr6'])this.harvestPoint('Gamma','Ghr6','4w1c2m',{id:'646e7335071eb8276c0a68bf',pos:{x:30,y:45,roomName:'W12N16'}});
-        
+       this.runRemoteRoom('Gamma','W12N16')
+       
         /////// W13N14 ////////////////////////////////////////
         let invadersInW12N15 = this.defendRoom('Gamma','Gd2','W13N14');
         this.reserverRoom('Gamma','Gr2',{id:'646e730b071eb8276c0a6779',pos:{x:7,y:26,roomName:'W13N14'}},'2cl2m');
-        this.maintainRoadsInRoom('Gamma-2','Gw2',['W13N14'],'2w6c2m');
+        this.maintainRoadsInRoom('Gamma-2','Gw2',['W13N14','W14N14'],'2w6c2m');
         this.keepRoomClearOfLv0InvaderCores('Gamma','Ga3','W13N14','3a3m');
         this.keepRoomClearOfLv0InvaderCores('Gamma','Ga4','W13N14','3a3m');
         //this.scoutRoom('Gamma','Gsc1','W12N15');
         this.harvestPoint('Gamma','Ghr5','4w1c2m',{id:'646e730b071eb8276c0a6778',pos:{x:7,y:5,roomName:'W13N14'}});
         
         /////// W14N14 ////////////////////////////////////////
-        //this.defendRoom('Gamma','Gd3','W14N14',true);
-        //this.harvestPoint('Gamma','Ghr7','10w1c5m',{id:'646e72e0071eb8276c0a65c3',pos:{x:38,y:4,roomName:'W14N14'}});
-       // this.harvestPoint('Gamma','Ghr8','10w1c5m',{id:'646e72e0071eb8276c0a65c7',pos:{x:16,y:38,roomName:'W14N14'}});
+        this.rotateCreep('W14N14-guard', function(activeCreepName){
+            let target = thing.constantGuardSKRoom('Gamma-3',activeCreepName,'W14N14',['646e72e0071eb8276c0a65c5','646e72e0071eb8276c0a65c9','646e72e0071eb8276c0a65c6'])
+          
+           // if(Game.creeps[activeCreepName])thing.duoHealer('Gamma-2',activeCreepName+'-healer','2m10h10m',activeCreepName, target, [])
+        },400)
+        this.harvestAndCollectCentreSectorMineral('Gamma-2','64765074d6ad5e002e062ca4',rp(43,38,'W14N14'),'648483965bdc7e637d357f8f',RESOURCE_OXYGEN,'4*2c1m','10*2w1c1m','-O-W14N14',2)
+        this.harvestPoint('Gamma','Ghr7','10w1c5m',{id:'646e72e0071eb8276c0a65c3',pos:{x:38,y:4,roomName:'W14N14'}});
+        this.harvestPoint('Gamma','Ghr8','10w1c5m',{id:'646e72e0071eb8276c0a65c7',pos:{x:16,y:38,roomName:'W14N14'}});
 
         
 
@@ -458,42 +513,16 @@ module.exports = {
         //#####################################################################################
        // this.emptyContainersInEnemyRemote('Delta','mosquito-1',{id:'64a418669ca314740e7a759f',pos:{x:45,y:39,roomName:'W13N31'}},[], rp(9,37,'W12N30'), rp(32,41,'W13N31'))
        let container_id ='64ae43e829eec8738c647af3';
-        this.harvestAndCollectMineral('Delta','64765074d6ad5e002e0619d3','64aed2aea7a98d1bcdfd85cf','64ad6dc0838496755f013b46',RESOURCE_HYDROGEN,'2m4c','20w5m1c')
+       // this.harvestAndCollectMineral('Delta','64765074d6ad5e002e0619d3','64aed2aea7a98d1bcdfd85cf','64ab23a839f2ded2a133dfa5',RESOURCE_HYDROGEN,'2m4c','20w5m1c')
+        this.harvestAndCollectCentreSectorMineral('Delta-2','64765074d6ad5e002e0619d3',rp(43,45,'W12N23'),'64ab23a839f2ded2a133dfa5',RESOURCE_HYDROGEN,'4*2c1m','10*2w1c1m','-H-W12N23',2)
        // this.startupRoomNoVision('Delta-2','W13N24',{harvestSources:false,workerCount:15,phaseOut:true})
         let deltaStore = gob('64ab23a839f2ded2a133dfa5');
-        this.haulResources('Delta-2','DfeX1','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta-2','DfeX2','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta-2','DfeX3','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta-2','DfeX4','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta-2','DfeX5','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta-2','DfeX6','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','DfeX7','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','DfeX8','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','DfeX9','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','DfeX10','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','DfeX11','25*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
         
-        this.haulResources('Delta','TfeX6','10*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','TfeX2','10*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','TfeX3','10*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','TfeX4','10*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Delta','TfeX5','10*1c1m',gob('64ab23a839f2ded2a133dfa5'),gob('64b599d3a835d054dc26df2f'),[RESOURCE_ENERGY],[],4000,300);
-        
-        this.haulResources('Theta','TfeX1','10*1c1m',gob('64b599d3a835d054dc26df2f'),gob('64b4459fa240f6c44e427726'),[RESOURCE_ENERGY],[],4000,300);
-       
-        this.rotateCreep('Dux1-', function(activeCreepName){
-                thing.withdrawThenUpgrade('Delta-2',activeCreepName,'64b4459fa240f6c44e427726','646e7307071eb8276c0a6755','20w10c20m',true,rp(28,9,'W13N24'),[{resource_type:RESOURCE_GHODIUM_ACID,lab_id:'64b307ece8ddd4754fa5441f'}]);
-                //thing.withdrawThenBuild('Delta-2',activeCreepName,'64b430fd54833d3bdc70e9b8','64b551debbcf3074dc3fa2d8','20w10c20m');
-        },500)
-        this.rotateCreep('Dux2-', function(activeCreepName){
-               thing.withdrawThenUpgrade('Delta-2',activeCreepName,'64b4459fa240f6c44e427726','646e7307071eb8276c0a6755','20w10c20m',true,rp(29,9,'W13N24'),[{resource_type:RESOURCE_GHODIUM_ACID,lab_id:'64b307ece8ddd4754fa5441f'}]);
-        },500)
-        
-        this.rotateCreep('Eux1-', function(activeCreepName){
-                thing.withdrawThenUpgrade('Epsilon',activeCreepName,'64b566ce6759f43367bbef50','646e72e1071eb8276c0a65d0','20w10c20m',true,rp(37,35,'W14N12'),[]);
-                //thing.withdrawThenBuild('Delta-2',activeCreepName,'64b430fd54833d3bdc70e9b8','64b551debbcf3074dc3fa2d8','20w10c20m');
-        },500)
-       
+        let tfexRomTrav2 = ['W13N24','W14N24','W14N23','W13N23','W12N23'];
+        let tfexRomTrav = ['W12N23','W13N23','W14N23','W14N24','W13N24'];
+        tfexRomTrav=[];
+        tfexRomTrav2=[];
+      
 
          /////// W13N23 ////////////////////////////////////////
          this.defendRoom('Delta','Dd0','W13N23');
@@ -509,7 +538,7 @@ module.exports = {
        this.reserverRoom('Delta','Dr2',{id:'646e7333071eb8276c0a68ad',pos:{x:33,y:8,roomName:'W12N22'}},'2cl2m');
     
         /////// W13N22 ////////////////////////////////////////
-        //this.maintainRoadsInRoom('Delta','Dw2',['W13N22'],'1w3c1m');
+        this.maintainRoadsInRoom('Delta','Dw2',['W13N22'],'2w6c2m');
         if(!mb.hasRoom('W13N22'))mb.scanRoom('W13N22')
          this.defendRoom('Delta','Dd2','W13N22');
         this.harvestPoint('Delta','Dhr3','6w1c3m',{id:'646e7308071eb8276c0a675c',pos:{x:45,y:20,roomName:'W13N22'}});
@@ -517,90 +546,18 @@ module.exports = {
        this.reserverRoom('Delta','Dr3',{id:'646e7308071eb8276c0a675d',pos:{x:45,y:20,roomName:'W13N22'}},'2cl2m');
         
         /////// W11N23 ////////////////////////////////////////
+        this.constantGuardRoom('Delta','pest-stomper','W11N23','5r1a6m',{x:42,y:24},false,true,50);
         this.maintainRoadsInRoom('Delta','Dw3',['W11N23'],'2w6c2m');
-      //  this.maintainRoadsInRoom('Delta','Dw3+1',['W11N23'],'2w6c2m');
-        if(!mb.hasRoom('W11N23'))mb.scanRoom('W11N23')
-         this.defendRoom('Delta','Dd3','W11N23');
-        this.harvestPoint('Delta','Dhr5','6w1c3m',{id:'646e735c071eb8276c0a69f5',pos:{x:25,y:25,roomName:'W11N23'}});
-        this.harvestPoint('Delta','Dhr6','6w1c3m',{id:'646e735c071eb8276c0a69f6',pos:{x:25,y:25,roomName:'W11N23'}});
-       this.reserverRoom('Delta','Dr4',{id:'646e735c071eb8276c0a69f4',pos:{x:25,y:25,roomName:'W11N23'}},'2cl2m');
-        
-        //this.harvestPoint('Delta','Dhrx','10w1c10m',{id:'646e72b0071eb8276c0a63bb',pos:{x:25,y:25,roomName:'W11N23'}});
+        this.runRemoteRoom('Delta','W11N23',true)
         //#####################################################################################
         // Season - Epsilon Tasks
         //#####################################################################################
 
-        this.startupRoomNoVision('Epsilon','W14N12',{phaseOut:true,workerCount:15,harvestSources:false})
-        
-         this.haulResources('Epsilon-2','EfeX1','20*1c1m',gob('6490e921bb3acd8a60da8c01'),gob('64b55024a835d0143f26bf83'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Epsilon-2','EfeX2','20*1c1m',gob('6490e921bb3acd8a60da8c01'),gob('64b55024a835d0143f26bf83'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Epsilon-2','EfeX3','20*1c1m',gob('6490e921bb3acd8a60da8c01'),gob('64b315eb92a3fc8a22959cc1'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Epsilon-2','EfeX4','20*1c1m',gob('6490e921bb3acd8a60da8c01'),gob('64b315eb92a3fc8a22959cc1'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Epsilon-2','EfeX5','20*1c1m',gob('6490e921bb3acd8a60da8c01'),gob('64b316fcc55cd605b4aa8fbc'),[RESOURCE_ENERGY],[],4000,300);
-        this.haulResources('Epsilon-2','EfeX6','20*1c1m',gob('6490e921bb3acd8a60da8c01'),gob('64b316fcc55cd605b4aa8fbc'),[RESOURCE_ENERGY],[],4000,300);
-
-       // this.emptyOutStoresAndRetrieve('Epsilon','W11N12-salvage','W11N12','6490e921bb3acd8a60da8c01')
-        this.harvestAndCollectMineral('Epsilon','64765074d6ad5e002e0619dc','649569695990a52db34cdb6c','6490e921bb3acd8a60da8c01',RESOURCE_UTRIUM,'4c2m','20w5m');
-         
-        
-       
-        // >>>>>>>> W11N13 >>>>>>>>
-        this.maintainRoadsInRoom('Epsilon','Ew0',['W11N13','W11N12'],'2w6c2m');
-       
-        this.defendRoom('Epsilon','Ed1','W11N13');
-        //this.reserverRoom('Epsilon','Er1',{id:'646e7360071eb8276c0a6a14',pos:{x:27,y:29,roomName:'W11N13'}},'2cl2m');
-        this.harvestPoint('Epsilon','Ehr1','6w1c3m',{id:'646e7360071eb8276c0a6a15',pos:{x:34,y:35,roomName:'W11N13'}});
-        this.harvestPoint('Epsilon','Ehr2','6w1c3m',{id:'646e7360071eb8276c0a6a16',pos:{x:7,y:16,roomName:'W11N13'}});
-        
-        
-         // >>>>>>>> W12N14 >>>>>>>>
-        
-        this.defendRoom('Epsilon','Ed2','W12N14');
-        this.maintainRoadsInRoom('Epsilon','Ew1',['W12N14','W11N14'],'2w6c2m');
-       // this.maintainRoadsInRoom('Epsilon','Ew1+1',['W12N14','W11N14'],'2w6c2m');
-        this.reserverRoom('Epsilon','Er2',{id:'646e7336071eb8276c0a68c5',pos:{x:27,y:29,roomName:'W12N14'}},'2cl2m');
-        this.harvestPoint('Epsilon','Ehr3','6w1c3m',{id:'646e7336071eb8276c0a68c7',pos:{x:34,y:35,roomName:'W12N14'}});
-        this.harvestPoint('Epsilon','Ehr4','6w1c3m',{id:'646e7336071eb8276c0a68c6',pos:{x:7,y:16,roomName:'W12N14'}});
-        
-        // >>>>>>>> W13N13 & W14N13 >>>>>>>>
-        
-        this.defendRoom('Epsilon','Ed3','W13N13');
-        this.defendRoom('Epsilon','Ed6','W14N13');
-         this.maintainRoadsInRoom('Epsilon','Ew2',['W13N13','W14N13','W13N12'],'2w6c2m');
-         this.maintainRoadsInRoom('Epsilon','Ew2+1',['W13N13','W14N13','W13N12'],'2w6c2m');
-        this.reserverRoom('Epsilon','Er3',{id:'646e730c071eb8276c0a677b',pos:{x:27,y:29,roomName:'W13N13'}},'2cl2m');
-        this.harvestPoint('Epsilon','Ehr5','6w1c3m',{id:'646e730c071eb8276c0a677d',pos:{x:34,y:35,roomName:'W13N13'}});
-        this.harvestPoint('Epsilon','Ehr6','6w1c3m',{id:'646e730c071eb8276c0a677c',pos:{x:7,y:16,roomName:'W13N13'}});
-        this.harvestPoint('Epsilon','Ehr9','4w1c2m',{id:'646e72e1071eb8276c0a65cc',pos:{x:7,y:16,roomName:'W14N13'}});
-        
-        // >>>>>>>> W11N12 >>>>>>>>
-         this.defendRoom('Epsilon','Ed4','W11N12');
-        this.harvestPoint('Epsilon','Ehr7','4w1c2m',{id:'646e7361071eb8276c0a6a18',pos:{x:8,y:17,roomName:'W11N12'}});
-        
-        // >>>>>>>> W11N14 >>>>>>>>
-        this.defendRoom('Epsilon','Ed5','W11N14');
-        this.harvestPoint('Epsilon','Ehr8','4w1c2m',{id:'646e7360071eb8276c0a6a11',pos:{x:10,y:9,roomName:'W11N14'}});
-        
-
-        
+     
         //#####################################################################################
         // Season - Zeta Tasks
         //#####################################################################################
-        if(!gob('646f56009bdd4e0008301781') || gob('646f56009bdd4e0008301781').mineralAmount<20000){
-            /*
-                roomToStrip='W11N19';
-               this.stripMineRoomForThorium(
-               // feeder node name & room to strip && bootupContainerId
-               'Zeta',roomToStrip, '64a000a8116aa83c32ab5411',
-               // upgrader spots 
-               [rp(9,35,roomToStrip),rp(10,35,roomToStrip),rp(10,36,roomToStrip),rp(9,36,roomToStrip),rp(8,36,roomToStrip)],
-               // funneler-wait-spot & hauler count & upgraderContainerSpot && upgraderBoostPlans
-               rp(13,33,roomToStrip),18, rp(9,35,roomToStrip),[{resource_type:RESOURCE_GHODIUM_ACID,lab_id:'64a85c6ec449d31ba1a8320a'}],
-               // thorium id & terminal pos & thorium harvester spots
-               '646f56019bdd4e00083017d8',rp(33,17,roomToStrip),[rp(32,16,roomToStrip)],
-               // spawn spot & storage build spot
-               rp(14,17,roomToStrip),rp(33,18,roomToStrip))*/
-        }
+
         this.emptyOutStoresAndRetrieve('Zeta-2','W11N19-salvage','W11N19','649d837753140c3091ec5697','10*1c1m')
 
 
@@ -616,37 +573,79 @@ module.exports = {
         
         // >>>>>>>> W11N19 >>>>>>>>
         this.defendRoom('Zeta','Zd2','W11N19');
-       // this.maintainRoadsInRoom('Zeta','Zw2','W11N19','1w3c1m');
+        this.maintainRoadsInRoom('Zeta','Zw2','W11N19','1w3c1m');
         this.reserverRoom('Zeta','Zr2',{id:'646e735e071eb8276c0a6a02',pos:{x:7,y:36,roomName:'W11N19'}},'2cl2m');
         this.harvestPoint('Zeta','Zhr3','6w1c3m',{id:'646e735e071eb8276c0a6a01',pos:{x:29,y:5,roomName:'W11N19'}});
         this.harvestPoint('Zeta','Zhr4','6w1c3m',{id:'646e735e071eb8276c0a6a00',pos:{x:36,y:5,roomName:'W11N19'}}); 
         
         // >>>>>>>> W11N18 >>>>>>>>
-        this.defendRoom('Zeta','Zd3','W11N18');
+        //this.defendRoom('Zeta','Zd3','W11N18');
         //this.reserverRoom('Zeta','Zr1',{id:'646e7360071eb8276c0a6a14',pos:{x:27,y:29,roomName:'W11N19'}},'2cl2m');
-        this.harvestPoint('Zeta','Zhr5','4w1c2m',{id:'646e735e071eb8276c0a6a04',pos:{x:16,y:15,roomName:'W11N18'}});
+       // this.harvestPoint('Zeta','Zhr5','4w1c2m',{id:'646e735e071eb8276c0a6a04',pos:{x:16,y:15,roomName:'W11N18'}});
         
         // >>>>>>>> W12N18 >>>>>>>>
-        this.defendRoom('Zeta','Zd3','W12N18');
-        this.maintainRoadsInRoom('Zeta','Zw4',['W12N18','W11N18'],'2w6c2m');
-        this.reserverRoom('Zeta','Zr4',{id:'646e7334071eb8276c0a68b8',pos:{x:27,y:29,roomName:'W12N18'}},'2cl2m');
+        //this.defendRoom('Zeta','Zd3','W12N18');
+        this.maintainRoadsInRoom('Zeta','Zw4',['W12N18'],'2w6c2m');
+       // this.reserverRoom('Zeta','Zr4',{id:'646e7334071eb8276c0a68b8',pos:{x:27,y:29,roomName:'W12N18'}},'2cl2m',true);
         this.harvestPoint('Zeta','Zhr6','6w1c3m',{id:'646e7334071eb8276c0a68b7',pos:{x:4,y:15,roomName:'W12N18'}});
     
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
     
-    
+        
 
         
         return;
        },
+       
+       runRemoteRoom:function(spawnName,roomName,reserve=true,specific_source_ids=[]){
+           
+           let spawnRCL = Game.spawns[spawnName].room.controller.level;
+           
+           if(!mb.hasRoom(roomName)){
+               this.scoutRoom(spawnName,roomName,roomName+'-scout');
+               mb.scanRoom(roomName);
+               return;
+           }
+           if(reserve && spawnRCL>2){
+                let controller = mb.getControllerForRoom(roomName,false)
+                let reservedTime = 0;
+                if(controller.haveVision && controller.reservation){
+                    reservedTime=controller.reservation.ticksToEnd;
+                }
+                let resBody = spawnRCL>3?'2m2cl':'1m1cl';
+                this.reserverRoom(spawnName,roomName+'-re',controller,resBody);
+           }
+           
+           let sources = mb.getSources({roomNames:[roomName],requireVision:false});
+           let harvebody='2w1c1m';
+           if(spawnRCL==2){
+               harvebody='4w1c2m';
+           }
+           if(spawnRCL>2){
+               harvebody='6w1c3m';
+           }
+           let h=0;
+           for(let src of sources){
+               
+               if(specific_source_ids.length==0 || specific_source_ids.includes(src.id)){
+                   
+                   this.harvestPoint(spawnName,roomName+'-ha-'+h,harvebody,src);
+                   h++;
+               }
+               
+           }
+           
+           this.defendRoom(spawnName,roomName+'-guard',roomName);
+       },
+       
        scheduledAttack: function(){
           // return;
-          // Memory.attackOnMuscles='scheduled';
+         // if(Game.time%5000===0) Memory.attackOnMuscles='scheduled';
           
         
           
-          //1434336 + 7k = 1,441,336
-          let scheduledTick =1441200;
+          //1483013 + 8.2k = 1491277
+          let scheduledTick =1491000;
            if(Game.time >scheduledTick && Memory.attackOnMuscles==='scheduled'){
                Memory.attackOnMuscles='mustering';
                clog('attack mustering')
@@ -672,8 +671,8 @@ module.exports = {
                 let destroyResourceBanks=true;
                 if(go){
                     // entry rampart
-                    target_ids.push('64b60d3a4979613df47d58f1')
-                    target_ids.push('64b44e0a937bbe2b3eab7675')
+                    target_ids.push('64b710b4937bbe11deac963a')
+                   // target_ids.push('64b44e0a937bbe2b3eab7675')
                     if(Game.time%10===0)mb.scanRoom(attackRoom);
                     let highPriorityTargets=[STRUCTURE_EXTENSION,STRUCTURE_SPAWN,STRUCTURE_TOWER];
                     let mediumPriorityTargets = [STRUCTURE_LAB,STRUCTURE_CONTAINER,STRUCTURE_LINK,STRUCTURE_EXTRACTOR];
@@ -695,30 +694,24 @@ module.exports = {
                     
                 }
                 
-                /*
-                this.breakStructures('Alpha-3','Cleanup1',attackRoom,target_ids,'20w20m');
-                this.breakStructures('Alpha-2','Cleanup2',attackRoom,target_ids,'20w20m');
-                this.breakStructures('Zeta-2','Cleanup3',attackRoom,target_ids,'20w20m');
-                this.breakStructures('Zeta','Cleanup4',attackRoom,target_ids,'20w20m');
-                
-                this.breakStructures('Alpha-3','Cleanup6',attackRoom,target_ids,'20w20m');
-                */
-                this.breakStructures('Alpha-3','Cleanup5',attackRoom,target_ids,'25w25m');
-                
                let allDuoCreepNames = ['duoL1','duoH1','duoL2','duoH2','duoL3','duoH3'];
                let renewSpawn = 'Alpha-3';
                
-               let duoCount = 1;
+               let duoCount = 2;
                
                let healerBody ='25*1h1m';
+               //healerBody='25h25m';
                healerBody = '33h17m';
                let healerBoostPlan =[{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'64a53bff66e7669492b5b659'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'64a55fad1f1cd7030d011b7f'}];
+              // healerBoostPlan=[];
                let dismantlerBody = '20*1w1m+5r5m';
                dismantlerBody='3m25w7r15m';
                let dismantlerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'64a53bff66e7669492b5b659'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'64a54b8e66e766bad4b5bd88'}];
+               //dismantlerBoostPlan=[];
                let attackerBody = '2m20a10m+12r6m';
+              // attackerBody='15r10a25m'; 
                let attackerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'64a53bff66e7669492b5b659'},{resource_type:RESOURCE_UTRIUM_ACID,lab_id:'64a57747038fbe71ec1507b2'}];
-               
+             //  attackerBoostPlan=[];
                
                let readyCount=0;
                for(let myCreepName of allDuoCreepNames){
@@ -726,37 +719,43 @@ module.exports = {
                        readyCount++;
                    }
                }
+               if(readyCount==0 &&  Memory.attackOnMuscles==='attacking'){
+                    Memory.attackOnMuscles='ended'
+               }
+             
                if(readyCount===(duoCount*2)){
                    Memory.attackOnMuscles='attacking';
                }
        
                //duoHealer:function(spawnName,cname,parts,leaderName, leadersTarget, allies=[],renewSpawn=false,boostPlans=[],spawnFacing=LEFT){
-               
+                let leaderTarget=false;
                if(Game.creeps['duoL1'] || Memory.attackOnMuscles==='mustering')
-                    this.duoLeader('Alpha','duoL1',dismantlerBody,'duoH1',musterSpot,attackRoom,target_ids,retreatSpots[0],roomTraversal,go,renewSpawn,dismantlerBoostPlan)
-                    
+                    leaderTarget= this.duoLeader('Alpha','duoL1',dismantlerBody,'duoH1',musterSpot,attackRoom,target_ids,retreatSpots[0],roomTraversal,go,renewSpawn,dismantlerBoostPlan)
+                
+               // clog(leaderTarget)
+                   
                 if(Game.creeps['duoH1'] || Memory.attackOnMuscles==='mustering')
-                    this.duoHealer('Alpha-3','duoH1',healerBody,'duoL1', false, allDuoCreepNames,renewSpawn,healerBoostPlan)
+                    this.duoHealer('Alpha-3','duoH1',healerBody,'duoL1', leaderTarget, allDuoCreepNames,renewSpawn,healerBoostPlan)
                 
                if(Game.creeps['duoL2'] || Memory.attackOnMuscles==='mustering')
                     this.duoLeader('Alpha-2','duoL2',dismantlerBody,'duoH2',musterSpot,attackRoom,target_ids,retreatSpots[1],roomTraversal,go,renewSpawn,dismantlerBoostPlan)
                     
                if(Game.creeps['duoH2'] || Memory.attackOnMuscles==='mustering')
                     this.duoHealer('Alpha-2','duoH2',healerBody,'duoL2', false, allDuoCreepNames,renewSpawn,healerBoostPlan)
-               /*
+              
                 if(Game.creeps['duoL3'] || Memory.attackOnMuscles==='mustering')
                     this.duoLeader('Alpha-2','duoL3',attackerBody,'duoH3',musterSpot,attackRoom,target_ids,retreatSpots[2],roomTraversal,go,renewSpawn,attackerBoostPlan)
                     
                 if(Game.creeps['duoH3'] || Memory.attackOnMuscles==='mustering')
                     this.duoHealer('Alpha-3','duoH3',healerBody,'duoL3', false,allDuoCreepNames,renewSpawn,healerBoostPlan)
-                    
+                /*    
                  if(Game.creeps['duoL4'] || Memory.attackOnMuscles==='mustering')
                     this.duoLeader('Alpha-2','duoL4',attackerBody,'duoH4',musterSpot,attackRoom,target_ids,retreatSpots[2],roomTraversal,go,renewSpawn,attackerBoostPlan)
                     
                 if(Game.creeps['duoH4'] || Memory.attackOnMuscles==='mustering')
                     this.duoHealer('Alpha-3','duoH4',healerBody,'duoL4', false,allDuoCreepNames,renewSpawn,healerBoostPlan)
+                */
 
-*/
            }
        },
      stripMineRoomNodes:[],
@@ -773,10 +772,11 @@ module.exports = {
       * thorium_id - mineral id
       * thoriumTerminalPos - 
       * thoriumHarvesterSpots - 
+      * harvesterBoostPlans - 
       * spawnPos - 
       * storageBuildSpot - 
       */ 
-     stripMineRoomForThorium:function(feederName,roomNameToStrip,bootupContainerId, upgraderSpots,upgradeFeederWaitSpot, upgradeFeederCount, upgraderContainerSpot, upgraderBoostPlans, thorium_id,thoriumTerminalPos,thoriumHarvesterSpots,spawnPos,storageBuildSpot){
+     stripMineRoomForThorium:function(feederName,roomNameToStrip,bootupContainerId, upgraderSpots,upgradeFeederWaitSpot, upgradeFeederCount, upgraderContainerSpot, upgraderBoostPlans, thorium_id,thoriumTerminalPos,thoriumHarvesterSpots,harvesterBoostPlans,spawnPos,storageBuildSpot){
          
         let controller = mb.getControllerForRoom(roomNameToStrip);
         let feederStorage = mb.getStorageForRoom(Game.spawns[feederName].pos.roomName);
@@ -794,9 +794,14 @@ module.exports = {
         }
         
         if(controller.level == 0){
-            clog('claiming strip mine',roomNameToStrip) 
+            if(Game.time %10==0)clog('claiming strip mine',roomNameToStrip) 
             this.reserverRoom(feederName,roomNameToStrip+'-claim',controller,'1cl1m',true);
         }
+        
+        
+        let towers = mb.getStructures({roomNames:[roomNameToStrip],types:[STRUCTURE_TOWER]})
+        
+        this.constantGuardRoom(feederName+'-2',roomNameToStrip+'-guard',roomNameToStrip,'4m+10*1a1m+1r1m1m1h',{x:spawnPos.x,y:spawnPos.y-1},false,true);
         
         
         if(controller.level >= 0){
@@ -831,11 +836,11 @@ module.exports = {
              rp(spawnPos.x+2,spawnPos.y+5,roomNameToStrip).createConstructionSite(STRUCTURE_ROAD);
              
              upgraderContainerSpot.createConstructionSite(STRUCTURE_CONTAINER);
-           
-            if(Game.creeps[roomNameToStrip+'-w0'] || !stripSpawn || controller.level<4)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w0',roomNameToStrip,'4w4c4m');
-            if(Game.creeps[roomNameToStrip+'-w1'] || !stripSpawn)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w1',roomNameToStrip,'4w4c4m');
-            if(Game.creeps[roomNameToStrip+'-w2'] || !stripSpawn)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w2',roomNameToStrip,'4w4c4m');
-            if(Game.creeps[roomNameToStrip+'-w3'] || !stripSpawn)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w3',roomNameToStrip,'4w4c4m');
+            let exts = mb.countStructures([STRUCTURE_EXTENSION],[roomNameToStrip])
+            if(Game.creeps[roomNameToStrip+'-w0'] || !stripSpawn || exts<10)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w0',roomNameToStrip,'4w4c4m');
+            if(Game.creeps[roomNameToStrip+'-w1'] || !stripSpawn || exts<10)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w1',roomNameToStrip,'4w4c4m');
+            if(Game.creeps[roomNameToStrip+'-w2'] || !stripSpawn || exts<10)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w2',roomNameToStrip,'4w4c4m');
+            if(Game.creeps[roomNameToStrip+'-w3'] || !stripSpawn )this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w3',roomNameToStrip,'4w4c4m');
             if(Game.creeps[roomNameToStrip+'-w4'] || !stripSpawn)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w4',roomNameToStrip,'4w4c4m');
             if(Game.creeps[roomNameToStrip+'-w5'] || !stripSpawn)this.maintainRoadsInRoom(feederName+'-2',roomNameToStrip+'-w5',roomNameToStrip,'4w4c4m');
             
@@ -854,9 +859,6 @@ module.exports = {
             this.haulResources(feederName+'-2',roomNameToStrip+'-feeder1','10*2c1m',feederStorage,feedTarget,[RESOURCE_ENERGY],[],4000,100);
         }
         
-        let towers = mb.getStructures({roomNames:[roomNameToStrip],types:[STRUCTURE_TOWER]})
-        if(towers.length==0 || Game.creeps[roomNameToStrip+'-guard'])
-            this.constantGuardRoom(feederName+'-2',roomNameToStrip+'-guard',roomNameToStrip,'2t2m+5*1r1a2m+1m1h',{x:spawnPos.x,y:spawnPos.y-1},false,true);
         
         if(controller.level<1){
             if(Game.time%3==0)clog('Controller must be claimed in strip mine room',roomNameToStrip); 
@@ -935,7 +937,7 @@ module.exports = {
 
             
         if(controller.level >=6){
-            this.stripMineThorium(thorium_id,thoriumTerminalPos,[feederName+'-2',feederName,feederName+'-2'],thoriumHarvesterSpots)
+            this.stripMineThorium(thorium_id,thoriumTerminalPos,[feederName+'-2',feederName,feederName+'-2'],thoriumHarvesterSpots,'39w1c10m',200,'W13N15',harvesterBoostPlans)
         }
 
         
@@ -950,7 +952,7 @@ module.exports = {
       * harvesterBody
       * scoreRoom - the room to send mined thorium
       */ 
-     stripMineThorium: function(thorium_id,thoriumTerminalPos,harvesterSpawns=[],harvesterSpots=[],harvesterBody='39w1c10m',rotationDelay=200,scoreRoom='W13N15'){
+     stripMineThorium: function(thorium_id,thoriumTerminalPos,harvesterSpawns=[],harvesterSpots=[],harvesterBody='39w1c10m',rotationDelay=200,scoreRoom='W13N15',harvesterBoostPlans=[]){
          
         let thorium = gob(thorium_id);
         let thoriumTerminal = thoriumTerminalPos.lookForStructure(STRUCTURE_TERMINAL);
@@ -979,7 +981,7 @@ module.exports = {
                             if(thoriumTerminal && thoriumExtractor){
                                 if(Game.creeps[activeCreepName])Game.creeps[activeCreepName].drop(RESOURCE_ENERGY)
                                 
-                                thing.harvestMineralAndTransfer( harvesterSpawns[i], activeCreepName, harvesterBody, thorium, thoriumTerminal.id, RESOURCE_THORIUM, harvesterSpots[i], true);
+                                thing.harvestMineralAndTransfer( harvesterSpawns[i], activeCreepName, harvesterBody, thorium, thoriumTerminal.id, RESOURCE_THORIUM, harvesterSpots[i],harvesterBoostPlans, true);
                             }else{
                                
                                 let site = extractorConstructionSite?extractorConstructionSite:termConstructionSite;
@@ -1028,10 +1030,27 @@ module.exports = {
             if(Game.creeps[scoutName])Game.creeps[scoutName].say(message,true)
         }
      },
+    earlyWarning2: function(spawnName,roomPos){
+         
+        let scoutName = this.rotateScouts(spawnName,roomPos.roomName,roomPos.roomName+'-beacon',roomPos);
+        //this.scoutRoom(spawnName,roomPos.roomName+'-beacon',roomPos.roomName,roomPos);
+        let userIgnores =[ ...Memory.allies,'Source Keeper','Invader']; //
+        let hostiles = Game.rooms[roomPos.roomName]?Game.rooms[roomPos.roomName].getHostiles():[];
+        let fighters = hostiles.filter(function(hostile){return ( (hostile.partCount(ATTACK)>0 || hostile.partCount(RANGED_ATTACK)>0 || hostile.partCount(HEAL)>0) && !userIgnores.includes(hostile.owner.username) ) });
+        if(fighters.length>2){
+            Memory.reactorThreats2.count = fighters.length;
+            Memory.reactorThreats2.lastSeen = Game.time;
+            Memory.reactorThreats2.roomLogs[roomPos.roomName]={
+                tick:Game.time,
+                owner:fighters[0].owner.username
+            }
+            let message = fighters.length+' threats detected';
+            clog(message,roomPos.roomName)
+            if(Game.creeps[scoutName])Game.creeps[scoutName].say(message,true)
+        }
+     },
     scoreThorium: function(scoring=false,guard=false){
-        
-            
-        
+
            let thoriumStorage = gob('6487f218a38d042a92467fce');
            let reactor = gob('646f55e99bdd4e0008300cf9');
            let scoutName = 'Barry';
@@ -1109,10 +1128,9 @@ module.exports = {
             this.earlyWarning('Epsilon',rp(47,44,'W15N13'));
             this.earlyWarning('Epsilon',rp(34,21,'W14N13'));
             this.earlyWarning('Gamma',rp(31,21,'W14N15'));
-            //this.earlyWarning('Gamma',rp(46,29,'W14N14'));
+            this.earlyWarning('Gamma',rp(46,29,'W14N14'));
             
             let guardBody = '2t2m+5*1r1m1a1m+5m5h';
-            //constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:25,y:25},allyName=false,killCivilians=false, maxDistance=75 , roomTraversal=[]){
             if(guard)this.constantGuardRoom('Gamma-3','Thor-guard','W15N15',guardBody,{x:35,y:29},allyName,true,75,roomTraversal);
             if(guard)this.constantGuardRoom('Gamma-3','Thor-guard2','W15N15',guardBody,{x:39,y:27},allyName,true,75,roomTraversal);
             
@@ -1147,6 +1165,151 @@ module.exports = {
             
         
             if(Memory.reactorThreats.count==0 && Game.time%2==0)scoutMessage='no threats';
+            
+            if(Game.creeps[scoutName])Game.creeps[scoutName].say(scoutMessage,true)
+       },
+       scoreThorium2: function(scoring=false,guard=false,allyName='Neom'){
+
+           let thoriumStorage = gob('64b7e39992a3fccf4e979958');
+           let reactor = gob('646f55e99bdd4e0008300cfc');
+           let scoutName = 'Swampy';
+           let reactorRoom= 'W15N25';
+           let roomTraversal = ['W13N15','W14N15','W15N15']
+           let haulerTraversal = ['W15N15','W14N15','W13N15']
+           roomTraversal=[];
+           haulerTraversal=[];
+           //let roomTraversal = ['W13N15','W13N14','W14N14','W15N14','W15N15'];
+          
+           let haulersReq=0;
+           let haulerCount=0;
+           let haulerNames = [];
+           let haulerMax=8;
+           for(let i=0;i<haulerMax;i++){ 
+               let cname = 'thor2-'+i;
+               haulerNames.push(cname) 
+               if(Game.creeps[cname]){
+                    //Game.creeps[cname].memory.riskyBiscuits=true;
+                    haulerCount++;
+                }
+           }
+            
+            
+            let scoutMessage = scoring?'':'w/ '+allyName;
+           scoutName=this.rotateScouts('Theta',reactorRoom,'thor2-scout',{x:25,y:25},roomTraversal,400);
+           
+           if(reactor){
+
+                if(thoriumStorage.storedAmount(RESOURCE_THORIUM)<5000  ){
+                    haulersReq=0;
+                    scoring=false;
+                    scoutMessage='<5k w/ '+allyName;
+                }
+
+                if(scoring){
+                   if(reactor.owner.username!=='MadDokMike'){
+                       
+                        this.claimReactor('Theta','thor2-claimer',reactor,'3m1cl');
+                        scoutMessage='claiming..';
+                        
+                    }else{
+                        haulersReq=3;
+                        if(reactor.store.getUsedCapacity(RESOURCE_THORIUM)<850){
+                            haulersReq=5;
+                        } 
+                    }
+                }
+                               
+               
+                 if(reactor.store.getUsedCapacity(RESOURCE_THORIUM)<450){
+                    haulersReq=6;
+                }
+                
+                let test=false;
+                if(haulersReq>0 || haulerCount>0){
+                    for(let cname of haulerNames){
+                        if(test){
+                            if(Game.creeps[cname]){
+                                Game.creeps[cname].say("test crash",true)
+                                Game.creeps[cname].moveToPos(reactor)
+                            }
+                        }else{
+                            if(Game.creeps[cname] || haulerCount < haulersReq)
+                                this.haulResources('Theta',cname,'4m2c2m',thoriumStorage,reactor,[RESOURCE_THORIUM],[],1000,400);
+                            
+                        }
+                        
+                        if(haulersReq==0 && reactor.store.getUsedCapacity(RESOURCE_THORIUM)>900 && Game.creeps[cname] && Game.creeps[cname].storedAmount(RESOURCE_THORIUM)==0 )Game.creeps[cname].suicide();
+                        
+                    }
+                    scoutMessage= haulerCount+'/'+haulersReq+' haulrs';
+                }
+                
+           }
+           let thing=this
+            this.rotateCreep('W14N24-guard', function(activeCreepName){
+                let target = thing.constantGuardSKRoom('Delta-2',activeCreepName,'W14N24',['646e72dc071eb8276c0a6593'])
+            },500)
+            
+            
+            this.earlyWarning2('Theta',rp(24,25,'W14N24'));
+            this.earlyWarning2('Theta',rp(25,21,'W15N24'));
+            this.earlyWarning2('Theta',rp(37,30,'W16N25'));
+            this.earlyWarning2('Theta',rp(20,47,'W16N26'));
+            //this.earlyWarning2('Theta',rp(33,37,'W15N26'));
+            this.earlyWarning2('Theta',rp(2,48,'W14N26'));
+            this.earlyWarning2('Theta',rp(22,22,'W14N25'));
+            
+            
+            if(guard){
+                // MUST be Delta-2!!!!! because it happens before roomNode runs and then if falls foul of the stupid spawn to fill spot bug...forceDirectionHack
+                this.rotateCreep('SwampRat1-', function(activeCreepName){
+                    thing.constantGuardRoom('Alpha-3',activeCreepName,reactorRoom,'2m16m10a5r16m1h',{x:15,y:16},false,false,10,roomTraversal);
+                },750)
+                this.rotateCreep('SwampRat2-', function(activeCreepName){
+                    thing.constantGuardRoom('Alpha-3',activeCreepName,reactorRoom,'2m16m10a5r16m1h',{x:16,y:16},false,false,10,roomTraversal);
+                },750)
+                 this.rotateCreep('SwampRat3-', function(activeCreepName){
+                    thing.constantGuardRoom('Alpha-3',activeCreepName,reactorRoom,'2m16m10a5r16m1h',{x:16,y:16},false,false,10,roomTraversal);
+                },750)
+                
+
+            }
+            
+            if(Memory.reactorThreats2===undefined || ( (Memory.reactorThreats2.lastSeen + 1500) < Game.time) )Memory.reactorThreats2={count:0,lastSeen:0,roomLogs:{}};
+            let test = false;
+           // clog(Memory.reactorThreats)
+            if(Memory.reactorThreats2.count>0){
+                for(let i =0; i<(Memory.reactorThreats2.count*3); i++){
+                    let body = test ?'1a1m':guardBody;
+                    this.constantGuardRoom('Theta','Thor2-reinforce-'+i,reactorRoom,'5m5a5m',{x:12,y:17},false,false,75,roomTraversal);
+                    
+                }
+                
+                this.rotateCreep('SwampFrog1-', function(activeCreepName){
+                    thing.constantGuardRoom('Delta-2',activeCreepName,reactorRoom,'2m16m10r1a15m5h',{x:15,y:17},false,false,10,roomTraversal);
+                },750)
+                
+                let msgSwitch=(Game.time+"").substr(-1);
+                let roomNames = [];
+                let attackers = [];
+                let seenAttackers={};
+                for(let roomName in Memory.reactorThreats2.roomLogs){
+                    
+                    let log = Memory.reactorThreats2.roomLogs[roomName];
+                    if(!roomNames.includes(roomName))roomNames.push(roomName);
+                    if(!attackers.includes(log.owner))attackers.push(log.owner);
+                }
+                
+                if(msgSwitch==0||msgSwitch==5)scoutMessage =  Memory.reactorThreats2.count+" Threats";
+                if(msgSwitch==1||msgSwitch==6)scoutMessage ="in:"+roomNames.join();
+                if(msgSwitch==2||msgSwitch==7)scoutMessage = attackers;
+                if(msgSwitch==3||msgSwitch==8)scoutMessage ="at:"+Memory.reactorThreats2.lastSeen;
+                if(msgSwitch==4||msgSwitch==9)scoutMessage ="extra:"+Memory.reactorThreats2.count;
+
+            }
+            
+        
+            if(Memory.reactorThreats2.count==0 && Game.time%2==0)scoutMessage='no threats';
             
             if(Game.creeps[scoutName])Game.creeps[scoutName].say(scoutMessage,true)
        },
@@ -1225,7 +1388,10 @@ module.exports = {
         
         let prefix = spawnNameForUpgraders.charAt(0);
         let creepNames = [prefix+'uX1',prefix+'uX2',prefix+'uX3',prefix+'uX4',prefix+'uX5'];
-        
+        creepNames=[];
+        for(let i in upgraderMatrix)
+            creepNames.push( prefix+'uX'+((i*1)+1) )
+       // clog(creepNames)
         for(let n=0; n < creepNames.length; n++){
             
             // default to join the back of the queue
@@ -1273,106 +1439,6 @@ module.exports = {
     },
     
 
-    manageReactions: function(spawnName,storage_id,terminal_id,labWirings,import_resource_types,parkSpot){
-        
-        let creepBody = '3m6c';
-        let storage = gob(storage_id)
-        let terminal = gob(terminal_id)
-
-        let cname = spawnName+'-Lab'
-        if(!Game.creeps[cname]){
-            Game.spawns[spawnName].spawnCreepX(creepBody,cname,{memory:{target:false}});
-        }
-        
-        if(Game.creeps[cname] && !Game.creeps[cname].spawning){
-           let creep = Game.creeps[cname];
-            
-            let stored_type=false;
-            for(let resource_type in creep.store){
-                stored_type=resource_type;
-            }    
-            
-           let targetAtStart=(creep.memory.target);
-           for(let wiring of labWirings){
-               this.manageLabTrio(creep,wiring);
-           }
-
-            // do we have space in storage, for deliveries?
-            let refillSize =  creep.store.getCapacity();
-            if( !creep.memory.target ){
-                
-                for(let resource_type of import_resource_types){
-                    //clog(terminal.storingAtleast(1,resource_type),'terminal.storingAtleast(resource_type)>>'+resource_type)
-                   // clog(storage.haveSpaceFor(1,resource_type)>refillSize,'storage.haveSpaceFor(resource_type)>refillSize>>'+resource_type)
-                    if( terminal.storingAtleast(1,resource_type)>0 && storage.haveSpaceFor(refillSize,resource_type)
-                        && (!stored_type || stored_type==resource_type ) ){
-                        
-                        creep.memory.target = {id:terminal_id,resource_type:resource_type,put_in_id:storage_id};
-                        creep.memory.target.dir = 'empty';
-                        clog("receive delivery of "+resource_type,creep.name)
-                        break;
-                        
-                    }
-                }
-            }
-            
-            if(creep.memory.target){
-            
-                if(creep.memory.target.dir == 'fill'){
-                    this.haulResources(spawnName,cname,creepBody,
-                    gob(creep.memory.target.draw_from_id),
-                    gob(creep.memory.target.id),
-                    [creep.memory.target.resource_type]);
-                    
-                    if(targetAtStart && creep.store.getUsedCapacity(creep.memory.target.resource_type)>0 ){
-                       
-                        creep.memory.pickedUp = true;
-                    }
-                    
-                    if(creep.memory.pickedUp && creep.pos.isNearTo( Game.getObjectById(creep.memory.target.id) ) && creep.store.getUsedCapacity(creep.memory.target.resource_type)===0 ){
-                        creep.memory.target = false;
-                        creep.memory.pickedUp = false;
-                    }
-                }
-                if(creep.memory.target.dir == 'empty'){
-                   // clog(creep.memory.target,creep.name)
-                    this.haulResources(spawnName,cname,creepBody,
-                    gob(creep.memory.target.id),
-                    gob(creep.memory.target.put_in_id),
-                    [creep.memory.target.resource_type]);
-                    //clog(targetAtStart,'targetAtStart')
-                    if(targetAtStart && creep.store.getUsedCapacity(creep.memory.target.resource_type)>0 ){
-                       
-                        creep.memory.pickedUp = true;
-                    }
-                    if(creep.memory.pickedUp && creep.pos.isNearTo( Game.getObjectById(creep.memory.target.put_in_id) ) && creep.store.getUsedCapacity(creep.memory.target.resource_type)===0 ){
-                        creep.memory.target = false;
-                        creep.memory.pickedUp = false;
-                    }
-                }
-                
-            }
-            
-            if(!creep.memory.target){
-               creep.moveTo(parkSpot) 
-            }
-            
-            //clog(creep.memory.target,creep.name)
-            // last check to see if something fucked up
-            if(creep.memory.target && stored_type && creep.memory.target.resource_type!=stored_type){
-
-                clog("Shit! Storing "+stored_type+" but had target for "+creep.memory.target.resource_type,creep.name)
-                creep.memory.target = false;
-            }
-            if(!creep.memory.target && stored_type ){
-                creep.memory.target = {id:storage_id,resource_type:stored_type,draw_from_id:terminal_id};
-                creep.memory.target.dir = 'fill';
-                clog("Shit! Storing "+stored_type+" but had no target. putting back  ")
-                //creep.memory.target = false;
-            }
-        }
-        
-    },
     
     /**
      * manage the config of what resources different rooms want. This assumes they've already been hauled to the terminal.
@@ -1407,7 +1473,7 @@ module.exports = {
                 && exportTerminal.storingAtleast( exportBatchSize, config.resource_type ) ){
                     
                     let res = exportTerminal.send(config.resource_type,exportBatchSize,roomName)
-                    if(res===OK)clog("Sending "+exportBatchSize+" >>["+config.resource_type+"]>> to "+config.importer,'manageInterRoomTrading')
+                    if(res===OK)clog("Sending "+exportBatchSize+" >>["+config.resource_type+"]>> to "+config.importer,'manageInterRoomTrading::'+exportTerminal.pos.roomName)
                 }
           }
           
@@ -1558,105 +1624,7 @@ module.exports = {
         }
     },
     
-    // this function is soon to be deprecated
-    manageLabTrio: function(creep,labConfig){
 
-        
-        let reactor = Game.getObjectById(labConfig.target.id);
-        let input0 = Game.getObjectById(labConfig.sources[0].id);
-        let input0_draw_from = Game.getObjectById(labConfig.sources[0].draw_from_id);
-        let input1 = Game.getObjectById(labConfig.sources[1].id);
-        let input1_draw_from = Game.getObjectById(labConfig.sources[1].draw_from_id);
-        
-        if(!creep.memory.target){
-            
-            // clean up old runs
-           
-            for(let resource_type in reactor.store){
-              //  clog(resource_type,'plan:'+labConfig.target.resource_type)
-                
-                if(resource_type==RESOURCE_ENERGY)continue;
-                
-                if(resource_type!==labConfig.target.resource_type){
-                    storing_another_type = resource_type;
-                    labConfig.target.resource_type = resource_type;
-                     creep.memory.target = labConfig.target;
-                     creep.memory.target.dir = 'empty';
-                     return;
-                }
-            }
-            
-            let stored_type=false;
-            for(let resource_type in creep.store){
-                stored_type=resource_type;
-            }
-           //clog(stored_type,'stored_type')
-          let refillSize =  creep.store.getCapacity();
-            //clog(input0.haveSpaceFor(refillSize,labConfig.sources[0].resource_type),labConfig.sources[0].resource_type)
-            //clog(input0_draw_from.storingAtleast(refillSize,labConfig.sources[0].resource_type) ,'input0_draw_from.storingAtleast(refillSize,labConfig.sources[0].resource_type)')
-            if(!stored_type && reactor.storingAtleast(refillSize,labConfig.target.resource_type) && labConfig.target.put_in_id!=='leave' ){
-                
-                creep.memory.target = labConfig.target;
-                creep.memory.target.dir = 'empty';
-                
-            }else if(labConfig.phaseOut && !stored_type && reactor.storingAtleast(1,labConfig.target.resource_type) ){
-                
-                creep.memory.target = labConfig.target;
-                creep.memory.target.dir = 'empty';
-                
-            }
-            
-            
-            else if( !labConfig.phaseOut 
-                    &&  (!stored_type||stored_type==labConfig.sources[0].resource_type) 
-                    && input0.haveSpaceFor(refillSize,labConfig.sources[0].resource_type) 
-                    && input0_draw_from
-                    && input0_draw_from.storingAtleast(refillSize,labConfig.sources[0].resource_type)
-                    && labConfig.target.draw_from_id!=='leave'){
-                
-                creep.memory.target = labConfig.sources[0];
-                creep.memory.target.dir = 'fill';
-                
-            }else if( !labConfig.phaseOut 
-                        && (!stored_type||stored_type==labConfig.sources[1].resource_type) 
-                        && input1.haveSpaceFor(refillSize,labConfig.sources[1].resource_type) 
-                        && input1_draw_from
-                        && input1_draw_from.storingAtleast(refillSize,labConfig.sources[1].resource_type)
-                        && labConfig.target.draw_from_id!=='leave'){
-                
-                creep.memory.target = labConfig.sources[1];
-                creep.memory.target.dir = 'fill';
-                
-            }
-            // if a lab has resources, and the OTHER lab is dry, AND we are done, then clean up and put back
-            else if( labConfig.phaseOut 
-                    &&  (!stored_type||stored_type==labConfig.sources[0].resource_type) 
-                    && input1.isEmpty(labConfig.sources[1].resource_type)
-                    && !input0.isEmpty(labConfig.sources[0].resource_type) 
-                    && input0_draw_from.haveSpaceFor(refillSize,labConfig.sources[0].resource_type) ){
-                
-                creep.memory.target = labConfig.sources[0];
-                creep.memory.target.dir = 'empty';
-                creep.memory.target.put_in_id = creep.memory.target.draw_from_id;
-                
-            }else if( labConfig.phaseOut 
-                    &&  (!stored_type||stored_type==labConfig.sources[1].resource_type) 
-                    && input0.isEmpty(labConfig.sources[0].resource_type)
-                    && !input1.isEmpty(labConfig.sources[1].resource_type) 
-                    && input1_draw_from.haveSpaceFor(refillSize,labConfig.sources[1].resource_type) ){
-                
-                creep.memory.target = labConfig.sources[1];
-                creep.memory.target.dir = 'empty';
-                creep.memory.target.put_in_id = creep.memory.target.draw_from_id;
-                
-            }
-        }
-        
-        if(reactor.cooldown==0){
-            reactor.runReaction(input0 , input1  );
-        }
-         
-    },
     
     // send a resource in chunks of X from roomA to RoomB. Mainly for feeding energy
     streamResource: function(srcClusterName,targetClusterName,resource_type,startAt=600000,stopAt=50000,batchSize=20000,bodyPlan='10c1m'){
@@ -1801,9 +1769,11 @@ module.exports = {
                     let res = this.traverseRooms(creep,roomTraversal.reverse());
                   //  creep.say("t-r:"+resource_type.charAt(0)+":"+res);
                 }else{
+                    //if(creep.name=='thor2-0')clog(targetStore.id,resource_type)
+                    
                       let res =  this.actOrMove2(creep,targetStore,"transfer",resource_type);
            
-                     // creep.say("t:"+res);
+                      //creep.say("t:"+res);
                 }
                 
             }
@@ -2144,18 +2114,29 @@ module.exports = {
             if(mineral)this.actOrMove2(creep,mineral,"harvest",resource_type);
         }
     },
-    harvestMineralAndTransfer:function(spawnName,cname,bodyPlan,target,transfer_id,resource_type,standingSpot,speedy=false,harvestIfContainerFull=false){
+    harvestMineralAndTransfer:function(spawnName,cname,bodyPlan,target,transfer_id,resource_type,standingSpot,boostPlans=[],speedy=false,harvestIfContainerFull=false){
         let mineral = (target)?gob(target.id):false;
         //clog(mineral)
         if(!Game.creeps[cname] && mineral && (mineral.amount>0 || mineral.mineralAmount>0) ){
-            Game.spawns[spawnName].spawnCreepX(bodyPlan,cname)
+             let mem= {};
+            if(boostPlans.length>0){
+                mem.boostPlans = boostPlans;
+            }
+            Game.spawns[spawnName].spawnCreepX(bodyPlan,cname,{memory:mem})
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
             let container = gob(transfer_id);
+            
+            if(creep.memory.boostPlans){
+                creep.runBoostPlan();return;   
+            }
+            
             if(creep.isEmpty(resource_type) && creep.ticksToLive<100){
                 creep.suicide();
             }
+            
+            
            
             if(container && creep.isFull(resource_type) || speedy){
                 creep.transfer(container,resource_type);
@@ -2521,7 +2502,7 @@ module.exports = {
                 creep.moveToPos(standingSpot);
             }
             
-            if(creep.isWorking()) {
+            if(creep.isWorking()||turbo) {
                 
                let controller = Game.getObjectById(controller_id);
                
@@ -3270,7 +3251,7 @@ module.exports = {
                     }else{
                         creep.say("wait")
                     }
-
+                    return target;
                     
                 }else{
                     
@@ -3404,7 +3385,7 @@ module.exports = {
                     
                 }
                 if(leader)creep.moveTo(leader);
-
+                
                 if(leadersTarget && creep.partCount(RANGED_ATTACK)>0){
                     creep.rangedAttack(leadersTarget)
                 }
@@ -3584,54 +3565,69 @@ module.exports = {
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
             creep.moveOffRoomEdge();
-           // creep.heal(creep)
+    
             if(creep.pos.roomName===roomName){
                 
-                let closest = false;
-                let healTarget=false;
-                    for(let mine of myCreeps){
-                        if(mine.hits<mine.hitsMax){
-                            healTarget = mine;break;
-                        }
-                    }
-                    
-                    
-                        if(hostiles.length==0 && healTarget){
-                            creep.rangedHeal(healTarget);
-                            creep.actOrMoveTo("heal",healTarget);
-                            creep.say(healTarget.name)
-                        }
-                let dist = 99999;
+                /////////////////// Fighting /////////////////////////////////////////
+                let fighterTarget = false;
+                let distF = 99999;
+                let fightersIn3 = 0;
                 if(fighters.length>0){
-                    
                     
                     for(let fighter of fighters){
                         let d = creep.pos.getRangeTo(fighter);
-                        if(d < dist && d < maxDistance && fighter.owner.username!=='GT500'){
-                            dist =d;
-                            closest = fighter;
+                        if(d<3)fightersIn3++;
+                        if(d < distF && d < maxDistance && !Memory.allies.includes(fighter.owner.username)){
+                            distF =d;
+                            fighterTarget = fighter;
                         }
                         
                     }
                     
-                    if(closest){
-                        creep.rangedAttack(closest)
-                        creep.actOrMoveTo("attack",closest);
-                        
-                        if(creep.hits<creep.hitsMax&&dist>1)creep.heal(creep);
+                    if(fighterTarget){
+                        creep.actOrMoveTo("attack",fighterTarget);
+                        if(fightersIn3>1)
+                            creep.rangedMassAttack()
+                        else
+                            creep.rangedAttack(fighterTarget)
+                    }
+                   
+                }
+                
+                /////////////////// Healing /////////////////////////////////////////
+                let healTarget=false;
+                for(let mine of myCreeps){
+                    if(mine.hits<mine.hitsMax){
+                        healTarget = mine;break;
+                    }
+                }
+                if(distF>1){
+                    
+                    if(creep.hits<creep.hitsMax)
+                        creep.heal(creep);
+                    else if(healTarget && creep.pos.getRangeTo(healTarget)<4){
+                        creep.rangedHeal(healTarget);
+                        creep.heal(healTarget)
                     }else{
-                        
-                        if(creep.hits<creep.hitsMax)creep.heal(creep);
-                        creep.moveToPos( new RoomPosition(waitingSpot.x,waitingSpot.y,roomName) );
-                        
+                        creep.heal(creep);
                     }
                 }else{
-                    
-                    if(!healTarget)creep.moveToPos( new RoomPosition(waitingSpot.x,waitingSpot.y,roomName) );
-                    else creep.actOrMoveTo("heal",healTarget);
+                    if(creep.hits<creep.hitsMax)
+                        creep.heal(creep);
+                    else if(healTarget){
+                        creep.rangedHeal(healTarget);
+                        creep.actOrMoveTo("heal",healTarget);
+                    }
+                }
+                /////////////////// Waiting /////////////////////////////////////////
+                if(!fighterTarget && !healTarget){
+                    creep.moveToPos( new RoomPosition(waitingSpot.x,waitingSpot.y,roomName) );
                 }
                
             }else{
+                if(creep.hits<creep.hitsMax)
+                        creep.heal(creep);
+                        
                 if(roomTraversal.length>0){
                     let res = this.traverseRooms(creep,roomTraversal);
                     creep.say("trav:"+res);
@@ -3712,7 +3708,7 @@ module.exports = {
                 baseBody='2t2m'+baseBody+'+1h1m';
             }
            // clog(baseBody,cname+" plan:")
-            clog(Game.spawns[spawnName].spawnCreepX(baseBody,cname,{},true),cname+':'+baseBody);
+            Game.spawns[spawnName].spawnCreepX(baseBody,cname,{},true);
         }
        // clog(target.name,creep.name)
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
@@ -3801,7 +3797,7 @@ module.exports = {
         	            }
     	            }
     	            
-    	            if(hostiles[ref].partCount(WORK)>0 || hostiles[ref].partCount(CLAIM)>0 /*|| hostiles[ref].partCount(CARRY)>0|| hostiles[ref].partCount(MOVE)>0*/){
+    	            if(hostiles[ref].partCount(WORK)>0 || hostiles[ref].partCount(CLAIM)>0 || hostiles[ref].partCount(CARRY)>0|| hostiles[ref].partCount(MOVE)>0){
     	               if(range<distC){
         	                distC = range;
         	                closestCivilian = hostiles[ref];
@@ -3813,7 +3809,6 @@ module.exports = {
     	        let target = false;
     	       
     	        if(closestFighter){
-                    
                     creep.actOrMoveTo('attack',closestFighter);
     	            if( creepsIn3>1){
     	                creep.rangedMassAttack();
@@ -3822,23 +3817,24 @@ module.exports = {
     	            }
     	        }
     	            
-    	        else if(closestCivilian){    
+    	        else if(closestCivilian){ 
+    	           
     	            creep.actOrMoveTo('attack',closestCivilian);
     	            if( creepsIn3>1){
     	                creep.rangedMassAttack();
     	            }else{
-    	                 creep.rangedAttack(closestFighter);
+    	                 
+    	                 creep.rangedAttack(closestCivilian);
     	            }
             
     	        }else{
-    	            
     	            for(let id of target_ids){
     	                target =Game.getObjectById(id);
     	                if(target)break;
     	            }
     	            
     	            if(!target){
-    	                target = mb.getNearestStructure(creep.pos,[STRUCTURE_CONTAINER,STRUCTURE_ROAD,STRUCTURE_RAMPART],[roomName]);
+    	                target = mb.getNearestStructure(creep.pos,[STRUCTURE_CONTAINER,STRUCTURE_ROAD,STRUCTURE_RAMPART,STRUCTURE_TOWER],[roomName]);
     	            }
     	            creep.say(target.id)
     	           if(target){

@@ -4,7 +4,7 @@ if(!Memory.creeps) { Memory.creeps = {}; }
 let _memHak = require('_memHak');
 require('_dev_utils');
 
-Memory.allies=['GT500','NeomCamouflage','joethebarber','Dakryolith','Trepidimous']
+Memory.allies=['GT500','NeonCamouflage','joethebarber','Dakryolith','Trepidimous']
 // 25,440
 // Alpha - 258,991
 require('global.objectMeta');
@@ -50,21 +50,23 @@ nodes.push( new roomNode('Alpha','W14N18',
                                 retreatSpot:rp(19,42,'W14N18'),
                                 extraFastFillSpots:[rp(13,35,'W14N18'),rp(13,37,'W14N18'),rp(12,41,'W14N18'),rp(14,41,'W14N18')],
                                 wallHeight:1500000,
-                                upgradeRate:RATE_VERY_SLOW,
+                                upgradeRate:RATE_OFF,
                                 buildFast:false,
-                                remoteRoomNames:['W13N18','W14N17','W14N19','W15N18','W15N19']
+                                remoteRoomNames:['W13N18','W14N17','W14N19','W15N18','W15N19'],
+                                funnelRoomName:'W13N18'
                             }
 ) );
 
 nodes.push( new roomNode('Beta','W18N17',
                             {
                                 spawnFacing:TOP,
-                                retreatSpot:rp(44,24,'W18N17'),
-                                extraFastFillSpots:[ rp(42,31,'W18N17') , rp(44,31,'W18N17'), rp(41,41,'W18N17'), rp(43,41,'W18N17')],
+                                retreatSpot:rp(44,18,'W18N17'),
+                                extraFastFillSpots:[ rp(42,31,'W18N17') , rp(44,31,'W18N17'), rp(41,41,'W18N17'), rp(43,41,'W18N17'), rp(41,43,'W18N17'), rp(43,43,'W18N17')],
                                 wallHeight:500000,
-                                upgradeRate:RATE_VERY_FAST,
+                                upgradeRate:RATE_VERY_SLOW,
                                 buildFast:false,
-                                remoteRoomNames:['W17N17','W19N17','W18N18','W17N16']
+                                remoteRoomNames:['W17N17','W19N17','W18N18','W17N16'],
+                                funnelRoomName:''
                             }
 
 )  );
@@ -87,15 +89,15 @@ nodes.push( new roomNode('Delta','W12N23',
                             {
                                 spawnFacing:LEFT,
                                 retreatSpot:rp(24,19,'W12N23'),
-                                buildFast:true,
+                                buildFast:false,
                                 upgradeRate:RATE_VERY_SLOW,
                                 wallHeight:1000000,
-                                extraFastFillSpots:[rp(26,26,'W12N23'),rp(26,24,'W12N23'),rp(20,23,'W12N23'),rp(20,21,'W12N23'),rp(30,25,'W12N23'),rp(32,25,'W12N23')],
+                                extraFastFillSpots:[rp(26,26,'W12N23'),rp(26,24,'W12N23'),rp(20,23,'W12N23'),rp(20,21,'W12N23'),rp(30,25,'W12N23'),rp(32,25,'W12N23'),rp(30,29,'W12N23'),rp(32,29,'W12N23')],
                                 remoteRoomNames:['W13N23','W12N22','W13N22','W11N23'],
                                 funnelRoomName:''
                             }
 ) );
-
+/*
 nodes.push( new roomNode('Epsilon','W12N13',
                             {
                                 spawnFacing:RIGHT,
@@ -108,17 +110,17 @@ nodes.push( new roomNode('Epsilon','W12N13',
                                 funnelRoomName:''
                             }
 ) );
-
+*/
 nodes.push( new roomNode('Zeta','W12N19',
                             {
                                 spawnFacing:TOP,
                                 retreatSpot:rp(10,14,'W12N19'),
                                 buildFast:false,
-                                upgradeRate:RATE_VERY_SLOW,
+                                upgradeRate:RATE_OFF,
                                 wallHeight:1000000,
                                 extraFastFillSpots:[rp(9,20,'W12N19'),rp(11,20,'W12N19'),rp(13,11,'W12N19'),rp(13,9,'W12N19'),rp(9,10,'W12N19'),rp(9,8,'W12N19')],
                                 remoteRoomNames:['W13N19','W11N19','W11N18','W12N18'],
-                                funnelRoomName:'W11N19'
+                                funnelRoomName:'W12N18'
                             }
 ) );
 
@@ -126,11 +128,11 @@ nodes.push( new roomNode('Zeta','W12N19',
 nodes.push( new roomNode('Theta','W13N24',
                             {
                                 spawnFacing:TOP,
-                                retreatSpot:rp(19,7,'W13N24'),
-                                buildFast:true,
-                                upgradeRate:RATE_FAST,
-                                wallHeight:1000000,
-                                extraFastFillSpots:[rp(18,14,'W13N24'),rp(20,14,'W13N24')],
+                                retreatSpot:rp(24,12,'W13N24'),
+                                buildFast:false,
+                                upgradeRate:RATE_VERY_SLOW,
+                                wallHeight:500000,
+                                extraFastFillSpots:[rp(18,14,'W13N24'),rp(20,14,'W13N24'),rp(20,6,'W13N24'),rp(20,8,'W13N24')],
                                 remoteRoomNames:[],
                                 funnelRoomName:''
                             }
@@ -140,11 +142,11 @@ nodes.push( new roomNode('Iota','W14N12',
                             {
                                 spawnFacing:RIGHT,
                                 retreatSpot:rp(24,17,'W14N12'),
-                                buildFast:true,
+                                buildFast:false,
                                 upgradeRate:RATE_FAST,
-                                wallHeight:1000000,
-                                extraFastFillSpots:[],
-                                remoteRoomNames:[],
+                                wallHeight:500000,
+                                extraFastFillSpots:[rp(14,8,'W14N12'),rp(16,8,'W14N12'),rp(14,6,'W14N12'),rp(16,6,'W14N12')],
+                                remoteRoomNames:['W13N12','W14N11','W15N12'],
                                 funnelRoomName:''
                             }
 ) );
@@ -161,10 +163,14 @@ module.exports.loop = function () {
     tempCode.scheduledAttack();
     reservationBook.runTick();
     
+    let gammaTerm = gob('6487f218a38d042a92467fce');
+    let thetaTerm= gob('64b7e39992a3fccf4e979958');
+    if(thetaTerm && gammaTerm && thetaTerm.storingLessThan(5000,RESOURCE_THORIUM) && gammaTerm.storingAtleast(30000,RESOURCE_THORIUM))
+       gammaTerm.sendX(RESOURCE_THORIUM,5000,'Theta')
+    
     tempCode.scoreThorium(true,true);
-   
-   tempCode.haulResources('Beta','BfeX1','10*2c1m',gob('64ac65e1038fbe1a0517ddd5'),gob('64b2b239e8ddd45affa52096'),[RESOURCE_ENERGY],[],4000,200);
-   
+   tempCode.scoreThorium2(false,true,'NeonCamouflage');
+   tempCode.haulResources('Iota','IfeXX','10*2c1m',gob('64b65d93a75a99c942d9e467'),gob('64b566ce6759f43367bbef50'),[RESOURCE_ENERGY],[],4000,200);
     for(let n of nodes){
         n.runTick();
     }
@@ -179,24 +185,30 @@ module.exports.loop = function () {
     global.tr.runTick()
     logs.mainLoopEnded();
     
+  
+     /*   
+    let allyNames = Game.rooms['W13N24'].getAllyCreeps()
+    let publicRamp = false;
+    for(let name of allyNames){
+        if(Game.creeps[name] && Game.creeps[name].owner.username=='joethebarber'){
+            publicRamp= true;
+        }
+    }
+    gob('64b4d80254833db84a712bde').setPublic(publicRamp)
     
-    
+    */
     //////// GUI CODE  //////////////////////////////////
     let low = '#990000';
     let medium = '#ebab34';
     let high = '#83eb34';
     let ultra = '#34ebd9';
     renderThorium('W11N17', high)
-    renderThorium('W11N18', ultra)
-    renderThorium('W11N19', high)
     renderThorium('W12N18', medium)
     renderThorium('W12N17', medium)
-    renderThorium('W12N16', ultra)
     renderThorium('W13N19', medium)
     renderThorium('W13N18', low)
     renderThorium('W14N17', medium)
     renderThorium('W15N19' ,medium)
-    renderThorium('W17N17', medium)
     renderThorium('W11N16', low)
     renderThorium('W11N15', medium)
     renderThorium('W11N14', low)
@@ -243,7 +255,6 @@ module.exports.loop = function () {
     renderThorium('W9N21',ultra)
     renderThorium('W18N19',high)
     renderThorium('W18N18',medium)
-    renderThorium('W18N17',high)
     renderThorium('W18N16',medium,false)
     renderThorium('W19N16',medium)
     renderThorium('W19N16',medium)
@@ -263,7 +274,6 @@ module.exports.loop = function () {
     renderThorium('W16N23',medium)
     renderThorium('W11N24',medium)
     renderThorium('W12N24',medium)
-    renderThorium('W13N24',medium)
     renderThorium('W9N21',ultra)
     renderThorium('W8N21',medium)
     renderThorium('W7N21',medium)

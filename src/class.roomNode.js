@@ -19,7 +19,7 @@ class RoomNode{
      * options:{
             spawnFacing:TOP         >> which way the main spawn should spawn its creeps
             retreatSpot:undefined   >> where creeps should flee if attack & where idle creeps park
-            extraFastFillSpots:[]   >> any extra positions to send fast filler creeps
+            extraFastFillSpots:[]   >> any extra positions to sfend fast filler creeps
             logger:undefined        >> an object that allows this object to report messages to a log
             funnelRoomName:false    >> if set, then haulers will funnel energy to this room
             upgradeRate:RATE_SLOW   >> if set RATE_FAST, then the room will pipe as much energy as possible into the controller. RATE_OFF to stop upgrading
@@ -273,7 +273,7 @@ class RoomNode{
         }
     }
     inRecoveryMode(){
-        if(Game.time%10==0)this._recoverMode=undefined;
+       // if(Game.time%10===0)this._recoverMode=undefined;
         if(this._recoverMode!==undefined){
             return this._recoverMode;
         }
@@ -283,6 +283,12 @@ class RoomNode{
         }else{
             this._recoverMode=false;
         }
+        
+       // if(this.name=='Iota')clog(this.fillerReady(),'this.fillerReady()')
+       // if(this.name=='Iota')clog(this.workforce_quota.harvester.count,'this.workforce_quota.harvester.count')
+       // if(this.name=='Iota')clog(this.workforce_quota.tanker.count,'this.workforce_quota.tanker.count')
+        
+       // if(this.name=='Iota')clog(this._recoverMode,'Iota-recover')
         return this._recoverMode;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,7 +296,7 @@ class RoomNode{
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     fillerReady(){
         
-        if(Game.time%10==0)this.fillerRdy=undefined;
+        if(Game.time%10===0)this.fillerRdy=undefined;
         
         if(this.fillerRdy!==undefined){
             return this.fillerRdy;
@@ -338,6 +344,7 @@ class RoomNode{
         // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
         // nob heads!
         Game.spawns[spawnName].forceDirectionHack = this.getMainSpawnSpots();
+        
         if(spawnName=='Gamma-2')Game.spawns['Gamma-2'].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
         if(spawnName=='Alpha-3')Game.spawns['Alpha-3'].forceDirectionHack = [TOP_LEFT,LEFT,BOTTOM_LEFT];
                
@@ -429,10 +436,10 @@ class RoomNode{
           
                 if(Game.spawns[this.name+'-2'] && cname===ERR_BUSY){
                     let dirs = [];
-                    if(this.name=='Alpha' || this.name=='Gamma'){
+                    if(this.name=='Alpha' || this.name=='Gamma'  || this.name=='Beta' || this.name=='Delta'){
                         dirs=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
                     }
-                    if(this.name=='Zeta' || this.name=='Beta'){
+                    if(this.name=='Zeta'){
                         dirs=[BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
                     }
                     if(this.name=='Epsilon'){
@@ -471,6 +478,8 @@ class RoomNode{
         let onlineCount=0;
         this.totalEnergyAtSources=0;
         let coreRoomSourcesCount = 0;
+        // assume 4 if we need to get things kicking
+        this.workforce_quota.worker.required = 4;
         
         for(let source of sources){
             
@@ -483,17 +492,8 @@ class RoomNode{
         this.workforce_quota.builder.required = 1;
         
         
-        if(controller.level===1){
-            this.workforce_quota.worker.required = 4;
-        }else{
-            
-            if( onlineCount > 1){
-                this.workforce_quota.worker.required = 4;
-                
-            }
-           
-            if(this.name=='Strip-W16N17')this.workforce_quota.worker.required=1;
-            
+        if(controller.level>1){
+
             let storage = this.storage();
             // if we have too much energy stored, then try to burn some of it off
             if(this.upgradeRate!=RATE_VERY_FAST && this.upgradeRate!=RATE_OFF && !this.funnelRoomName && storage && !storage.haveSpaceFor(50000)){
