@@ -13,6 +13,7 @@ $options = [
 
 $response = $client->get('api/user/code',$options);
 $data = Utils::jsonDecode($response->getBody(), true);
+var_dump(array_keys($data));
 if(is_array($data)){
     echo "======================\n";
     echo "Connection: Success \n";
