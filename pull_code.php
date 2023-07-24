@@ -34,14 +34,19 @@ if(is_array($data)){
     echo "Branch name: [ ".$data['branch']." ] \n";
     echo "======================\n";
     echo "saving \e[36m".count($data['modules'] )."\e[0m new files ...";
-    foreach ($data['modules'] as $filename=>$file_contents){
+    foreach ($data['modules'] as $filename=>$file_contents) {
         echo "writing $filename ...";
-        file_put_contents("src/".$filename.".js",$file_contents);
-        if(file_exists("src/".$filename.".js")){
-            echo "\e[32msuccess\e[0m \n";
+        if ($file_contents){
+            file_put_contents("src/" . $filename . ".js", $file_contents);
+            if(file_exists("src/".$filename.".js")){
+                echo "\e[32m success\e[0m \n";
+            }else{
+                echo "\e[31m failed\e[0m \n";
+            }
         }else{
-            echo "\e[31mfailed\e[0m \n";
+            echo "\e[33m empty\e[0m \n";
         }
+
     }
     echo "======================\n";
 }
