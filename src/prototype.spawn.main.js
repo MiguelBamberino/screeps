@@ -4,9 +4,18 @@ module.exports = function(){
     StructureSpawn.prototype.builder_boost = 2;//4
     StructureSpawn.prototype.fixer_boost = 1;//2
     StructureSpawn.prototype.waller_boost = 1;//2
+    StructureSpawn.prototype.spawningStarted = false;
     
-    StructureSpawn.prototype.createCreep = function(parts,memory,nameOveride){
-
+    StructureSpawn.prototype.pauseSpawningUntil = function(gameTime){
+        this.memory.pausedUntil= gameTime;
+    }
+    
+    StructureSpawn.prototype.createCreep = function(parts,memory,nameOveride,directions=[]){
+       // if(this.name=='Delta'){clog(nameOveride,'createCreep'+Game.time);clog(directions,'directions')}
+        if(this.spawningStarted!==false){
+            return -50;
+        }
+        
         if(!memory){
           this.log("error",this.name+":: creep create request with no memory. "+nameOveride);
           return -40;
@@ -23,40 +32,59 @@ module.exports = function(){
             return -30;
         }
         
-        memory.spawn_name = this.name;
+        //memory.spawn_name = this.name;
         delete Memory.creeps[name]; // clear out old crap
         
-        let spots = [TOP_LEFT,TOP,TOP_RIGHT];
-        let fillerSpots = [BOTTOM_LEFT,BOTTOM_RIGHT];
-        if(this.name=='Eta' ||  this.name.indexOf('-2')>0){
-            fillerSpots=[TOP_LEFT,TOP_RIGHT];
-            spots = [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
-        }
-        if(this.name=='Theta' ){
-            fillerSpots=[TOP_LEFT,BOTTOM_LEFT];
-            spots = [RIGHT,TOP_RIGHT,BOTTOM_RIGHT];
-        }
-        if(this.name=='Theta-2' ){
-            fillerSpots=[TOP_RIGHT,BOTTOM_RIGHT];
-            spots = [LEFT,TOP_LEFT,BOTTOM_LEFT];
-        }
-        
-        if(memory && memory.role=='ffiller'){
-            spots = fillerSpots;
-        }
-        let result = this.spawnCreepX(parts, name, {memory:memory,directions:spots});
+        let result = this.spawnCreepX(parts, name, {memory:memory,directions:directions});
         this.memory.spawn_result = name+": "+result;
         if(result ===OK){
+            
             // this.memory.creep_names[name]= name; DEPRECATED=V18
             this.log("spawn",memory.role+" called "+name);
+            return name;
         }
         return result;
     },
-    Structure.prototype.spawnCreepX= function(parts, name, options){
+    /**
+     * Get the next available  creep name
+     */ 
+    StructureSpawn.prototype.getCreepNameX = function(role){
+        // A-Wo-1 vs A:wo:0
+        let count = 0;
+        while(count<10){
+           let name = this.name.substr(0,1)+"-"+role.substr(0,2)+"-"+count;
+           if(!Game.creeps[name]){
+                return name;    
+            }
+            count++;
+        }
+        return false;
+        
+    },
+    Structure.prototype.spawnCreepX= function(parts, name, options={},highPriority=false){
+        
+        if(!highPriority && this.memory.pausedUntil && this.memory.pausedUntil > Game.time)return -60;
+        
+        //if(this.name=='Delta'){clog(name,'spawnCreepX '+Game.time);clog(options,'options')}
+        
+        if( options.directions==undefined && this.forceDirectionHack){
+            // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
+            // nob heads!
+            options.directions =this.forceDirectionHack; 
+        }
+       // if(this.name=='Delta'){clog(name,'spawnCreepX '+Game.time);clog(options,'options after')}
+        if(this.spawningStarted!==false && !highPriority){
+            return -50;
+        }
         if(typeof parts ==='string'){
             parts =  this.parseBody(parts);
         }
-        return this.spawnCreep(parts,name,options);
+        
+        let res = this.spawnCreep(parts,name,options);
+        if(res===OK){
+            this.spawningStarted = name;
+        }
+        return res;
     }
     StructureSpawn.prototype.getBodyPlanFromStr=function(str){
         str = str.toLowerCase();
@@ -88,7 +116,6 @@ module.exports = function(){
     StructureSpawn.prototype.parseBodyT = function(str){
         let st = Game.cpu.getUsed();
         let res = this.parseBody(str);
-        clog( Game.cpu.getUsed()-st,'CPU:parseBody' );
         return res;
     }
     global.BODY_PLAN_CACHE={};
@@ -159,270 +186,12 @@ module.exports = function(){
         return budget;
        // return energy;
     },
-    /**
-     * Get the next available  creep name
-     */ 
-    StructureSpawn.prototype.getCreepNameX = function(role){
-        // A-Wo-1 vs A:wo:0
-        let count = 0;
-        while(count<10){
-           let name = this.name.substr(0,1)+"-"+role.substr(0,2)+"-"+count;
-           if(!Game.creeps[name]){
-                return name;    
-            }
-            count++;
-        }
-        return false;
-        
-    },
     
-    StructureSpawn.prototype.getAvailableMine2 = function(online = false) {
-        const roomNames = this.roomNames();
-        let filters = [
-            {
-                operator: "fn",
-                attribute: "haveNoCreep",
-                value: []
-            }
-        ];
     
-        if (online) {
-            filters.push({
-                operator: "fn",
-                attribute: "haveContainer",
-                value: []
-            });
-        }
-    
-        let sources = mb.getSources({
-            roomNames: roomNames,
-            filters: filters
-        });
-        if(sources.length>0){
-            return sources[0];
-        }
-
-        return false;
-    }
     StructureSpawn.prototype.roomNames = function(){
         return Object.keys(this.memory.room_names);
     }
-    StructureSpawn.prototype.remoteRoomNames = function(){
-        let rooms = [];
-        for(let r of this.roomNames()){
-            if(this.room.name !=r){
-                rooms.push(r);
-            }
-        }
-        return rooms;
-    }
-    StructureSpawn.prototype.checkBuilderQuota = function(){
-        
-        let builder_quota = this.memory.workforce_quota.builder;
-        let haveSites = mb.haveConstructions(this.roomNames());
-        if(haveSites && builder_quota.required!== this.builder_boost){
-            this.log("QUOTAS",this.name+" Stuff to build. Increasing builder quota by "+this.builder_boost);
-            builder_quota.required = this.builder_boost;
-        }
-        if( !haveSites && builder_quota.required>0){
-            this.log("QUOTAS",this.name+" No stuff to build. decreasing builder quota to 0");
-            builder_quota.required = 0;
-        }
-    },
-       StructureSpawn.prototype.checkWallerUpgraderQuota = function(){
-
-        this.depotE = 0;
-        let storage = mb.getStorageForRoom(this.pos.roomName);
-        if(storage){
-            this.depotE = storage.storedAmount();
-        }
-  
-
-        let wallCount = mb.countStructures([STRUCTURE_WALL,STRUCTURE_RAMPART],this.roomNames());
-        let onePer2k = Math.floor(  (this.depotE/2)/1000  );
-        let onePer200k = Math.floor(  (this.depotE/2)/100000  );
-        let oneper300k = Math.floor(((this.depotE/3)/100000));
-        let oneper400k = Math.floor(((this.depotE/4)/100000));
-        let wallersWanted = wallCount>1?1:0;
-        if(storage && this.depotE<1000){
-            wallersWanted=0;
-        }
-        
-        let upgradersWanted = this.room.controller.getContainer()? 1:0;
-        
-       
-        //if(this.room.controller.level<4){
-           // upgradersWanted += onePer2k;
-          // upgradersWanted =1;
-        //}else{
-            if(this.room.controller.level==8){
-                wallersWanted += onePer200k;
-                //upgradersWanted += oneper300k;
-            }else{
-                wallersWanted += oneper300k;
-                //upgradersWanted += onePer200k;
-            }
-        //}
-        if(this.name=='Alpha' || this.name=='Gamma'){
-            wallersWanted=0;
-        }
-        if(this.name=='Eta' ){
-           // upgradersWanted=2;
-        }
-        if(this.name=='Delta' && wallersWanted>0){
-            wallersWanted=1;
-        }
-
-        if(Game.cpu.bucket<5000){
-            if(wallersWanted>0)wallersWanted--;
-            //if(upgradersWanted>0)upgradersWanted--;
-        }
     
-        if(Game.cpu.bucket<2000){
-            wallersWanted=0;
-            upgradersWanted=1;
-        }
-
-        let quota = this.memory.workforce_quota.waller;
-        if(quota.required!== wallersWanted){
-            this.log("QUOTA",this.name+" Changing waller quota to "+wallersWanted);
-            quota.required = wallersWanted;
-        }
-        quota = this.memory.workforce_quota.upgrader;
-        if(quota.required!== upgradersWanted){
-            this.log("QUOTA",this.name+" Changing upgrader quota to "+upgradersWanted);
-            quota.required = upgradersWanted;
-        }
-   },
-    StructureSpawn.prototype.checkFixerQuota = function(){
-        let fixer_quota = this.memory.workforce_quota.fixer;
-        let count = mb.countStructures([STRUCTURE_ROAD],this.roomNames());
-        if(this.room.controller.level > 1 && count>1 && fixer_quota.required!== this.fixer_boost){
-            this.log("QUOTA",this.name+" Changing fixer quota to "+this.fixer_boost);
-            fixer_quota.required = this.fixer_boost;
-        }
-   },
-    StructureSpawn.prototype.checkReserverQuota = function(){
-        
-        let roomsToReserve = 0;
-        for(let name in this.memory.room_names){
-            this.memory.room_names[name]['type']='claim';
-            if(name==='W42N51'){
-                this.memory.room_names[name]['type']='claim';
-            }
-            // skip spawns room and can we see the remote
-            if(this.room.name !== name && Game.rooms[name]){
-                
-
-                
-                if(this.memory.room_names[name].type =='claim'){
-                    if(typeof Game.rooms[name].controller.owner==='undefined'){
-                        roomsToReserve++;
-                    }else if(Game.rooms[name].controller.ticksToDowngrade < 200){
-                        roomsToReserve++;
-                    }
-                }else if(this.memory.room_names[name].type =='reserve'){
-                   
-                    roomsToReserve++;
-                }
-
-            }
-        }
-        if(this.memory.workforce_quota.reserver.required != roomsToReserve){
-            this.log("quota",this.name+" Changing reserver quota to "+roomsToReserve);
-            this.memory.workforce_quota.reserver.required= roomsToReserve;
-        }
-    },
-    
-     StructureSpawn.prototype.recycleAll = function(){
-        for(let name in Memory.creeps){
-            if(Game.creeps[name]){
-                Game.creeps[name].recycle();
-            }
-        }
-    },
-    StructureSpawn.prototype.clearUpMemory = function(){
-        for(let name in Memory.creeps){
-            if(!Game.creeps[name]){
-                this.log("cleanup","Cleaning up creep:"+name);
-                delete Memory.creeps[name];
-            }
-        }
-    }
-    StructureSpawn.prototype.reportHostile = function(hostile){
-        
-        if(typeof this.memory.room_names[hostile.room.name]!=='undefined'){
-
-            if(typeof this.memory.room_names[hostile.room.name].hostiles[hostile.id]==='undefined'){
-                
-                hostile.room.name;
-                this.memory.room_names[hostile.room.name].dangerous = true;
-                let attckParts=0;
-                for(let i in hostile.body){
-                    if(hostile.body[i].type===ATTACK||hostile.body[i].type===ATTACK){
-                        attckParts++;
-                    }
-                }
-                
-                this.memory.room_names[hostile.room.name].hostiles[hostile.id] = {
-                    last_known_pos:{x:hostile.pos.x,y:hostile.pos.y,roomName:hostile.room.name},
-                    attack_parts:attckParts
-                };
-                this.log('ATTACK','New hostile found in '+hostile.room.name);
-            }
-        }
-    }
-    StructureSpawn.prototype.reportHostileDead = function(roomName,hostile_id){
-        if(typeof this.memory.room_names[roomName]!=='undefined'){
-            if(typeof this.memory.room_names[roomName].hostiles[hostile_id]!=='undefined'){
-                delete this.memory.room_names[roomName].hostiles[hostile_id];
-                this.log('ATTACK','Hostile marked dead in '+roomName+" id:"+hostile_id);
-            }
-            if(Object.keys(this.memory.room_names[roomName].hostiles).length===0){
-                this.memory.room_names[roomName].dangerous = false;
-                this.log('ATTACK','All hostiles are gone. '+roomName+" is now safe.");
-            }
-            let c = Object.keys(this.memory.room_names[roomName].hostiles).length;
-            
-        }
-    }
-    StructureSpawn.prototype.addRoom = function(roomName){
-
-       let controller = Game.rooms[roomName].controller;   
-       this.memory.room_names[roomName] = {controller_id:controller.id,controller_pos:controller.pos,reserver_id:"",dangerous:false,hostiles:{},dropped_energy:{},type:"claim",level:"claim"}; 
-            
-    }
-    
-    StructureSpawn.prototype.lockFillSites= function(){
-        
-        let results = this.room.lookForAtArea(LOOK_STRUCTURES,this.pos.y,this.pos.x-2,this.pos.y+2,this.pos.x+2,true);
-       // console.log(results.length);
-        for(let s in results){
-            //console.log(results[s].structure.id)
-           // console.log(JSON.stringify(results[s].structure.getReservations()))
-            //results[s].structure.resetReservations();
-            if(results[s].structure.structureType === STRUCTURE_CONTAINER){
-                if(results[s].structure.isWithdrawLocked()===false)results[s].structure.lockReservations(['withdraw']);
-            }else if(results[s].structure.structureType === STRUCTURE_SPAWN){
-                if(results[s].structure.isWithdrawLocked()===false)results[s].structure.lockReservations(['transfer']);
-            }else if(results[s].structure.structureType === STRUCTURE_EXTENSION){
-                if(results[s].structure.isWithdrawLocked()===false)results[s].structure.lockReservations(['transfer']);
-            }
-        }
-    }
-       
-    StructureSpawn.prototype.unlockFillSites= function(){
-        
-        let results = this.room.lookForAtArea(LOOK_STRUCTURES,this.pos.y,this.pos.x-2,this.pos.y+2,this.pos.x+2,true);
-       // console.log(results.length);
-        for(let s in results){
-            if(results[s].structure.structureType === STRUCTURE_SPAWN){
-                results[s].structure.resetReservations();
-            }else if(results[s].structure.structureType === STRUCTURE_EXTENSION){
-                results[s].structure.resetReservations();
-            }
-        }
-    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
 	//// CORE DEBUG FUNCS

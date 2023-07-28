@@ -18,6 +18,7 @@ checkDeletedObjects()
 //#######################################################
 // RoomObject Object Metas
 //#######################################################
+/*
 RoomObject.prototype.getMeta=function(){
     let meta = objectMeta.get(this.id);
    // clog(meta,'meta')
@@ -25,7 +26,7 @@ RoomObject.prototype.getMeta=function(){
         return {};
     }
     return meta;
-} 
+} */
 RoomObject.prototype.setMeta=function(data){
     let meta = objectMeta.get(this.id);
     if(meta){
@@ -44,6 +45,32 @@ RoomObject.prototype.setMetaAttr=function(name,value){
     return false;
 }
 
+
+extraFunctions={
+    getMeta:function(){
+        let meta = objectMeta.get(this.id);
+       // clog(meta,'meta')
+        if(!meta){
+            return {};
+        }
+        return meta;
+    },
+    bob:function(name){clog(name,'bob1')},
+    bob2:function(name){clog(this.id,'bob2')}
+}
+for(let funcName in extraFunctions){
+    RoomObject.prototype[funcName] = extraFunctions[funcName]
+}
+//#######################################################
+// RoomObject isActive Metas
+//#######################################################
+RoomObject.prototype.isActive=function(){
+    let meta = this.getMeta();
+    return (meta.isActive)?true:false;
+}
+RoomObject.prototype.setActive=function(val=true){
+    return this.setMetaAttr('isActive',val);
+}
 //#######################################################
 // RoomObject Container/Link Metas
 //#######################################################
@@ -78,32 +105,32 @@ RoomObject.prototype.haveLink = function () {
     return this.getLink() ? true : false;
 };
 //#######################################################
-// Source Metas
+// RoomObject Assigned Creep Metas
 //#######################################################
 
-Source.prototype.getStandingSpot=function(){
+RoomObject.prototype.getStandingSpot=function(){
     
     let meta = this.getMeta();
     if(meta.standing_pos)return new RoomPosition(meta.standing_pos.x,meta.standing_pos.y,meta.standing_pos.roomName);
 }
 
-Source.prototype.setStandingSpot=function(pos){
+RoomObject.prototype.setStandingSpot=function(pos){
     return this.setMetaAttr('standing_pos',pos);
 }
 
-Source.prototype.getCreep = function() {
+RoomObject.prototype.getCreep = function() {
     let meta = this.getMeta();
     if (meta.creep_id) return Game.getObjectById(meta.creep_id);
 };
 
-Source.prototype.haveCreep = function() {
+RoomObject.prototype.haveCreep = function() {
     return this.getCreep() ? true : false;
 };
-Source.prototype.haveNoCreep = function() {
+RoomObject.prototype.haveNoCreep = function() {
     return this.getCreep() ? false : true;
 };
 // Set a creep to act as a harvester or worker for this Source object
-Source.prototype.setCreep = function(creep) {
+RoomObject.prototype.setCreep = function(creep) {
     return this.setMetaAttr('creep_id', creep.id);
 };
 

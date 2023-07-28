@@ -10,9 +10,9 @@ var role = {
         return {role: "recycle"};
     },
     /** @param {Creep} creep **/
-    run: function(creep,spawn) {
-        
-        creep.moveToPos(spawn);
+    run: function(creep,config) {
+        creep.suicide();return;
+        //creep.moveToPos(Game.spawns[]);
         creep.say("Recycling");
        
 	}

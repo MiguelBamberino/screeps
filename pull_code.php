@@ -4,7 +4,7 @@ use GuzzleHttp\Utils;
 
 include __DIR__."/vendor/autoload.php";
 
-$client = new \GuzzleHttp\Client(['base_uri' => 'https://screeps.com/', 'http_errors' => false]);
+$client = new \GuzzleHttp\Client(['base_uri' => 'https://screeps.com/season/', 'http_errors' => false]);
 $options = [
    // 'headers' => ['Accept' => 'application/json'],
     'query' => ['_token'=>'c8bb2547-cb51-4f0a-b475-213cd12c3705'],

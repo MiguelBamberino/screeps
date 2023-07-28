@@ -2,8 +2,6 @@
 module.exports = {
     fname:"bob",
     sname:"burger",
-   
-    compressor:require('_packRat'),
     testStatLog:function(){
         let start = Game.cpu.getUsed();
         const StatLog = require('class.statthing');
@@ -235,31 +233,6 @@ module.exports = {
         }
     },
     
-
-//##################################################################################################################
-// UNIT TESTS
-//##################################################################################################################
-    runPackerDetectTypeTests: function(){
-        testObj = this.compressor;
-        this.runTest(testObj,'detectType',[true],'boolean');
-        this.runTest(testObj,'detectType',[false],'boolean');
-        this.runTest(testObj,'detectType',[0],'int65');
-        this.runTest(testObj,'detectType',[1],'int65');
-        this.runTest(testObj,'detectType',[2],'int65');
-        this.runTest(testObj,'detectType',[65534],'int65');
-        this.runTest(testObj,'detectType',[65535],'int');
-        this.runTest(testObj,'detectType',[-1],'int');
-
-    },
-    runTest: function(obj, func, values, expectedValue){
-        let actualValue = obj[func](...values);
-        if( actualValue===expectedValue){
-            console.log("test "+func+"("+values+"): <strong style='color:green'>PASS</strong>");
-        }else{
-            console.log("test "+func+"("+values+"): <strong style='color:red'>FAIL!</strong> >> expected: "+expectedValue+" but got: "+actualValue);
-        }
-    },
-
 
 //##################################################################################################################
 // job - queue planning
