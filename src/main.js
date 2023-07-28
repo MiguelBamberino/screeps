@@ -1,5 +1,5 @@
 let VERSION='18.4';
-let bob='hello';
+let bob='hello bob';
 if(!Memory.VERSION){Memory.VERSION=VERSION;}
 
 let _memHak = require('_memHak');
