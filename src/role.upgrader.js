@@ -15,9 +15,6 @@ var role = {
                 budget=800;
             }
         }
-        if(config.upgradeRate===RATE_VERY_SLOW){
-            return '1w1c1m';
-        }
 
         // !! WARNING!! Don't have >15 WORK parts, because thats max upgrade amount at RCL 8
        if(depotE>200000 && budget >=2450){
@@ -53,19 +50,23 @@ var role = {
         
          
         
-        let controller = Game.getObjectById(config.controller_id);
+        let controller = config.controller;
+        if(config.coreRoomName==='W42N53')clog(controller.id,creep.name)
         let container = controller.getContainer();
-        if(container){
+        
+        //if(config.coreRoomName==='W42N53')clog(container.id,creep.name)
+        
+       /* if(container){
             //container.allowOverBooking(0)
             if(config.upgradeRate===RATE_FAST){
                 container.allowOverBooking(2000)
             }else{ 
                 container.allowOverBooking(0)
             }
-        }
+        }*/
         
         let link = controller.getLink();
-        if(!container&&!link){
+        if(!container){
             
             if(creep.isWorking()){
                 
@@ -88,7 +89,7 @@ var role = {
                 }
                 
             }else if(creep.isCollecting()){
-                creep.getEnergy();
+                creep.getEnergy([config.coreRoomName]);
             }
             return;
             

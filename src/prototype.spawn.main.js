@@ -34,8 +34,9 @@ module.exports = function(){
         
         //memory.spawn_name = this.name;
         delete Memory.creeps[name]; // clear out old crap
-        
-        let result = this.spawnCreepX(parts, name, {memory:memory,directions:directions});
+        let opts = {memory:memory}
+        if(directions.length>0)opts.directions=directions
+        let result = this.spawnCreepX(parts, name, opts);
         this.memory.spawn_result = name+": "+result;
         if(result ===OK){
             
@@ -67,7 +68,7 @@ module.exports = function(){
         
         //if(this.name=='Delta'){clog(name,'spawnCreepX '+Game.time);clog(options,'options')}
         
-        if( options.directions==undefined && this.forceDirectionHack){
+        if( options.directions==undefined && this.forceDirectionHack && this.forceDirectionHack.length>0){
             // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
             // nob heads!
             options.directions =this.forceDirectionHack; 
@@ -81,6 +82,11 @@ module.exports = function(){
         }
         
         let res = this.spawnCreep(parts,name,options);
+        if(this.name==='xxx-3'){
+            clog(parts,name)
+            clog(options,name)
+            clog(res,name)
+        }
         if(res===OK){
             this.spawningStarted = name;
         }

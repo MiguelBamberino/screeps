@@ -12,7 +12,7 @@ global.reservationBook = {
                 let structure = Game.getObjectById(id);
                 if(!structure){
                     
-                    console.log("Structure disappeared. Deleting reservation book id:"+id);
+                    clog("Structure disappeared. Deleting reservation book id:"+id,Game.time);
                     delete Memory.reservationBook[id];
                     
                 }else{
@@ -171,8 +171,8 @@ Structure.prototype.reserveTransfer=function(ref,amount,force=false){
     }
     if(this.store){
         let reservations = this.getReservations();
-        if(reservations.transfer.reserves[ref]===undefined){
-            if(!this.canReserveTransfer(amount)){
+        if(reservations.transfer.reserves[ref]===undefined || force){
+            if(force===false && !this.canReserveTransfer(amount)){
                 amount = this.store.getFreeCapacity(RESOURCE_ENERGY);
             }
             if(this.canReserveTransfer(amount) || force){

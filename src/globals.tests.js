@@ -27,118 +27,25 @@ module.exports = {
         //console.log(x.logLength)
         
     },
-    runLinkSend:function(roomName) {
-        const linksReadyToSend = mb.getStructures({
-            types: [STRUCTURE_LINK],
-            roomNames: [roomName],
-            filters: [
-                {
-                    attribute: 'readyToSend',
-                    value: [],
-                    operator: 'fn'
-                }
-            ]
-        });
-    
-        for (const link of linksReadyToSend) {
-            const recipient = link.getFirstReadyRecipient();
-            if (recipient) {
-                link.transferEnergy(recipient);
-                break;
-            }
-        }
-    },
-    setLinksInRoom:function(roomName) {
-        const room = Game.rooms[roomName];
-        const links = mb.getStructures({
-            types: [STRUCTURE_LINK],
-            roomNames: [roomName]
-        });
-    
-        const structures = mb.getStructures({
-            types: [STRUCTURE_STORAGE,STRUCTURE_SPAWN, STRUCTURE_TOWER],
-            roomNames: [roomName]
-        });
-        const sources = mb.getSources({
-            roomNames: [roomName]
-        });
-    
-        const controller = room.controller;
-        let receivers = [];
-        let senders = [];
-        let found=false;
-        for (const link of links) {
-            found=false;
-            // Check if the link is within 2 of a source
-            for (const source of sources) {
-                if (link.pos.inRangeTo(source, 2)) {
-                    link.setAsSender();
-                    source.setLink(link);
-                    senders.push(link);
-                    clog(link.pos+'','set as Sender  - Source')
-                    found=true;
-                    break;
-                }
-            }
-            
-            if(!found)
-            for (const structure of structures) {
-                if (structure.structureType === STRUCTURE_STORAGE && link.pos.inRangeTo(structure, 2)) {
-                    link.setAsReceiver();
-                    link.setPriority(4);
-                    structure.setLink(link);
-                    receivers.push(link);
-                    clog(link.pos+'','seGame.gett as Receiver - Priority-4 - Storage')
-                    found=true;
-                    break;
-                } else if (structure.structureType === STRUCTURE_SPAWN && link.pos.inRangeTo(structure, 2)) {
-                    link.setAsReceiver();
-                    link.setPriority(1);
-                    receivers.push(link);
-                    clog(link.pos+'','seGame.gett as Receiver - Priority-1 - Filler')
-                    found=true;
-                    break;
-                }else if (structure.structureType === STRUCTURE_TOWER && link.pos.inRangeTo(structure, 1)) {
-                    link.setAsReceiver();
-                    link.setPriority(3);
-                    receivers.push(link);
-                    clog(link.pos+'','set as Receiver - Priority-3 - Tower')
-                    found=true;
-                    break;
-                }
-            }
-
-            if (!found && controller && link.pos.inRangeTo(controller.getContainer(), 1)) {
-                link.setAsReceiver();
-                link.setPriority(2);
-                receivers.push(link);
-                clog(link.pos+'','set as Receiver- Priority-2 - Controller')
-            }
-        }
+    mbChanges:function() {
+        let st = Game.cpu.getUsed()
+        rp(20,29,'W48N52').lookForStructure(STRUCTURE_ROAD)
+        let used = Game.cpu.getUsed() - st;
+        clog(used,'lookForStructure');
         
-        for(slink of senders){
-            slink.clearRecipients();
-            for(let rlink of receivers)slink.addRecipient(rlink.id);
-        }
+        st = Game.cpu.getUsed()
+        Game.getObjectById('650d89557ae44cc6b6903e7b')
+        used = Game.cpu.getUsed() - st;
+        clog(used,'getObjectById');
     },
-    linkReport:function(roomName) {
-        const links = mb.getStructures({
-            types: [STRUCTURE_LINK],
-            roomNames: [roomName]
-        });
-    
-        for (const link of links) {
-            let linkType = 'none';
-            if (link.isReceiver()) {
-                linkType = 'receiver';
-            } else if (link.isSender()) {
-                linkType = 'sender';
-            }
-            let recips = link.getMeta()['recipients'];
-            console.log(`Link ID: ${link.id} ${link.pos} | Type: ${linkType} >> ${recips}`);
-        }
+    parseCPU:function(){
+       let st = Game.cpu.getUsed();
+       JSON.stringify(Memory)
+       let used = Game.cpu.getUsed() - st;
+       clog(used,'stringfy Memory CPU');
+        
     },
-
+   
     removeFlags: function(roomName){
         const room = Game.rooms[roomName];
     

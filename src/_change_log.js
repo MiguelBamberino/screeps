@@ -1,5 +1,24 @@
 
 /*
+===================================
+= Version 19.1.2 
+===================================
+- added rKeeper role to manage in-room hauling; replace tankers+tempCode hauler
+- moved imports and exports config to be stored in roomNodes
+- rKeeper hauls for imports & exports
+- moved mapBook to heap for rooms with vision
+- moved roomNode setup to _shard_config.js
+- added more CPU watches to GUI summary
+
+===================================
+= Version 19.1.1
+===================================
+- adding labComplex prototype
+
+===================================
+= Version 19.1 
+===================================
+- Pulling code from season for shard3
 
 ===================================
 = Version 19.0 

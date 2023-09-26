@@ -4,8 +4,9 @@ module.exports = function(){
 	//// ACTION CORE FUNCS
 	//////////////////////////////////////////////////////////////////////////////////////////////////////	
 	Creep.prototype.swapPositions=function(them){
-	    this.moveTo(them)
-	    them.moveTo(this);
+	    let res = this.moveTo(them.pos)
+	    if(res!==OK)return res;
+	    return them.moveTo(this.pos);
 	}
     Creep.prototype.actOrMoveTo=function(action,target,param2){
         let result = this.act(action,target,param2);
@@ -264,7 +265,7 @@ module.exports = function(){
             //  creep.pos.getRangeTo(hostile)<=10 && 
             let creep = this;// so callback works
             let hostiles = this.room.getHostiles().filter(function(hostile){return (hostile.partCount(ATTACK)>0||hostile.partCount(RANGED_ATTACK)>0) });
-         //   if(this.name=='Slammy')clog(hostiles,'moveToPos:hostiles')
+           // if(this.name=='Fighty1')clog(hostiles,'moveToPos:hostiles')
            // let reUse = 50; 
           // let ignoreNoobs = true;
             let opts = {
@@ -290,9 +291,9 @@ module.exports = function(){
             // if we're  still on the same space as last tick, then lets try move around the noobs
             if(this.memory.last_pos == this.pos.x+"-"+this.pos.y){
                 opts.ignoreCreeps=false;
-                opts.reusePath = 2;
+                opts.reusePath = 5;
             }
-            if(hostiles.length>0 && Game.cpu.bucket>4000){
+            if(hostiles.length>0 && Game.cpu.bucket>8000){
                 
                 opts.reusePath=2;
                 
@@ -357,7 +358,9 @@ module.exports = function(){
                     return costMatrix;
                 };
             }
-            
+            if(this.name=='E-ha-0'){
+              //  clog(opts)
+            }
             result= this.moveTo(target,opts);
             this.debugSay("M:"+result)
             if(result===OK){

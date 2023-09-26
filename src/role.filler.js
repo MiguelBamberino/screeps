@@ -1,8 +1,7 @@
 var role = {
 
-
     getParts: function(budget,config){
-        let level = Game.getObjectById(config.controller_id).level;
+        let level = config.controller.level;
         if(level ===8){
             return [CARRY,CARRY,CARRY,CARRY];
         }else if(level===7){
@@ -13,7 +12,7 @@ var role = {
     },
     /** @param {Creep} creep **/
     run: function(creep,config) {
-        
+        let clogCPU=true;
         // lock 2k on container/storage
         // want lock, so filler is able to reserveWithdraw more under its name
         
@@ -86,62 +85,90 @@ var role = {
 
         if(spawn && creep.ticksToLive<600){
             spawn.renewCreep(creep);
+            creep.memory.fillingInProgress=true;
         }
-
-        let blobs = creep.pos.lookFor(LOOK_ENERGY);
+        
+        // if Game.time%2==0 && spawn.spawning
+        //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawing');
+        if(Game.time%2==0 && !creep.memory.fillingInProgress && creep.memory.all_spawn_ids){
+            for(let sid of creep.memory.all_spawn_ids){
+                let sp = Game.getObjectById(sid);
+                if(sp && sp.spawning){
+                    creep.memory.fillingInProgress=true;break;
+                }
+            }
+        }
+        //if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':spawing',clogCPU);
+        
+        
         let container = Game.getObjectById(creep.memory.container_id);
         if(container && !container.isFillerStore())container.setAsFillerStore();
 
 	    if(creep.isWorking()) {
 
-
-            let target = Game.getObjectById(creep.memory.spawn_id);
-            
-            if(target){
-                let res = creep.act("transfer",target,RESOURCE_ENERGY);
-                //creep.say(res)
-                if(res===OK){
-                   return ;
-                }
-            }
-            
-            for(let id of creep.memory.extension_ids){
-                let extension = Game.getObjectById(id);
-                if(extension && creep.store.getUsedCapacity(RESOURCE_ENERGY) >= extension.store.getUsedCapacity(RESOURCE_ENERGY)){
-                    if(creep.act("transfer",extension,RESOURCE_ENERGY)===OK){
+            //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawn_id');
+            if(creep.memory.fillingInProgress){
+                if(spawn){
+                    let res = creep.act("transfer",spawn,RESOURCE_ENERGY);
+                    if(res===OK){
                        return ;
                     }
-                }else{
-                    creep.goCollect();
                 }
+            }
+            //if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':spawn_id',clogCPU);
+            
+            //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':extension_ids');
+            if(creep.memory.fillingInProgress){
+                for(let id of creep.memory.extension_ids){
+                    let extension = Game.getObjectById(id);
+                    if(extension && creep.store.getUsedCapacity(RESOURCE_ENERGY) >= extension.store.getUsedCapacity(RESOURCE_ENERGY)){
+                        if(creep.act("transfer",extension,RESOURCE_ENERGY)===OK){
+                           return ;
+                        }
+                    }else{
+                        creep.goCollect();
+                    }
+    
+                }
+                creep.memory.fillingInProgress = false; // if we got this far then we have filled all extensions and spawns
+            }
+            
+           // if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':extension_ids',clogCPU);
+            
+            //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':tower_id');
+            let playerAttackers = Game.rooms[creep.pos.roomName].getEnemyPlayerFighters(); 
+            if(Game.time%10==0 || playerAttackers.length>0 || config.towersBuildWalls){
+                for(let id of creep.memory.tower_ids){
+                    let tower = Game.getObjectById(id);
+                    if(tower && tower.haveSpaceFor(creep.store.getCapacity())  ){
+                        let res = creep.act("transfer",tower,RESOURCE_ENERGY);
+                        if(res===OK){
+                           return ;
+                        }
+                    }
+                }
+            }
+           // if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':tower_id',clogCPU);
+            
 
-            }
-            
-            let tower = Game.getObjectById(creep.memory.tower_id);
-            
-            if(tower){
-                let res = creep.act("transfer",tower,RESOURCE_ENERGY);
-                if(res===OK){
-                   return ;
-                }
-            }
-            
-            
-            if(blobs.length>0){
-                let resStatus = creep.reserveTransfer(container);
-                if( resStatus===OK){
-                    let r = creep.act("transferX",container,RESOURCE_ENERGY);
-                    if(r===OK){
-                       return ;
-                    }else{creep.say(r);}
-                }else{
-                    creep.say(resStatus);
-                }
-            }
             
             let link = Game.getObjectById(creep.memory.link_id);
             let terminal = Game.getObjectById(creep.memory.terminal_id);
+            
+            // if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':terminal1');
+            if(terminal && container.storingAtleast(2000) && terminal.storingLessThan(config.terminalEnergyCap,RESOURCE_ENERGY)){
+                let resStatus = creep.reserveTransfer(terminal);
+                if( resStatus===OK){
+                    let r = creep.act("transferX",terminal,RESOURCE_ENERGY);
+                    if(r===OK){
+                       return ;
+                    }
+                }
+            }
+            //if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':terminal1',clogCPU);
+            
             // if we have a link thats not empty || a terminal with an import, then lets try transfer into the container
+           // if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':link');
             if(link && !link.isEmpty()){
                 let resStatus = creep.reserveTransfer(container);
                 if( resStatus===OK){
@@ -151,7 +178,11 @@ var role = {
                     }
                 }
             }
-            if(terminal && terminal.storingAtleast(15000,RESOURCE_ENERGY)){
+           // if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':link',clogCPU);
+            
+            //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':terminal2');
+            let withdrawLimit = config.terminalEnergyCap+1+creep.store.getCapacity()
+            if(terminal && terminal.storingAtleast(withdrawLimit,RESOURCE_ENERGY)){
                 let resStatus = creep.reserveTransfer(container);
                 if( resStatus===OK){
                     let r = creep.act("transferX",container,RESOURCE_ENERGY);
@@ -160,20 +191,25 @@ var role = {
                     }
                 }
             }
+            //if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':terminal2',clogCPU);
             
 	    }
 	    else if(creep.isCollecting()){
 	        
-	        if(blobs.length>0){
+	      /*  if(blobs.length>0){
 	            creep.pickup(blobs[0]);
-	        }else if(container){
+	        }else */
+	        //creep.say('yo')
+	        if(container){
 	            
 	            let link = Game.getObjectById(creep.memory.link_id);
                 if(link && !link.isEmpty()){
                     return creep.act("withdraw",link,RESOURCE_ENERGY);
                 }
                 let terminal = Game.getObjectById(creep.memory.terminal_id);
-                if(terminal && terminal.storingAtleast(15000,RESOURCE_ENERGY)){
+                let withdrawLimit = config.terminalEnergyCap+1+creep.store.getCapacity()
+               
+                if(terminal && terminal.storingAtleast(withdrawLimit,RESOURCE_ENERGY)){
                     return creep.act("withdraw",terminal,RESOURCE_ENERGY);
                 }
 	            
@@ -200,7 +236,14 @@ var role = {
 	        roomNames:[creep.pos.roomName]
 	    });
 	   creep.memory.extension_ids=[];
+	   creep.memory.all_spawn_ids=[];
+	   creep.memory.tower_ids=[];
 	    for(let structure of structures){
+	        
+	        if(structure.structureType===STRUCTURE_SPAWN){
+                creep.memory.all_spawn_ids.push(structure.id);
+            }
+	        
 	        if(creep.pos.isNearTo(structure)){
 	            if(structure.structureType===STRUCTURE_SPAWN){
 	                creep.memory.spawn_id = structure.id;
@@ -208,7 +251,7 @@ var role = {
 	                //structure.lockFillSites();
 	            }
 	            if(structure.structureType===STRUCTURE_TOWER){
-	                creep.memory.tower_id = structure.id;
+	                creep.memory.tower_ids.push(structure.id);
 	                structure.reserveTransfer(creep.name,250,true);
 	            }
 	            if(structure.structureType===STRUCTURE_LINK){
@@ -228,7 +271,7 @@ var role = {
 	                if(!structure.isFillerStore())structure.setAsFillerStore();
 	            }
 	            if(structure.structureType===STRUCTURE_EXTENSION){
-	                structure.reserveTransfer(creep.name,structure.store.getCapacity(),true);
+	                structure.reserveTransfer(creep.name,structure.store.getCapacity(RESOURCE_ENERGY),true);
 	                creep.memory.extension_ids.push(structure.id);
 	            }
 	        }

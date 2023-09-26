@@ -13,6 +13,8 @@ global.mb = {
     // how many uses must a path have, to not be purged
     PATH_CACHE_PURGE_THRESHOLD:5,
     
+    paths:{},
+    
     type_shorts_lookup:{
         'container':'CO',
         'controller':'CO',
@@ -36,7 +38,14 @@ global.mb = {
         'tower':'TW',
         'wall':'WA'
     },
-
+    intervals:{ 
+       /* 'PATH_AUDIT':{refresh_rate:100,callback:'auditPaths'}, */
+        'REFRESH_REPAIR':{refresh_rate:1000,callback:'refreshRepairTargets'},
+        'CONSTRUCTION_SCAN':{refresh_rate:100,callback:'scanForConstructions'},
+        'CLEAN_STRUCTURES':{refresh_rate:500,callback:'cleanMissingStructures'}
+    },
+    
+    heap_rooms:{},
     
     runTick: function(){
         this.checkIntervals();
@@ -44,36 +53,24 @@ global.mb = {
         this.reviewConstructions();
     },
     checkIntervals: function(){
-        for(let t in Memory.mapBook.intervals){
-            
-            let interval = Memory.mapBook.intervals[t];
-            interval.ticker++;
-            if(interval.ticker >= interval.refresh_rate){
+        for(let t in this.intervals){
+            let interval = this.intervals[t];
+            if( Game.time% interval.refresh_rate===0){
+               // clog("running..",interval.callback)
                 this[interval.callback]();
-                interval.ticker=0;
             }
-            
+            //clog("running at "+interval.refresh_rate,interval.callback)
         }
     },
     initiate: function(){
 
         if(!Memory.mapBook){
             Memory.mapBook = {
-                intervals:{},
-                paths:{},
                 rooms:{}
             };
-            this.reloadIntervals();
         }
     },
-    reloadIntervals: function(){
-        Memory.mapBook.intervals={ 
-                    'PATH_AUDIT':{ticker:0,refresh_rate:100,callback:'auditPaths'},  
-                    'REFRESH_REPAIR':{ticker:0,refresh_rate:1000,callback:'refreshRepairTargets'},
-                    'CONSTRUCTION_SCAN':{ticker:0,refresh_rate:100,callback:'scanForConstructions'},
-                    'CLEAN_STRUCTURES':{ticker:0,refresh_rate:500,callback:'cleanMissingStructures'}
-                };
-    },
+
     scanRoom: function(roomName){
 
         if(Game.rooms[roomName]){
@@ -91,13 +88,12 @@ global.mb = {
             let minerals = Game.rooms[roomName].find(FIND_MINERALS);
             let mineralID = '';
             for(let mineral of minerals)
-                if(mineral.mineralType!==RESOURCE_THORIUM)
                     mineralID=mineral.id;
             
             let c = Game.rooms[roomName].controller;
             //console.log(c);
             let controllerStruct =(c)?{id:c.id,coords:{x:c.pos.x,y:c.pos.y}}:{};
-            Memory.mapBook.rooms[roomName]={
+            let base={
                 constructionSites:{},
                 structures:{},
                 struct_id_cache:{},
@@ -108,6 +104,17 @@ global.mb = {
                 terminal_id:'',
                 mineral_id:mineralID
             };
+            //clog(c.owner.username==='MadDokMike','c-user')
+            if( c && c.owner.username === 'MadDokMike'){
+               // Memory.mapBook.rooms[roomName] = base;
+                this.heap_rooms[roomName] = base;
+                //clog('on heap')
+            }else{
+                Memory.mapBook.rooms[roomName] = base;
+               // clog('in memory')
+                
+            }
+            
             this.scanRoomForStructures(roomName)
             this.scanRoomForConstructions(roomName);
             this.refreshRepairTargetsForRoom(roomName);
@@ -118,18 +125,21 @@ global.mb = {
     },
     
     getRoom: function(name){
+        if(this.heap_rooms[name])return this.heap_rooms[name];
         if(Memory.mapBook.rooms[name])return Memory.mapBook.rooms[name];
         return false;
        
     },
     deleteRoom: function(name){
+        if(this.heap_rooms[name])delete this.heap_rooms[name];
         if(Memory.mapBook.rooms[name])delete Memory.mapBook.rooms[name];
     },
     hasRoom: function(name){
-        return (Memory.mapBook.rooms[name])?true:false;
+        return (this.heap_rooms[name] || Memory.mapBook.rooms[name])?true:false;
     },
     allRooms: function(){
-        return Memory.mapBook.rooms;
+        // this will break when you want all rooms in/out vision. Need to refactor vision-less rooms into heap
+        return this.heap_rooms;
     },
     createNoVisionObject: function(data,roomName){
         
@@ -216,8 +226,12 @@ global.mb = {
         return this.getSources();
     },
     getSources: function (query,debug=false) {
-        const allRooms = this.allRooms();
         let sources = [];
+        
+        // if rooms is not set, then filter on all of them
+        if(! query.roomNames){
+            query.roomNames = Object.keys(this.allRooms());
+        }
         
         if(query.requireVision===undefined)
             query.requireVision=true;
@@ -226,15 +240,10 @@ global.mb = {
             query.filters=[];
         
         if(debug)clog(query)
-        for (const roomName in allRooms) {
-            // Check if the filter is set and roomNames is provided, then filter the rooms
-            if (query && query.roomNames && query.roomNames.length > 0) {
-                if (!query.roomNames.includes(roomName)) {
-                    continue;
-                }
-            }
+        
+        for (const roomName of query.roomNames) {
     
-            const room = allRooms[roomName];
+            let room = this.getRoom(roomName);
             if (room && room.sources) {
                 for (const id in room.sources) {
                     const source = Game.getObjectById(id);
@@ -434,7 +443,8 @@ global.mb = {
                                         }
 
                                     }else{
-                                        structures.push(obj);
+                                        if(query.justIDs)structures.push(obj.id);
+                                        else structures.push(obj);
                                     }
                                 }
                             }
@@ -755,33 +765,33 @@ global.mb = {
     // Path Functions
     //////////////////////////////////////////////////////////////////////////////////////////
     markPathUsed: function(key){
-        Memory.mapBook.paths[key].uses+=1;
+        this.paths[key].uses+=1;
     },
     savePath: function(key,_path){
-        Memory.mapBook.paths[key] = { path:_path, created:Game.time, uses:1 };
+        this.paths[key] = { path:_path, created:Game.time, uses:1 };
     },
     havePath: function(key){
-        return (Memory.mapBook.paths[key])?true:false;
+        return (this.paths[key])?true:false;
     },
     getPath: function(key){
-        if(Memory.mapBook.paths[key]){
-            return Memory.mapBook.paths[key].path;
+        if(this.paths[key]){
+            return this.paths[key].path;
         }
         return false;
     },
     deletePath: function(key){
-        if(Memory.mapBook.paths[key]){
-            delete Memory.mapBook.paths[key];
+        if(this.paths[key]){
+            delete this.paths[key];
             return true;
         }
         return false;
         
     },
     allPaths:function(){
-        return Memory.mapBook.paths;
+        return this.paths;
     },
     pathCount: function(){
-        return Object.keys(Memory.mapBook.paths).length;
+        return Object.keys(this.paths).length;
     },
     auditPaths: function(){
         

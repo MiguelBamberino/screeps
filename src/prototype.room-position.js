@@ -113,6 +113,17 @@ RoomPosition.prototype.findNearbyBuildableSpot = function () {
  * Find a given object type at a location
  * this function will search and filter results
  */ 
+RoomPosition.prototype.lookForCreep = function(){
+    let results = this.lookFor(LOOK_CREEPS);
+    if(results.length>0) return results[0];
+
+    return false;
+}
+
+/**
+ * Find a given object type at a location
+ * this function will search and filter results
+ */ 
 RoomPosition.prototype.lookForStructure = function(type){
     let results = this.lookFor(LOOK_STRUCTURES);
     for(let r in results){
@@ -213,8 +224,11 @@ RoomPosition.prototype.lookForResource = function (resource_type) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Render functions
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-RoomPosition.prototype.colourIn = function(colour){
-     Game.rooms[this.roomName].visual.circle(this,{fill: colour, radius: 0.55, stroke: colour});
+RoomPosition.prototype.colourIn = function(colour,opa=0.5){
+     Game.rooms[this.roomName].visual.circle(this,{fill: colour, radius: 0.55, stroke: colour,opacity:opa});
+}
+RoomPosition.prototype.text = function(text,colour='#fff'){
+     Game.rooms[this.roomName].visual.text(text,this,{strokeWidth:'0.01',font:' 0.4 Times New Roman', color: colour,align:'center'/*,backgroundColor:'#f00',opacity:0.5*/});
 }
 RoomPosition.prototype.drawPolyAround = function(distance,colour='red') {
     const { x, y, roomName } = this;

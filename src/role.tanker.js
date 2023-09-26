@@ -118,14 +118,14 @@ var roleTanker = {
                     //creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
                 }
             }
-            
+            /*
             let storage = mb.getStorageForRoom(config.coreRoomName)
             if(!target && storage && !storage.getMeta().streaming){
     	        let terminal = mb.getTerminalForRoom(config.coreRoomName);
                 if(terminal && terminal.storingAtleast(15000)){
                     target = creep.reserveWithdrawalFromTerminal(config.coreRoomName);
                 }
-	        }
+	        }*/
             
             // if not enough E in the mines, then draw from storage
              if(!target /*&& creep.memory.lastTransferTo!==STRUCTURE_STORAGE*/){

@@ -13,8 +13,6 @@ class RemoteRoom extends AbstractRoom{
             this.buildMetaData();
         }
     }
-    
-    
 
     planOnFirstVision(){
         clog(mb.getControllerForRoom(this.roomName),'controller');

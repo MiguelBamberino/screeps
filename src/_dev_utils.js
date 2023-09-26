@@ -1,6 +1,7 @@
 
 // debug any JS type
 global.clog = function(data,label){
+    label = Game.time+':'+label;
     if(typeof data==='object'){
         console.log(label+" : ");
         let s = JSON.stringify(data, null, 2);
@@ -37,35 +38,28 @@ global.util = {
     recycle_all_creeps:function(){
         for(let k in Memory.creeps){
             if(Game.creeps[k]){
-              //  console.log(k)
-                if(Game.creeps[k].memory.role==='harvester'){
-                    Game.creeps[k].suicide();
-                }
-                let sp = Game.creeps[k].spawn();
-                if(!sp){
-                    Game.creeps[k].suicide();
-                }
-                if(sp.pos.isNearTo(Game.creeps[k])){
-                    sp.recycleCreep(Game.creeps[k]);
-                }else{
-                    Game.creeps[k].moveToPos(sp);
-                }
+             Game.creeps[k].suicide();
                 
             }else{
                 delete Memory.creeps[k];
             }
         }    
     },
-    to19_0:function(){
-        console.log('running upgrade to 19.0...')
+    to19_1:function(){
+        console.log('running upgrade to 19.1...')
         if(Memory.VERSION ==='18.4'){
-            let spawnNames = ['Alpha','Beta','Gamma','Delta'];
-            for(let name of spawnNames){
-                
-
-            }
+            
+            delete Memory.spawns;
+            delete Memory.mapBook;
+            delete Memory.logs;
+            delete Memory.reservationBook;
+            delete Memory.statLogs;
+            delete Memory.healTrioStage;
+            delete Memory.quad;
+            delete Memory.objectMeta;
+            delete Memory.mcTest;
           
-           Memory.VERSION ='19.0'; 
+           Memory.VERSION ='19.1'; 
         }else{
             console.log("Upgrade Failed. Must be on 18.4")
         }
@@ -78,7 +72,7 @@ global.util = {
         });
     
         const structures = mb.getStructures({
-            types: [STRUCTURE_STORAGE,STRUCTURE_SPAWN, STRUCTURE_TOWER],
+            types: [STRUCTURE_STORAGE,STRUCTURE_SPAWN, STRUCTURE_TOWER,STRUCTURE_WALL],
             roomNames: [roomName]
         });
         const sources = mb.getSources({
@@ -131,6 +125,12 @@ global.util = {
                     link.setPriority(3);
                     receivers.push(link);
                     clog(link.pos+'','set as Receiver - Priority-3 - Tower')
+                    found=true;
+                    break;
+                }else if (structure.structureType === STRUCTURE_WALL && link.pos.inRangeTo(structure, 2)) {
+                    link.setAsSender();
+                    senders.push(link);
+                    clog(link.pos+'','set as Sender - Dismantler')
                     found=true;
                     break;
                 }

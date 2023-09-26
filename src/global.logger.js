@@ -4,6 +4,12 @@ global.logs = {
     creepTrackers:{},
     lastTickAt:0,
     msSinceLastTick:0,
+    globalResetCPU:0,
+    globalResetTick:0,
+    expectedCPUProfit:0,
+    cpuOnMem:0,
+    bucketAtLastLoopEnd:0,
+    guiCPU:0,
     initiate: function(){
         if(!Memory.logs){
             Memory.logs={trace:false,stats:{}};
@@ -12,13 +18,36 @@ global.logs = {
     log: function(category,msg){
         //console.log("GT:"+Game.time+": "+category+" : "+msg);
     },
+    globalResetStarted: function(){
+
+    },
+    globalResetComplete:function(){
+        this.globalResetCPU = Game.cpu.getUsed();
+        this.globalResetTick = Game.time;
+    },
     mainLoopStarted: function(){
         this.msSinceLastTick = Date.now() - this.lastTickAt;
         this.lastTickAt = Date.now();
+        this.cpuTrackers={};
+        if(Game.cpu.bucket<10000){
+            actualCPUProfit = Game.cpu.bucket - this.bucketAtLastLoopEnd
+            this.cpuOnMem = this.expectedCPUProfit - actualCPUProfit - this.guiCPU;
+        }
+        //clog(Game.cpu.bucket,'bucketAtLoopStart')
+        //clog(this.expectedCPUProfit,'expectedCPUProfit')
+        //clog(actualCPUProfit,'actualCPUProfit')
+        //clog(this.cpuOnMem,'cpuOnMem')
         this.startCPUTracker('total');
     },
     mainLoopEnded: function(){
-        this.stopCPUTracker('total');
+        let cpuUsed = this.stopCPUTracker('total');
+        let cpuTickBudget = 20;
+        //clog('------------------')
+        //clog(cpuUsed,'cpuUsed')
+        this.expectedCPUProfit = cpuTickBudget - cpuUsed;
+        this.bucketAtLastLoopEnd = Game.cpu.bucket;
+        //clog(this.expectedCPUProfit,'expectedCPUProfit')
+        //clog(this.bucketAtLastLoopEnd,'bucketAtLastLoopEnd')
     },
     totalCPUUsed:function(){
         return this.cpuTrackers['total'].stop - this.cpuTrackers['total'].start;
@@ -39,8 +68,10 @@ global.logs = {
     startCPUTracker: function(tag){
         this.cpuTrackers[tag] = {start:Game.cpu.getUsed(),stop:false};
     },
-    stopCPUTracker: function(tag){
+    stopCPUTracker: function(tag,conslog=false){
         this.cpuTrackers[tag].stop = Game.cpu.getUsed();
+        if(conslog)clog( this.cpuTrackers[tag].stop-this.cpuTrackers[tag].start, Game.time+"-"+tag )
+        return this.cpuTrackers[tag].stop;
     },
     getCPULog: function(){
         let report = [];

@@ -21,7 +21,7 @@
         
     }
     Creep.prototype.checkAndUpdateState=function(config=undefined){
-	    
+
 	    // kill self, if they could not complete another job and not currently doing a job
         // this avoids lots of dropped E
         if(this.ticksToLive<25 && this.isEmpty()){
@@ -188,20 +188,20 @@
         }
     }
     Creep.prototype.linkHarvest = function (source) {
-        
-        const standingSpot = source.getStandingSpot();
+
+        let standingSpot = source.getStandingSpot();
         let link = source.getLink();
-    
+        let buildableSpot=false;
+        
         if (source.haveNoCreep()) {
             source.setCreep(this);
         }
-        
     
         if (!standingSpot) {
             if (this.pos.isNearTo(source)) {
                 source.setStandingSpot(this.pos);
                 standingSpot = this.pos;
-                const buildableSpot = standingSpot.findNearbyBuildableSpot();
+                buildableSpot = standingSpot.findNearbyBuildableSpot();
                 if (buildableSpot) {
                     mb.addConstruction(buildableSpot, STRUCTURE_LINK);
                 }
@@ -210,15 +210,17 @@
                 return ERR_NOT_IN_RANGE;
             }
         } else {
-            if (this.pos.isEqualTo(standingSpot)) {
+            let nextTo = this.pos.isEqualTo(standingSpot);
+            if(nextTo && source.energy==0 )return ERR_NOT_ENOUGH_RESOURCES;
+            
+            if (nextTo) {
                 if (link) {
-                    if ( !link.isFull(RESOURCE_ENERGY) ) {
+                    if (   !link.isFull(RESOURCE_ENERGY) ) {
                         
-                        this.pickupResourcesAtMyFeet(RESOURCE_ENERGY, false);
+                        this.pickupResourcesAtMyFeet(RESOURCE_ENERGY, false,50);
                         if(this.isFull(RESOURCE_ENERGY)){
                             this.transfer(link, RESOURCE_ENERGY);
                         }
-
                     }
                 } else {
                     const constructionSites = standingSpot.lookForNearConstructions();
@@ -229,7 +231,7 @@
                             source.setLink(links[0]);
                             links[0].setAsSender();
                         } else {
-                            const buildableSpot = standingSpot.findNearbyBuildableSpot();
+                            buildableSpot = standingSpot.findNearbyBuildableSpot();
                             if (buildableSpot) {
                                 mb.addConstruction(buildableSpot, STRUCTURE_LINK);
                             }
@@ -243,7 +245,17 @@
                 // Harvest energy from the source
                 return this.harvest(source);
             } else {
-                this.moveToPos(standingSpot);
+                if(this.pos.isNearTo(standingSpot)){
+                    let creepInTheWay = standingSpot.lookForCreep();
+                    if(creepInTheWay){
+                        this.swapPositions(creepInTheWay)
+                    }else{
+                        this.moveToPos(standingSpot);
+                    }
+                }else{
+                    this.moveToPos(standingSpot);
+                }
+                return ERR_BUSY
             }
         }
     }
@@ -252,7 +264,7 @@
         if(!source)return -404;
         let standingSpot = source.getStandingSpot();
         let container = source.getContainer();
-       // if(container)container.setAsMineStore();
+        
         if(source.haveNoCreep()){
            source.setCreep(this);
         }
@@ -313,7 +325,17 @@
                 // aalways Harvest; overflowing into container at feet
                 return this.harvest(source);
             } else {
-                this.moveToPos(standingSpot);
+                if(this.pos.isNearTo(standingSpot)){
+                    let creepInTheWay = standingSpot.lookForCreep();
+                    if(creepInTheWay){
+                        this.swapPositions(creepInTheWay)
+                    }else{
+                        this.moveToPos(standingSpot);
+                    }
+                }else{
+                    this.moveToPos(standingSpot);
+                }
+                return ERR_BUSY
             }
         }
     }
@@ -375,6 +397,16 @@
             return res;
 
         }else{
+            
+            let storage = mb.getStorageForRoom(this.pos.roomName)
+            let withdrawLimit = storage?15000:1000;
+            if(!storage || (storage && !storage.getMeta().streaming) ){
+    	        let terminal = mb.getTerminalForRoom(this.pos.roomName);
+                if(terminal && terminal.storingAtleast(withdrawLimit)){
+                    target = this.reserveWithdrawalFromTerminal(this.pos.roomName);
+                }
+	        }
+            
             let source = this.getNearestSource(roomNames);
             return this.actOrMoveTo("harvest",source);
         }
@@ -481,7 +513,31 @@
         return false;
 	    
     }
-
+	Creep.prototype.getFillerStationToFill2=function(roomNames){
+        
+	 
+	    let used =this.store.getUsedCapacity(RESOURCE_ENERGY);
+	    let filts = [
+	        {attribute:'isFillerStore',operator:'fn',value:[]},
+	        // can this target take what dis creep got
+	        {attribute:'canReserveTransfer',operator:'fn',value:[used]},
+	        // does this fill station have less than 2k stored
+	        {attribute:'storingLessThan',operator:'fn',value:[2000]}
+	        ];
+	   
+	    let structures = mb.getStructures({
+	                    types:[STRUCTURE_CONTAINER,STRUCTURE_STORAGE],
+	                    roomNames:roomNames,
+	                    filters:filts,
+	                    orderBy:{fn:'storedAmount',value:[]}
+	                });
+	    
+        if(structures.length>0){
+            return structures[0];
+        }
+        return false;
+	    
+    }
         
     Creep.prototype.getMostEmptyDepot=function(roomNames, maxEnergy=null){
         
@@ -656,6 +712,7 @@
         if(target){
             return target;
         }
+
         let targets = mb.getStructures({
                     
                     types:[STRUCTURE_CONTAINER],
@@ -664,9 +721,10 @@
                          {attribute:'isUpgraderStore',operator:'fn',value:[]},
                           {attribute:'canReserveTransfer',operator:'fn',value:[this.storedAmount()]}
                     ]})
-        if(targets.length){
 
-            if( this.reserveTransfer(targets[0])===OK){
+        if(targets.length){
+            let res = this.reserveTransfer(targets[0]);
+            if(res===OK){
                 return targets[0];
             }
         }

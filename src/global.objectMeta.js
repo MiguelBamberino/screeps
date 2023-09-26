@@ -112,6 +112,7 @@ RoomObject.prototype.getStandingSpot=function(){
     
     let meta = this.getMeta();
     if(meta.standing_pos)return new RoomPosition(meta.standing_pos.x,meta.standing_pos.y,meta.standing_pos.roomName);
+    return undefined;
 }
 
 RoomObject.prototype.setStandingSpot=function(pos){

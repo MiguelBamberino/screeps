@@ -2,7 +2,7 @@
 var role = {
 
     getParts: function(budget,config){
-        let level = Game.getObjectById(config.controller_id).level;
+        let level = config.controller.level;
         
         // assume we now have roads.
         if(level>2 && budget>=550){
@@ -23,7 +23,7 @@ var role = {
 
     run: function(creep,config){
         creep.checkAndUpdateState();
-        let controller = Game.getObjectById(config.controller_id);
+        let controller = config.controller;
         
         let playerAttackers = Game.rooms[config.coreRoomName].getEnemyPlayerFighters(); 
        // if(creep.name=='I-wo-0')clog(creep.memory.reserve_id,'rexer_id at start')
@@ -35,7 +35,7 @@ var role = {
                 return creep.actOrMoveTo("upgradeController",controller);
             }
             let target=false;
-            if(config.inRecoveryMode || playerAttackers.length>0){
+            if(config.inRecoveryMode || playerAttackers.length>0 || controller.level<4){
                 
                 let spawns = mb.getStructures({roomNames:[config.coreRoomName],types:[STRUCTURE_SPAWN]});
                 if(spawns.length>0){
@@ -57,11 +57,7 @@ var role = {
                     
                    return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
                 }
-                
-                
-                
-                    
-                
+ 
             
             }
 

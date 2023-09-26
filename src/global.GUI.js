@@ -6,7 +6,10 @@ global.gui = {
     creeptrack:false,
     mb:false,
     rb:false,
+    rbFor:false,
+    nodeStats:false,
     nodes:[],
+    renderRooms:[],
     on: function(){
         this.display=true;
         console.log("GUI loading. Please wait...");
@@ -23,6 +26,8 @@ global.gui = {
         console.log('gui.summary.on/off()');
         console.log('gui.rb.on/off()');
         console.log('gui.creeptrack.on/off()');
+        console.log('gui.rbFor=true/false');
+        console.log('gui.nodeStats=true/false');
     },
     debugSay:function(val=true){
         this.displayCreepDebugSay = val;
@@ -33,38 +38,39 @@ global.gui = {
         this.nodes = roomNodes;
         
         //let roomsToRender = ['W42N53','W45N51','W41N53'];
-        let roomsToRender = [];
-        for(let node of this.nodes)
-            roomsToRender.push(node.coreRoomName);
+        for(let id in this.nodes)
+            this.renderRooms.push(this.nodes[id].coreRoomName);
         
-        if(Game.rooms['sim'])roomsToRender=['sim'];
+        if(Game.rooms['sim'])this.renderRooms=['sim'];
         
         this.summary = Object.create( require('global.GUI.partial'));
-        this.summary.headingConfig("Overview",true,{cpu:2,tick:3,serverSpeed:3,bucket:2});
-        this.summary.setRooms(roomsToRender);
+        this.summary.headingConfig("Overview - V"+Memory.VERSION,true,{tick:3,reset:3,elapsed:2,cpu:2,memCPU:3,serverSpeed:3,bucket:2,rstCPU:2});
+        this.summary.setRooms(this.renderRooms);
         
-        this.summary.atCoords(34,1);
+        this.summary.atCoords(21,1);
         this.summary.on();
         
         this.cpu = Object.create( require('global.GUI.partial'));
         
-        this.cpu.headingConfig("CPU-USAGE",false,{tag:2,usage:3});
-        this.cpu.setRooms(roomsToRender);
-        this.cpu.atCoords(41,6);
+        this.cpu.headingConfig("CPU-USAGE",false,{tag:6,usage:3});
+        this.cpu.setRooms(this.renderRooms);
+        this.cpu.atCoords(30,15);
         //this.cpu.on();
         
         this.mb = Object.create( require('global.GUI.partial'));
         this.mb.headingConfig("MAP-BOOK",false,{col1:3,col2:3});
-        this.mb.setRooms(roomsToRender);
+        this.mb.setRooms(this.renderRooms);
        // this.mb.on();
         
         this.rb = Object.create( require('global.GUI.partial'));
         this.rb.headingConfig("Reserve Book",true,{id:6,curr:2,ref:2,transfers:6,withdrawals:6});
-        this.rb.setRooms(roomsToRender);
+        this.rb.setRooms(this.renderRooms);
+        this.rb.atCoords(1,20)
+        this.rb.off()
         
         this.creeptrack = Object.create( require('global.GUI.partial'));
         this.creeptrack.headingConfig("Creep Track",true,{name:2,cpu:2,role:3});
-        this.creeptrack.setRooms(roomsToRender);
+        this.creeptrack.setRooms(this.renderRooms);
        // this.creeptrack.on();
         
     },
@@ -75,104 +81,106 @@ global.gui = {
         
         let st = Game.cpu.getUsed();
         
-        this.cpu.setData(logs.getCPULog());
+    //logs.startCPUTracker('gui.cpu');
+        if(this.cpu.display)this.cpu.setData(logs.getCPULog());
         this.cpu.render();
+    //logs.stopCPUTracker('gui.cpu',true);
         
+    logs.startCPUTracker('gui.summary');
         this.summary.setData([{
-            cpu:logs.totalCPUUsed(),
             tick:Game.time,
+            reset:logs.globalResetTick,
+            elapsed:Game.time-logs.globalResetTick,
+            cpu:logs.totalCPUUsed().toFixed(4),
+            memCPU:logs.cpuOnMem.toFixed(4),
             serverSpeed:(logs.msSinceLastTick/1000)+'s',
-            bucket:Game.cpu.bucket
+            bucket:Game.cpu.bucket,
+            rstCPU:logs.globalResetCPU.toFixed(4)
         }]);
+        
+    //logs.stopCPUTracker('gui.summary',true);
+       // logs.startCPUTracker('gui.summary.render');
         this.summary.render();
-        //console.log(logs.getCreepTrackData());
+    //logs.stopCPUTracker('gui.summary.render',true);
+        
+        
+    //logs.startCPUTracker('gui.creeptrack');
         //this.creeptrack.setData(logs.getCreepTrackData());
         this.creeptrack.render();
+    //logs.stopCPUTracker('gui.creeptrack',true);
         
-        this.renderMapBookStats();
+    //logs.startCPUTracker('gui.renderMapBookStats');
+        if(this.mb.display)this.renderMapBookStats();
+    //logs.stopCPUTracker('gui.renderMapBookStats',true);
 
+    //logs.startCPUTracker('gui.renderRoomNodeStats');
         this.renderRoomNodeStats();
+    //logs.stopCPUTracker('gui.renderRoomNodeStats',true);
         
         //this.renderSourceStatTest();
+        
+    //logs.startCPUTracker('gui.renderReserveBookOverview');    
+        if(this.rb.display)this.renderReserveBookOverview();
+    //logs.stopCPUTracker('gui.renderReserveBookOverview',true);
 
-
-        //this.renderReserveBookOverview('W42N53',mb.getStructures({roomNames:['W42N53'], types:[STRUCTURE_STORAGE,  STRUCTURE_CONTAINER,STRUCTURE_EXTENSION, STRUCTURE_SPAWN,STRUCTURE_TOWER]}) );
-        //this.renderReserveBookOverview('W42N54',mb.getStructures({roomNames:['W42N54'], types:[STRUCTURE_STORAGE,  STRUCTURE_CONTAINER,STRUCTURE_EXTENSION, STRUCTURE_SPAWN,STRUCTURE_TOWER]}) );
 
 
         // 63ea53f6c136d01981747c72
         
         //this.renderStructureRefs('W41N54')
-
-        //this.renderSourceStats('5bbcaab49099fc012e632090');
+        
+    //logs.startCPUTracker('gui.renderReserveBookFor');
+        this.renderReserveBookFor('651085ad2d38a9b8568c8b36');
         //this.renderSourceStats('63de812d8ec3bb0b54708522');
         
-        ///////////// Beta ///////////////////////////
-        // upgrade
-        this.renderReserveBookFor('64ab1d1f5ca6fb3d0f098c28',rp(28,25,'W18N17'))
   
+        this.renderReserveBookFor('64fe16bce5f704a221ae4b13')
+        this.renderReserveBookFor('64fe17512a44963aee437614')
+        this.renderReserveBookFor('64ff6f2448f1e9c942be7b12',rp(35,7,'W48N54'))
+    //logs.stopCPUTracker('gui.renderReserveBookFor',true);
+  
+        //this.renderDefenseDetails()
         
-        ///////////// Alpha //////////////
-        this.renderReserveBookFor('647d9486f71e27059f5c0ca9');
-        this.renderReserveBookFor('647910f41e06c862d53f8fb5');
-        
-        this.renderReserveBookFor('647a7245535ff46892cadb5e');
-        
-        this.renderReserveBookFor('647a92e8655cd29697596191',new RoomPosition(17,17,'W14N18'));
-      
-        
-        this.renderReserveBookFor('6478f4cd8ccbad57a487413a',new RoomPosition(0,40,'W14N18'));
-        this.renderReserveBookFor('6478f61952c5bfe1b733b0ec',new RoomPosition(7,40,'W14N18'));
-        //mines
-         this.renderReserveBookFor('6482e5a8f6bdc8409b943e88');
-          this.renderReserveBookFor('6482e31fd597e75632544fe0');
-
-           this.renderReserveBookFor('6482e930b7e508806504c1b0');
-            this.renderReserveBookFor('6482e95070bfded1f196de62');
-        //////// Gamma //////////////////////
-        // controller
-        this.renderReserveBookFor('64859cff9a94182509bc4b0f',rp(28,25,'W13N15'));
-        // storage
-        this.renderReserveBookFor('648483965bdc7e637d357f8f',rp(0,20,'W13N15'));
-        //mines
-        this.renderReserveBookFor('6481d3e19e4145825aac41ce')
-        this.renderReserveBookFor('6481d3fea439d4c258488ab9')
-        this.renderReserveBookFor('64839e27133a097c46b37d1f')
-        this.renderReserveBookFor('64839d839a94185a6dbb7a36')
-        
-        this.renderReserveBookFor('6483bc59cb55931e0760b5ee')
-        //this.renderReserveBookFor('64899f6b133a0947a6b5d157',rp(0,37,'W13N17'))
-        
-        this.renderReserveBookFor('64822902f1157b0b6cd44aa7')
-        this.renderReserveBookFor('6486cfbbeb2a545b91527bac')
-
-        //////// Delta //////////////////////
-        //controller
- 
-        this.renderReserveBookFor('64a95a7283849663edff8c48',rp(7,37,'W12N23'))
-       
-
-        //////// Epsilon //////////////////////
-        //controller
-       
-        this.renderReserveBookFor('649b8be0fb058c6394ee5c2f',rp(23,7,'W12N14'))
-        
-        
-        //////// Epsilon //////////////////////
-        //controller
-       
-        this.renderReserveBookFor('6499c8c6654a803d497d0b3a',rp(24,18,'W12N19'))
-        let u = Game.cpu.getUsed()-st;
-        
-        ///// Strip mine ////////////////
-        
-        this.renderReserveBookFor('64a6bf93cadd0597d786979e')
-        
-        
+        let u = Game.cpu.getUsed() - st;
+        logs.guiCPU= u;
         //console.log("GUI-CPU-used: "+u);  
     },
-
+    
+    renderComplexPlan: function(complex){
+        for(let plan of complex.getLayoutPositions()){
+            plan.pos.colourIn('#fff');
+            plan.pos.text( plan.type.charAt(0).toUpperCase()+plan.type.charAt(1)+'/'+plan.rcl ,'#111')
+        }
+    },
+    
+    renderLabComplexStats: function(complex){
+        labData = [];
+       // labData.pus({field})
+        Game.rooms[complex.pos.roomName].renderGUITable(new RoomPosition(complex.pos.x+10,complex.pos.y,complex.pos.roomName),labData,false,true);
+    },
+    
+    renderDefenseDetails: function(){
+        
+        let walls = mb.getStructures({roomNames:['W45N51','W41N53'],types:[STRUCTURE_WALL,STRUCTURE_RAMPART]});
+        for(let wall of walls){
+            let colour = 'white';
+            let diff= 25000000 - wall.hits;
+            let perc=100;
+            if(diff>0){
+                perc= (wall.hits/25000000)*100;
+                
+                    colour='rgb('+(200-(perc/2))+','+((perc*2)+1)+',1)';
+                
+            }else{
+                colour= 'rgb(100,255,1)';
+            }
+            wall.pos.colourIn(colour);
+            wall.pos.text(perc.toFixed(0)+'%');
+        }
+    },
+        
     renderMapBookStats:function(){
+        
         let mbData = [{col1:'*',col2:'Path Count',col3:mb.pathCount()}];
         let rooms = mb.allRooms();
         for(let rn in rooms){
@@ -180,9 +188,9 @@ global.gui = {
            // mbData.push({col1:'>',col2:'structures',col3:Object.keys(rooms[rn].structures).length});
             mbData.push({col1:'>',col2:'repairTargets',col3:Object.keys(rooms[rn].repairTargets).length});
         }
-        let intervals = Memory.mapBook.intervals;
+        let intervals = mb.intervals;
         for(let i in intervals){
-            mbData.push({col1:'interval', col2:i ,col3: (intervals[i].refresh_rate-intervals[i].ticker) });
+            mbData.push({col1:'interval', col2:i ,col3: (intervals[i].refresh_rate) });
         }
         this.mb.setData(mbData);
         this.mb.render();
@@ -193,12 +201,13 @@ global.gui = {
      * 
      */ 
     renderRoomNodeStats:function(){
-        let y=8;
-
-        for(let node of this.nodes){
+        let y=4;
+        if(!this.nodeStats)return;
+        for(let n in this.nodes){
+            let node = this.nodes[n];
             let lines=[];
             let sp = Game.spawns[node.name];
-            if(!sp)continue;
+           // if(!sp)continue;
             
             lines.push({ key:'E2Collect', value:node.totalEnergyAtSources });
             lines.push({ key:'upgr rate', value:node.upgradeRate });
@@ -236,10 +245,12 @@ global.gui = {
             }
             let renderPos = new RoomPosition(41,10,node.coreRoomName);
             
-            if(node.coreRoomName=='W18N17')renderPos=rp(15,28,'W18N17')
+            if(['W41N53','W41N54','W48N52'].includes(node.coreRoomName) )renderPos=rp(8,20,node.coreRoomName)
+            if(node.coreRoomName=='W48N54')renderPos=rp(19,4,node.coreRoomName)
             
             
             Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name,true,{key:3,value:3});
+            
             y+=15;
         }
     },
@@ -283,7 +294,9 @@ global.gui = {
         structures[s].room.visual.text(structures[s].ref(),structures[s].pos.x,structures[s].pos.y,{color:'#11f',font:'bold 0.4 Arial',align:'center'});
         }
     },
-    renderReserveBookOverview: function(renderInRoom,structures){
+    renderReserveBookOverview: function(){
+        if(!this.rb.display)return;
+        let structures = mb.getStructures({roomNames:['W45N51'], types:[STRUCTURE_STORAGE,  STRUCTURE_CONTAINER,STRUCTURE_EXTENSION, STRUCTURE_SPAWN,STRUCTURE_TOWER]}) ;
         
         let seen={};
         let reserves = [];
@@ -319,8 +332,6 @@ global.gui = {
             structures[s].room.visual.text(structures[s].ref()+l,structures[s].pos.x,structures[s].pos.y,{color:'#11f',font:'bold 0.4 Arial',align:'center'});
         }
         this.rb.setData(reserves);
-        this.rb.setRooms([renderInRoom]);
-        if(this.rb.display===false)this.rb.on();
         this.rb.render();
         //Game.rooms[renderInRoom].renderGUITable(new RoomPosition(0,0,renderInRoom),reserves,"Reserve Book",true,{id:6,curr:2,ref:2,transfers:6,withdrawals:6});
     },
@@ -329,6 +340,7 @@ global.gui = {
      * Render anchor will be the structure.pos
      */ 
     renderReserveBookFor:function(id,pos=false){
+        if(!this.rbFor)return;
         let obj = Game.getObjectById(id);
         
         if(obj){
