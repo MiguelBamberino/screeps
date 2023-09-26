@@ -24,6 +24,8 @@ var role = {
     run: function(creep,config){
         creep.checkAndUpdateState();
         let controller = Game.getObjectById(config.controller_id);
+        
+        let playerAttackers = Game.rooms[config.coreRoomName].getEnemyPlayerFighters(); 
        // if(creep.name=='I-wo-0')clog(creep.memory.reserve_id,'rexer_id at start')
         
         if(creep.isWorking()){
@@ -33,7 +35,22 @@ var role = {
                 return creep.actOrMoveTo("upgradeController",controller);
             }
             let target=false;
-            if(config.inRecoveryMode){
+            if(config.inRecoveryMode || playerAttackers.length>0){
+                
+                let spawns = mb.getStructures({roomNames:[config.coreRoomName],types:[STRUCTURE_SPAWN]});
+                if(spawns.length>0){
+ 
+                    if(spawns[0].haveSpaceFor(50)){
+                        return creep.actOrMoveTo("transfer",spawns[0],RESOURCE_ENERGY);
+                    }
+                }
+                
+                target = creep.getExtensionToCharge([config.coreRoomName]);
+                if(target){
+                    return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
+                }
+                
+                
               //  if(creep.name=='I-wo-0')clog('recover mode')
                  target = creep.getFillerStationToFill([config.coreRoomName]);
                 if(target){
@@ -44,13 +61,7 @@ var role = {
                 
                 
                     
-                let spawns = mb.getStructures({roomNames:[config.coreRoomName],types:[STRUCTURE_SPAWN]});
-                if(spawns.length>0){
- 
-                    if(spawns[0].haveSpaceFor(50)){
-                        return creep.actOrMoveTo("transfer",spawns[0],RESOURCE_ENERGY);
-                    }
-                }
+                
             
             }
 
@@ -59,10 +70,7 @@ var role = {
             if(repairTarget){
                 // if we have some breathing time on repairs, check for any exts to fill
                 if(repairTarget.hits>2000){
-                  //  if(creep.name=='I-wo-0')clog('ext lookup')
-                   // if(creep.name=='I-wo-0')clog(creep.memory.reserve_id,'rexer_id just before')
                      target = creep.getExtensionToCharge([config.coreRoomName]);
-                    // if(creep.name=='I-wo-0')clog(target.structureType,target.id)
                     if(target){
                         return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
                     }

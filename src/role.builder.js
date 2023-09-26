@@ -7,9 +7,11 @@ var role = {
     run: function(creep,config) {
         
         creep.checkAndUpdateState();
+        let playerAttackers = Game.rooms[config.coreRoomName].getEnemyPlayerFighters(); 
 
 	    if(creep.isWorking()) {
-	        
+	       
+	       
 	        
 	       if(creep.memory.last_site_type==STRUCTURE_RAMPART){
                 let finds = creep.pos.lookForNearStructures(STRUCTURE_RAMPART);
@@ -23,7 +25,7 @@ var role = {
 	        
             
             let structure = this.targetToRepair(creep,config,[STRUCTURE_WALL,STRUCTURE_RAMPART]);
-            if(structure && structure.hits < 2000){
+            if(structure && structure.hits < 2000  || playerAttackers.length>0){
                 return creep.actOrMoveTo("repair",structure);
             }
             
@@ -57,25 +59,14 @@ var role = {
 	    else if(creep.isCollecting()){
 	        creep.memory.target_to_fix_id = false;
 	        
-            let drop = creep.getDroppedEnergy();
-
-            if(drop){
-                return creep.actOrMoveTo("pickup",drop);
-            }
-            /*
-            let dismantleTarget = Game.getObjectById(creep.memory.dismantle_id);
-            if(!dismantleTarget){
-                let structures = mb.getStructures({roomNames:[config.coreRoomName],filters:[{attribute:'isMarkedForDismantle',operator:'fn',value:[]}]})
-                if(structures.length>0){
-                    creep.memory.dismantle_id = structures[0].id;
-                    dismantleTarget=structures[0];
+	        if(playerAttackers.length==0){
+                let drop = creep.getDroppedEnergy();
+    
+                if(drop){
+                    return creep.actOrMoveTo("pickup",drop);
                 }
-            }
-            
-            if(dismantleTarget){
-                return creep.actOrMoveTo("dismantle",dismantleTarget);
-            }
-            */
+	        }
+
 
 	        creep.getEnergy([config.coreRoomName]);
 	    }else{

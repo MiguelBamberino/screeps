@@ -21,8 +21,12 @@ global.rp = function(x,y,r){
 global.gob = function(id){
     return Game.getObjectById(id)
 }
-StructureTerminal.prototype.sendX=function(resource,amount,clusterName){
-    return this.send(resource,amount,Game.spawns[clusterName].pos.roomName)
+global.sendX=function(fromClusterName,resource,amount,toClusterName){
+    let term = mb.getTerminalForRoom(Game.spawns[fromClusterName].pos.roomName)
+    return term.send(resource,amount,Game.spawns[toClusterName].pos.roomName)
+}
+StructureTerminal.prototype.sendX=function(resource,amount,toClusterName){
+    return this.send(resource,amount,Game.spawns[toClusterName].pos.roomName)
 }
 global.util = {
     

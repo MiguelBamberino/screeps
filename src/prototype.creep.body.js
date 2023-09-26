@@ -49,6 +49,9 @@ Creep.prototype.spawnCost = function(){
 Creep.prototype.isFighter = function(){
     return (this.partCount(ATTACK)>0||this.partCount(RANGED_ATTACK)>0)
 }
+Creep.prototype.isDismantler = function(){
+    return (this.partCount(WORK)>=20)
+}
 Creep.prototype.isHealer = function(){
     return (this.partCount(HEAL)>0)
 }

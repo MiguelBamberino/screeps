@@ -4,7 +4,7 @@ if(!Memory.creeps) { Memory.creeps = {}; }
 let _memHak = require('_memHak');
 require('_dev_utils');
 
-Memory.allies=['GT500','NeonCamouflage','joethebarber','Dakryolith','Trepidimous']
+Memory.allies=['GT500','NeonCamouflage',/*'joethebarber',*/'Dakryolith'/*,'Trepidimous'*/]
 // 25,440
 // Alpha - 258,991
 require('global.objectMeta');
@@ -89,7 +89,7 @@ nodes.push( new roomNode('Delta','W12N23',
                             {
                                 spawnFacing:LEFT,
                                 retreatSpot:rp(24,19,'W12N23'),
-                                buildFast:true,
+                                buildFast:false,
                                 upgradeRate:RATE_VERY_SLOW,
                                 wallHeight:1200000,
                                 extraFastFillSpots:[rp(26,26,'W12N23'),rp(26,24,'W12N23'),rp(20,23,'W12N23'),rp(20,21,'W12N23'),rp(30,25,'W12N23'),rp(32,25,'W12N23'),rp(30,29,'W12N23'),rp(32,29,'W12N23')],
@@ -129,7 +129,7 @@ nodes.push( new roomNode('Theta','W13N24',
                             {
                                 spawnFacing:TOP,
                                 retreatSpot:rp(24,12,'W13N24'),
-                                buildFast:true,
+                                buildFast:false,
                                 upgradeRate:RATE_VERY_SLOW,
                                 wallHeight:1000000,
                                 extraFastFillSpots:[rp(18,14,'W13N24'),rp(20,14,'W13N24'),rp(20,6,'W13N24'),rp(20,8,'W13N24'),rp(22,6,'W13N24'),rp(22,8,'W13N24')],
@@ -166,14 +166,14 @@ module.exports.loop = function () {
     let gammaTerm = gob('6487f218a38d042a92467fce');
     let thetaTerm= gob('64b7e39992a3fccf4e979958');
      let iotaTerm= gob('64b9d13bdec1636613e107c8');
-    if(thetaTerm && gammaTerm && thetaTerm.storingLessThan(5000,RESOURCE_THORIUM) && gammaTerm.storingAtleast(30000,RESOURCE_THORIUM))
-       gammaTerm.sendX(RESOURCE_THORIUM,5000,'Theta')
+    if(thetaTerm && gammaTerm && thetaTerm.storingAtleast(1000,RESOURCE_THORIUM))
+       thetaTerm.sendX(RESOURCE_THORIUM,1000,'Gamma')
     
     if(iotaTerm && gammaTerm && iotaTerm.storingLessThan(10000,RESOURCE_THORIUM) && gammaTerm.storingAtleast(10000,RESOURCE_THORIUM))
        gammaTerm.sendX(RESOURCE_THORIUM,5000,'Iota')
     
     tempCode.scoreThorium(true,true);
-   tempCode.scoreThorium2(false,true,'Dakryolith');
+  // tempCode.scoreThorium2(false,true,'Dakryolith');
    
   
    
@@ -193,17 +193,16 @@ module.exports.loop = function () {
     logs.mainLoopEnded();
     
   
-     /*   
+        
     let allyNames = Game.rooms['W13N24'].getAllyCreeps()
     let publicRamp = false;
-    for(let name of allyNames){
-        if(Game.creeps[name] && Game.creeps[name].owner.username=='joethebarber'){
-            publicRamp= true;
-        }
+    if(allyNames.length>0){
+        publicRamp= true;
     }
+
     gob('64b4d80254833db84a712bde').setPublic(publicRamp)
     
-    */
+    
     //////// GUI CODE  //////////////////////////////////
     let low = '#990000';
     let medium = '#ebab34';

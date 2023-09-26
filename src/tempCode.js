@@ -15,14 +15,16 @@ module.exports = {
                 tid = id;
             }
         }
-        
-        if(!mb.hasRoom('W13N12'))mb.scanRoom('W13N12')
+                         if(Game.creeps['thorPickup1'] || Memory.scheduledAttackState==='ended')    
+                    this.haulResources('Theta','thorPickup1','10*1c1m',{id:'64af496e48c2254f2206f10f',pos:{x:25,y:20,roomName:'W11N24'}},gob('64b7e39992a3fccf4e979958'),[RESOURCE_THORIUM],[],4000,400);
+             
+  
          
-         this.streamResource('Gamma','Beta',RESOURCE_ENERGY,300000,100000);
-          this.streamResource('Theta','Beta',RESOURCE_ENERGY,300000,100000);
-         this.streamResource('Alpha','Beta',RESOURCE_ENERGY,700000,600000);
-         this.streamResource('Zeta','Beta',RESOURCE_ENERGY,700000,600000);
-         this.streamResource('Delta','Theta',RESOURCE_ENERGY,600000,400000);
+         //this.streamResource('Gamma','Beta',RESOURCE_ENERGY,300000,100000);
+       //   this.streamResource('Theta','Beta',RESOURCE_ENERGY,300000,100000);
+       //  this.streamResource('Alpha','Beta',RESOURCE_ENERGY,700000,600000);
+         this.streamResource('Zeta','Theta',RESOURCE_ENERGY,600000,500000);
+         this.streamResource('Iota','Theta',RESOURCE_ENERGY,400000,300000);
 
  
     /**
@@ -32,10 +34,10 @@ module.exports = {
      * exporters - an array of rooms who are exporting, such as ['Alpha','Beta'...]
      */
         this.manageInterRoomTrading([ 
-                {importer:'Gamma',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,storageCap:12000},
-                {importer:'Gamma',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:12000},
-                {importer:'Gamma',resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:12000},
-                {importer:'Gamma',resource_type:RESOURCE_UTRIUM_ACID,storageCap:12000},
+                {importer:'Alpha',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,storageCap:12000},
+                {importer:'Alpha',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:12000},
+                {importer:'Alpha',resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:12000},
+                {importer:'Alpha',resource_type:RESOURCE_UTRIUM_ACID,storageCap:12000},
                 {importer:'Gamma',resource_type:RESOURCE_GHODIUM_ALKALIDE,storageCap:12000},
                 
                 {importer:'Gamma',resource_type:RESOURCE_LEMERGIUM,storageCap:50000},
@@ -66,10 +68,11 @@ module.exports = {
                 {id:'6487d4aba1ad7797ace7c0a1',resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,action:'fill'},
                 {id:'64875c1d820c464f9e4a5774',resource_type:RESOURCE_OXYGEN,action:'empty',phaseOut:true},
                 
-                {id:'6487f21514b4db61c6d46a2b',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'empty'},
-                {id:'648771d4ea93d5700d04f97d',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'empty'},
-                {id:'6487afae7817371e6cef1dd8',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'empty'},
-                {id:'648728193d915148ff1d3911',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'empty'},
+                {id:'6487f21514b4db61c6d46a2b',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'fill'},
+                {id:'648771d4ea93d5700d04f97d',resource_type:RESOURCE_ZYNTHIUM_OXIDE,action:'fill'},
+                {id:'6487afae7817371e6cef1dd8',resource_type:RESOURCE_UTRIUM_ACID,action:'fill'},
+                {id:'648728193d915148ff1d3911',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,action:'fill'},
+                
                 {id:'64a54b8e66e766bad4b5bd88',resource_type:RESOURCE_GHODIUM_OXIDE,action:'fill'},
 
                 {id:'64a53bff66e7669492b5b659',resource_type:RESOURCE_GHODIUM_ALKALIDE,action:'empty'},     
@@ -82,27 +85,24 @@ module.exports = {
                 
              
             ],
-            [RESOURCE_HYDROXIDE,RESOURCE_GHODIUM,RESOURCE_OXYGEN,RESOURCE_HYDROGEN,RESOURCE_LEMERGIUM_OXIDE],
+            [RESOURCE_HYDROXIDE,RESOURCE_GHODIUM,RESOURCE_OXYGEN,RESOURCE_HYDROGEN,RESOURCE_LEMERGIUM_OXIDE
+            
+            , RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_OXIDE,RESOURCE_ZYNTHIUM_ACID,RESOURCE_UTRIUM_ACID,RESOURCE_GHODIUM_ALKALIDE],
             [
                 {resource_type:RESOURCE_LEMERGIUM,exportOver:0,batchSize:12000},
                 {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:48000},
                 {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:0,batchSize:20000},
                 {resource_type:RESOURCE_GHODIUM_HYDRIDE,exportOver:0,batchSize:6000},
                 {resource_type:RESOURCE_GHODIUM_ACID,exportOver:0,batchSize:6000},
-                
-                {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,exportOver:0,batchSize:6000},
-                {resource_type:RESOURCE_ZYNTHIUM_OXIDE,exportOver:0,batchSize:6000},
-                {resource_type:RESOURCE_ZYNTHIUM_ACID,exportOver:0,batchSize:6000},
-                {resource_type:RESOURCE_UTRIUM_ACID,exportOver:0,batchSize:6000},
-                {resource_type:RESOURCE_GHODIUM_ALKALIDE,exportOver:0,batchSize:6000},
+
             ],
             rp(12,29,'W14N18'))
 
        // RESOURCE_ZYNTHIUM_ACID
-        this.runLabTrio('6487f21514b4db61c6d46a2b','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
-        this.runLabTrio('648771d4ea93d5700d04f97d','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
-        this.runLabTrio('6487afae7817371e6cef1dd8','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
-        this.runLabTrio('648728193d915148ff1d3911','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
+        //this.runLabTrio('6487f21514b4db61c6d46a2b','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
+        //this.runLabTrio('648771d4ea93d5700d04f97d','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
+        //this.runLabTrio('6487afae7817371e6cef1dd8','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
+       // this.runLabTrio('648728193d915148ff1d3911','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
        // this.runLabTrio('64a54b8e66e766bad4b5bd88','6487d4aba1ad7797ace7c0a1','64875c1d820c464f9e4a5774')
        
        // RESOURCE_GHODIUM_ALKALIDE
@@ -140,26 +140,33 @@ module.exports = {
             [
                 {id:'64ab58f0838496a118005fef',resource_type:RESOURCE_GHODIUM,action:'fill'},
                 
-                {id:'6498e6cc5990a50bdb4e9841',resource_type:RESOURCE_ZYNTHIUM_OXIDE,action:'fill'},
-                {id:'6497ed17654a8057187c244e',resource_type:RESOURCE_UTRIUM_ACID,action:'fill'},
+                {id:'6498e6cc5990a50bdb4e9841',resource_type:RESOURCE_ZYNTHIUM_OXIDE,action:'empty',phaseOut:true},
+                {id:'6497ed17654a8057187c244e',resource_type:RESOURCE_UTRIUM_ACID,action:'empty',phaseOut:true},
                 {id:'6498725ffb058cee23ece3e7',resource_type:RESOURCE_LEMERGIUM,action:'fill'},
                 
                 {id:'649a8f82fb058c2ff9ede38f',resource_type:RESOURCE_ZYNTHIUM_KEANITE,action:'fill'},
                 {id:'64996ab5282181f1b707225d',resource_type:RESOURCE_ZYNTHIUM,action:'fill'},
                 {id:'649a30033e99bf8327e1a894',resource_type:RESOURCE_KEANIUM,action:'fill'},
                 
-                {id:'64ad7ca82cc0b6f6e5787555',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,action:'fill'},
-                {id:'64ab8de7b4e019a4313d9681',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,action:'fill'},
-                {id:'64ab268b038fbe528e175e7b',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'fill'},
+                {id:'64ad7ca82cc0b6f6e5787555',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,action:'empty',phaseOut:true},
+                {id:'64ab8de7b4e019a4313d9681',resource_type:RESOURCE_LEMERGIUM_ALKALIDE,action:'empty',phaseOut:true},
+                {id:'64ab268b038fbe528e175e7b',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'empty',phaseOut:true},
                 {id:'64a3e31323e3634b7d42053d',resource_type:RESOURCE_ENERGY,action:'fill'},
             ],
-            [RESOURCE_OXYGEN,RESOURCE_ZYNTHIUM,RESOURCE_UTRIUM,RESOURCE_ZYNTHIUM_KEANITE, RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_OXIDE,RESOURCE_ZYNTHIUM_ACID,RESOURCE_UTRIUM_ACID,RESOURCE_GHODIUM_ALKALIDE],
+            [RESOURCE_OXYGEN,RESOURCE_ZYNTHIUM,RESOURCE_UTRIUM,RESOURCE_ZYNTHIUM_KEANITE],
             [
                 {resource_type:RESOURCE_GHODIUM_HYDRIDE,exportOver:0,batchSize:6000},
                 {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:6000},
                 {resource_type:RESOURCE_GHODIUM,exportOver:0,batchSize:6000},
                 {resource_type:RESOURCE_LEMERGIUM_OXIDE,exportOver:0,batchSize:6000},
-                {resource_type:RESOURCE_UTRIUM_OXIDE,exportOver:0,batchSize:6000}
+                {resource_type:RESOURCE_UTRIUM_OXIDE,exportOver:0,batchSize:6000},
+                
+                                
+                {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_ZYNTHIUM_OXIDE,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_ZYNTHIUM_ACID,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_UTRIUM_ACID,exportOver:0,batchSize:6000},
+                {resource_type:RESOURCE_GHODIUM_ALKALIDE,exportOver:0,batchSize:6000},
             ],
             rp(6,29,'W13N15'))
         // RESOURCE_UTRIUM_LEMERGITE
@@ -241,18 +248,7 @@ module.exports = {
             [
             ],
             rp(16,19,'W14N12'))
-        
-        this.cleanupRoom('Gamma-2','Gamma-cleanup','W12N13','20*1w1m');
-        this.cleanupRoom('Alpha-2','Alpha-cleanup','W17N18','20*1w1m');
-        this.cleanupRoom('Alpha-2','Alpha-cleanup2','W14N17','20*1w1m');
-        this.cleanupRoom('Zeta-2','Zeta-cleanup','W13N17','20*1w1m');
-        this.emptyOutStoresAndRetrieve('Delta','W13N23-salvage','W13N23','64ab23a839f2ded2a133dfa5','10*1c1m')
-      this.emptyOutStoresAndRetrieve('Zeta','W13N19-salvage','W13N19','649a9d4257f6b84692fe9d26','10*1c1m')
     
-        
-       // this.lv4InvaderCoreRanger('Gamma-3','pokey1','W14N15','15r16m1h',['64c2167a96b115cdd29b2eb0'], rp(3,12,'W13N15'))
-        
-        
         let thing=this;
         
         if(Game.creeps['trader'])
@@ -266,7 +262,53 @@ module.exports = {
         let heavyRanged = '19*1r1m+1m1a+5*1m1h';
         let spartanBody='14m6a10r18m2h';
         let hopliteBody='8m8a';
-
+        
+        let thetaEnemies = Game.rooms['W13N24'].getEnemyPlayerFighters();
+        if(thetaEnemies.length>1){
+            let range = 25;
+            let wallSpots = [{x:13,y:18},{x:12,y:15},{x:12,y:17}];
+            let closestRamp = false;
+            let closestDist=999;
+            
+            for(let id of thetaEnemies){
+                let e = gob(id);
+                if(e && e.isFighter()){
+                    
+                    let ramps = mb.getStructures({roomNames:['W13N24'],types:[STRUCTURE_RAMPART]});
+                    
+                    for(let r of ramps){
+                        let dist=e.pos.getRangeTo(r)
+                        if(dist<closestDist){
+                            closestRamp=r;
+                            closestDist = dist;
+                        }
+                    }
+                    if(closestRamp){
+                        let rampsToMan = closestRamp.pos.lookForNearStructures(STRUCTURE_RAMPART);
+                       // wallSpots[0] = 
+                    }
+                    range=1;break;
+                }
+            }
+            this.constantGuardRoom('Theta','T-de-0','W13N24','20a10m',wallSpots[0],false,true,range);
+            this.constantGuardRoom('Theta','T-de-1','W13N24','20a10m',wallSpots[1],false,true,range);
+            this.constantGuardRoom('Theta','T-de-2','W13N24','20a10m',wallSpots[2],false,true,range);
+        }
+        let deltaEnemies = Game.rooms['W12N23'].getEnemyPlayerFighters();
+        if(deltaEnemies.length>1){
+            let range = 25;
+            for(let id of deltaEnemies){
+                let e = gob(id);
+                if(e && e.isFighter()){
+                    range=1;break;
+                }
+            }
+            this.constantGuardRoom('Delta','D-de-0','W12N23','20a10m',{x:29,y:17},false,true,range);
+            this.constantGuardRoom('Delta-2','D-de-1','W12N23','20a10m',{x:36,y:27},false,true,range);
+            this.constantGuardRoom('Delta','D-de-2','W12N23','20a10m',{x:30,y:18},false,true,range);
+        }
+        
+/*
         let roomToStrip=false;
         
         let currentRoom = 'W18N18';
@@ -287,7 +329,7 @@ module.exports = {
                    // funneler-wait-spot & hauler count & upgraderContainerSpot && upgraderBoostPlans
                    rp(42,27,roomToStrip),15, rp(43,22,roomToStrip),[{resource_type:RESOURCE_GHODIUM_ACID,lab_id:'64af17076d8f12a3e0ede1e2'}],
                    // thorium id & terminal pos & thorium harvester spots & stripMineRoomForThorium
-                   '646f55fc9bdd4e00083015bd',rp(4,37,roomToStrip),[rp(3,37,roomToStrip),rp(3,38,roomToStrip)],[/*{resource_type:RESOURCE_UTRIUM_ALKALIDE,lab_id:'649ea2cf0b6a4a65f03edc13'}*/],
+                   '646f55fc9bdd4e00083015bd',rp(4,37,roomToStrip),[rp(3,37,roomToStrip),rp(3,38,roomToStrip)],[/*{resource_type:RESOURCE_UTRIUM_ALKALIDE,lab_id:'649ea2cf0b6a4a65f03edc13'}],
                    // spawn spot & storage build spot
                    rp(35,39,roomToStrip),rp(5,37,roomToStrip))
         }
@@ -303,10 +345,10 @@ module.exports = {
                    // funneler-wait-spot & hauler count & upgraderContainerSpot && upgraderBoostPlans
                    rp(7,17,roomToStrip),15, rp(6,22,roomToStrip),[{resource_type:RESOURCE_GHODIUM_ACID,lab_id:'64c03c7768cf6c2a97ecaf28'}],
                    // thorium id & terminal pos & thorium harvester spots & stripMineRoomForThorium
-                   '646f55ff9bdd4e00083016e4',rp(4,33,roomToStrip),[rp(4,34,roomToStrip)],[/*{resource_type:RESOURCE_UTRIUM_ALKALIDE,lab_id:'649ea2cf0b6a4a65f03edc13'}*/],
+                   '646f55ff9bdd4e00083016e4',rp(4,33,roomToStrip),[rp(4,34,roomToStrip)],[/*{resource_type:RESOURCE_UTRIUM_ALKALIDE,lab_id:'649ea2cf0b6a4a65f03edc13'}],
                    // spawn spot & storage build spot
                    rp(22,34,roomToStrip),rp(4,32,roomToStrip))
-        }
+        }*/
      
       
        return;
@@ -546,7 +588,7 @@ module.exports = {
        this.reserverRoom('Delta','Dr3',{id:'646e7308071eb8276c0a675d',pos:{x:45,y:20,roomName:'W13N22'}},'2cl2m');
         
         /////// W11N23 ////////////////////////////////////////
-        this.constantGuardRoom('Delta','pest-stomper','W11N23','5r1a6m',{x:42,y:24},false,true,50);
+        
         this.maintainRoadsInRoom('Delta','Dw3',['W11N23'],'2w6c2m');
         this.runRemoteRoom('Delta','W11N23',true)
         //#####################################################################################
@@ -645,7 +687,7 @@ module.exports = {
         
           
           //1483013 + 8.2k = 1491277
-          let scheduledTick =1677150;
+          let scheduledTick =1757750;
            if(Game.time >scheduledTick && Memory.scheduledAttackState==='scheduled'){
                Memory.scheduledAttackState='mustering';
                clog('attack mustering')
@@ -659,26 +701,23 @@ module.exports = {
               
             // Attack Logistics ////////////////////////////////////////
                 let go = (Memory.scheduledAttackState==='attacking');
-                let attackRoom = 'W14N15';
-                let musterSpot = rp(4,14,'W13N15');
-                let retreatSpots = [rp(42,25,attackRoom),rp(44,25,attackRoom),rp(46,25,attackRoom)];
+               
+                let attackRoom = 'W11N24';
+                let musterSpot = rp(3,26,'W10N24');
+                //let retreatSpots = [rp(47,25,attackRoom),rp(26,10,attackRoom),rp(22,10,attackRoom)];
+                let retreatSpots = [rp(46,25,attackRoom),rp(46,26,attackRoom),rp(46,26,attackRoom)];
                 let roomTraversal=['W14N18','W14N19','W14N20','W14N21','W15N21','W15N22','W15N23','W15N24','W15N25','W15N26','W14N26'];    
                // roomTraversal=['W14N18','W14N19','W14N20','W14N21','W15N21','W15N22','W15N23','W15N24','W16N24','W16N25','W16N25','W15N26','W14N26'];
                 roomTraversal=[];
                 
             // Attack Targets  //////////////////////////////////////// 
                 let target_ids = [];
-                let destroyResourceBanks=true;
+                let destroyResourceBanks=false;
                 if(go){
                     // entry rampart
-                    target_ids.push('64c23cf80d03956e4d9e87d1')
-                    target_ids.push('64c23cf80d03955d369e87cf')
-                    target_ids.push('64c23cf80d039517189e87aa')
+                    target_ids.push('64c43f60e954e018b59fcf2b')
+                    target_ids.push('64af4a28df3b4b54ee58a8a9')
                     
-                    target_ids.push('64c23cf80d0395adca9e87da')
-                    target_ids.push('64c23cf80d03956a669e87c7')
-                    target_ids.push('64c23cf80d039558889e87a9')
-                    target_ids.push('64c1ebd3a54c2751e6e93b05')
                     if(Game.time%10===0)mb.scanRoom(attackRoom);
                     let highPriorityTargets=[STRUCTURE_EXTENSION,STRUCTURE_SPAWN,STRUCTURE_TOWER];
                     let mediumPriorityTargets = [STRUCTURE_LAB,STRUCTURE_CONTAINER,STRUCTURE_LINK,STRUCTURE_EXTRACTOR];
@@ -700,33 +739,37 @@ module.exports = {
                     
                 }
                 
-               let allDuoCreepNames = ['duoL1','duoH1','duoL2','duoH2','duoL3','duoH3','duoH11','duoH22'];
-               let renewSpawn = 'Gamma-3';
+               let allDuoCreepNames = ['duoL1','duoH1','duoL2','duoH2','duoL3','duoH3'];
+               let renewSpawn = 'Alpha-3';
                
-               let duoCount = 4;
+               let duoCount = 1;
                
                let healerBody ='10*4h1m';
                //healerBody='25h25m';
-               //healerBody = '33h17m';
-               let healerBoostPlan =[{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'6498e6cc5990a50bdb4e9841'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'64ad7ca82cc0b6f6e5787555'}];
-               let healerBoostPlan2 =[{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'6498e6cc5990a50bdb4e9841'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'64ab8de7b4e019a4313d9681'}];
-              // healerBoostPlan=[];
+               healerBody = '16*2h1m+1h1m';
+               let healerBoostPlan =[{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'648771d4ea93d5700d04f97d'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'648728193d915148ff1d3911'}];
+               let healerBoostPlan2 =[{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'648771d4ea93d5700d04f97d'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'648728193d915148ff1d3911'}];
+               //healerBoostPlan=[];
                let dismantlerBody = '10*3w1m+5r5m';
-              // dismantlerBody='3m25w7r15m';
-               let dismantlerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'6498e6cc5990a50bdb4e9841'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'64ab268b038fbe528e175e7b'}];
-               //dismantlerBoostPlan=[];
-               let attackerBody = '10*3a1m+5r5m';
+               dismantlerBody='12*2w1m+4*2r1m+1w1m';
+               let dismantlerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'648771d4ea93d5700d04f97d'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'6487f21514b4db61c6d46a2b'}];
+              // dismantlerBoostPlan=[];
+               let attackerBody = '12*2a1m+4*2r1m+1a1m';
               // attackerBody='2m20a10m'; 
-               let attackerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'6498e6cc5990a50bdb4e9841'},{resource_type:RESOURCE_UTRIUM_ACID,lab_id:'6497ed17654a8057187c244e'}];
-             //  attackerBoostPlan=[];
+               let attackerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'648771d4ea93d5700d04f97d'},{resource_type:RESOURCE_UTRIUM_ACID,lab_id:'6487afae7817371e6cef1dd8'}];
+              // attackerBoostPlan=[];
                
                let readyCount=0;
+               let aliveCount=0;
                for(let myCreepName of allDuoCreepNames){
                    if(Game.creeps[myCreepName] && musterSpot.getRangeTo(Game.creeps[myCreepName])<4){
                        readyCount++;
+                       
                    }
+                   if(Game.creeps[myCreepName])aliveCount++;
                }
-               if(readyCount==0 &&  Memory.scheduledAttackState==='attacking'){
+           
+               if(aliveCount===0 &&  Memory.scheduledAttackState==='attacking'){
                     Memory.scheduledAttackState='ended'
                }
               //  clog(readyCount)
@@ -736,33 +779,59 @@ module.exports = {
        
         
                if(Game.creeps['duoL1'] || Memory.scheduledAttackState==='mustering')
-                    this.duoLeader('Gamma','duoL1',dismantlerBody,'duoH1',musterSpot,attackRoom,target_ids,retreatSpots[0],roomTraversal,go,renewSpawn,dismantlerBoostPlan,TOP)
+                    this.duoLeader('Alpha','duoL1',dismantlerBody,'duoH1',musterSpot,attackRoom,target_ids,retreatSpots[0],roomTraversal,go,renewSpawn,dismantlerBoostPlan,TOP)
 
                 if(Game.creeps['duoH1'] || Memory.scheduledAttackState==='mustering')
-                    this.duoHealer('Gamma','duoH1',healerBody,'duoL1', false, allDuoCreepNames,renewSpawn,healerBoostPlan2,TOP)
+                    this.duoHealer('Alpha','duoH1',healerBody,'duoL1', false, allDuoCreepNames,renewSpawn,healerBoostPlan,TOP)
                     
-                
+               /* 
                if(Game.creeps['duoL2'] || Memory.scheduledAttackState==='mustering')
                     this.duoLeader('Gamma-2','duoL2',dismantlerBody,'duoH2',musterSpot,attackRoom,target_ids,retreatSpots[1],roomTraversal,go,renewSpawn,dismantlerBoostPlan,TOP)
                     
                if(Game.creeps['duoH2'] || Memory.scheduledAttackState==='mustering')
                     this.duoHealer('Gamma','duoH2',healerBody,'duoL2', false, allDuoCreepNames,renewSpawn,healerBoostPlan,TOP)
-              
-              
-                if(Game.creeps['duoL3'] || Memory.scheduledAttackState==='mustering')
-                    this.duoLeader('Gamma-3','duoL3',attackerBody,'duoH3',musterSpot,attackRoom,target_ids,retreatSpots[2],roomTraversal,go,renewSpawn,attackerBoostPlan,TOP)
+              */
+              /*
+                if(Game.creeps['duoL2'] || Memory.scheduledAttackState==='mustering')
+                    this.duoLeader('Alpha-2','duoL2',attackerBody,'duoH2',musterSpot,attackRoom,target_ids,retreatSpots[2],roomTraversal,go,renewSpawn,attackerBoostPlan,TOP)
                     
-                if(Game.creeps['duoH3'] || Memory.scheduledAttackState==='mustering')
-                    this.duoHealer('Gamma-2','duoH3',healerBody,'duoL3', false,allDuoCreepNames,renewSpawn,healerBoostPlan2,TOP)
-                
-                
-                // extra healers    
-                if(Game.creeps['duoH11'] || Memory.scheduledAttackState==='mustering')
-                    this.duoHealer('Gamma','duoH11',healerBody,'duoL1', false,allDuoCreepNames,renewSpawn,healerBoostPlan,TOP)
-                if(Game.creeps['duoH22'] || Memory.scheduledAttackState==='mustering')
-                    this.duoHealer('Gamma-2','duoH22',healerBody,'duoL2', false,allDuoCreepNames,renewSpawn,healerBoostPlan,TOP)
-           
+                if(Game.creeps['duoH2'] || Memory.scheduledAttackState==='mustering')
+                    this.duoHealer('Alpha-2','duoH2',healerBody,'duoL2', false,allDuoCreepNames,renewSpawn,healerBoostPlan2,TOP)
+                    */
+                /*    
+                if(Game.creeps['duoL4'] || Memory.scheduledAttackState==='mustering')
+                    this.duoLeader('Alpha','duoL4','24r1a25m','duoH4',musterSpot,attackRoom,target_ids,retreatSpots[2],roomTraversal,go,'Alpha-3',[],LEFT)
+                    
+                if(Game.creeps['duoH4'] || Memory.scheduledAttackState==='mustering')
+                    this.duoHealer('Alpha-2','duoH4','25h25m','duoL4', false,allDuoCreepNames,'Alpha-3',[],LEFT)
+                    
+                if(Game.creeps['duoL5'] || Memory.scheduledAttackState==='mustering')
+                    this.duoLeader('Alpha','duoL5','24r1a25m','duoH5',musterSpot,attackRoom,target_ids,retreatSpots[2],roomTraversal,go,'Alpha-3',[],LEFT)
+                    
+                if(Game.creeps['duoH5'] || Memory.scheduledAttackState==='mustering')
+                    this.duoHealer('Alpha-2','duoH5','25h25m','duoL5', false,allDuoCreepNames,'Alpha-3',[],LEFT)
+                    
+                 if(Game.creeps['duoL6'] || Memory.scheduledAttackState==='mustering')
+                    this.duoLeader('Alpha','duoL6','24r1a25m','duoH6',musterSpot,attackRoom,target_ids,retreatSpots[2],roomTraversal,go,'Alpha-3',[],LEFT)
+                    
+                if(Game.creeps['duoH6'] || Memory.scheduledAttackState==='mustering')
+                    this.duoHealer('Alpha-2','duoH6','25h25m','duoL6', false,allDuoCreepNames,'Alpha-3',[],LEFT)*/
+               
 
+                
+       /*
+                let pokeRoom = go?attackRoom:'W6N17';
+               if(Game.creeps['pokey1'] || Memory.scheduledAttackState==='mustering')
+                this.lv4InvaderCoreRanger('Zeta-2','pokey1',pokeRoom,'20r25m5h',target_ids, musterSpot)
+                
+                if(Game.creeps['pokey2'] || Memory.scheduledAttackState==='mustering')
+                this.lv4InvaderCoreRanger('Zeta-2','pokey2',pokeRoom,'20r25m5h',target_ids, musterSpot)
+                
+                if(Game.creeps['pokey3'] || Memory.scheduledAttackState==='mustering')
+                this.lv4InvaderCoreRanger('Zeta-2','pokey3',pokeRoom,'20r25m5h',target_ids, musterSpot)
+                
+                if(Game.creeps['pokey4'] || Memory.scheduledAttackState==='mustering')
+                this.lv4InvaderCoreRanger('Zeta-2','pokey4',pokeRoom,'20r25m5h',target_ids, musterSpot)*/
            }
        },
      stripMineRoomNodes:[],
@@ -1281,13 +1350,13 @@ module.exports = {
             },500)
             
             
-            this.earlyWarning2('Theta',rp(24,25,'W14N24'));
-            this.earlyWarning2('Theta',rp(25,21,'W15N24'));
+           // this.earlyWarning2('Theta',rp(24,25,'W14N24'));
+         //   this.earlyWarning2('Theta',rp(25,21,'W15N24'));
             //this.earlyWarning2('Theta',rp(37,30,'W16N25'));
-            this.earlyWarning2('Theta',rp(20,47,'W16N26'));
+            //this.earlyWarning2('Theta',rp(20,47,'W16N26'));
             //this.earlyWarning2('Theta',rp(33,37,'W15N26'));
-            this.earlyWarning2('Theta',rp(2,48,'W14N26'));
-            this.earlyWarning2('Theta',rp(22,22,'W14N25'));
+          //  this.earlyWarning2('Theta',rp(2,48,'W14N26'));
+           // this.earlyWarning2('Theta',rp(22,22,'W14N25'));
             
             
             if(guard){
@@ -3341,15 +3410,16 @@ module.exports = {
                      creep.memory.swampCost = 5;
                      
                     if(creep.pos.roomName==='W15N24' || creep.pos.roomName==='W15N25' )creep.memory.swampCost = 3;
-                    
-                    if(roomTraversal.length>0 && creep.pos.roomName!=musterSpot.roomName){
-                        if(okToMove){
-                            let res = this.traverseRooms(creep,roomTraversal);
+                    if(okToMove){
+                        if(roomTraversal.length>0 && creep.pos.roomName!=musterSpot.roomName){
+                            
+                                let res = this.traverseRooms(creep,roomTraversal);
+                            
                         }else{
-                            creep.say("wait")
+                            return creep.moveToPos(musterSpot);
                         }
                     }else{
-                        return creep.moveToPos(musterSpot);
+                        creep.say("wait")
                     }
 
                 }

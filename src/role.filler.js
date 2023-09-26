@@ -184,7 +184,7 @@ var role = {
 	        
 	        
 	    }else{
-	        spawn.log("ERROR" ,"Creep entered bad state:"+creep.name);
+	        creep.log("ERROR" ,"Creep entered bad state:"+creep.name);
 	    }
 	},
 	setUp: function(creep){

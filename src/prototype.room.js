@@ -83,7 +83,7 @@ Room.prototype._parseHostileCreeps=function(cacheSensitivity=5){
             }else {
                 
                 CREEPS_ROOM_CACHE[this.name].enemyPlayerCreeps.push(creep.id);
-                if(creep.isFighter()){
+                if(creep.isFighter() || creep.isDismantler()){
                     CREEPS_ROOM_CACHE[this.name].dangerousCreeps.push(creep.id);
                     CREEPS_ROOM_CACHE[this.name].enemyPlayerFighters.push(creep.id);
                 }else if(creep.isCivilian()){

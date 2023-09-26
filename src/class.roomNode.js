@@ -33,6 +33,14 @@ class RoomNode{
         
         this.name = name;
         this.coreRoomName = coreRoomName;
+        this.workforce_quota={
+            worker:{count:0,required:0},
+            harvester:{count:0,required:0},
+            tanker:{count:0,required:0},
+            builder:{count:0,required:0},
+            fixer:{count:0,required:0},
+            upgrader:{count:0,required:0}
+        };
         
         let controller = mb.getControllerForRoom(this.coreRoomName);
         if(controller){
@@ -71,20 +79,12 @@ class RoomNode{
         let store = {};
         
         store.creepNames = [];
-        
-        store.workforce_quota={
-            worker:{count:0,required:0},
-            harvester:{count:0,required:0},
-            tanker:{count:0,required:0},
-            builder:{count:0,required:0},
-            fixer:{count:0,required:0},
-            upgrader:{count:0,required:0}
-        };
+
         return store; 
     }
     saveStore(){
         let newStore={};
-        for(let attrName of ['creepNames','workforce_quota']){
+        for(let attrName of ['creepNames'/*,'workforce_quota'*/]){
             newStore[attrName] = this[attrName];
         }
         Memory['roomNodes'][this.name] = newStore;
@@ -113,7 +113,7 @@ class RoomNode{
         
         let controller = this.controller();
         if(!controller.haveContainer() && this.upgradeRate!==RATE_OFF){
-            clog('Searching for container...',this.coreRoomName); 
+            clog('Searching for controller container...',this.coreRoomName); 
             let containers = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER]})
             for(let container of containers){
                 if(controller.pos.getRangeTo(container)<4){
@@ -140,17 +140,13 @@ class RoomNode{
         
         
         // safety repair, in case some event kills normal repair creeps and room is collapsing
-    	//let decay_structs = mb.getStructures({types:[STRUCTURE_RAMPART,STRUCTURE_CONTAINER],roomNames:[this.coreRoomName]} );
-    	// ramparts & walls < 50k
-    	// roads < 1k
-    	// container < 1k
     	let decay_structs = mb.getStructures({roomNames:[this.coreRoomName], types:[STRUCTURE_RAMPART,STRUCTURE_CONTAINER,STRUCTURE_WALL,STRUCTURE_ROAD],filters:[{attribute:'hits',operator:'<',value:[2000]}]});
         
         let hostileIds = Game.rooms[this.coreRoomName].getNoneAllyCreeps();
         let playerFighters = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
 
         
-        if(towers.length<2 && playerFighters.length>=4){
+        if(towers.length<2 && playerFighters.length>=4 ){
             this.controller().activateSafeMode();
         }
         
@@ -198,14 +194,21 @@ class RoomNode{
 	                tower.repair(obj);
 	            }
 	        }
- 
-	        if(target){
-	            clog("ATTACK"," Shooting Hostile "+target.name+ "at: "+target.pos+". . Pew pew!" );
-	            let res = tower.attack(target);
-	            if(res ===OK && target.body.length==1){
-	                return;// dont waste 1+ towers on a scout
-	            }
+            
+            if(target.hits < 600){
+                
+                tower.attack(target);
+                
+            }else if( (healTarget.hitsMax-healTarget.hits)>600 ){
+	            
+	            tower.attack(target);
+
+	        } else if(target){
+	            
+	            tower.attack(target);
+
 	        }else if(healTarget){
+	            
 	            tower.heal(healTarget);
             
 	        }
@@ -215,6 +218,7 @@ class RoomNode{
     
     runCreeps(){
         
+       let playerAttackers = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
         
        this.runAllFillers();
         
@@ -242,7 +246,11 @@ class RoomNode{
             
             if(this.workforce_quota[creep.getRole()])this.workforce_quota[creep.getRole()].count++;
             
-            if(!creep.spawning){    
+            if(!creep.spawning){
+                
+                if(playerAttackers.length>0 && creep.getRole()=='upgrader'){
+                    creep.setRole("builder")
+                }
              
                 creepRoles[ creep.getRole() ].run(creep,this.getConfig());
             }
@@ -301,7 +309,7 @@ class RoomNode{
         // this should stay cached once true, because it shouldn't change unless the room is invaded and destroyed
         if(Game.time%10===0 && this.spawnFastFillerReady==false)this.spawnFastFillerReady=undefined;
         if(this.spawnFastFillerReady===undefined){
-            let structures = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER]});    
+            let structures = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER,STRUCTURE_STORAGE]});    
             let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
             this.spawnFastFillerReady=false;
             for(let container of structures){
@@ -379,7 +387,8 @@ class RoomNode{
                 
                
                 
-                Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs);
+                let res = Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs);
+                if(this.name=='Delta')clog(res,'Delta Filler')
             }
         }
         
@@ -440,6 +449,7 @@ class RoomNode{
                     
                 };
     }
+    
     checkAndSpawnWorkforce(){
 
         let budget = this.getSpawnBudget();
@@ -492,6 +502,7 @@ class RoomNode{
     decideWorkforceQuotas(){
         
         let controller = this.controller();
+        let playerAttackers = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
         
         let sources = mb.getSources({ roomNames: this.allRoomNames()}); 
         let onlineCount=0;
@@ -527,7 +538,7 @@ class RoomNode{
                 this.workforce_quota.worker.required = 1;
                 this.workforce_quota.builder.required = (this.buildFast &&  !this.inRecoveryMode)?4:1;
                 
-                if(this.totalEnergyAtSources > 0){
+                if(this.totalEnergyAtSources >= 0){
                     this.workforce_quota.tanker.required = 1;
                 }
                 if(this.totalEnergyAtSources > 2000){
@@ -588,15 +599,15 @@ class RoomNode{
                
             }
             
-            
-            let hostiles = Game.rooms[this.coreRoomName].find(FIND_HOSTILE_CREEPS)
-            if(hostiles.length>0 || this.inRecoveryMode){
-                this.workforce_quota.upgrader.required = 0;
-            }
-            
         }
-        if(this.upgradeRate==RATE_OFF){
-            this.workforce_quota.upgrader.required =0;
+        if(playerAttackers.length>0 || this.inRecoveryMode || this.upgradeRate==RATE_OFF){
+            this.workforce_quota.upgrader.required = 0;
+        }
+        if(playerAttackers.length>1){
+            this.workforce_quota.builder.required = 4;
+        }
+        if(playerAttackers.length>2){
+            this.workforce_quota.builder.required = 6;
         }
       
     }
@@ -611,6 +622,7 @@ class RoomNode{
         }
         return [this.coreRoomName,...activeRemotes];
     }
+
     getSpawnBudget(){
         let capacity = 0;
         let stored = 0;
@@ -621,6 +633,8 @@ class RoomNode{
         }
         return (this.inRecoveryMode)?stored: capacity;
     }
+    
+    
     getAvailableMine(online = false) {
 
         let filters = [
