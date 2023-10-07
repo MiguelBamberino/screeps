@@ -56,10 +56,8 @@ global.mb = {
         for(let t in this.intervals){
             let interval = this.intervals[t];
             if( Game.time% interval.refresh_rate===0){
-               // clog("running..",interval.callback)
                 this[interval.callback]();
             }
-            //clog("running at "+interval.refresh_rate,interval.callback)
         }
     },
     initiate: function(){
@@ -69,10 +67,20 @@ global.mb = {
                 rooms:{}
             };
         }
+        for(let roomName in Game.rooms){
+            if(this.havePermanentVision(roomName)){
+                this.scanRoom(roomName)
+            }
+        }
+        
+        for(let roomName in Memory.mapBook.rooms){
+            this.heap_rooms[roomName] = Memory.mapBook.rooms[roomName];
+        }
+        
     },
 
     scanRoom: function(roomName){
-
+        clog("Room Scan: "+roomName,Game.time)
         if(Game.rooms[roomName]){
             let srcObjs = Game.rooms[roomName].find(FIND_SOURCES);
             let srcCache={};
@@ -91,7 +99,6 @@ global.mb = {
                     mineralID=mineral.id;
             
             let c = Game.rooms[roomName].controller;
-            //console.log(c);
             let controllerStruct =(c)?{id:c.id,coords:{x:c.pos.x,y:c.pos.y}}:{};
             let base={
                 constructionSites:{},
@@ -104,15 +111,14 @@ global.mb = {
                 terminal_id:'',
                 mineral_id:mineralID
             };
-            //clog(c.owner.username==='MadDokMike','c-user')
-            if( c && c.owner.username === 'MadDokMike'){
-               // Memory.mapBook.rooms[roomName] = base;
+           
+            if(this.havePermanentVision(roomName)){
+                base.permanentVision = true;
                 this.heap_rooms[roomName] = base;
-                //clog('on heap')
             }else{
+                base.permanentVision = false;
                 Memory.mapBook.rooms[roomName] = base;
-               // clog('in memory')
-                
+                 this.heap_rooms[roomName] = base;
             }
             
             this.scanRoomForStructures(roomName)
@@ -126,7 +132,6 @@ global.mb = {
     
     getRoom: function(name){
         if(this.heap_rooms[name])return this.heap_rooms[name];
-        if(Memory.mapBook.rooms[name])return Memory.mapBook.rooms[name];
         return false;
        
     },
@@ -135,10 +140,17 @@ global.mb = {
         if(Memory.mapBook.rooms[name])delete Memory.mapBook.rooms[name];
     },
     hasRoom: function(name){
-        return (this.heap_rooms[name] || Memory.mapBook.rooms[name])?true:false;
+        return (this.heap_rooms[name])?true:false;
+    },
+    havePermanentVision: function(name){
+        //if()
+        if(!Game.rooms[name])return false;
+        if(!Game.rooms[name].controller)return false;
+        if(!Game.rooms[name].controller.owner)return false;
+        
+        return (Game.rooms[name].controller.owner.username=='MadDokMike')
     },
     allRooms: function(){
-        // this will break when you want all rooms in/out vision. Need to refactor vision-less rooms into heap
         return this.heap_rooms;
     },
     createNoVisionObject: function(data,roomName){
@@ -154,7 +166,8 @@ global.mb = {
     //////////////////////////////////////////////////////////////////////////////////////////
     getControllerForRoom: function(roomName,requireVision=true){
         let room = this.getRoom(roomName);
-        if(room){
+        
+        if(room && room.controller && room.controller.id){
             let obj = Game.getObjectById(room.controller.id);
             if(obj){
                 obj.haveVision=true;
@@ -227,7 +240,7 @@ global.mb = {
     },
     getSources: function (query,debug=false) {
         let sources = [];
-        
+        if(!query)query={};
         // if rooms is not set, then filter on all of them
         if(! query.roomNames){
             query.roomNames = Object.keys(this.allRooms());
@@ -284,23 +297,19 @@ global.mb = {
             if(Game.rooms[name]){
                 let room = this.getRoom(name);
                 // this should clear 90% of missing structures
-               /* for(let s in room.structures){
-                    if(!Game.getObjectById(room.structures[s].id)){
-                        logs.log("Delete","Map struct deleted:"+JSON.stringify(room.structures[s]) );
-                        delete room.struct_id_cache[room.structures[s].type][room.structures[s].id];
-                        delete room.structures[s];
-                    }
-                }*/
+
                 // some rare cases leave id cache records behind, so lets clean those too
                 for(let type in room.struct_id_cache){
                     for(let id in room.struct_id_cache[type]){
                         if(!Game.getObjectById(id)){
-                            logs.log("Delete","Deleting id cache for "+type+", id:"+id);
+                            clog("Deleting id cache for "+type+", id:"+id,"Delete");
                             delete room.struct_id_cache[type][id];
                         }
                     }
                 }
                 
+            }else{
+                clog("no vision",name)
             }
         }
     },
@@ -323,7 +332,9 @@ global.mb = {
         }
     },
     addStructure: function(obj){
-        let room = this.getRoom(obj.pos.roomName);
+        let rn = obj.pos.roomName;
+        let room = this.getRoom(rn);
+        
         if(room){
             //room.structures[obj.id] = {id:obj.id,x:obj.pos.x,y:obj.pos.y,roomName:obj.pos.roomName,type:obj.structureType};
             
@@ -333,19 +344,27 @@ global.mb = {
             if(obj.structureType===STRUCTURE_TERMINAL){
                 room.terminal_id = obj.id;
             }
+
             // store id in a quick lookup cache
             if(!room.struct_id_cache[obj.structureType]){
                 room.struct_id_cache[obj.structureType]={};
+                if(!this.havePermanentVision(rn)){
+                    Memory.mapBook.rooms[rn].struct_id_cache[obj.structureType]={};
+                }
             }
             
             if(room.struct_id_cache[obj.structureType][obj.id] === undefined){
                 let l = Object.keys(room.struct_id_cache[obj.structureType]).length+1;
                 room.struct_id_cache[obj.structureType][obj.id]=l;
+                
+                if(!this.havePermanentVision(rn)){
+                    Memory.mapBook.rooms[rn].struct_id_cache[obj.structureType][obj.id]=l;
+                }
+                
             }
 
-            
-            
         }else{
+            
             return ERR_ROOM_NOT_SCANNED;
         }
     },
@@ -531,9 +550,9 @@ global.mb = {
         return false;
     },
     
-    getFullestStructure: function(typesP,roomNamesP,filtersP=[]){
+    getFullestStructure: function(typesP,roomNamesP,filtersP=[],blog=false){
 
-        let structures = this.getStructures({types:typesP,roomNames:roomNamesP,filters:filtersP,orderBy:{fn:'getWithdrawReserveLimit',dir:DESC}});
+        let structures = this.getStructures({types:typesP,roomNames:roomNamesP,filters:filtersP,orderBy:{fn:'getWithdrawReserveLimit',dir:DESC}},blog);
         if(structures.length>0){
             return structures[0];
         }
@@ -597,9 +616,11 @@ global.mb = {
         }
     },
     refreshRepairTargetsForRoom: function(r){
+  
         let room = this.getRoom(r);
         if(room){
             room.repairTargets={};
+            
             if(room.struct_id_cache[STRUCTURE_ROAD]){
                 for(let id in room.struct_id_cache[STRUCTURE_ROAD]){
                     let obj = Game.getObjectById(id);
@@ -744,7 +765,6 @@ global.mb = {
                     if(obj){
                         
                         if(priorityTypes.indexOf(obj.structureType)!==-1){
-                            //clog(obj,'prioritising')
                             return obj;
                         }
                             

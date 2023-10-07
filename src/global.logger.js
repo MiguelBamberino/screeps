@@ -14,9 +14,22 @@ global.logs = {
         if(!Memory.logs){
             Memory.logs={trace:false,stats:{}};
         }
+        if(!Memory.logs.rclTimeline)Memory.logs.rclTimeline={}
     },
     log: function(category,msg){
         //console.log("GT:"+Game.time+": "+category+" : "+msg);
+    },
+    logRCLGT:function(){
+        for(let roomName in Game.rooms){
+            if(Game.rooms[roomName].controller){
+                if(!Memory.logs.rclTimeline[roomName]) {
+                    Memory.logs.rclTimeline[roomName]={};
+                    Memory.logs.rclTimeline[roomName][0]=Game.time;
+                    
+                }
+                Memory.logs.rclTimeline[roomName][Game.rooms[roomName].controller.level] = Game.time;
+            }
+        }
     },
     globalResetStarted: function(){
 
@@ -26,6 +39,9 @@ global.logs = {
         this.globalResetTick = Game.time;
     },
     mainLoopStarted: function(){
+        
+        this.logRCLGT();
+        
         this.msSinceLastTick = Date.now() - this.lastTickAt;
         this.lastTickAt = Date.now();
         this.cpuTrackers={};

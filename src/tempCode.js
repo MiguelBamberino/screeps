@@ -1,6 +1,6 @@
 let tankerRole=require('role.tanker');
 const roomNode = require('class.roomNode');
-//let builderRole = require('role.builder');
+let harvesterRole = require('role.harvester');
 module.exports = {
     
 // attack on Game.time 1075909. invader quad
@@ -8,7 +8,19 @@ module.exports = {
     // keep duo together, leader running off
     run:function(){
         //return;
-          let thing=this;
+        
+        //this.shard3TempCode();
+        this.shardBATempCode();
+        
+        return;
+    },
+    shardBATempCode:function(){
+        
+        this.botArenaForRoomNode(nodes.a);
+        
+    }, 
+    shard3TempCode:function(){
+             let thing=this;
        // this.haulResources('Theta','taxman1','20*1c1m',{id:'60c90cef9891318f82fa19dd',pos:{x:25,y:20,roomName:'W46N49'}},gob('64e672e8ff9345439bb731e3'),[RESOURCE_ENERGY],['W45N51','W46N51','W46N50','W46N49'],4000,250);
         //if(Game.creeps['taxman2'])this.haulResources('Theta','taxman2','20*1c1m',{id:'60c90cef9891318f82fa19dd',pos:{x:25,y:20,roomName:'W46N49'}},gob('64c8f4af8864060224b86e60'),[RESOURCE_ENERGY],[],4000,250);
         
@@ -17,19 +29,15 @@ module.exports = {
        // this.startupNewRoomWithVision('W48N52','Iota-3', {workerBody:'10w10c10m',defend:true,defenderSpot:{x:41,y:17}})
    
         
-        if(Game.creeps['Af0']||gob('64d258b7ac37e86f64210866').storedAmount()<600000)
+        if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').storedAmount()<600000 && Game.cpu.bucket>6000))
             this.farmStructureThenTransfer('Alpha','Af0','20w1c10m',['62aa95635d8a323481c138bb','62aa955ce2e2855ce315256a','62aa95557c404d6a8c7029e0'],'64d3a146a4357404b77dabab')
-        if(Game.creeps['Af0']||gob('64d258b7ac37e86f64210866').storedAmount()<600000)
+        if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').storedAmount()<600000 && Game.cpu.bucket>6000))
             this.farmStructureThenTransfer('Alpha','Af1','20w1c10m',['62aa954c5ae7b06a395d48d5','62aa954fc44b546bf0aa175e','62aa953ec7649673fcfe5ff9'],'64d3ad9d691b1e72a6839726')
         
 
-        this.farmStructureThenTransfer('Beta-2','Bf0','20w1c5m',['62be4317cfb9d575bb3d61ce'],'64e6d5792d5489be439e7d7a')
-        this.farmStructureThenTransfer('Beta-2','Bf1','20w1c5m',['62be4354c35f7bf6201794a8'],'64e6d5792d5489be439e7d7a')
-        this.farmStructureThenTransfer('Beta-2','Bf2','20w1c5m',['62be435738ef713093bc8804'],'64e6d5792d5489be439e7d7a')
-        
-        this.withdrawThenUpgrade('Kappa','Kux1','20w1c5m','6504346920565f7971fca016','5bbcaa6c9099fc012e631532',true,rp(43,10,'W48N54'))
-        this.withdrawThenUpgrade('Kappa','Kux2','20w1c5m','65109b9370eb628ad7a66183','5bbcaa6c9099fc012e631532',true,rp(44,10,'W48N54'))
-        this.withdrawThenUpgrade('Kappa','Kux3','20w1c5m','6504346920565f7971fca016','5bbcaa6c9099fc012e631532',true,rp(45,10,'W48N54'))
+        //this.withdrawThenUpgrade('Kappa','Kux1','20w1c5m','6504346920565f7971fca016','5bbcaa6c9099fc012e631532',true,rp(43,10,'W48N54'))
+        //this.withdrawThenUpgrade('Kappa','Kux2','20w1c5m','65109b9370eb628ad7a66183','5bbcaa6c9099fc012e631532',true,rp(44,10,'W48N54'))
+        //this.withdrawThenUpgrade('Kappa','Kux3','20w1c5m','6504346920565f7971fca016','5bbcaa6c9099fc012e631532',true,rp(45,10,'W48N54'))
         
         //this.harvestAndCollectCentreSectorMineral('Zeta-3','5bbcb17a40062e4259e92f92',rp(21,22,'W42N52'),'64cd63532bbcf529bdbb2972',RESOURCE_KEANIUM,'5m10c','20W10c10m','-K',1)
         this.harvestAndCollectCentreSectorMineral('Beta-3','5bbcb18340062e4259e92ffe',rp(5,6,'W41N52'),'64d1fc933d58eb0dc83119e8',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O',1)
@@ -48,14 +56,14 @@ module.exports = {
          //this.harvestAndCollectCentreSectorMineral('Theta-3','5bbcb16540062e4259e92e94',rp(41,1,'W45N51'),'64e672e8ff9345439bb731e3',RESOURCE_UTRIUM,'5m5c','30W5c15m','-U',2)
       
         
-        this.withdrawThenUpgrade('Maintainer1','Mx1','1w1c','64d4a6df69e9867caf3a3604','5bbcaac09099fc012e63221b')
-        this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
-        this.withdrawThenUpgrade('Maintainer3','Mx3','1w1c','64eba8b3511e240c621b3cc4','5bbcaac09099fc012e632211')
+        if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer1','Mx1','1w1c','64d4a6df69e9867caf3a3604','5bbcaac09099fc012e63221b')
+        if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
+        if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer3','Mx3','1w1c','64eba8b3511e240c621b3cc4','5bbcaac09099fc012e632211')
         
         
         
         //if(Game.creeps['Etx1'])
-        this.haulResources('Iota','Itx1','25*1c1m',gob('64cce22382ec1b1a14572ef9'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],3000,200)
+        this.haulResources('Iota','Itx1','25*1c1m',gob('64cce22382ec1b1a14572ef9'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
         
      
         
@@ -117,96 +125,530 @@ module.exports = {
                 {importer:'Iota',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
                 {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 
-                 {importer:'Kappa',resource_type:RESOURCE_ENERGY,storageCap:400000},
-                
             ],
             ['Alpha','Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota']);
+        
+       },
+
+    botArenaForRoomNode:function(node){
+        if(!node)return
+        let spawn = Game.spawns[node.name];
+        if(!spawn)return spawn
+        let room = spawn.room;
+        let storage = mb.getStorageForRoom(room.name)
+        
+        
+        if(!room.controller.getStandingSpot()){
+            this.setControllerUp(node);
+        }
+        if(!mb.haveConstructions([node.coreRoomName])){
+            node.upgradeRate = RATE_FAST;
+            node.buildFast=storage?true:false;
+        }else{
+            node.buildFast=true;
+            if(node.totalEnergyAtSources<3000){
+                node.upgradeRate = RATE_SLOW;
+            }else{
+                node.upgradeRate = RATE_FAST;
+            }
+            if(room.controller.level>=5){
+                node.upgradeRate = RATE_FAST;
+            }
+        }
+        if(room.controller.level>=7){
+             // switch focus to wall building
+            node.upgradeRate = RATE_SLOW;
+            node.buildFast=true;
+        }
+        
+        
+        if(room.energyCapacityAvailable>=550){
+            this.runRemotes(node);
+        }
+        
+        if(room.controller.level>=4){
+            node.wallHeight=50000;
             
-
             
-        /////////// Zeta         ///////////     
-        /*this.manageMineralHauling('Zeta',
-            [
-               
-                {id:'64d10dce13d79694aefcfaf8',resource_type:RESOURCE_GHODIUM_OXIDE,action:'fill',phaseOut:true},
-                {id:'64d150df015cee89ea42c269',resource_type:RESOURCE_GHODIUM_OXIDE,action:'fill',phaseOut:true},
-                {id:'64d10517bb59e9857883b859',resource_type:RESOURCE_GHODIUM_OXIDE,action:'fill',phaseOut:true},
-                {id:'64d191357aac6f2808025d53',resource_type:RESOURCE_OXYGEN,action:'empty'},
-                {id:'64d15f61e48efe6e067b4497',resource_type:RESOURCE_GHODIUM,action:'empty'},
-                
-                
-                {id:'64d0aebf91220c75b2576df8',resource_type:RESOURCE_ZYNTHIUM_ACID,action:'empty',phaseOut:true},
-                {id:'64d0d5e29994c05d6f9c9e68',resource_type:RESOURCE_LEMERGIUM_OXIDE,action:'empty',phaseOut:true},
-                {id:'64d0cd7fb263617fc28dfa35',resource_type:RESOURCE_UTRIUM_ACID,action:'empty',phaseOut:true},
-                {id:'64d1adace48efe57667b5921',resource_type:RESOURCE_LEMERGIUM_OXIDE,action:'empty',phaseOut:true},
-                
-                {id:'64da8bf1054f11194ebff8e8',resource_type:RESOURCE_GHODIUM,action:'fill',fillup:true},
-                {id:'64da8bf1054f11194ebff8e8',resource_type:RESOURCE_ENERGY,action:'fill'},
-                
-                
-            ],
-            [RESOURCE_GHODIUM_OXIDE,RESOURCE_HYDROXIDE, RESOURCE_OXYGEN, RESOURCE_ZYNTHIUM_ACID,RESOURCE_UTRIUM_ACID,RESOURCE_ZYNTHIUM_OXIDE,RESOURCE_LEMERGIUM_OXIDE],
-            [
-                {resource_type:RESOURCE_GHODIUM,exportOver:0,batchSize:50000},
-            ],
-            rp(20,36,'W42N52'))
-            */
-            // RESOURCE_LEMERGIUM_ALKALIDE
+            if(storage){
+                this.manageWalls(node);
+                node.extraFastFillSpots=[rp(spawn.pos.x-1,spawn.pos.y+3,room.name),rp(spawn.pos.x+1,spawn.pos.y+3,room.name)];
+            }
+        }
+        if(room.controller.level>=5){
+            node.wallHeight=500000;
+        }
+        if(room.controller.level>=6){
+            node.wallHeight=10000000;//10m
+            let mineral = mb.getMineralForRoom(room.name);
+            if(!mineral.getStandingSpot()){
+                mineral.setStandingSpot( mineral.pos.lookForNearbyWalkable(false,false)[0])
+            }
+            this.harvestAndCollectCentreSectorMineral(node.name,mineral.id,mineral.getStandingSpot(),storage.id,mineral.mineralType,'5m10c','16w5c8m','-'+mineral.mineralType,1)
+            //node.makeResource = mineral.mineralType;
+        }
+        
+        if(Game.spawns[node.name+'-2']){
+            node.extraFastFillSpots=[];
+        }
+        
+        if(Game.time%500===0)this.removeRedundantRoads(node)
+        this.manageConstructionSites(node);
+    },
+    
+    runRemotes:function(node){
+       // return
+        if(node.remoteRoomNames.length==0){
+            node.badRooms = [];
+            let adjRooms = Game.map.describeExits(node.coreRoomName);
+            for(let dir in adjRooms){
+                node.remoteRoomNames.push(adjRooms[dir])
+            }
+        }
+        
+        let eCap =  Game.rooms[node.coreRoomName].energyCapacityAvailable;
+        let harvesterBodyPlan = harvesterRole.getParts(eCap,node.getConfig());
+        
+        for(let roomName of node.remoteRoomNames){
             
+             if(node.badRooms.includes(roomName))continue;
+            
+            let c = mb.getControllerForRoom(roomName)
+            if(c && c.owner){
+                // forget the room
+                node.badRooms.push(roomName);
+                continue;
+            }
+            
+            // skipp player room
+           
+            
+            if(!mb.hasRoom(roomName)){
+                this.scoutRoom(node.name,roomName+'-sc',roomName)
+                if(Game.rooms[roomName])
+                {
+                    mb.scanRoom(roomName);
+                    
+                }
+            }else{
+                if(Game.creeps[roomName+'-sc'])Game.creeps[roomName+'-sc'].suicide()
+                
+                let currConSiteCount = Object.keys(Game.constructionSites).length;
+                let pathsToMaintain = false;
+                let controller = mb.getControllerForRoom(roomName,false);
+                if(!controller)node.badRooms.push(roomName);
+                
+                /////////////// Harvesters  ///////////////////////////////////////////////////////
+                for(let src of mb.getSources({roomNames:[roomName],requireVision:false})){
+                    
+                    this.harvestPoint(node.name,roomName+'-'+src.pos.x+'-'+src.pos.y+'-h',harvesterBodyPlan,src);
+                    
+                    if(src.haveVision &&src.getMeta().pathed){
+                        pathsToMaintain=true;
+                    }
+                   // if(roomName==='W5N9')clog(src.getMeta(),roomName)
+                    //clog(currConSiteCount,'currConSiteCount')
+                    
+                    if(src.haveVision && Game.time%1000==0 && currConSiteCount ==0)src.setMetaAttr('pathed',false);
+                    
+                    let conSpace = 100-currConSiteCount;
+                    
+                    if(src.haveVision && !src.getMeta().pathed && src.haveContainer() && currConSiteCount<15){
+                        let to = src.getStandingSpot();
+                        if(to){
+                            let result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{swampCost:2,maxOps:10000});
+                            
+                            if( result.path.length<(100-currConSiteCount) ){
+                                for(let pos of result.path){
+                                    let pos2 = rp(pos.x,pos.y,pos.roomName);
+                                    if(pos2.isWalkable())
+                                        pos2.createConstructionSite(STRUCTURE_ROAD);
+                                }
+                                src.setMetaAttr('pathed',true);
+                                currConSiteCount+=result.path.length
+                            }
+                            clog(result.path.length,"Remote path: "+src.pos)
+                        }
+                    }
+                }
+                
+                /////////////// Others  ///////////////////////////////////////////////////////
+                if(pathsToMaintain && node.controller().level>=3)this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m');
+                this.keepRoomClearOfLv0InvaderCores(node.name,roomName+'-a','2a2m',roomName)
+                this.defendRoom(node.name,roomName+'-guard',roomName);
+                
+                /////////////// Reserever  ///////////////////////////////////////////////////////
+                if(eCap>=650){
+                    let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
+                    this.reserverRoom(node.name,roomName+'-cl',controller,bodyPlan)
+                }
+                
+            }
+        }
+    },
+    
+    removeRedundantRoads: function(node){
+        let spawn = Game.spawns[node.name];
+        let roads = mb.getStructures({roomNames:[node.coreRoomName],types:[STRUCTURE_ROAD]})
+        for(let road of roads){
+            if(!road.pos.isWalkable()){
+                road.destroy();
+            }
+            if(road.pos.isEqualTo(rp(spawn.pos.x-1,spawn.pos.y+1,spawn.pos.roomName)))road.destroy()
+            if(road.pos.isEqualTo(rp(spawn.pos.x+1,spawn.pos.y+1,spawn.pos.roomName)))road.destroy()
+            if(road.pos.isEqualTo(rp(spawn.pos.x-1,spawn.pos.y+3,spawn.pos.roomName)))road.destroy()
+            if(road.pos.isEqualTo(rp(spawn.pos.x+1,spawn.pos.y+3,spawn.pos.roomName)))road.destroy()
+        }
+    },
+    
+    manageWalls:function(node){
+        
+        // once all walls are heiggh enough, lets maybe build another
+        if(Game.time%500==0 && node.defenceIntel.weakest_structure.hits>=node.wallHeight)this.wallCheck=undefined;
+        let allRampsBuilt = true;
+        if(this.wallCheck===undefined){
+            for(let pos of Game.spawns[node.name].pos.findBuildableSpotsAtAreaEdge(10,4,6,12)){
+                
+                pos.createConstructionSite(STRUCTURE_RAMPART);
+                allRampsBuilt=false;
+                break;
+            }
+           
+            if(allRampsBuilt){
+                let antiBlinkWalls = Game.spawns[node.name].pos.getPositionsAtAreaEdge(12,6,8,14)
+                this.buildWallRing(antiBlinkWalls)
+                let antiContactWalls = Game.spawns[node.name].pos.getPositionsAtAreaEdge(11,5,7,13)
+                this.buildWallRing(antiContactWalls)
+            }
+            
+            this.wallCheck = Game.time;
+        }
+        
+    }, 
+    buildWallRing:function(positions){
+        for(let i in positions){
+                //pos.colourIn('blue')
+                if(i%2==0 && positions[i].canBuild(STRUCTURE_WALL)){
+                    if(positions[i].lookForStructure(STRUCTURE_ROAD)){
+                        
+                        if( positions[i+1] && positions[i+1].isWalkable()){
+                            positions[i+1].createConstructionSite(STRUCTURE_ROAD);
+                        }else if(positions[i-1] && positions[i-1].isWalkable()){
+                            positions[i-1].createConstructionSite(STRUCTURE_ROAD);
+                            
+                        }
+                    }
+                    positions[i].createConstructionSite(STRUCTURE_WALL);
+                }
+            }
+    },
+    
+    
+    manageConstructionSites:function(node){
+        
+        if(node.controller().level==2)this.buildAtRCL2(node)
+        if(node.controller().level==3)this.buildAtRCL3(node)
+        if(node.controller().level==4)this.buildAtRCL4(node)
+        if(node.controller().level==5)this.buildAtRCL5(node)
+        if(node.controller().level==6)this.buildAtRCL6(node)
+        if(node.controller().level==7)this.buildAtRCL7(node)
+    },
+    buildAtRCL7:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+        
+        if(!Game.spawns[node.name+'-2']){
+            let siteToDelete = rp(spawn.pos.x-2,spawn.pos.y+6,room.name).lookForStructure(STRUCTURE_EXTENSION);
+            if(siteToDelete)siteToDelete.destroy();
+            rp(spawn.pos.x-2,spawn.pos.y+6,room.name).createConstructionSite(STRUCTURE_TOWER)
+            
+            // Length fills
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+6,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+5,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+7,STRUCTURE_ROAD);
+            
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+8,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+6,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+7,STRUCTURE_EXTENSION);
+            
+            // fast-fill/closed fill
+            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+2,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y+6,STRUCTURE_CONTAINER);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y+4,STRUCTURE_RAMPART);
+            
+             let sources = mb.getSources({roomNames:[room.name]});
+            for(let src of sources){
+                let buildableSpot = src.getStandingSpot().findNearbyBuildableSpot();
+                if(buildableSpot)buildableSpot.createConstructionSite(STRUCTURE_EXTENSION);
+            }
+            
+            if( node.defenceIntel.weakest_structure.hits>=node.wallHeight){
+                room.createConstructionSite(spawn.pos.x,spawn.pos.y+4,STRUCTURE_SPAWN,node.name+'-2');
+            }
+            
+        }else{
+            
+        }
+    },
+    buildAtRCL6:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+        // x exts + 
+        // +1 link
+        // +1 extractor, + terminal
+        let mineral = mb.getMineralForRoom(room.name);
+        mineral.pos.createConstructionSite(STRUCTURE_EXTRACTOR)
+        let sources = mb.getSources({roomNames:[room.name]});
+        let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
+        
+        if( node.defenceIntel.weakest_structure.hits>=node.wallHeight){
+            let siteToDelete = rp(spawn.pos.x+2,spawn.pos.y+1,room.name).lookForStructure(STRUCTURE_EXTENSION);
+            if(siteToDelete)siteToDelete.destroy();
+            rp(spawn.pos.x+2,spawn.pos.y+1,room.name).createConstructionSite(STRUCTURE_TERMINAL)
+            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+7,STRUCTURE_EXTENSION);
+        }
+        
+        
+        if(linkCount<3){
+            for(let src of sources){
+                if(!src.haveLink()){
+                    let buildableSpot = src.getStandingSpot().findNearbyBuildableSpot();
+                    if(buildableSpot)buildableSpot.createConstructionSite(STRUCTURE_LINK);
+                    break;
+                }
+            }
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+1,STRUCTURE_RAMPART);
+            /// Fast filler
+            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y,STRUCTURE_EXTENSION);
+            
+            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+1,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+1,STRUCTURE_ROAD);
+            
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+2,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+2,STRUCTURE_EXTENSION);
+            
+            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+3,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+3,STRUCTURE_ROAD);
+            
+            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+4,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+4,STRUCTURE_EXTENSION);
+            
+            // Length fills
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+5,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+5,STRUCTURE_ROAD);
+            
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+6,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+6,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+7,STRUCTURE_EXTENSION);
+           // 
+            
+            
+        }
+        if(linkCount==3 && this.linksSetup!=linkCount){
+            util.setLinksInRoom(room.name);
+            this.linksSetup=linkCount;
+        }
+    },
+    buildAtRCL5:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+        
+            // 10 exts + 1 destroy
+            // 1 tower
+            // 2 links
+            let siteToDelete = rp(spawn.pos.x,spawn.pos.y+2,room.name).lookForStructure(STRUCTURE_EXTENSION);
+            if(siteToDelete)siteToDelete.destroy();
+            rp(spawn.pos.x,spawn.pos.y+2,room.name).createConstructionSite(STRUCTURE_LINK)
+            
+            room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+7,STRUCTURE_EXTENSION);
+             
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+7,STRUCTURE_EXTENSION);
+            
+            room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+8,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-1,spawn.pos.y+8,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y+8,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x+1,spawn.pos.y+8,STRUCTURE_TOWER);
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+8,STRUCTURE_EXTENSION);
+            
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+1,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+3,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+4,STRUCTURE_EXTENSION);
+            
+        let sources = mb.getSources({roomNames:[room.name]});
+        let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
+        
+        if(linkCount<2)
+        for(let src of sources){
+            let buildableSpot = src.getStandingSpot().findNearbyBuildableSpot();
+            if(buildableSpot)buildableSpot.createConstructionSite(STRUCTURE_LINK);
+            break;
+        }
+        
+        if(linkCount>=2 && this.linksSetup!=linkCount){
+            util.setLinksInRoom(room.name);
+            this.linksSetup=linkCount;
+            //clog("here") 
+            for(let src of sources){
+                src.getStandingSpot().createConstructionSite(STRUCTURE_RAMPART);
+                if(src.haveLink())src.getLink().pos.createConstructionSite(STRUCTURE_RAMPART);
+            }
+        }
+        
+            
+        },
+    buildAtRCL4:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+        
+        
+        let extCount = mb.countStructures([STRUCTURE_EXTENSION],[room.name])
+        
+        
+        if(node.haveStorage){
+            let siteToDelete = rp(spawn.pos.x,spawn.pos.y+2,room.name).lookForStructure(STRUCTURE_CONTAINER);
+            if(siteToDelete)siteToDelete.destroy();
+            rp(spawn.pos.x+4,spawn.pos.y+1,room.name).createConstructionSite(STRUCTURE_ROAD);
+            rp(spawn.pos.x+4,spawn.pos.y+2,room.name).createConstructionSite(STRUCTURE_ROAD);
+            rp(spawn.pos.x+4,spawn.pos.y+3,room.name).createConstructionSite(STRUCTURE_ROAD);
+            rp(spawn.pos.x,spawn.pos.y+2,room.name).createConstructionSite(STRUCTURE_EXTENSION);
+            
+        }
+        if(extCount==20 && node.defenceIntel.weakest_structure.hits>=node.wallHeight){
+            let siteToDelete = rp(spawn.pos.x+2,spawn.pos.y+2,room.name).lookForStructure(STRUCTURE_EXTENSION);
+            if(siteToDelete)siteToDelete.destroy();
+            rp(spawn.pos.x+2,spawn.pos.y+2,room.name).createConstructionSite(STRUCTURE_STORAGE);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y+7,STRUCTURE_EXTENSION);
 
-        //#####################################################################################
-        // MMO - Iota Tasks
-        //##################################################################################### 
+        }else{
+            
+             // gaining 10+1destroy EXTs
+            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+3,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+3,spawn.pos.y+3,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+3,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y+3,STRUCTURE_EXTENSION);
+            
+            
+            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+4,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+3,spawn.pos.y+4,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+4,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-1,spawn.pos.y+4,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x+1,spawn.pos.y+4,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+4,STRUCTURE_EXTENSION);
+            
+            room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+5,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x-1,spawn.pos.y+5,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y+5,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+1,spawn.pos.y+5,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+5,STRUCTURE_ROAD);
+            
+            room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+6,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x-1,spawn.pos.y+6,STRUCTURE_EXTENSION);
+            
+            room.createConstructionSite(spawn.pos.x+1,spawn.pos.y+6,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+6,STRUCTURE_EXTENSION);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y+6,STRUCTURE_ROAD);
+            
+            
+            room.createConstructionSite(spawn.pos.x-1,spawn.pos.y+7,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+1,spawn.pos.y+7,STRUCTURE_ROAD);
+            
+            
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+3,STRUCTURE_RAMPART);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y,STRUCTURE_RAMPART);
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+2,STRUCTURE_RAMPART);
+        }
+        
+        
+    },
+    
+    buildAtRCL3:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+        
+        // gaining 5 EXTs
+        room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+1,STRUCTURE_EXTENSION);
+        room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+1,STRUCTURE_EXTENSION);
+        
+        room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+2,STRUCTURE_CONTAINER);//
+        room.createConstructionSite(spawn.pos.x-1,spawn.pos.y+2,STRUCTURE_EXTENSION);
+        room.createConstructionSite(spawn.pos.x+1,spawn.pos.y+2,STRUCTURE_EXTENSION);
+        room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+2,STRUCTURE_EXTENSION);
+        
+        room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+3,STRUCTURE_TOWER);
 
-        //#####################################################################################
-        // MMO - Alpha Tasks
-        //#####################################################################################
+        
+    },
 
-     
-
-        //#####################################################################################
-        // MMO - Beta Tasks
-        //#####################################################################################
-
-
-        //#####################################################################################
-        // MMO - Gamma Tasks
-        //#####################################################################################
-      
-
+    buildAtRCL2:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+        
+         // gaining 5 EXTs
+        room.createConstructionSite(spawn.pos.x-2,spawn.pos.y,STRUCTURE_EXTENSION);
+        room.createConstructionSite(spawn.pos.x-1,spawn.pos.y,STRUCTURE_EXTENSION);
+        room.createConstructionSite(spawn.pos.x+1,spawn.pos.y,STRUCTURE_EXTENSION);
+        room.createConstructionSite(spawn.pos.x+2,spawn.pos.y,STRUCTURE_EXTENSION);
+        
+        room.createConstructionSite(spawn.pos.x,spawn.pos.y+1,STRUCTURE_EXTENSION);
+        room.createConstructionSite(spawn.pos.x,spawn.pos.y+2,STRUCTURE_CONTAINER);
+        
+        
+        if(node.spawnFastFillerReady){
+            room.createConstructionSite(spawn.pos.x-2,spawn.pos.y-1,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x-1,spawn.pos.y-1,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x,spawn.pos.y-1,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+1,spawn.pos.y-1,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y-1,STRUCTURE_ROAD);
+            
+            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x+3,spawn.pos.y,STRUCTURE_ROAD);
+            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+1,STRUCTURE_ROAD);
+             room.createConstructionSite(spawn.pos.x+3,spawn.pos.y+1,STRUCTURE_ROAD);
+             room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+2,STRUCTURE_ROAD);
+             room.createConstructionSite(spawn.pos.x+3,spawn.pos.y+2,STRUCTURE_ROAD);
+        
+        }
  
-        //#####################################################################################
-        // MMO - Delta Tasks
-        //#####################################################################################
-       
-        //#####################################################################################
-        // MMO - Epsilon Tasks
-        //#####################################################################################
-
-     
-        //#####################################################################################
-        // MMO - Zeta Tasks
-        //#####################################################################################
+        if(room.controller.haveContainer() && !room.controller.getMeta().pathed ){
+            
+            let path = spawn.pos.findPathTo(room.controller.getStandingSpot(),{ignoreCreeps:true});
+            clog("pathing controller...",path.length)
+            for(let point of path){
+                room.createConstructionSite(point.x,point.y,STRUCTURE_ROAD)
+            }
+            room.controller.setMetaAttr('pathed',true)
+            
+            let sources = mb.getSources({roomNames:[room.name]})
+            for(let src of sources){
+                let path = spawn.pos.findPathTo(src.getStandingSpot(),{ignoreCreeps:true});
+                clog("pathing src...",path.length)
+                for(let point of path){
+                    room.createConstructionSite(point.x,point.y,STRUCTURE_ROAD)
+                }
+                src.setMetaAttr('pathed',true)
+            }
+            
+        }
+    },
     
-       
-    
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-    
-        
-
-        
-        return;
-       },
-       maintainerSpawn:function(spawnName){
-           if(Game.spawns[spawnName]){
-               let controller = Game.spawns[spawnName].room.controller;
-               let cname = spawnName+"w";
-               if(!Game.creeps[cname]){
-                   Game.spawns[spawnName].spawnCreepX(creepBody,creepName,{memory:{job:false}},true);
-               }
-               
-           }
-       },
+    setControllerUp:function(node){
+        let positions = node.controller().pos.getPositionsInRange(3);
+        let spawn = Game.spawns[node.name];
+        let closest = false;
+        let closestDist=9999;
+        for(let pos of positions){
+            let dist = spawn.pos.getRangeTo(pos)
+            //clog(dist,pos)
+            if(pos.isWalkable() && dist<closestDist){
+                closestDist=dist;
+                closest = pos;
+            }
+        }
+        clog("controller spot set",closest)
+        node.controller().setStandingSpot(closest);
+    },
        runRemoteRoom:function(spawnName,roomName,reserve=true,specific_source_ids=[]){
            
            let spawnRCL = Game.spawns[spawnName].room.controller.level;
@@ -247,7 +689,17 @@ module.exports = {
            
            this.defendRoom(spawnName,roomName+'-guard',roomName);
        },
-       
+        
+        maintainerSpawn:function(spawnName){
+           if(Game.spawns[spawnName]){
+               let controller = Game.spawns[spawnName].room.controller;
+               let cname = spawnName+"w";
+               if(!Game.creeps[cname]){
+                   Game.spawns[spawnName].spawnCreepX(creepBody,creepName,{memory:{job:false}},true);
+               }
+               
+           }
+       },
        scheduledAttack: function(){
            //return;
          // if(Game.time%5000===0) Memory.scheduledAttackState='scheduled';
@@ -671,7 +1123,7 @@ module.exports = {
          
         let scoutName = this.rotateScouts(spawnName,roomPos.roomName,roomPos.roomName+'-beacon',roomPos);
         //this.scoutRoom(spawnName,roomPos.roomName+'-beacon',roomPos.roomName,roomPos);
-        let userIgnores =[ ...Memory.allies,'Source Keeper','Invader']; //
+        let userIgnores =[ ...BOT_ALLIES,'Source Keeper','Invader']; //
         let hostiles = Game.rooms[roomPos.roomName]?Game.rooms[roomPos.roomName].getHostiles():[];
         let fighters = hostiles.filter(function(hostile){return ( (hostile.partCount(ATTACK)>0 || hostile.partCount(RANGED_ATTACK)>0 || hostile.partCount(HEAL)>0) && !userIgnores.includes(hostile.owner.username) ) });
         if(fighters.length>2){
@@ -1845,7 +2297,7 @@ module.exports = {
                     if(target.isMarkedForDismantle())return creep.actOrMoveTo('dismantle',target);
                     else return creep.actOrMoveTo('repair',target);
                 }else{
-                    creep.say('no targets')
+                    //creep.say('no targets')
                 }
                 
             }else if(creep.isCollecting()) {
@@ -2410,14 +2862,16 @@ module.exports = {
         }
     },
     
-    keepRoomClearOfLv0InvaderCores: function(spawnName,cname,roomName,parts){
+    keepRoomClearOfLv0InvaderCores: function(spawnName,cname,parts,roomName){
         
         let room = Game.rooms[roomName];
         if(!room)return;
         
-        if(Game.time%10==0)mb.scanRoom(roomName);
+        
         let cores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
         
+        if(Game.time%5000==0 && cores.length==0)mb.scanRoom(roomName);
+        //clog(cores.length,roomName)
         if(!Game.creeps[cname] && cores.length>0){
 
             Game.spawns[spawnName].spawnCreepX(parts,cname);
@@ -3073,7 +3527,7 @@ module.exports = {
                     for(let fighter of fighters){
                         let d = creep.pos.getRangeTo(fighter);
                         if(d<3)fightersIn3++;
-                        if(d < distF && d < maxDistance && !Memory.allies.includes(fighter.owner.username)){
+                        if(d < distF && d < maxDistance && !BOT_ALLIES.includes(fighter.owner.username)){
                             distF =d;
                             fighterTarget = fighter;
                         }
@@ -3155,26 +3609,28 @@ module.exports = {
         let boostedMeleeTotalCount = 0;
         let boostedHealTotalCount = 0;
         
-        let hostiles = Game.rooms[roomName]?Game.rooms[roomName].getHostiles():[];
-        for(var ref in hostiles){
+        let hostiles = Game.rooms[roomName]?Game.rooms[roomName].getDangerousCreeps():[];
+        for(var id in hostiles){
+            let hostile = gob(id);
+            if(!hostile)continue;
             
-             if(hostiles[ref].owner.username==='Source Keeper'){
+             if(hostile.owner.username==='Source Keeper'){
                 continue;
             }
+            if(!target)target = hostile;
             
-            if(hostiles[ref].partCount(RANGED_ATTACK)>0 || hostiles[ref].partCount(ATTACK)>0 || hostiles[ref].partCount(HEAL)>0){
-                // we want to ensure we prioritise store the healer creep, if it exits
-                if(healTotalCount===0){
-                    target = hostiles[ref];
-                }
-                
-                // if we have many invaders, then size based on creep
-                meleeTotalCount += hostiles[ref].partCount(ATTACK);
-                rangeTotalCount += hostiles[ref].partCount(RANGED_ATTACK);
-                healTotalCount += hostiles[ref].partCount(HEAL);
-                
-                Memory.invaderSeen[roomName] = Game.time+target.ticksToLive;
+            
+            
+            // if we have many invaders, then size based on creep
+            meleeTotalCount += hostile.partCount(ATTACK);
+            rangeTotalCount += hostile.partCount(RANGED_ATTACK);
+            healTotalCount += hostile.partCount(HEAL);
+            // we want to ensure we prioritise store the healer creep, if it exits
+            if(healTotalCount>0){
+                target = hostile;
             }
+            Memory.invaderSeen[roomName] = Game.time+target.ticksToLive;
+            
         }
         /*
         if(roomName =='W14N18'){

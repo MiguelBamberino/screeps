@@ -612,6 +612,7 @@
 	    }
 
 	    let free =this.store.getFreeCapacity(RESOURCE_ENERGY);
+	    //if(this.name==='A-ta-5')clog(searchRooms,free)
 	     storage = mb.getFullestStructure(
                     [STRUCTURE_CONTAINER],
                     searchRooms,

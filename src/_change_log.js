@@ -1,5 +1,17 @@
 
 /*
+ 
+===================================
+= Version 19.2.0 
+===================================
+- patched some bugs with spelling mistake variables
+- added tempCode for auto-building a room for RCL 1 > RCL 6
+- rooms RCL 1-3 will now spawn extra harvesters per source
+- room will not spawn too many builders if E surplus is low
+- added server config for different deployments
+- mapbook now support non-vision rooms again, by storing data in mem
+- changed worked to prioritise fast fill stores over random exts
+
 ===================================
 = Version 19.1.2 
 ===================================

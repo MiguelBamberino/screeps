@@ -29,6 +29,7 @@ var roleTanker = {
 
     run: function(creep,config) {
         //clog(creep.name)
+        
         let storage = mb.getStorageForRoom(config.coreRoomName)
         let terminal = mb.getTerminalForRoom(config.coreRoomName)
         let creepSpace =  creep.store.getCapacity();
@@ -55,7 +56,7 @@ var roleTanker = {
         
         
         if(!creep.memory.job && energyInStorage>=creepSpace && this.shouldCheckForFillJobs(creep,config) ){
-            let reserveAmount = config.controller.level===8?200: ( config.controller.level===7?00:50 );
+            let reserveAmount = config.controller.level===8?200: ( config.controller.level===7?0:50 );
             let ext =  mb.getNearestStructure(creep.pos,[STRUCTURE_EXTENSION],[config.coreRoomName],[{attribute:'canReserveTransfer',operator:'fn',value:[1]}])
      
             if(ext){
@@ -97,8 +98,8 @@ var roleTanker = {
         }
         
         if(!creep.memory.job  && Game.time%50==0 && energyInStorage>=creepSpace){
-            
-            let tower = mb.getNearestStructure(creep.pos,[STRUCTURE_TOWER],[config.coreRoomName],[{attribute:'canReserveTransfer',operator:'fn',value:[creepSpace]}])
+            let towerSpace = creepSpace>=1000?500:creepSpace;
+            let tower = mb.getNearestStructure(creep.pos,[STRUCTURE_TOWER],[config.coreRoomName],[{attribute:'canReserveTransfer',operator:'fn',value:[towerSpace]}])
             if(tower){
                 tower.reserveTransfer(creep.name,creepSpace);
                 creep.memory.job = {target_id:tower.id,resource_type:RESOURCE_ENERGY,action:'fill'}

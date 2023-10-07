@@ -41,7 +41,10 @@ global.gui = {
         for(let id in this.nodes)
             this.renderRooms.push(this.nodes[id].coreRoomName);
         
-        if(Game.rooms['sim'])this.renderRooms=['sim'];
+        if(Game.rooms['sim'] || util.getServerName()==='private'){
+            this.nodeStats=true;
+            this.rbFor= true;
+        }
         
         this.summary = Object.create( require('global.GUI.partial'));
         this.summary.headingConfig("Overview - V"+Memory.VERSION,true,{tick:3,reset:3,elapsed:2,cpu:2,memCPU:3,serverSpeed:3,bucket:2,rstCPU:2});
@@ -130,16 +133,17 @@ global.gui = {
         //this.renderStructureRefs('W41N54')
         
     //logs.startCPUTracker('gui.renderReserveBookFor');
-        this.renderReserveBookFor('651085ad2d38a9b8568c8b36');
-        //this.renderSourceStats('63de812d8ec3bb0b54708522');
+    if(util.getServerName()=='private'){
+        if( nodes.a.controller().haveContainer() )
+            this.renderReserveBookFor(nodes.a.controller().getContainer().id);
         
-  
-        this.renderReserveBookFor('64fe16bce5f704a221ae4b13')
-        this.renderReserveBookFor('64fe17512a44963aee437614')
-        this.renderReserveBookFor('64ff6f2448f1e9c942be7b12',rp(35,7,'W48N54'))
+        for(let src of mb.getAllSources()){
+            if(src.haveVision && src.haveContainer())this.renderReserveBookFor(src.getContainer().id);
+        }
+    }
     //logs.stopCPUTracker('gui.renderReserveBookFor',true);
   
-        //this.renderDefenseDetails()
+       // this.renderDefenseDetails(nodes.a)
         
         let u = Game.cpu.getUsed() - st;
         logs.guiCPU= u;
@@ -159,15 +163,15 @@ global.gui = {
         Game.rooms[complex.pos.roomName].renderGUITable(new RoomPosition(complex.pos.x+10,complex.pos.y,complex.pos.roomName),labData,false,true);
     },
     
-    renderDefenseDetails: function(){
+    renderDefenseDetails: function(node){
         
-        let walls = mb.getStructures({roomNames:['W45N51','W41N53'],types:[STRUCTURE_WALL,STRUCTURE_RAMPART]});
+        let walls = mb.getStructures({roomNames:[node.coreRoomName],types:[STRUCTURE_WALL,STRUCTURE_RAMPART]});
         for(let wall of walls){
             let colour = 'white';
-            let diff= 25000000 - wall.hits;
+            let diff= node.wallHeight - wall.hits;
             let perc=100;
             if(diff>0){
-                perc= (wall.hits/25000000)*100;
+                perc= (wall.hits/node.wallHeight)*100;
                 
                     colour='rgb('+(200-(perc/2))+','+((perc*2)+1)+',1)';
                 
@@ -249,7 +253,7 @@ global.gui = {
             if(node.coreRoomName=='W48N54')renderPos=rp(19,4,node.coreRoomName)
             
             
-            Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name,true,{key:3,value:3});
+            Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name+" - "+node.coreRoomName,true,{key:3,value:3});
             
             y+=15;
         }

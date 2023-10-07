@@ -4,16 +4,22 @@ var role = {
     getParts: function(budget,config){
         let level = config.controller.level;
         
-        // assume we now have roads.
-        if(level>2 && budget>=550){
-            return '2w2c2m';//400, 
+        // assume we now have roads between src and base.
+        if(level > 2 && budget>=500){
+            return '1w5c3m';//500, 
+        }
+        
+        
+        // assume we now have roads between src and base.
+        if(level > 2 && budget>=350){
+            return '1w3c2m';//350, 
         }
         
         //////////////////////////////////////////////
         // assume we dont have roads below here: 
         /////////////////////////////////////////////
-        if(budget>=400){
-            return '2w1c3m';
+        if(budget>=350){
+            return '1w2c3m';
         }
         // this work is used for starting a lv1 room and rebooting crashed rooms
         // RCL 1 - 300/300 , assume no roads early on
@@ -22,6 +28,7 @@ var role = {
     },
 
     run: function(creep,config){
+        
         creep.checkAndUpdateState();
         let controller = config.controller;
         
@@ -45,20 +52,22 @@ var role = {
                     }
                 }
                 
-                target = creep.getExtensionToCharge([config.coreRoomName]);
-                if(target){
-                    return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
-                }
-                
-                
               //  if(creep.name=='I-wo-0')clog('recover mode')
                  target = creep.getFillerStationToFill([config.coreRoomName]);
                 if(target){
                     
                    return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
                 }
+                
+                target = creep.getExtensionToCharge([config.coreRoomName]);
+                if(target){
+                    return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
+                }
  
             
+            }
+            if(controller.level==1){
+                return creep.actOrMoveTo("upgradeController",controller);
             }
 
             let repairTarget = this.targetToRepair(creep,config);
@@ -75,11 +84,6 @@ var role = {
                 return creep.actOrMoveTo("repair",repairTarget);
             }
             
-           
-            
-            
-            
-            
             
             let site = this.siteToBuild(creep,config);
             if(site){
@@ -93,11 +97,25 @@ var role = {
             
         }else if(creep.isCollecting()){
             
-            if(controller.level == 1){
-                let drop = creep.getDroppedEnergy();
+            if(controller.level <=3 ){
+                
+                let drop = gob(creep.memory.drop_id);
+                
+                let srcs = mb.getSources({roomNames:[config.coreRoomName]});
+                
+                let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
+                if(!drop){
+                    
+                   // if( !srcs[i].haveContainer() ){
+                        drop = srcs[i].pos.lookForNearbyResource(RESOURCE_ENERGY);
+                    
+                }
                 if(drop){
+                    creep.memory.drop_id = drop.id;
                     return creep.actOrMoveTo("pickup",drop);
                 }
+               // creep.say((creep.name.charAt(5)*1)&2)
+               if( !srcs[i].haveContainer() ) return creep.actOrMoveTo("harvest",srcs[i]);
             }
                 
            return creep.getEnergy([config.coreRoomName]);

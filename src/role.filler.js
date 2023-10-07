@@ -72,7 +72,8 @@ var role = {
         creep.checkAndUpdateState();
         
         // if anything changes, lets reload 
-        if(Game.time % 5000 === 0){
+        let container = Game.getObjectById(creep.memory.container_id);
+        if(Game.time % 1000 === 0 || !container){
            
             creep.memory.container_id=false;
         }
@@ -90,10 +91,13 @@ var role = {
         
         // if Game.time%2==0 && spawn.spawning
         //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawing');
+         
         if(Game.time%2==0 && !creep.memory.fillingInProgress && creep.memory.all_spawn_ids){
+           
             for(let sid of creep.memory.all_spawn_ids){
                 let sp = Game.getObjectById(sid);
                 if(sp && sp.spawning){
+                    
                     creep.memory.fillingInProgress=true;break;
                 }
             }
@@ -101,7 +105,7 @@ var role = {
         //if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':spawing',clogCPU);
         
         
-        let container = Game.getObjectById(creep.memory.container_id);
+        
         if(container && !container.isFillerStore())container.setAsFillerStore();
 
 	    if(creep.isWorking()) {
@@ -121,7 +125,7 @@ var role = {
             if(creep.memory.fillingInProgress){
                 for(let id of creep.memory.extension_ids){
                     let extension = Game.getObjectById(id);
-                    if(extension && creep.store.getUsedCapacity(RESOURCE_ENERGY) >= extension.store.getUsedCapacity(RESOURCE_ENERGY)){
+                    if(extension && creep.storingAtleast(1,RESOURCE_ENERGY) && extension.haveSpaceFor(1,RESOURCE_ENERGY)){
                         if(creep.act("transfer",extension,RESOURCE_ENERGY)===OK){
                            return ;
                         }

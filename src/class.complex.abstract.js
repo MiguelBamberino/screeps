@@ -12,12 +12,15 @@ class AbstractComplex{
         this.detectExistingStructures();
     }
     runTick(){
-        if(this.rcl<this.minRCL){
+        if(Game.rooms[this.anchor.roomName].controller.level<this.minRCL){
             return ERR_RCL_NOT_ENOUGH;
         }
         if(Game.rooms[this.anchor.roomName].controller.level!=this.rcl){
-            clog("RCL change, rechecking complex structures")
-            this.detectExistingStructures();
+            this.rcl=Game.rooms[this.anchor.roomName].controller.level;
+            clog("RCL change, rechecking complex structures ")
+            //logs.startCPUTracker('detectExistingStructures');
+            this.detectExistingStructures(); 
+            //logs.stopCPUTracker('detectExistingStructures',true);
         }
         return this.runComplex();
     }

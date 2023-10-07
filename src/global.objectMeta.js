@@ -18,7 +18,7 @@ checkDeletedObjects()
 //#######################################################
 // RoomObject Object Metas
 //#######################################################
-/*
+
 RoomObject.prototype.getMeta=function(){
     let meta = objectMeta.get(this.id);
    // clog(meta,'meta')
@@ -26,7 +26,7 @@ RoomObject.prototype.getMeta=function(){
         return {};
     }
     return meta;
-} */
+} 
 RoomObject.prototype.setMeta=function(data){
     let meta = objectMeta.get(this.id);
     if(meta){
@@ -46,7 +46,7 @@ RoomObject.prototype.setMetaAttr=function(name,value){
 }
 
 
-extraFunctions={
+/*let extraFunctions={
     getMeta:function(){
         let meta = objectMeta.get(this.id);
        // clog(meta,'meta')
@@ -60,7 +60,7 @@ extraFunctions={
 }
 for(let funcName in extraFunctions){
     RoomObject.prototype[funcName] = extraFunctions[funcName]
-}
+}*/
 //#######################################################
 // RoomObject isActive Metas
 //#######################################################

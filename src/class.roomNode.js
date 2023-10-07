@@ -44,7 +44,7 @@ class RoomNode{
         this.coreRoomName = coreRoomName;
         
         
-        let controller = mb.getControllerForRoom(this.coreRoomName);
+        //let controller = mb.getControllerForRoom(this.coreRoomName);
   
         this.totalEnergyAtSources=0;
         
@@ -119,7 +119,6 @@ class RoomNode{
         for(const cname of this.creepNames){
             let creep = Game.creeps[cname];
             
-            //clog("detected creep: "+cname,this.name);
             if(!creep){clog("Missing creep: "+cname,this.name); continue;}
             
             if(!creepRoles[ creep.getRole() ]){
@@ -161,10 +160,20 @@ class RoomNode{
           //  logs.stopCPUTracker(this.name+':runTowers');
           
         if(this.makeResource && this.labComplex){
+            
             this.labComplex.make(this.makeResource);
         }else if(this.splitResource && this.labComplex){
             this.labComplex.split(this.splitResource);
         }
+    
+        //// Recovery Mode //////////////////////////////////////////////////////
+        // removed this from recovery check because i was miss-using it to scale up quick in low levels 
+        if( (this.workforce_quota.tanker.count==0 &&this.workforce_quota.tanker.required>0) || this.workforce_quota.harvester.count!=this.workforce_quota.harvester.required || this.workforce_quota.worker.count===0){
+            this.inRecoveryMode=true;
+        }else{
+            this.inRecoveryMode=false;
+        }
+        ////////////////////////////////////////////////////////////////////////
             
         this.saveStore();
         logs.stopCPUTracker(this.name+':runTick');
@@ -220,7 +229,6 @@ class RoomNode{
 
         for(var id of hostileIds){
             let enemy = Game.getObjectById(id);
-            //if(this.name =='Alpha') clog(enemy,'enemy')
             if(!enemy)continue;
             
             let range = towers[0].pos.getRangeTo(enemy);
@@ -322,6 +330,8 @@ class RoomNode{
             }
                     
         }
+        
+        
         this.creepNames = stillAlive;
     }
     
@@ -386,19 +396,27 @@ class RoomNode{
             }
         }
         
-        //// Recovery Mode //////////////////////////////////////////////////////
-        if(Game.time%10===0)this.inRecoveryMode=undefined;
-        
-        if(this.inRecoveryMode===undefined){
-         
-             // removed this from recovery check because i was miss-using it to scale up quick in low levels 
-            if(/*!this.spawnFastFillerReady || */this.workforce_quota.harvester.count!=this.workforce_quota.harvester.required || this.workforce_quota.worker.count===0){
-                this.inRecoveryMode=true;
-            }else{
-                this.inRecoveryMode=false;
+        //// Stats about room Sources ////////////////////////////////////////////
+        if(Game.time%10===0){
+            this.coreRoomSourcesCount=undefined
+        }
+       
+        if(this.coreRoomSourcesCount===undefined){
+            
+            this.totalEnergyAtSources=0;
+            this.coreRoomSourcesCount=0;
+            this.allSourcesBuilt = true;
+            let sources = mb.getSources({ roomNames: this.allRoomNames()}); 
+            for(let source of sources){
+                 
+                if(source.pos.roomName==this.coreRoomName)this.coreRoomSourcesCount++;
+                if( source.pos.roomName==this.coreRoomName &&  !source.haveContainer() && !source.haveLink() ){ this.allSourcesBuilt = false;}
+                
+                this.totalEnergyAtSources+= source.energyAwaitingCollection();
             }
         }
         ////////////////////////////////////////////////////////////////////////
+        
         
         //// Defence Intelligence //////////////////////////////////////////////
         let playerFighters = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
@@ -435,8 +453,9 @@ class RoomNode{
     allRoomNames(){
  
         let activeRemotes  = [];
+        if(Memory.invaderSeen===undefined)Memory.invaderSeen={}
         for(let roomName of this.remoteRoomNames){
-            if(Memory.invaderSeen[roomName]< Game.time || Memory.invaderSeen[roomName]==undefined){
+            if( Memory.invaderSeen[roomName]==undefined || emory.invaderSeen[roomName]< Game.time){
                 activeRemotes.push(roomName)
             }
         }
@@ -447,6 +466,7 @@ class RoomNode{
         return mb.getStorageForRoom(this.coreRoomName);
     }
     controller(){
+        if(!Game.rooms[this.coreRoomName])return false;
         return Game.rooms[this.coreRoomName].controller;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -476,6 +496,7 @@ class RoomNode{
             }
              
             for(let pos of this.extraFastFillSpots){
+                
                 this.runFiller(this.name,this.name.charAt(0)+'FF'+i,pos);
                 i++;
             }
@@ -571,6 +592,7 @@ class RoomNode{
                     remoteRoomNames:this.remoteRoomNames,
                     allRoomNames:this.allRoomNames(),
                     inRecoveryMode:this.inRecoveryMode,
+                    spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
                     retreatSpot:this.retreatSpot,
                     funnelRoomName:this.funnelRoomName,
@@ -661,23 +683,33 @@ class RoomNode{
         let controller = this.controller();
         let playerAttackers = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
 
-        if(Game.time%10===0 || this.totalEnergyAtSources===undefined || this.coreRoomSourcesCount===undefined){
-            this.totalEnergyAtSources=0;
-            this.coreRoomSourcesCount=0;
-            let sources = mb.getSources({ roomNames: this.allRoomNames()}); 
-            for(let source of sources){
-  
-                if(source.pos.roomName==this.coreRoomName)this.coreRoomSourcesCount++;
-                
-                this.totalEnergyAtSources+= source.energyAwaitingCollection();
-            }
-        }
+        
         
         this.workforce_quota.worker.required = 4;
-        this.workforce_quota.upgrader.required = 1;
+        
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
+        if(Game.rooms[this.coreRoomName].energyCapacityAvailable<800){
+            this.workforce_quota.harvester.required+=2;
+        }
 
-        this.workforce_quota.builder.required = (this.buildFast &&  !this.inRecoveryMode)?4:1;
+   
+        if(this.buildFast && !this.inRecoveryMode){
+            if(this.haveStorage){
+                // at higher RCL, builder can consume too quick and dry out system
+                if(this.energeySurplus > 50000)
+                    this.workforce_quota.builder.required = 4;
+                else if(this.energeySurplus > 30000)
+                    this.workforce_quota.builder.required = 3;
+                else if(this.energeySurplus > 10000)
+                    this.workforce_quota.builder.required = 2;
+                else
+                    this.workforce_quota.builder.required = 1;
+            }else{
+                // at low RCL the builders can consume quicker than draw
+                this.workforce_quota.builder.required = 4;
+            }
+                
+        }else this.workforce_quota.builder.required = 1;
         
         if(this.haveStorage && this.spaceInStorage<50000){
             this.workforce_quota.harvester.required=0;
@@ -688,29 +720,35 @@ class RoomNode{
         }
         
         // if we are early on, ensure we build the basics or we have a storage to recover with
-        if( (this.spawnFastFillerReady && controller.haveContainer) || this.haveStorage){
+        if( this.spawnFastFillerReady || this.haveStorage){
             
             this.workforce_quota.worker.required = 1; // xmark
+            
     
             if(this.defenceIntel.weakest_structure.hits > this.defenceIntel.wallHeight && !mb.haveConstructions([this.coreRoomName])){
                 this.workforce_quota.builder.required = 0;
             }
             
-
-            this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/2000 )
-            //if(this.name==='Kappa')this.workforce_quota.tanker.required=0;
+            if(this.allSourcesBuilt){
+                let tankersPerX = Game.rooms[this.coreRoomName].energyCapacityAvailable<1300?1000:2000;
+                this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
+            }
             //this.workforce_quota.tanker.required = this.totalEnergyAtSources===0?1:Math.ceil(this.totalEnergyAtSources/2000)
     
-           if( (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) && Game.cpu.bucket>5000){
+           if( (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) && (Game.cpu.bucket>5000||Game.rooms['sim']) && this.allSourcesBuilt && controller.haveContainer()){
                
                let readyToSpend = controller.getContainer().storedAmount();
-                if(readyToSpend==2000){
-                    this.workforce_quota.upgrader.required = (this.upgradeRate===RATE_VERY_FAST)?7:5;
+               
+                if(this.haveStorage && this.energeySurplus<50000 && controller.level<=7 ){
+                    // we need to start saving, incase we get attacked or need to spend
+                    this.workforce_quota.upgrader.required = 1;
                 }else if(readyToSpend>=1800){
+                    this.workforce_quota.upgrader.required = (this.upgradeRate===RATE_VERY_FAST)?7:5;
+                }else if(readyToSpend>=1500){
                     this.workforce_quota.upgrader.required = 4;
-                }else if(readyToSpend>1500){
+                }else if(readyToSpend>1200){
                     this.workforce_quota.upgrader.required = 3;
-                }else if(readyToSpend>800){
+                }else if(readyToSpend>600){
                     this.workforce_quota.upgrader.required = 2;
                 }else{
                     this.workforce_quota.upgrader.required = 1;
@@ -718,7 +756,7 @@ class RoomNode{
            }else if(this.upgradeRate===RATE_VERY_SLOW && controller.ticksToDowngrade>100000){
                this.workforce_quota.upgrader.required = 0;
            }else{
-               this.workforce_quota.upgrader.required = 1;
+               this.workforce_quota.upgrader.required = this.allSourcesBuilt?1:0;
            }
            
             //////////////////////////////////////////////////////////////////////////////////

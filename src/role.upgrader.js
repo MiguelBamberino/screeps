@@ -33,8 +33,8 @@ var role = {
         else if(budget >= 1250 ){ // RCL 4 - 800 + 300 + 200 = 1300/1300 20 ext
             return '10w2c3m'; 
         }
-        else if(budget >= 700 ){ // RCL 3 - 400 + 300 + 100 =  800/800 10 ext
-            return '5w2c2m';
+        else if(budget >= 800 ){ // RCL 3 - 400 + 300 + 100 =  800/800 10 ext
+            return '4w6c2m';
         }
         else if(budget >= 550){ // RCL 2 - 400 + 50 + 100 =  550/550 5 ext
             return '4w1c2m';
@@ -56,14 +56,14 @@ var role = {
         
         //if(config.coreRoomName==='W42N53')clog(container.id,creep.name)
         
-       /* if(container){
+        if(container){
             //container.allowOverBooking(0)
-            if(config.upgradeRate===RATE_FAST){
-                container.allowOverBooking(2000)
+            if(config.upgradeRate===RATE_FAST && controller.level>2){
+                container.allowOverBooking(1000)
             }else{ 
                 container.allowOverBooking(0)
             }
-        }*/
+        }
         
         let link = controller.getLink();
         if(!container){

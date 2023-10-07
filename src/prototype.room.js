@@ -66,7 +66,7 @@ Room.prototype._parseHostileCreeps=function(cacheSensitivity=5){
         let creeps =  this.find(FIND_HOSTILE_CREEPS);
         for(let creep of creeps){
             
-            if( Memory.allies.includes(creep.owner.username) ){
+            if( BOT_ALLIES.includes(creep.owner.username) ){
                 CREEPS_ROOM_CACHE[this.name].allies.push(creep.id);
             }
             else{

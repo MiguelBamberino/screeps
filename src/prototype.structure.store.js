@@ -18,3 +18,4 @@ Structure.prototype.isFull = function(type=RESOURCE_ENERGY){
 Structure.prototype.isEmpty = function(type=RESOURCE_ENERGY){
     return ( this.store.getUsedCapacity(type) == 0);
 }
+

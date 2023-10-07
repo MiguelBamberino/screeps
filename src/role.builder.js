@@ -73,9 +73,8 @@ var role = {
                //if(creep.name==cpuCreep) logs.stopCPUTracker(creep.name+':repair',true);
                 return res;
             }
-            let controller = Game.getObjectById(config.controller_id);
            
-            return creep.actOrMoveTo("upgradeController",controller);
+            return creep.actOrMoveTo("upgradeController",config.controller);
             //creep.say("I'm bored!");
             
 	    }
@@ -84,18 +83,26 @@ var role = {
 	    else if(creep.isCollecting()){
 	        //creep.memory.target_to_fix_id = false;
 
-	        if(false && playerAttackers.length==0 && !creep.memory.reserve_id){
-	           // if(creep.name==cpuCreep)logs.startCPUTracker(creep.name+':getDroppedEnergy');
-                let drop = creep.getDroppedEnergy();
-    
-                if(drop){
-                    let res =  creep.actOrMoveTo("pickup",drop);
-                    creep.say(res)
-                  //if(creep.name==cpuCreep)logs.stopCPUTracker(creep.name+':getDroppedEnergy',true);
-                    return res;
+	        if(config.controller.level <=3 ){
+                
+                let drop = gob(creep.memory.drop_id);
+                
+                let srcs = mb.getSources({roomNames:[config.coreRoomName]});
+                
+                let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
+                if(!drop){
+                    
+                   // if( !srcs[i].haveContainer() ){
+                        drop = srcs[i].pos.lookForNearbyResource(RESOURCE_ENERGY,false,50);
+                    
                 }
-               // if(creep.name==cpuCreep)logs.stopCPUTracker(creep.name+':getDroppedEnergy',true);
-	        }
+                if(drop /*&& drop.amount >= creep.store.getFreeCapacity(RESOURCE_ENERGY)*/ ){
+                    creep.memory.drop_id = drop.id;
+                    return creep.actOrMoveTo("pickup",drop);
+                }
+               // creep.say((creep.name.charAt(5)*1)&2)
+                if( !srcs[i].haveContainer() )return creep.actOrMoveTo("harvest",srcs[i]);
+            }
             
 
            // if(creep.name==cpuCreep)logs.startCPUTracker(creep.name+':getEnergy');
@@ -109,15 +116,17 @@ var role = {
 
 	    
 	    var site = Game.getObjectById(creep.memory.construction_site_id);
+	    
 	    if(site){
+	        
+	        creep.memory.last_site_type = site.structureType;
+	        creep.memory.last_site_pos = {x:site.pos.x,y:site.pos.y};
 	        return site;
 	    }
         creep.memory.construction_site_id=false;
 	    let obj = mb.getNearestConstruction(creep.pos, [config.coreRoomName]);
 	    if(obj){
             creep.memory.construction_site_id=obj.id;
-	        creep.memory.last_site_type = obj.structureType;
-	        creep.memory.last_site_pos = {x:obj.pos.x,y:obj.pos.y};
 	        return obj;
 	    }
 	    return false;

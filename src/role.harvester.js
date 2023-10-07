@@ -20,7 +20,7 @@ var roleHarvester = {
             return '4w1c2m';
             
         }
-        return '2w1c1m'; // 300/300
+        return '2w1m'; // 300/300
     
     },
     run: function(creep,config){
@@ -28,7 +28,45 @@ var roleHarvester = {
         
         
        let src =  this.getSource(creep,config);
+       
+         
+       if( !config.spawnFastFillerReady){
+           
+           if(src){
+                if(src.haveNoCreep())src.setCreep(creep)
+                return creep.actOrMoveTo('harvest',src)
+           }
+           
+       }
+       if(!src){
+           let srcs = mb.getSources({roomNames:[config.coreRoomName]});
+                let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
+                let spots = srcs[i].pos.lookForNearbyWalkable(true);
+               if(spots.length>0){
+                   //clog(spot,creep.name)
+                   creep.memory.mine_id = srcs[i].id;
+                   creep.memory.extraSupport=true;
+               }else{
+                   i2 = i===1?0:1;
+                   if(srcs[i2]){
+                       let spots = srcs[i2].pos.lookForNearbyWalkable(true);
+                       if(spots.length>0){
+                           //clog(spot,creep.name)
+                           creep.memory.mine_id = srcs[i2].id;
+                           creep.memory.extraSupport=true;
+                       }
+                   }
+               }
+       }
        if(!src){creep.say("!src");return;}
+       
+       if(creep.memory.extraSupport){
+           if(creep.isFull() && src.haveContainer()){
+               creep.transfer(src.getContainer(),RESOURCE_ENERGY)
+           }
+           return creep.actOrMoveTo('harvest',src)
+       }
+       
         
       // if(creep.name=='K-ha-1')return creep.moveTo(new RoomPosition(18,38,'W48N54'))
         
@@ -52,21 +90,7 @@ var roleHarvester = {
             }
         }
 
-       /*if(!src){
-           src = mb.getNearestSource(creep.pos,[config.coreRoomName])
-           
-           if(src ){
-               let container = src.getContainer();
-               creep.actOrMoveTo('harvest',src)
-               if(creep.isFull() && container){
-                   creep.actOrMoveTo('transfer',container,RESOURCE_ENERGY)
-               }
-               return
-           }
-           clog("no source",creep.name)
-           return -500;
-       }*/
-       
+      
 
        if( src.haveLink()){
            let res = creep.actOrMoveTo('linkHarvest',src);

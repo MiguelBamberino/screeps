@@ -306,7 +306,7 @@ module.exports = function(){
                         creep.memory.dontFlee===undefined &&
                         this.pos.getRangeTo(hostile) < 5 
                         && myTotalFightyParts < theirTotalFightParts 
-                        && !Memory.allies.includes(hostile.owner.username)
+                        && !BOT_ALLIES.includes(hostile.owner.username)
                         ){
                         // if the creep is too close, then flee, before repathing
                         let r = target.pos?target.pos.roomName:target.roomName;
@@ -338,7 +338,7 @@ module.exports = function(){
                             // dont avoid if we opt in for risks or need to flee from an avoid area
                              && !creep.memory.riskyBiscuits && !creep.memory.fleeZoneOfControl
                              // ally list
-                            && !Memory.allies.includes(hostile.owner.username)
+                            && !BOT_ALLIES.includes(hostile.owner.username)
                             //&& hostile.owner.username!='Trepidimous' 
                             // if we are avoiding SKs, then add them to the avoid list
                             || (creep.memory.avoidSkeepers && hostile.owner.username=='Source Keeper') 
@@ -382,7 +382,7 @@ module.exports = function(){
                     range = range-1;
                     colour='purple';
                 }
-                if(Memory.allies.includes(hostile.owner.username))
+                if(BOT_ALLIES.includes(hostile.owner.username))
                     colour = 'blue';
                 let avoid = hostile.pos.drawPolyAround(range,colour);
 

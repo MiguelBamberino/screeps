@@ -29,12 +29,13 @@ var roleTanker = {
     },
 
     run: function(creep,config) {
+        
         //if(creep.name=='B-ta-0')clog(config)
         creep.checkAndUpdateState();
 
 	    if(creep.isWorking()) {
 	        
-	        let targget = false;
+	        let target = false;
             let hostiles = Game.rooms[config.coreRoomName].find(FIND_HOSTILE_CREEPS)
             if(hostiles.length>0){
                 target = creep.getTowerToCharge([config.coreRoomName]);
@@ -112,7 +113,12 @@ var roleTanker = {
             }
             // now look at remotes
             if(!target){
-	            let roomRange = creep.ticksToLive>100?config.allRoomNames:[config.coreRoomName]
+	            let roomRange = config.allRoomNames;
+	            
+	            if(creep.ticksToLive<100)roomRange=[config.coreRoomName];
+	            // don't suck from local mines, when builders need this to build the storage. go get remote E
+	            else if(config.controller.level==4 && !Game.rooms[config.coreRoomName].storage)roomRange = config.remoteRoomNames;
+	           
 	            target = creep.getFullestMineStore(roomRange);
 	            if(target){
                     //creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
