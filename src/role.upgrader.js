@@ -58,7 +58,7 @@ var role = {
         
         if(container){
             //container.allowOverBooking(0)
-            if(config.upgradeRate===RATE_FAST && controller.level>2){
+            if(config.upgradeRate===RATE_FAST ){
                 container.allowOverBooking(1000)
             }else{ 
                 container.allowOverBooking(0)

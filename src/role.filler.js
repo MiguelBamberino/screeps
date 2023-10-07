@@ -242,6 +242,7 @@ var role = {
 	   creep.memory.extension_ids=[];
 	   creep.memory.all_spawn_ids=[];
 	   creep.memory.tower_ids=[];
+	   creep.memory.fillingInProgress=true;
 	    for(let structure of structures){
 	        
 	        if(structure.structureType===STRUCTURE_SPAWN){

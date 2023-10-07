@@ -92,8 +92,12 @@ var roleTanker = {
                 }else if(Game.time%10==0){
                     creep.memory.lastWithdrewFrom=false;
                 }else{
-                     creep.say('bored')
-                creep.moveToPos(config.retreatSpot)
+                                   creep.say('bored')
+                    if(config.controller.level<4 && config.controller.haveContainer()){
+                        creep.moveToPos(config.controller.getContainer())
+                    }else{
+                        creep.moveToPos(config.retreatSpot)
+                    }
                 }
                
             }
@@ -148,7 +152,11 @@ var roleTanker = {
     
             }else{
                 creep.say('bored')
-                creep.moveToPos(config.retreatSpot)
+                if(config.controller.level<4 && config.controller.haveContainer()){
+                    creep.moveToPos(config.controller.getContainer())
+                }else{
+                    creep.moveToPos(config.retreatSpot)
+                }
             }
             
             

@@ -194,6 +194,7 @@ module.exports = {
         
         if(Game.time%500===0)this.removeRedundantRoads(node)
         this.manageConstructionSites(node);
+        this.defendHomeRoom(node)
     },
     
     runRemotes:function(node){
@@ -325,6 +326,7 @@ module.exports = {
         }
         
     }, 
+    
     buildWallRing:function(positions){
         for(let i in positions){
                 //pos.colourIn('blue')
@@ -343,6 +345,37 @@ module.exports = {
             }
     },
     
+    defendHomeRoom:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+        let hostileIds = room.getNoneAllyCreeps();
+        if(hostileIds.length==0)return;
+        
+        let towers = mb.getStructures({roomNames:[room.name],types:[STRUCTURE_TOWER]})
+        
+        let bodyPlan = "2a2m";
+        if(room.energyCapacityAvailable>=550){
+                 bodyPlan = "1t1m+3*1a1m";
+             }
+             
+        if(towers.length==0){
+            // if we have no towers just charge and hope for best
+            for(let i in hostileIds){
+                this.constantGuardRoom(node.name,"guard"+i,room.name,bodyPlan)
+            }
+        }else{
+            
+            let ramparts = mb.getStructures({roomNames:[room.name],types:[STRUCTURE_RAMPART]})
+            if(ramparts.length<10){
+                // we dont have a full wall so keep near the tower and then fight 
+                for(let i in hostileIds){
+                    this.constantGuardRoom(node.name,"guard"+i,room.name,bodyPlan,towers[0].pos,false,false,10);
+                }
+            }
+            
+        }
+        
+    },
     
     manageConstructionSites:function(node){
         

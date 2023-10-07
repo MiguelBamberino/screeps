@@ -12,6 +12,7 @@
 - mapbook now support non-vision rooms again, by storing data in mem
 - changed worked to prioritise fast fill stores over random exts
 - fixed bug where mb.getControllerRoom() throws error for corridor rooms
+- changed tankers to wait near controller when bored and < rcl 4
 
 ===================================
 = Version 19.1.2 
