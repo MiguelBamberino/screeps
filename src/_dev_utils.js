@@ -34,10 +34,11 @@ global.util = {
     setupNodes:function(){
         global.nodes = _config.createRoomNodes(this.getServerName());
     },
-    resetForRespawn:function(){
-       // this.destroyAllConSites();
-       // this.destroyAllStructures();
-        
+    resetForRespawn:function(sameRoom=false){
+        if(sameRoom){
+            this.destroyAllConSites();
+            this.destroyAllStructures();
+        }
         //for(let n in nodes)nodes[n].controller().unclaim();
         global.nodes = _config.createRoomNodes(this.getServerName());
         gui.init(nodes);

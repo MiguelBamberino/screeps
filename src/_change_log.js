@@ -11,6 +11,7 @@
 - added server config for different deployments
 - mapbook now support non-vision rooms again, by storing data in mem
 - changed worked to prioritise fast fill stores over random exts
+- fixed bug where mb.getControllerRoom() throws error for corridor rooms
 
 ===================================
 = Version 19.1.2 
