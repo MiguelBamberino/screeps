@@ -41,7 +41,7 @@ global.gui = {
         for(let id in this.nodes)
             this.renderRooms.push(this.nodes[id].coreRoomName);
         
-        if(Game.rooms['sim'] || util.getServerName()==='private'){
+        if(Game.rooms['sim'] || util.getServerName()==='private'  || util.getServerName()==='botarena'){
             this.nodeStats=true;
             this.rbFor= true;
         }
@@ -133,7 +133,7 @@ global.gui = {
         //this.renderStructureRefs('W41N54')
         
     //logs.startCPUTracker('gui.renderReserveBookFor');
-    if(util.getServerName()=='private'){
+    if(util.getServerName()=='private' || util.getServerName()==='botarena'){
         if( nodes.a.controller().haveContainer() )
             this.renderReserveBookFor(nodes.a.controller().getContainer().id);
         

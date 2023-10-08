@@ -55,7 +55,9 @@ var role = {
               //  if(creep.name=='I-wo-0')clog('recover mode')
                  target = creep.getFillerStationToFill([config.coreRoomName]);
                 if(target){
-                    
+                   // if the fill station is a container, then lets repair as we approach to keep it topped up 
+                   if(target.structureType===STRUCTURE_CONTAINER)creep.repair(target);
+                   
                    return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
                 }
                 

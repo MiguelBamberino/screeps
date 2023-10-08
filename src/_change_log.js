@@ -13,6 +13,9 @@
 - changed worked to prioritise fast fill stores over random exts
 - fixed bug where mb.getControllerRoom() throws error for corridor rooms
 - changed tankers to wait near controller when bored and < rcl 4
+- changed fillers to drop their lock if the container goes
+- changed workers to repair filler stations as they approach
+- fixed bug with now spawning > 10 creeps of a given role
 
 ===================================
 = Version 19.1.2 

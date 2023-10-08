@@ -76,7 +76,7 @@ module.exports.loop = function () {
         mb.runTick();
         logs.stopCPUTracker('map.runTick');
         
-        if(Game.cpu.bucket>2000 || serverName=='sim'){
+        if(Game.cpu.bucket>2000 || util.getServerName()==='botarena'){
             logs.startCPUTracker('tempCode');
             tempCode.run();
             logs.stopCPUTracker('tempCode',false);

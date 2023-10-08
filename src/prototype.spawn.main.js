@@ -22,6 +22,7 @@ module.exports = function(){
         }
         
         let name = nameOveride?nameOveride:this.getCreepNameX(memory.role);
+        clog(name)
         if(!name){
             this.log("error","run out of creep names for role:"+memory.role);
             return ERR_NAME_EXISTS;
@@ -52,7 +53,7 @@ module.exports = function(){
     StructureSpawn.prototype.getCreepNameX = function(role){
         // A-Wo-1 vs A:wo:0
         let count = 0;
-        while(count<10){
+        while(count<30){
            let name = this.name.substr(0,1)+"-"+role.substr(0,2)+"-"+count;
            if(!Game.creeps[name]){
                 return name;    

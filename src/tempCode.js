@@ -237,7 +237,9 @@ module.exports = {
                 let currConSiteCount = Object.keys(Game.constructionSites).length;
                 let pathsToMaintain = false;
                 let controller = mb.getControllerForRoom(roomName,false);
-                if(!controller)node.badRooms.push(roomName);
+                if(!controller){
+                    node.badRooms.push(roomName);continue;
+                }
                 
                 /////////////// Harvesters  ///////////////////////////////////////////////////////
                 for(let src of mb.getSources({roomNames:[roomName],requireVision:false})){
@@ -254,7 +256,7 @@ module.exports = {
                     
                     let conSpace = 100-currConSiteCount;
                     
-                    if(src.haveVision && !src.getMeta().pathed && src.haveContainer() && currConSiteCount<15){
+                    if(src.haveVision && !src.getMeta().pathed && src.haveContainer() && currConSiteCount<15 && node.controller().level>3){
                         let to = src.getStandingSpot();
                         if(to){
                             let result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{swampCost:2,maxOps:10000});
@@ -281,6 +283,7 @@ module.exports = {
                 /////////////// Reserever  ///////////////////////////////////////////////////////
                 if(eCap>=650){
                     let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
+                  
                     this.reserverRoom(node.name,roomName+'-cl',controller,bodyPlan)
                 }
                 

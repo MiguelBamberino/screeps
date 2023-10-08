@@ -168,7 +168,7 @@ class RoomNode{
     
         //// Recovery Mode //////////////////////////////////////////////////////
         // removed this from recovery check because i was miss-using it to scale up quick in low levels 
-        if( (this.workforce_quota.tanker.count==0 &&this.workforce_quota.tanker.required>0) || this.workforce_quota.harvester.count!=this.workforce_quota.harvester.required || this.workforce_quota.worker.count===0){
+        if( (this.workforce_quota.tanker.count==0 &&this.workforce_quota.tanker.required>0) || this.workforce_quota.harvester.count<this.workforce_quota.harvester.required || this.workforce_quota.worker.count===0){
             this.inRecoveryMode=true;
         }else{
             this.inRecoveryMode=false;
@@ -321,7 +321,8 @@ class RoomNode{
             if(!creep.spawning){
                 
                 if(playerAttackers.length>0 && creep.getRole()=='upgrader'){
-                    creep.setRole("builder")
+                    // this broke on botarena for some reason
+                    //creep.setRole("builder")
                 }
                     logs.startCPUTracker(creep.name);
                 creepRoles[ creep.getRole() ].run(creep,this.getConfig());
@@ -635,7 +636,7 @@ class RoomNode{
                 let cname = ERR_BUSY; 
                 if(Game.spawns[this.name])
                     cname = Game.spawns[this.name].createCreep(bodyPlan,{role:roleName},false,this.getMainSpawnSpots());
-   
+                    clog(cname,roleName)
 
                 if(Game.spawns[this.name+'-2'] && cname===ERR_BUSY){
                     let dirs = [];

@@ -80,6 +80,15 @@ var role = {
         
         if(!creep.memory.container_id){
             this.setUp(creep);
+            // if we still don't have a container, then reset our reservations, so other creeps can fill the extensions
+            // the container went missing. something big went wrong
+            if(!creep.memory.container_id){
+                for(let id of creep.memory.extension_ids){
+                    let ext = gob(id);
+                    if(ext)ext.resetReservations()
+                }
+                creep.say('idle')
+            }
         }
         
         let spawn = Game.getObjectById(creep.memory.spawn_id);
