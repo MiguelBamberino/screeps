@@ -1,5 +1,10 @@
  
 ===================================
+= Version 19.2.1|2 
+===================================
+- patches from deploying 19.2.0 to mmo
+
+===================================
 = Version 19.2.0 
 ===================================
 - patched some bugs with spelling mistake variables
