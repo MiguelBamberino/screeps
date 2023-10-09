@@ -181,26 +181,29 @@ var roleTanker = {
 	    let job = creep.memory.job;
         let jobTarget = Game.getObjectById(job.target_id);
         //if(creep.name=='T-rk-0')clog(job,creep.name);
-        if(!jobTarget){
+        if(!jobTarget && job.target_id!='nope'){
             // not sure why the game object would not exist, but to be safe, drop the job
+            clog(creep.memory.job,creep.name+" !job error :")
             creep.memory.reserve_id = false;
             creep.say('!job obj')
             creep.memory.job= false;
             return;
         }
         
-        if(job.action=='empty' &&  jobTarget.isEmpty(job.resource_type) && creep.isEmpty(job.resource_type) ){
+        if(job.target_id!='nope' && job.action=='empty' &&  jobTarget.isEmpty(job.resource_type) && creep.isEmpty(job.resource_type) ){
             // not sure what the edge case is, for this, but this is a safety clause to stop creep being stuck with a fake job.
             // it could be a global reset bug/ spawning fresh bug
             jobTarget.fulfillWithdraw(creep.name)
+            clog(creep.memory.job,creep.name+" all empty :")
             creep.memory.reserve_id = false;
             creep.say('all empty')
             creep.memory.job= false;
         }
         
-        if(job.action=='fill' &&  jobTarget.isFull(job.resource_type)){
+        if(job.target_id!='nope' && job.action=='fill' &&  jobTarget.isFull(job.resource_type)){
             // not sure what the edge case is, i think it can happen when ext filler dies and the ext is not pathable
             jobTarget.fulfillTransfer(creep.name)
+            clog(creep.memory.job,creep.name+" all full :")
             creep.memory.reserve_id = false;
             creep.say('all full')
             creep.memory.job= false;

@@ -97,6 +97,10 @@ var role = {
             spawn.renewCreep(creep);
             creep.memory.fillingInProgress=true;
         }
+        if(spawn && !spawn.isFull(RESOURCE_ENERGY)){
+            creep.say('reset')
+            creep.memory.fillingInProgress=true;
+        }
         
         // if Game.time%2==0 && spawn.spawning
         //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawing');
@@ -117,7 +121,7 @@ var role = {
         
         if(container && !container.isFillerStore())container.setAsFillerStore();
 
-	    if(creep.isWorking()) {
+	    if(creep.carryingAtleast(1)) {
 
             //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawn_id');
             if(creep.memory.fillingInProgress){

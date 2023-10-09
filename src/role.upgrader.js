@@ -58,8 +58,9 @@ var role = {
         
         if(container){
             //container.allowOverBooking(0)
-            if(config.upgradeRate===RATE_FAST ){
-                container.allowOverBooking(1000)
+            // cant have overbooking once we have storage, because it breaks the rKeepr
+            if(config.upgradeRate===RATE_FAST && !creep.room.storage ){
+                container.allowOverBooking(1500)
             }else{ 
                 container.allowOverBooking(0)
             }
@@ -89,7 +90,16 @@ var role = {
                 }
                 
             }else if(creep.isCollecting()){
-                creep.getEnergy([config.coreRoomName]);
+                
+                let spot = controller.getStandingSpot();
+                if(spot){
+                    let drop = spot.lookForNearbyResource(RESOURCE_ENERGY);
+                    if(drop){
+                        creep.actOrMoveTo("pickup",drop);
+                    }
+                }
+                
+                //creep.getEnergy([config.coreRoomName]);
             }
             return;
             

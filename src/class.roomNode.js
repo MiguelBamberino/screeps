@@ -306,7 +306,7 @@ class RoomNode{
             
             if(!creep){
                 delete Memory.creeps[cname]; 
-                clog(cname,"Creep went missing/died."); 
+               // clog(cname,"Creep went missing/died."); 
                 continue;
             }
                 
@@ -636,7 +636,7 @@ class RoomNode{
                 let cname = ERR_BUSY; 
                 if(Game.spawns[this.name])
                     cname = Game.spawns[this.name].createCreep(bodyPlan,{role:roleName},false,this.getMainSpawnSpots());
-                    clog(cname,roleName)
+                    
 
                 if(Game.spawns[this.name+'-2'] && cname===ERR_BUSY){
                     let dirs = [];
@@ -666,10 +666,9 @@ class RoomNode{
                         dirs=[BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
                     }
                     cname = Game.spawns[this.name+'-3'].createCreep(bodyPlan,{role:roleName},false,dirs);
-                    if(this.name==='Theta')clog(cname,this.name+':'+bodyPlan)
+   
                 } 
                
-               //clog(cname,"spawn res")
                 if(typeof cname ==='string'){
                     this.creepNames.push(cname);
                     return;
@@ -731,7 +730,7 @@ class RoomNode{
             }
             
             if(this.allSourcesBuilt){
-                let tankersPerX = Game.rooms[this.coreRoomName].energyCapacityAvailable<1300?1000:2000;
+                let tankersPerX = Game.rooms[this.coreRoomName].energyCapacityAvailable<1300?1000:1600;
                 this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
             }
             //this.workforce_quota.tanker.required = this.totalEnergyAtSources===0?1:Math.ceil(this.totalEnergyAtSources/2000)
@@ -745,8 +744,14 @@ class RoomNode{
                     this.workforce_quota.upgrader.required = 1;
                 }else if(readyToSpend>=1800){
                     this.workforce_quota.upgrader.required = (this.upgradeRate===RATE_VERY_FAST)?7:5;
+                    if(this.totalEnergyAtSources>8000 && this.workforce_quota.tanker.count>10){
+                        this.workforce_quota.upgrader.required++;
+                    }
                 }else if(readyToSpend>=1500){
                     this.workforce_quota.upgrader.required = 4;
+                    if(this.totalEnergyAtSources>8000 && this.workforce_quota.tanker.count>10){
+                        this.workforce_quota.upgrader.required++;
+                    }
                 }else if(readyToSpend>1200){
                     this.workforce_quota.upgrader.required = 3;
                 }else if(readyToSpend>600){

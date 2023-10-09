@@ -32,8 +32,19 @@ var roleTanker = {
         
         //if(creep.name=='B-ta-0')clog(config)
         creep.checkAndUpdateState();
-
+        
 	    if(creep.isWorking()) {
+	    
+	        if(creep.memory.droppingAtController==true){
+	            if(creep.pos.isNearTo(config.controller.getStandingSpot())){
+	                creep.drop(RESOURCE_ENERGY);
+	                creep.memory.droppingAtController=false;
+	                return;
+	            }else{
+	                return creep.moveToPos(config.controller.getStandingSpot())
+	            }
+	        }
+	    
 	        
 	        let target = false;
             let hostiles = Game.rooms[config.coreRoomName].find(FIND_HOSTILE_CREEPS)
@@ -62,10 +73,15 @@ var roleTanker = {
 	        }
 	        
             if(!target){
-                let roomNames = config.funnelRoomName==undefined?[config.coreRoomName]:[config.coreRoomName,config.funnelRoomName];
-              //  if(config.funnelRoomName=='W13N17')clog(roomNames,creep.name)
-               target = creep.getUpgradeStoreToFill(roomNames);
-               //if(config.funnelRoomName=='W13N17' && target)clog(target.pos.target.id)
+                if(config.controller.level < 5 && !config.controller.haveContainer()){
+                    creep.memory.droppingAtController = true;
+                    creep.moveToPos(config.controller.getStandingSpot())
+                    return;
+                }else{
+                    let roomNames = config.funnelRoomName==undefined?[config.coreRoomName]:[config.coreRoomName,config.funnelRoomName];
+                    target = creep.getUpgradeStoreToFill(roomNames);
+                }
+                
             }
 	        
 	        if(!target){
@@ -92,9 +108,22 @@ var roleTanker = {
                 }else if(Game.time%10==0){
                     creep.memory.lastWithdrewFrom=false;
                 }else{
-                                   creep.say('bored')
+                                   //creep.say('bored')
                     if(config.controller.level<4 && config.controller.haveContainer()){
-                        creep.moveToPos(config.controller.getContainer())
+                        
+                        let idleSpot = false;
+                        let distance = 999;
+                        for(let pos of config.controller.getStandingSpot().getPositionsInRange(4)){
+                            if(pos.isWalkable() && !pos.lookForStructure(STRUCTURE_ROAD)){
+                                let dist = pos.getRangeTo(Game.spawns['Alpha'].pos);
+                                if(dist<distance){
+                                    idleSpot=pos;
+                                    distance=dist;
+                                }
+                            }
+                        }
+                        
+                        creep.moveToPos(idleSpot)
                     }else{
                         creep.moveToPos(config.retreatSpot)
                     }

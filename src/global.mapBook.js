@@ -750,7 +750,7 @@ global.mb = {
         }
         return false;
     },
-    getNearestConstruction: function(pos,roomNames,priorityTypes = [STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TOWER,STRUCTURE_TERMINAL]){
+    getNearestConstruction: function(pos,roomNames,priorityTypes = [STRUCTURE_SPAWN,STRUCTURE_TOWER,STRUCTURE_EXTENSION,STRUCTURE_STORAGE,STRUCTURE_TERMINAL]){
         if(!roomNames){
             roomNames = Object.keys(this.allRooms());
         }

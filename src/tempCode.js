@@ -20,13 +20,14 @@ module.exports = {
         
     }, 
     shard3TempCode:function(){
-             let thing=this;
+        //return;
+          let thing=this;
        // this.haulResources('Theta','taxman1','20*1c1m',{id:'60c90cef9891318f82fa19dd',pos:{x:25,y:20,roomName:'W46N49'}},gob('64e672e8ff9345439bb731e3'),[RESOURCE_ENERGY],['W45N51','W46N51','W46N50','W46N49'],4000,250);
         //if(Game.creeps['taxman2'])this.haulResources('Theta','taxman2','20*1c1m',{id:'60c90cef9891318f82fa19dd',pos:{x:25,y:20,roomName:'W46N49'}},gob('64c8f4af8864060224b86e60'),[RESOURCE_ENERGY],[],4000,250);
         
         //gob('64f39b9f9fa508dbd35620b9').observeRoom('W45N50')
         
-       // this.startupNewRoomWithVision('W48N52','Iota-3', {workerBody:'10w10c10m',defend:true,defenderSpot:{x:41,y:17}})
+        //this.startupRoomWithVision('Zeta-2','W43N51', {workerCount:0,workerBody:'10w10c10m',defend:true,defenderSpot:{x:13,y:16}})
    
         
         if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').storedAmount()<600000 && Game.cpu.bucket>6000))
@@ -35,13 +36,13 @@ module.exports = {
             this.farmStructureThenTransfer('Alpha','Af1','20w1c10m',['62aa954c5ae7b06a395d48d5','62aa954fc44b546bf0aa175e','62aa953ec7649673fcfe5ff9'],'64d3ad9d691b1e72a6839726')
         
 
-        //this.withdrawThenUpgrade('Kappa','Kux1','20w1c5m','6504346920565f7971fca016','5bbcaa6c9099fc012e631532',true,rp(43,10,'W48N54'))
-        //this.withdrawThenUpgrade('Kappa','Kux2','20w1c5m','65109b9370eb628ad7a66183','5bbcaa6c9099fc012e631532',true,rp(44,10,'W48N54'))
-        //this.withdrawThenUpgrade('Kappa','Kux3','20w1c5m','6504346920565f7971fca016','5bbcaa6c9099fc012e631532',true,rp(45,10,'W48N54'))
+        //this.withdrawThenUpgrade('Lambda','Lux1','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,42,'W48N52'))
+        this.withdrawThenUpgrade('Lambda','Lux2','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,41,'W48N52'))
+        this.withdrawThenUpgrade('Lambda','Lux3','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,40,'W48N52'))
         
         //this.harvestAndCollectCentreSectorMineral('Zeta-3','5bbcb17a40062e4259e92f92',rp(21,22,'W42N52'),'64cd63532bbcf529bdbb2972',RESOURCE_KEANIUM,'5m10c','20W10c10m','-K',1)
-        this.harvestAndCollectCentreSectorMineral('Beta-3','5bbcb18340062e4259e92ffe',rp(5,6,'W41N52'),'64d1fc933d58eb0dc83119e8',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O',1)
-        this.harvestAndCollectCentreSectorMineral('Beta-3','5bbcb18340062e4259e92ffe',rp(6,6,'W41N52'),'64d1fc933d58eb0dc83119e8',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O2',1)
+        //this.harvestAndCollectCentreSectorMineral('Beta-3','5bbcb18340062e4259e92ffe',rp(5,6,'W41N52'),'64d1fc933d58eb0dc83119e8',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O',1)
+       // this.harvestAndCollectCentreSectorMineral('Beta-3','5bbcb18340062e4259e92ffe',rp(6,6,'W41N52'),'64d1fc933d58eb0dc83119e8',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O2',1)
         
         
         this.harvestAndCollectCentreSectorMineral('Iota-3','5bbcb15e40062e4259e92e4a',rp(21,20,'W46N53'),'64cce22382ec1b1a14572ef9',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O',1)
@@ -60,12 +61,42 @@ module.exports = {
         if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
         if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer3','Mx3','1w1c','64eba8b3511e240c621b3cc4','5bbcaac09099fc012e632211')
         
+        //this.haulResources('Kappa','Ktx1','25*1c1m',gob('6504346920565f7971fca016'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
         
+        if(Game.creeps['Ztx1'])
+        this.haulResources('Zeta-2','Ztx1','25*1c1m',gob('64de8f2c3c187d2cb5df12b0'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
+        if(Game.creeps['Ztx2'])
+        this.haulResources('Zeta-2','Ztx2','25*1c1m',gob('64de8f2c3c187d2cb5df12b0'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
         
-        //if(Game.creeps['Etx1'])
-        this.haulResources('Iota','Itx1','25*1c1m',gob('64cce22382ec1b1a14572ef9'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
+        for(let i=0; i<=1;i++){
+            this.haulResources('Boost','Boost-t'+i,'3*1c1m',gob('651ad96bca05f36e8d9e7108'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
+            if(Game.creeps['Boost-t'+i] && Game.spawns['Boost']){
+                
+                Game.creeps['Boost-t'+i].memory.reusePath=5;
+                
+                if(Game.creeps['Boost-t'+i].ticksToLive<600 && Game.creeps['Boost-t'+i].pos.isNearTo(Game.spawns['Boost'])){
+                    Game.spawns['Boost'].renewCreep(Game.creeps['Boost-t'+i])
+                }
+            }
+        }
+        this.rotateCreep('Zux', function(activeCreepName){
+            
+             thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(6,14,'W43N51'))
+        },300)
+        this.rotateCreep('Zux2', function(activeCreepName){
+             if(Game.creeps[activeCreepName] || (gob('6523463c3085921d30ef1ffc') && gob('6523463c3085921d30ef1ffc').storingAtleast(50000)))thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(5,13,'W43N51'))
+        },300)
+       
         
-     
+        if(gob('651d338b7f3cad4cabce6223')){
+            this.withdrawThenBuild('Zeta-2','W43N51-h0','10w1c5m','651ad96bca05f36e8d9e7108','651d338b7f3cad4cabce6223')
+            if(Game.creeps['W43N51-h0'])Game.creeps['W43N51-h0'].memory.rampart_ids=undefined;
+        }else {
+            this.spawnHarvest('Zeta-2','Boost','W43N51-h0','5bbcaaa99099fc012e631f0b')
+        }
+        
+        let hostileIds = Game.rooms['W43N51'].getNoneAllyCreeps();
+        if(hostileIds.length>0 && gob('651d16f663f96bf75536f5dd'))gob('651d16f663f96bf75536f5dd').attack(gob(hostileIds[0]))
         
        // this.streamResource('Iota','Theta',RESOURCE_ENERGY,400000,300000);
         
@@ -102,6 +133,7 @@ module.exports = {
                 {importer:'Iota',resource_type:RESOURCE_HYDROGEN,storageCap:24000},
                 
                 
+                
                 {importer:'Theta',resource_type:RESOURCE_HYDROGEN,storageCap:12000},
                 {importer:'Theta',resource_type:RESOURCE_OXYGEN,storageCap:12000},
                 {importer:'Theta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
@@ -116,6 +148,7 @@ module.exports = {
                 {importer:'Zeta',resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
                 {importer:'Zeta',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                 {importer:'Zeta',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
+                {importer:'Zeta',resource_type:RESOURCE_ENERGY,storageCap:24000},
                 /*
                 {importer:'Theta',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 {importer:'Theta',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
@@ -125,8 +158,12 @@ module.exports = {
                 {importer:'Iota',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
                 {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 
+                {importer:'Lambda',resource_type:RESOURCE_ENERGY,storageCap:200000},
+                {importer:'Boost',resource_type:RESOURCE_ENERGY,storageCap:100000},
             ],
             ['Alpha','Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota']);
+    
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         
        },
 
@@ -197,6 +234,61 @@ module.exports = {
         this.defendHomeRoom(node)
     },
     
+    scoreRemote:function(node,roomName){
+        
+        if(!Memory.remotes)Memory.remotes={};
+        if(!Memory.remotes[node.name])Memory.remotes[node.name]={};
+        ///////////////////////////////////////////////////
+        // Analyse and score remotes
+        ///////////////////////////////////////////////////
+        // score is src distances to spawn + controller distance to spawn
+        Memory.remotes[node.name][roomName]={score:0,username:false};
+        
+        let controller = mb.getControllerForRoom(roomName);
+        if(controller && controller.reservation){
+            Memory.remotes[node.name][roomName].username = controller.reservation.username;
+            
+            if(controller.reservation.username!=='MadDokMike'){
+                // try not focus on rooms that anothr player already reservs
+                Memory.remotes[node.name][roomName].score+=controller.reservation.ticksToEnd;
+            }else{
+                // let boost priority of rooms we already reserve
+                Memory.remotes[node.name][roomName].score-=Math.ceil(controller.reservation.ticksToEnd/10);
+            }
+        }
+        
+        let cores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
+        if(cores.length>0){
+            // try not to prefer invader core rooms, because they are costly
+            Memory.remotes[node.name][roomName].score+=50;
+        }
+        let result=false;
+        
+        let srcs = mb.getSources({roomNames:[roomName]});
+        for(let src of srcs){
+            let to = src.pos;
+            result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{swampCost:2,maxOps:10000});
+            Memory.remotes[node.name][roomName].score+= result.path.length;
+        }
+        if(srcs.length==1){
+            // lower score 
+            Memory.remotes[node.name][roomName].score += Memory.remotes[node.name][roomName].score;
+        }
+        let cPos = controller.pos;
+        result = PathFinder.search(Game.spawns[node.name].pos, rp(cPos.x,cPos.y,cPos.roomName) ,{swampCost:2,maxOps:10000});
+        Memory.remotes[node.name][roomName].score+= result.path.length;
+    },
+    sortRemotes:function(node){
+        
+        let sorted = [];
+        if(Memory.remotes && Memory.remotes[node.name]){
+            // Sort the object entries by the score and map to get only the keys (room names)
+            node.remoteRoomNames = Object.entries(Memory.remotes[node.name])
+              .sort(([, a], [, b]) => a.score - b.score) // For ascending order
+              .map(([key]) => key)
+              //clog(sortedRoomNames)
+        }
+    },
     runRemotes:function(node){
        // return
         if(node.remoteRoomNames.length==0){
@@ -207,12 +299,15 @@ module.exports = {
             }
         }
         
+        if(Game.time%200==0)this.sortRemotes(node);
+        
         let eCap =  Game.rooms[node.coreRoomName].energyCapacityAvailable;
         let harvesterBodyPlan = harvesterRole.getParts(eCap,node.getConfig());
         
         for(let roomName of node.remoteRoomNames){
             
-             if(node.badRooms.includes(roomName))continue;
+            
+            if(node.badRooms.includes(roomName))continue;
             
             let c = mb.getControllerForRoom(roomName)
             if(c && c.owner){
@@ -229,7 +324,7 @@ module.exports = {
                 if(Game.rooms[roomName])
                 {
                     mb.scanRoom(roomName);
-                    
+                    this.scoreRemote(node,roomName);
                 }
             }else{
                 if(Game.creeps[roomName+'-sc'])Game.creeps[roomName+'-sc'].suicide()
@@ -240,6 +335,8 @@ module.exports = {
                 if(!controller){
                     node.badRooms.push(roomName);continue;
                 }
+                
+                if(Game.time%500==0 && controller.haveVision)this.scoreRemote(node,roomName);
                 
                 /////////////// Harvesters  ///////////////////////////////////////////////////////
                 for(let src of mb.getSources({roomNames:[roomName],requireVision:false})){
@@ -320,17 +417,23 @@ module.exports = {
            
             if(allRampsBuilt){
                 let antiBlinkWalls = Game.spawns[node.name].pos.getPositionsAtAreaEdge(12,6,8,14)
-                this.buildWallRing(antiBlinkWalls)
+                this.buildWallRing(node,antiBlinkWalls)
                 let antiContactWalls = Game.spawns[node.name].pos.getPositionsAtAreaEdge(11,5,7,13)
-                this.buildWallRing(antiContactWalls)
+                this.buildWallRing(node,antiContactWalls)
             }
             
             this.wallCheck = Game.time;
         }
         
-    }, 
+    },  
     
-    buildWallRing:function(positions){
+    buildWallRing:function(node,positions){
+        let ignoreSpots = [];
+        let srcs = mb.getSources({roomNames:[node.coreRoomName]});
+        let controller = mb.getControllerForRoom(node.coreRoomName);
+        for(let s of srcs)ignoreSpots.push(s.getStandingSpot());
+        ignoreSpots.push(controller.getStandingSpot());
+        
         for(let i in positions){
                 //pos.colourIn('blue')
                 if(i%2==0 && positions[i].canBuild(STRUCTURE_WALL)){
@@ -343,7 +446,13 @@ module.exports = {
                             
                         }
                     }
-                    positions[i].createConstructionSite(STRUCTURE_WALL);
+                    let nope=false;
+                    for(let spot of ignoreSpots){
+                        if(spot.isEqualTo(positions[i])){
+                            nope=true;break;
+                        }
+                    }
+                    if(!nope)positions[i].createConstructionSite(STRUCTURE_WALL);
                 }
             }
     },

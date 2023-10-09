@@ -22,7 +22,7 @@ module.exports = function(){
         }
         
         let name = nameOveride?nameOveride:this.getCreepNameX(memory.role);
-        clog(name)
+        
         if(!name){
             this.log("error","run out of creep names for role:"+memory.role);
             return ERR_NAME_EXISTS;
