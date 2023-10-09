@@ -8,9 +8,12 @@ module.exports = {
     // keep duo together, leader running off
     run:function(){
         //return;
-        
-        //this.shard3TempCode();
-        this.shardBATempCode();
+        if( util.getServerName()==='shard3'){
+            this.shard3TempCode();
+        }else if( util.getServerName()==='botarena'){
+           this.shardBATempCode();
+        }
+        //
         
         return;
     },
@@ -84,16 +87,12 @@ module.exports = {
              thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(6,14,'W43N51'))
         },300)
         this.rotateCreep('Zux2', function(activeCreepName){
-             if(Game.creeps[activeCreepName] || (gob('6523463c3085921d30ef1ffc') && gob('6523463c3085921d30ef1ffc').storingAtleast(50000)))thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(5,13,'W43N51'))
+             if(Game.creeps[activeCreepName] || (gob('6523463c3085921d30ef1ffc') && gob('6523463c3085921d30ef1ffc').storingAtleast(50000)))
+             thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(7,14,'W43N51'))
         },300)
        
         
-        if(gob('651d338b7f3cad4cabce6223')){
-            this.withdrawThenBuild('Zeta-2','W43N51-h0','10w1c5m','651ad96bca05f36e8d9e7108','651d338b7f3cad4cabce6223')
-            if(Game.creeps['W43N51-h0'])Game.creeps['W43N51-h0'].memory.rampart_ids=undefined;
-        }else {
-            this.spawnHarvest('Zeta-2','Boost','W43N51-h0','5bbcaaa99099fc012e631f0b')
-        }
+        this.spawnHarvest('Zeta-2','Boost','W43N51-h0','5bbcaaa99099fc012e631f0b')
         
         let hostileIds = Game.rooms['W43N51'].getNoneAllyCreeps();
         if(hostileIds.length>0 && gob('651d16f663f96bf75536f5dd'))gob('651d16f663f96bf75536f5dd').attack(gob(hostileIds[0]))
@@ -834,7 +833,21 @@ module.exports = {
            
            this.defendRoom(spawnName,roomName+'-guard',roomName);
        },
-        
+        spawnHarvest:function(feedSpawn, renewSpawn, cname,src_id){
+           
+           if(!Game.creeps[cname]){
+               
+           }
+           if( Game.spawns[renewSpawn] && Game.creeps[cname] && !Game.creeps[cname].spawning){
+               let creep = Game.creeps[cname];
+               creep.memory.mine_id = src_id;
+               if( creep.ticksToLive<1400){
+                    Game.spawns[renewSpawn].renewCreep(creep)
+                }
+               harvesterRole.run(creep,{coreRoomName: Game.spawns[renewSpawn].pos.roomName,wallHeight:10000})
+           }
+           
+       },
         maintainerSpawn:function(spawnName){
            if(Game.spawns[spawnName]){
                let controller = Game.spawns[spawnName].room.controller;
