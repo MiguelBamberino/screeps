@@ -138,7 +138,7 @@ module.exports = {
                 {importer:'Lambda',resource_type:RESOURCE_ENERGY,storageCap:200000},
             ],
             // atm, Alpha is getting all the flah and exporting for E, even if its not got much in terrminal. code needs to check terminals cap.
-            [/*'Alpha',*/'Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota']);
+            [/*'Alpha',*/'Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota','Kappa']);
     
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         

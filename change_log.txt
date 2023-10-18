@@ -10,6 +10,7 @@
 - changed workers to spawn 2, not 1, when rcl>1 & !allSrcsBuilt
 - added gui for abstract complex
 - moved runCoolDown into abstract.complex 
+- stopped a room spawning builders if it has less than 5k surplus
  
 ===================================
 = Version 19.3.0 

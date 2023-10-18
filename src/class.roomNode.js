@@ -402,7 +402,7 @@ class RoomNode{
             let storage = this.storage();
             this.haveStorage = storage?true:false;
             this.spaceInStorage = this.haveStorage?storage.store.getFreeCapacity(RESOURCE_ENERGY) :0;
-            this.energeySurplus = this.haveStorage?storage.store.getUsedCapacity(RESOURCE_ENERGY) :0;
+            this.energySurplus = this.haveStorage?storage.store.getUsedCapacity(RESOURCE_ENERGY) :this.totalEnergyAtSources;
         }
         ////////////////////////////////////////////////////////////////////////
        
@@ -724,20 +724,24 @@ class RoomNode{
         if(this.buildFast && !this.inRecoveryMode){
             if(this.haveStorage){
                 // at higher RCL, builder can consume too quick and dry out system
-                if(this.energeySurplus > 50000)
+                if(this.energySurplus > 50000)
                     this.workforce_quota.builder.required = 4;
-                else if(this.energeySurplus > 30000)
+                else if(this.energySurplus > 30000)
                     this.workforce_quota.builder.required = 3;
-                else if(this.energeySurplus > 10000)
+                else if(this.energySurplus > 15000)
+                    this.workforce_quota.builder.required = 2;
+                else if(this.energySurplus > 5000)
                     this.workforce_quota.builder.required = 2;
                 else
-                    this.workforce_quota.builder.required = 1;
+                    this.workforce_quota.builder.required = 0;
             }else{
                 // at low RCL the builders can consume quicker than draw
                 this.workforce_quota.builder.required = 4;
             }
                 
-        }else this.workforce_quota.builder.required = 1;
+        }else{
+            this.workforce_quota.builder.required = (this.energySurplus > 5000)?1:0;
+        } 
         
         if(this.haveStorage && this.spaceInStorage<50000){
             this.workforce_quota.harvester.required=0;
@@ -767,7 +771,7 @@ class RoomNode{
                
                let readyToSpend = controller.getContainer().storedAmount();
                
-                if(this.haveStorage && this.energeySurplus<50000 && controller.level<=7 ){
+                if(this.haveStorage && this.energySurplus<50000 && controller.level<=7 ){
                     // we need to start saving, incase we get attacked or need to spend
                     this.workforce_quota.upgrader.required = 1;
                 }else if(readyToSpend>=1800){
