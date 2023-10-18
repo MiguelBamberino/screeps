@@ -19,3 +19,4 @@ Source.prototype.energyAwaitingCollection=function(){
     
     return stored;
 }
+// 

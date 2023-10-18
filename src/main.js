@@ -1,9 +1,9 @@
 global.BOT_VERSION='19.2';
 global.BOT_ALLIES = ['NeonCamouflage'];
-
+ 
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
 if(!Memory.creeps) { Memory.creeps = {}; }
-
+   
    
 require('global.logger');
 logs.globalResetStarted();
@@ -33,6 +33,9 @@ require('prototype.spawn.main')();
 require('prototype.creep');
 require('prototype.creep.body');
 require('prototype.creep.actions')();
+
+
+
 
  
 let tempCode= require('tempCode');
@@ -64,6 +67,10 @@ module.exports.loop = function () {
     if(util.allowTick()){
         
         logs.mainLoopStarted();
+        
+        
+       // clog(ec.runTick(),'extractor');
+        
         
         logs.startCPUTracker('rBook.runTick');
         reservationBook.runTick();

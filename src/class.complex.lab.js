@@ -1,6 +1,7 @@
 const AbstractComplex = require('class.complex.abstract')
 const RUN_COOLDOWN_HAULER=10;
-const RUN_COOLDOWN_NOT_BUILT=100;
+
+
 class LabComplex extends AbstractComplex{
     
     
@@ -53,8 +54,8 @@ class LabComplex extends AbstractComplex{
         let feederIDs = this.getStructureIDsByGroup('feeder');
         let reactorIDs = this.getStructureIDsByGroup('reactor');
         if(feederIDs.length<2 || reactorIDs.length<1){
-            this.runCoolDown=RUN_COOLDOWN_NOT_BUILT;// we are missing some  labs. Lets check back in x ticks
-            return ERR_INVALID_ARGS;
+           this.markRequiredStructureMissing(); 
+           return ERR_INVALID_ARGS;
         }
         
         let feederLabs = [];
@@ -63,8 +64,8 @@ class LabComplex extends AbstractComplex{
             
             let lab = Game.getObjectById(feederIDs[f]);
             if(!lab){
-                this.runCoolDown=RUN_COOLDOWN_NOT_BUILT; // we are missing one of the feeder labs. Lets check back in x ticks
-                return ERR_INVALID_ARGS;
+               this.markRequiredStructureMissing(); 
+               return ERR_INVALID_ARGS;
             }
             feederLabs.push(lab);
             
@@ -84,8 +85,8 @@ class LabComplex extends AbstractComplex{
         for(let id of reactorIDs){
             let reactor = Game.getObjectById(id);
             if(!reactor){
-                this.runCoolDown=RUN_COOLDOWN_NOT_BUILT; // we are missing one of the reactor labs. Lets check back in x ticks
-                return ERR_INVALID_ARGS;
+                this.markRequiredStructureMissing(); 
+               return ERR_INVALID_ARGS;
             }
             // they should all stay in sync, but if not, lets process the ones off cooldown
             if(reactor.cooldown===0){
@@ -161,9 +162,8 @@ class LabComplex extends AbstractComplex{
         let feederIDs = this.getStructureIDsByGroup('feeder');
         let reactorIDs = this.getStructureIDsByGroup('reactor');
         if(feederIDs.length<2 || reactorIDs.length<1){
-            // we are missing some  labs. Lets check back in x ticks
-            this.checkForHaulJobsAfter=Game.time+RUN_COOLDOWN_NOT_BUILT;
-            return ERR_INVALID_ARGS;
+            this.markRequiredStructureMissing(); 
+               return ERR_INVALID_ARGS;
         }
         for(let f in feederIDs){
             

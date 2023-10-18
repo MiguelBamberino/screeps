@@ -1,3 +1,4 @@
+const ExtractorComplex = require('class.complex.extractor');
 
 var creepRoles ={
     worker:require('role.worker'),
@@ -43,10 +44,13 @@ class RoomNode{
         this.name = name;
         this.coreRoomName = coreRoomName;
         
-        
-        //let controller = mb.getControllerForRoom(this.coreRoomName);
+        let mineral = mb.getMineralForRoom(coreRoomName);
+        this.homeMineralType = mineral.mineralType;
+        if(Game.spawns[this.name] )
+            this.extractorComplex = new ExtractorComplex(mineral.pos,Game.spawns[this.name].pos,name)
   
         this.totalEnergyAtSources=0;
+        this.homeMineralSurplus = 80001;
         
         // options
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
@@ -158,12 +162,35 @@ class RoomNode{
           //  logs.startCPUTracker(this.name+':runTowers');
         this.runTowers();
           //  logs.stopCPUTracker(this.name+':runTowers');
-          
-        if(this.makeResource && this.labComplex){
+        
+        //// Manage Mineral activities /////////////////////////////////////////////////////////////
+        if(this.haveStorage){  
+            if(this.makeResource && this.labComplex){
+                
+                this.labComplex.make(this.makeResource);
+            }else if(this.splitResource && this.labComplex){
+                this.labComplex.split(this.splitResource);
+            }
             
-            this.labComplex.make(this.makeResource);
-        }else if(this.splitResource && this.labComplex){
-            this.labComplex.split(this.splitResource);
+           if(this.extractorComplex){ 
+                // keep it ticking, if we only have a small amount left
+                let mineral = mb.getMineralForRoom(this.coreRoomName);
+                
+                if(this.extractorComplex.isOn()){
+                    
+                    this.extractorComplex.runTick();
+                    
+                    if( mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
+                        clog("winding down",this.name)
+                        this.extractorComplex.windDown();
+                    }
+                }
+                else if( mineral.mineralAmount<10000 || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ){
+                    this.extractorComplex.turnOn();
+                }
+            }
+            
+        
         }
     
         //// Recovery Mode //////////////////////////////////////////////////////
@@ -210,9 +237,9 @@ class RoomNode{
             
             repairTarget = Game.getObjectById(this.defenceIntel.weakest_structure.id);
 
-        }else if(this.inRecoveryMode){
+        }else if(Game.time%100==0){
             
-            let decay_structs = mb.getStructures({roomNames:[this.coreRoomName], types:[STRUCTURE_ROAD,STRUCTURE_CONTAINER],filters:[{attribute:'hits',operator:'<',value:[2000]}]});
+            let decay_structs = mb.getStructures({roomNames:[this.coreRoomName], types:[STRUCTURE_CONTAINER],filters:[{attribute:'hits',operator:'<',value:[200000]}]});
             if(decay_structs.length>0)
                 repairTarget=decay_structs[0];
                 
@@ -464,7 +491,7 @@ class RoomNode{
     }
         
     storage(){
-        return mb.getStorageForRoom(this.coreRoomName);
+        return Game.rooms[this.coreRoomName].storage;
     }
     controller(){
         if(!Game.rooms[this.coreRoomName])return false;
@@ -685,7 +712,7 @@ class RoomNode{
 
         
         
-        this.workforce_quota.worker.required = 4;
+        this.workforce_quota.worker.required = controller.level===2?2:1;
         
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
         if(Game.rooms[this.coreRoomName].energyCapacityAvailable<800){

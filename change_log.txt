@@ -1,5 +1,12 @@
  
 ===================================
+= Version 19.3.alpha 
+===================================
+- added extractorComplex
+- fixed minor bugs i cannae remember...
+
+
+===================================
 = Version 19.2.1|2 
 ===================================
 - patches from deploying 19.2.0 to mmo

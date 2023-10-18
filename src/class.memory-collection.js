@@ -19,7 +19,7 @@ class MemoryCollection{
         this.ensureMemoryExists();
         this.readInCollection();
 
-    }
+    } 
     get(key){
         return (this.collection[key])?this.collection[key]:undefined;
     }
@@ -172,7 +172,7 @@ class MemoryCollection{
             // default to JSON
             return JSON.parse(strDataItem);
         }
-    }
+    } 
     
     //################################################################################################################
     //## Collection->Memory Manager functions
@@ -190,12 +190,12 @@ class MemoryCollection{
             this.keyToSwap[ meta.keySwaps[s] ] = s;
         }
        
-        this.logMsg('uncompress',(Game.cpu.getUsed()-start));
+        //this.logMsg('uncompress',(Game.cpu.getUsed()-start));
         start = Game.cpu.getUsed();
         
         this.__applyCachedActions(meta,this.collection,this.keyToSwap);
         
-        this.logMsg('applyCachedActions',(Game.cpu.getUsed()-start));
+        //this.logMsg('applyCachedActions',(Game.cpu.getUsed()-start));
         
         return this.collection;
     }

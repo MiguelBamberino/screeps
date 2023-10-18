@@ -34,15 +34,15 @@ global.util = {
     setupNodes:function(){
         global.nodes = _config.createRoomNodes(this.getServerName());
     },
-    resetForRespawn:function(sameRoom=false){
-        if(sameRoom){
-            this.destroyAllConSites();
-            this.destroyAllStructures();
-        }
-        //for(let n in nodes)nodes[n].controller().unclaim();
+    respawn:function(){
+        
+        this.destroyAllConSites();
+        this.resetBotData();
+        this.destroyAllStructures([STRUCTURE_SPAWN]);
+        
         global.nodes = _config.createRoomNodes(this.getServerName());
         gui.init(nodes);
-        this.resetBotData();
+        
         util.resumeTicks();
         
     },
@@ -55,6 +55,7 @@ global.util = {
         delete Memory.reservationBook;
         delete Memory.objectMeta;
         delete Memory.roomNodes;
+        delete Memory.remotes 
         
         Memory.creeps = {};
         logs.initiate();
@@ -77,9 +78,10 @@ global.util = {
       
       for (let c in Game.constructionSites)Game.constructionSites[c].remove()
     },
-    destroyAllStructures:function(){
+    destroyAllStructures:function(exclude=[]){
       
-      for (let s of mb.getStructures())s.destroy()
+      for (let s of mb.getStructures())
+        if(!exclude.includes(s.structureType))s.destroy()
     },
     
     renderFootPrint:function(anchor){
