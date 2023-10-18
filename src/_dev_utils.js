@@ -179,14 +179,14 @@ global.util = {
             }
         }    
     },
-    to19_2:function(){
-        console.log('running upgrade to 19.2...')
-        if(Memory.VERSION ==='19.1'){
+    to19_3:function(){
+        console.log('running upgrade to 19.33...')
+        if(Memory.VERSION ==='19.2'){
             
        
-           Memory.VERSION ='19.2'; 
+           Memory.VERSION ='19.3'; 
         }else{
-            console.log("Upgrade Failed. Must be on 19.1")
+            console.log("Upgrade Failed. Must be on 19.2")
         }
     },
     setLinksInRoom:function(roomName) {

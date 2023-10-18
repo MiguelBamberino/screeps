@@ -1,4 +1,4 @@
-global.BOT_VERSION='19.2';
+global.BOT_VERSION='19.3';
 global.BOT_ALLIES = ['NeonCamouflage'];
  
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}

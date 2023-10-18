@@ -74,7 +74,7 @@ module.exports = {
         if(Game.creeps['Ztx2'])
         this.haulResources('Zeta-2','Ztx2','25*1c1m',gob('64de8f2c3c187d2cb5df12b0'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
         
-        for(let i=0; i<=1;i++){
+       /* for(let i=0; i<=1;i++){
             this.haulResources('Boost','Boost-t'+i,'3*1c1m',gob('651ad96bca05f36e8d9e7108'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
             if(Game.creeps['Boost-t'+i] && Game.spawns['Boost']){
                 
@@ -84,7 +84,7 @@ module.exports = {
                     Game.spawns['Boost'].renewCreep(Game.creeps['Boost-t'+i])
                 }
             }
-        }
+        }*/
         this.rotateCreep('Zux', function(activeCreepName){
             
              thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(6,14,'W43N51'))
