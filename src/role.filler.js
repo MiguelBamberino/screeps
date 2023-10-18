@@ -97,7 +97,7 @@ var role = {
             spawn.renewCreep(creep);
             creep.memory.fillingInProgress=true;
         }
-        if(spawn && !spawn.isFull(RESOURCE_ENERGY)){
+        if(spawn && !creep.memory.fillingInProgress  && !spawn.isFull(RESOURCE_ENERGY)){
             creep.say('reset')
             creep.memory.fillingInProgress=true;
         }

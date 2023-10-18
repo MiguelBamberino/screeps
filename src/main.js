@@ -48,6 +48,7 @@ global.RATE_SLOW='slow';
 global.RATE_VERY_SLOW='very-slow';
 global.RATE_SCALE_WITH_SURPLUS='scale-with-surplus';
 global.RATE_OFF='off';
+global.RUN_FOREVER=9999999;
 //const RemoteRoom = require('class.remoteRoom');
 
 util.setupNodes()
@@ -100,6 +101,7 @@ module.exports.loop = function () {
         //////// GUI CODE  //////////////////////////////////
         
         gui.render();
+        gui.renderComplexStats(nodes.i.extractorComplex)
     }
     
 }

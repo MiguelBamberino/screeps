@@ -620,6 +620,7 @@ class RoomNode{
                     remoteRoomNames:this.remoteRoomNames,
                     allRoomNames:this.allRoomNames(),
                     inRecoveryMode:this.inRecoveryMode,
+                    allSourcesBuilt:this.allSourcesBuilt,
                     spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
                     retreatSpot:this.retreatSpot,
@@ -712,7 +713,7 @@ class RoomNode{
 
         
         
-        this.workforce_quota.worker.required = controller.level===2?2:1;
+        this.workforce_quota.worker.required = controller.level>1 && !this.allSourcesBuilt?2:1;
         
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
         if(Game.rooms[this.coreRoomName].energyCapacityAvailable<800){

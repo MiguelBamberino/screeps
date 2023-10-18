@@ -42,7 +42,7 @@ var role = {
                 return creep.actOrMoveTo("upgradeController",controller);
             }
             let target=false;
-            if(config.inRecoveryMode || playerAttackers.length>0 || controller.level<4){
+            if(config.inRecoveryMode || playerAttackers.length>0 || !config.allSourcesBuilt){
                 
                 let spawns = mb.getStructures({roomNames:[config.coreRoomName],types:[STRUCTURE_SPAWN]});
                 if(spawns.length>0){
@@ -99,13 +99,14 @@ var role = {
             
         }else if(creep.isCollecting()){
             
-            if(controller.level <=3 ){
+            if(!config.allSourcesBuilt){
                 
                 let drop = gob(creep.memory.drop_id);
                 
                 let srcs = mb.getSources({roomNames:[config.coreRoomName]});
                 
                 let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
+                if(srcs.length==1)i=0;
                 if(!drop){
                     
                    // if( !srcs[i].haveContainer() ){

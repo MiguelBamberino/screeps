@@ -8,7 +8,6 @@ class LabComplex extends AbstractComplex{
     constructor(anchor,facing,fillerSize=600){
         super(anchor,facing);
         this.makingResource = false;
-        this.runCoolDown=0;// this is used for CPU saving. There is a lot of check to run, for successful run.
         this.checkForHaulJobsAfter=Game.time;// this is used for CPU saving too. it limits the amount of checks we do on lab stores.
         this.fillerSize = fillerSize;// unlikely to change, but the size of the assigned hauler
         this.haulJob=false;

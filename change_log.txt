@@ -1,6 +1,18 @@
  
+ 
 ===================================
-= Version 19.3.alpha 
+= Version 19.3.1 
+===================================
+- added Mu to MMO
+- fixed bug when rooms have 1 src, the harvesters distro code breaks
+- fix bug in filler constantly shouting RESET 
+- changed worker to pickup E from drops at src, if container not built
+- changed workers to spawn 2, not 1, when rcl>1 & !allSrcsBuilt
+- added gui for abstract complex
+- moved runCoolDown into abstract.complex 
+ 
+===================================
+= Version 19.3.0 
 ===================================
 - added extractorComplex
 - fixed minor bugs i cannae remember...

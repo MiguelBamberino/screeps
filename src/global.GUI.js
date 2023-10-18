@@ -157,10 +157,13 @@ global.gui = {
         }
     },
     
-    renderLabComplexStats: function(complex){
-        labData = [];
-       // labData.pus({field})
-        Game.rooms[complex.pos.roomName].renderGUITable(new RoomPosition(complex.pos.x+10,complex.pos.y,complex.pos.roomName),labData,false,true);
+    renderComplexStats: function(complex){
+        let data = [];
+        let rt = complex.windDownTimer===0?'OFF' : complex.windDownTimer===RUN_FOREVER?'INF':complex.windDownTimer;
+        data.push({key:'Run Time',value:rt})
+        data.push({key:'Run CD',value:complex.runCoolDown})
+        data.push({key:'last res',value:complex.lastResult})
+        Game.rooms[complex.anchor.roomName].renderGUITable(complex.anchor,data,false,false,{key:2,value:2});
     },
     
     renderDefenseDetails: function(node){

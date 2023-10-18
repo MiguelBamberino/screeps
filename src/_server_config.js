@@ -98,7 +98,7 @@ module.exports = {
                                         wallHeight:0,
                                         terminalEnergyCap:200000,
                                         exports:[
-                                            {resource_type:RESOURCE_OXYGEN,exportOver:50000,batchSize:24000}
+                                            {resource_type:RESOURCE_OXYGEN,exportOver:50000,batchSize:100000}
                                         ]
                                     }
         );
@@ -289,6 +289,16 @@ module.exports = {
                                     {
                                         spawnFacing:LEFT,
                                         retreatSpot:rp(32,13,'W48N52'),
+                                        extraFastFillSpots:[],
+                                        buildFast:false,
+                                        upgradeRate:RATE_SLOW,
+                                        terminalEnergyCap:100000
+                                    }
+        );
+        nodes['m']= new roomNode('Mu','W43N51',
+                                    {
+                                        spawnFacing:TOP,
+                                        retreatSpot:rp(42,29,'W43N51'),
                                         extraFastFillSpots:[],
                                         buildFast:false,
                                         upgradeRate:RATE_SLOW,

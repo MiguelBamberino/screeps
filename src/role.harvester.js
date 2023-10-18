@@ -41,12 +41,13 @@ var roleHarvester = {
        if(!src){
            let srcs = mb.getSources({roomNames:[config.coreRoomName]});
                 let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
+                if(srcs.length==1)i=0;
                 let spots = srcs[i].pos.lookForNearbyWalkable(true);
                if(spots.length>0){
                    //clog(spot,creep.name)
                    creep.memory.mine_id = srcs[i].id;
                    creep.memory.extraSupport=true;
-               }else{
+               }else if(srcs.length>1){
                    i2 = i===1?0:1;
                    if(srcs[i2]){
                        let spots = srcs[i2].pos.lookForNearbyWalkable(true);

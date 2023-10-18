@@ -6,25 +6,31 @@ module.exports =class ExtractorComplex extends AbstractComplex{
         super(anchor,facing);
         
         this.spawnName = spawnName;
-        this.runCoolDown=0;// this is used for CPU saving. There is a lot of check to run, for successful run.
         
         // if a global reset happens when we're running, then turn us back on.
+        if(this.haveLivingWorkers()){
+            this.windDown();
+        }
+        
+    }
+    haveLivingWorkers(){
         for(let i in this.standingSpots){
             let cname = this.spawnName.charAt(0)+'-ex-'+i;
-            if(Game.creeps[cname])this.windDown();
+            if(Game.creeps[cname]){
+                return true;
+            }
         }
+        if(Game.creeps[ this.spawnName.charAt(0)+'-mh-0' ])return true;
     }
     
      runComplex(){
         
-        if(this.runCoolDown>0){
-            this.runCoolDown--;return ERR_TIRED;
-        }
+        
         let mineral = mb.getMineralForRoom(this.anchor.roomName);
-        if(mineral.mineralAmount===0 && !this.isWindingDown()){
-            this.windDown();
-            //this.runCoolDown = mineral.ticksToRegeneration;
-            //return ERR_TIRED;
+        if(mineral.mineralAmount===0 && !this.haveLivingWorkers() ){
+            
+            this.runCoolDown = mineral.ticksToRegeneration;
+            return ERR_TIRED;
         }
         
         

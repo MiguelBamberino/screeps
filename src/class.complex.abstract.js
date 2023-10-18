@@ -1,14 +1,19 @@
 const DETECT_STRUCTURES_INTERVAL=250;
 const ERR_OFF=-16;
-const RUN_FOREVER=9999999;
+
 
 class AbstractComplex{
     
     constructor(anchor,facing){
         
         this.anchor = anchor;
-        //this.on = false;
+        // this is used to power down slowly, if we still have workers alive
         this.windDownTimer = 0;
+        // this is used for CPU saving. There is a lot of check to run, for successful run.
+        this.runCoolDown=0;
+        
+        this.lastResult = OK;
+        
         this.standingSpot = this._getStandingSpot(facing);
         this.facing = facing;
         this.rcl = Game.rooms[anchor.roomName].controller.level;
@@ -23,13 +28,20 @@ class AbstractComplex{
         
         
         if(Game.rooms[this.anchor.roomName].controller.level<this.minRCL){
-            return ERR_RCL_NOT_ENOUGH;
+            this.lastResult = ERR_RCL_NOT_ENOUGH;
+            return this.lastResult;
         }
         
-        if(this.windDownTimer===0)return -16;
+        if(this.runCoolDown>0){
+            this.lastResult = ERR_TIRED;
+            this.runCoolDown--;
+            return this.lastResult;
+        }
+        
+        if(this.windDownTimer===0)return ERR_OFF;
         
         if(this.windDownTimer!=RUN_FOREVER && this.windDownTimer>0)this.windDownTimer--;
-        //if(this.windDownTimer==0)this.turnOff();
+
         
         if(Game.time % DETECT_STRUCTURES_INTERVAL===0 || Game.rooms[this.anchor.roomName].controller.level!=this.rcl){
             
@@ -39,9 +51,13 @@ class AbstractComplex{
             logs.stopCPUTracker('detectExistingStructures',true);
         }
         
-        if(!this.allRequiredStructuresBuilt)return ERR_INVALID_ARGS;
+        if(!this.allRequiredStructuresBuilt){
+            this.lastResult = ERR_INVALID_ARGS;
+            return this.lastResult;
+        }
         
-        return this.runComplex();
+        this.lastResult = this.runComplex();
+        return this.lastResult;
     }
     isOn(){
         return this.windDownTimer>0;

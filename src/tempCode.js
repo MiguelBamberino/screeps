@@ -43,59 +43,34 @@ module.exports = {
         
 
         //this.withdrawThenUpgrade('Lambda','Lux1','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,42,'W48N52'))
-        this.withdrawThenUpgrade('Lambda','Lux2','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,41,'W48N52'))
-        this.withdrawThenUpgrade('Lambda','Lux3','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,40,'W48N52'))
+        if(Game.creeps['Lux2'] || Game.cpu.bucket>4000)
+            this.withdrawThenUpgrade('Lambda','Lux2','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,41,'W48N52'))
         
-        //this.harvestAndCollectCentreSectorMineral('Zeta-3','5bbcb17a40062e4259e92f92',rp(21,22,'W42N52'),'64cd63532bbcf529bdbb2972',RESOURCE_KEANIUM,'5m10c','20W10c10m','-K',1)
-        //this.harvestAndCollectCentreSectorMineral('Beta-3','5bbcb18340062e4259e92ffe',rp(5,6,'W41N52'),'64d1fc933d58eb0dc83119e8',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O',1)
-       // this.harvestAndCollectCentreSectorMineral('Beta-3','5bbcb18340062e4259e92ffe',rp(6,6,'W41N52'),'64d1fc933d58eb0dc83119e8',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O2',1)
+        if(Game.creeps['Lux3'] || Game.cpu.bucket>6000)
+            this.withdrawThenUpgrade('Lambda','Lux3','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,40,'W48N52'))
         
-        
-        this.harvestAndCollectCentreSectorMineral('Iota-3','5bbcb15e40062e4259e92e4a',rp(21,20,'W46N53'),'64cce22382ec1b1a14572ef9',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O',1)
-        this.harvestAndCollectCentreSectorMineral('Iota-3','5bbcb15e40062e4259e92e4a',rp(21,19,'W46N53'),'64cce22382ec1b1a14572ef9',RESOURCE_OXYGEN,'5m10c','20W10c10m','-O2',1)
-        
-        this.harvestAndCollectCentreSectorMineral('Alpha','5bbcb17a40062e4259e92f91',rp(8,7,'W42N53'),'64d258b7ac37e86f64210866',RESOURCE_OXYGEN,'5m5c','30W5c15m','-O',1)
-        this.harvestAndCollectCentreSectorMineral('Alpha','5bbcb17a40062e4259e92f91',rp(8,8,'W42N53'),'64d258b7ac37e86f64210866',RESOURCE_OXYGEN,'5m5c','30W5c15m','-O2',1)
-        
-        this.harvestAndCollectCentreSectorMineral('Epsilon-2','5bbcb18340062e4259e92ffc',rp(26,42,'W41N54'),'64ef46bc05dece1ce817ab45',RESOURCE_HYDROGEN,'5m5c','30W5c15m','-H',2)
-        this.harvestAndCollectCentreSectorMineral('Epsilon-2','5bbcb18340062e4259e92ffc',rp(27,42,'W41N54'),'64ef46bc05dece1ce817ab45',RESOURCE_HYDROGEN,'5m5c','30W5c15m','-H2',2)
-        
+       
          //this.harvestAndCollectCentreSectorMineral('Theta-3','5bbcb16540062e4259e92e94',rp(41,1,'W45N51'),'64e672e8ff9345439bb731e3',RESOURCE_UTRIUM,'5m5c','30W5c15m','-U',2)
       
         
-        if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer1','Mx1','1w1c','64d4a6df69e9867caf3a3604','5bbcaac09099fc012e63221b')
-        if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
-        if(Game.creeps['Mx1']||Game.cpu.bucket>5000)this.withdrawThenUpgrade('Maintainer3','Mx3','1w1c','64eba8b3511e240c621b3cc4','5bbcaac09099fc012e632211')
+        if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaac09099fc012e63221b').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer1','Mx1','1w1c','64d4a6df69e9867caf3a3604','5bbcaac09099fc012e63221b')
+        if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaab49099fc012e63208a').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
+        if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaac09099fc012e632211').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer3','Mx3','1w1c','64eba8b3511e240c621b3cc4','5bbcaac09099fc012e632211')
         
         //this.haulResources('Kappa','Ktx1','25*1c1m',gob('6504346920565f7971fca016'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
         
         if(Game.creeps['Ztx1'])
         this.haulResources('Zeta-2','Ztx1','25*1c1m',gob('64de8f2c3c187d2cb5df12b0'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
-        if(Game.creeps['Ztx2'])
-        this.haulResources('Zeta-2','Ztx2','25*1c1m',gob('64de8f2c3c187d2cb5df12b0'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
+
         
-       /* for(let i=0; i<=1;i++){
-            this.haulResources('Boost','Boost-t'+i,'3*1c1m',gob('651ad96bca05f36e8d9e7108'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
-            if(Game.creeps['Boost-t'+i] && Game.spawns['Boost']){
-                
-                Game.creeps['Boost-t'+i].memory.reusePath=5;
-                
-                if(Game.creeps['Boost-t'+i].ticksToLive<600 && Game.creeps['Boost-t'+i].pos.isNearTo(Game.spawns['Boost'])){
-                    Game.spawns['Boost'].renewCreep(Game.creeps['Boost-t'+i])
-                }
-            }
-        }*/
         this.rotateCreep('Zux', function(activeCreepName){
-            
+            if(Game.creeps[activeCreepName] )
              thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(6,14,'W43N51'))
         },300)
-        this.rotateCreep('Zux2', function(activeCreepName){
-             if(Game.creeps[activeCreepName] || (gob('6523463c3085921d30ef1ffc') && gob('6523463c3085921d30ef1ffc').storingAtleast(50000)))
-             thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(7,14,'W43N51'))
-        },300)
+
        
         
-        this.spawnHarvest('Zeta-2','Boost','W43N51-h0','5bbcaaa99099fc012e631f0b')
+       // this.spawnHarvest('Zeta-2','Boost','W43N51-h0','5bbcaaa99099fc012e631f0b')
         
         let hostileIds = Game.rooms['W43N51'].getNoneAllyCreeps();
         if(hostileIds.length>0 && gob('651d16f663f96bf75536f5dd'))gob('651d16f663f96bf75536f5dd').attack(gob(hostileIds[0]))
@@ -161,9 +136,9 @@ module.exports = {
                 {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 
                 {importer:'Lambda',resource_type:RESOURCE_ENERGY,storageCap:200000},
-                {importer:'Boost',resource_type:RESOURCE_ENERGY,storageCap:100000},
             ],
-            ['Alpha','Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota']);
+            // atm, Alpha is getting all the flah and exporting for E, even if its not got much in terrminal. code needs to check terminals cap.
+            [/*'Alpha',*/'Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota']);
     
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         
