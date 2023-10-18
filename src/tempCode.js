@@ -10,7 +10,7 @@ module.exports = {
         //return;
         if( util.getServerName()==='shard3'){
             this.shard3TempCode();
-        }else if( util.getServerName()==='botarena'){
+        }else if( util.getServerName()==='botarena' || util.getServerName()==='private'){
            this.shardBATempCode();
         }
         //
@@ -19,7 +19,10 @@ module.exports = {
     },
     shardBATempCode:function(){
         
-        this.botArenaForRoomNode(nodes.a);
+        //this.botArenaForRoomNode(nodes.a);
+        this.botArenaForRoomNode(nodes.b);
+        this.botArenaForRoomNode(nodes.g);
+        //this.startupRoomNoVision('Alpha','W7N4', {workerCount:4,workerBody:'10w10c10m'})
         
     }, 
     shard3TempCode:function(){
@@ -194,7 +197,7 @@ module.exports = {
         if(room.controller.level>=7){
              // switch focus to wall building
             node.upgradeRate = RATE_SLOW;
-            node.buildFast=true;
+            node.buildFast=true; 
         }
         
         
@@ -216,11 +219,11 @@ module.exports = {
         }
         if(room.controller.level>=6){
             node.wallHeight=10000000;//10m
-            let mineral = mb.getMineralForRoom(room.name);
+            /*let mineral = mb.getMineralForRoom(room.name);
             if(!mineral.getStandingSpot()){
                 mineral.setStandingSpot( mineral.pos.lookForNearbyWalkable(false,false)[0])
-            }
-            this.harvestAndCollectCentreSectorMineral(node.name,mineral.id,mineral.getStandingSpot(),storage.id,mineral.mineralType,'5m10c','16w5c8m','-'+mineral.mineralType,1)
+            }*/
+            //this.harvestAndCollectCentreSectorMineral(node.name,mineral.id,mineral.getStandingSpot(),storage.id,mineral.mineralType,'5m10c','16w5c8m','-'+mineral.mineralType,1)
             //node.makeResource = mineral.mineralType;
         }
         
@@ -339,6 +342,14 @@ module.exports = {
                 
                 /////////////// Harvesters  ///////////////////////////////////////////////////////
                 for(let src of mb.getSources({roomNames:[roomName],requireVision:false})){
+                    
+                    /*let hName = roomName+'-'+src.pos.x+'-'+src.pos.y+'-h'
+                    if(!Game.creeps[hName] && !Memory.invaderSeen[roomName]){
+                        Game.spawns[node.name].spawnCreepX(harvesterBodyPlan,hName);
+                    }
+                    if(Game.creeps[hName] && !Game.creeps[hName].spawning){
+                        harvesterRole.run(Game.creeps[hName],{coreRoomName:roomName,spawnFastFillerReady:node.spawnFastFillerReady});
+                    }*/
                     
                     this.harvestPoint(node.name,roomName+'-'+src.pos.x+'-'+src.pos.y+'-h',harvesterBodyPlan,src);
                     
@@ -526,7 +537,7 @@ module.exports = {
                 if(buildableSpot)buildableSpot.createConstructionSite(STRUCTURE_EXTENSION);
             }
             
-            if( node.defenceIntel.weakest_structure.hits>=node.wallHeight){
+            if( node.defenceIntel.weakest_structure.hits>=10000){
                 room.createConstructionSite(spawn.pos.x,spawn.pos.y+4,STRUCTURE_SPAWN,node.name+'-2');
             }
             
@@ -540,8 +551,8 @@ module.exports = {
         // x exts + 
         // +1 link
         // +1 extractor, + terminal
-        let mineral = mb.getMineralForRoom(room.name);
-        mineral.pos.createConstructionSite(STRUCTURE_EXTRACTOR)
+       // let mineral = mb.getMineralForRoom(room.name);
+        //mineral.pos.createConstructionSite(STRUCTURE_EXTRACTOR)
         let sources = mb.getSources({roomNames:[room.name]});
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
         

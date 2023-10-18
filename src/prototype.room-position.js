@@ -9,7 +9,22 @@ RoomPosition.prototype.getReverseDirectionTo = function(obj){
     if(dir===LEFT)return RIGHT;
     if(dir===TOP_LEFT)return BOTTOM_RIGHT;
 }
+RoomPosition.prototype.getOffsets = function(targetPosition) {
+    // Ensure the target position is a valid RoomPosition object
+    if (!(targetPosition instanceof RoomPosition)) {
+        throw new Error('The target must be an instance of RoomPosition.');
+    }
 
+    // Ensure both positions are in the same room
+    if (this.roomName !== targetPosition.roomName) {
+        throw new Error('Both RoomPosition objects must be in the same room.');
+    }
+
+    return {
+        x: targetPosition.x - this.x,
+        y: targetPosition.y - this.y,
+    };
+};
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -35,6 +35,34 @@ module.exports = {
                                         }
                     )
         }
+        if(Game.spawns['Beta']){
+                let spwn = Game.spawns['Beta']
+                nodes['b']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_SLOW,
+                                            buildFast:false,/*
+                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_HYDROXIDE*/
+                                        }
+                    )
+        }
+        if(Game.spawns['Gamma']){
+                let spwn = Game.spawns['Gamma']
+                nodes['g']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_SLOW,
+                                            buildFast:false,/*
+                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_HYDROXIDE*/
+                                        }
+                    )
+        }
         return nodes;
     },
     createLocalServerRoomNodes:function(){

@@ -67,6 +67,7 @@ global.mb = {
                 rooms:{}
             };
         }
+        
         for(let roomName in Game.rooms){
             if(this.havePermanentVision(roomName)){
                 this.scanRoom(roomName)
@@ -80,7 +81,7 @@ global.mb = {
     },
 
     scanRoom: function(roomName){
-        clog("Room Scan: "+roomName,Game.time)
+        
         if(Game.rooms[roomName]){
             let srcObjs = Game.rooms[roomName].find(FIND_SOURCES);
             let srcCache={};

@@ -269,7 +269,7 @@ module.exports = function(){
            // let reUse = 50; 
           // let ignoreNoobs = true;
             let opts = {
-                maxOps:7000,reusePath:50,ignoreCreeps:true,
+                maxOps:7000,reusePath:10,ignoreCreeps:true,
                 visualizePathStyle: {stroke: '#ffffff'}
                  
             }
@@ -282,8 +282,8 @@ module.exports = function(){
             }
             
             
-            if(Game.shard.name =='shardSeason'){
-                opts.reusePath = 10;
+            if(Game.shard.name =='shard3'){
+                opts.reusePath = 50;
             }
             if(creep.memory.swampCost){
                 opts.swampCost = creep.memory.swampCost;

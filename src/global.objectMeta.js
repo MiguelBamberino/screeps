@@ -18,7 +18,7 @@ checkDeletedObjects()
 //#######################################################
 // RoomObject Object Metas
 //#######################################################
-
+ 
 RoomObject.prototype.getMeta=function(){
     let meta = objectMeta.get(this.id);
    // clog(meta,'meta')
