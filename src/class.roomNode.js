@@ -511,7 +511,7 @@ class RoomNode{
         if(Game.spawns[spawnName])Game.spawns[spawnName].forceDirectionHack = this.getMainSpawnSpots();
         
         if(spawnName=='Zeta-3'||spawnName=='Theta-3')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,TOP,TOP_RIGHT];
-        if(spawnName=='Iota-2')Game.spawns[spawnName].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
+        if(spawnName=='Iota-2'||spawnName=='Lambda-2')Game.spawns[spawnName].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
         if(spawnName=='Theta-2')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,LEFT,BOTTOM_LEFT];
         if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2'].includes(spawnName))
             Game.spawns[spawnName].forceDirectionHack = [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
@@ -530,7 +530,7 @@ class RoomNode{
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[BOTTOM_LEFT,BOTTOM_RIGHT]);
             else if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2'].includes(spawnName))
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,TOP_RIGHT]);
-            else if(spawnName=='Iota-2')
+            else if(spawnName=='Iota-2'||spawnName=='Lambda-2')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,BOTTOM_LEFT]);
             else if(spawnName=='Theta-2')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_RIGHT,BOTTOM_RIGHT]);
