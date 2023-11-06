@@ -95,8 +95,8 @@ module.exports = {
                                         extraFastFillSpots:[],
                                         upgradeRate:RATE_VERY_SLOW,
                                         buildFast:false,
-                                        wallHeight:0,
-                                        terminalEnergyCap:200000,
+                                        wallHeight:10000000,
+                                        terminalEnergyCap:100000,
                                         exports:[
                                             {resource_type:RESOURCE_OXYGEN,exportOver:50000,batchSize:100000}
                                         ]
@@ -200,6 +200,7 @@ module.exports = {
                                         funnelRoomName:'',
                                         terminalEnergyCap:15000,
                                         wallHeight:3000000,
+                                        armNuke:true,
                                         labComplex:new LabComplex(rp(20,36,'W42N52'),BOTTOM_RIGHT),
                                         //makeResource:RESOURCE_,
                                         imports:[
@@ -277,9 +278,9 @@ module.exports = {
                                         spawnFacing:TOP,
                                         retreatSpot:rp(33,29,'W48N54'),
                                         extraFastFillSpots:[],
-                                        buildFast:false,
+                                        buildFast:true,
                                         upgradeRate:RATE_VERY_SLOW,
-                                        terminalEnergyCap:100000,
+                                        terminalEnergyCap:20000,
                                         labComplex:new LabComplex(rp(32,33,'W48N54'),TOP_LEFT),
                                         makeResource:RESOURCE_HYDROXIDE
                                     }
@@ -291,7 +292,7 @@ module.exports = {
                                         retreatSpot:rp(32,13,'W48N52'),
                                         extraFastFillSpots:[],
                                         buildFast:false,
-                                        upgradeRate:RATE_SLOW,
+                                        upgradeRate:RATE_VERY_SLOW,
                                         terminalEnergyCap:100000
                                     }
         );

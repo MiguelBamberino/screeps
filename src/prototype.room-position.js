@@ -9,6 +9,18 @@ RoomPosition.prototype.getReverseDirectionTo = function(obj){
     if(dir===LEFT)return RIGHT;
     if(dir===TOP_LEFT)return BOTTOM_RIGHT;
 }
+RoomPosition.prototype.getPosAtDistanceAndAngle = function(distance, angle) {
+    // Adjust the angle for the game's coordinate system
+    const adjustedAngle = (angle - 90 + 360) % 360;
+    const rad = (adjustedAngle * Math.PI) / 180;
+
+    // Calculate the new x and y coordinates
+    const newX = Math.round(this.x + distance * Math.cos(rad));
+    const newY = Math.round(this.y + distance * Math.sin(rad));
+
+    return new RoomPosition(newX, newY, this.roomName);
+}
+
 RoomPosition.prototype.getOffsets = function(targetPosition) {
     // Ensure the target position is a valid RoomPosition object
     if (!(targetPosition instanceof RoomPosition)) {

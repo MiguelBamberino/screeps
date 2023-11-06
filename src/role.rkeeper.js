@@ -128,6 +128,18 @@ var roleTanker = {
             }
         }
         
+        if(config.armNuke && !creep.memory.job){
+            let nuker = mb.getNukerForRoom(config.coreRoomName);
+            if(nuker){
+                if(!nuker.isFull(RESOURCE_ENERGY)){
+                    creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_ENERGY, action:'fill' };
+                }else if(!nuker.isFull(RESOURCE_GHODIUM)){
+                    creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_GHODIUM, action:'fill' };
+                }
+            }
+        }
+        
+        
         /////// Import Jobs //////////////////////////////////
         if(!creep.memory.job){
             for(let importConf of config.imports){

@@ -30,6 +30,7 @@ class RoomNode{
             terminalEnergyCap:15000 >> The amount to be kept in reserve in the terminal
             towersBuildWalls:false  >> If true, then the towers will build up the walls in peace time
             wallHeight:25000000     >> How hight the walls should be 
+            armNuke:false           >> Whether this rooms Nuke should be kept armed
             labComplex:undefined    >> if set, then it will be used to run reactions
             makeResource:undefined  >> if set, then this resource will be made in the labComplex
             exports:[]              >> a list of export instructions. Each instruction looks like:  {resource_type:RESOURCE_GHODIUM,exportOver:0,batchSize:50000},
@@ -69,12 +70,19 @@ class RoomNode{
         
         this.towersBuildWalls = options.towersBuildWalls===undefined?false:options.towersBuildWalls;
         this.wallHeight = options.wallHeight===undefined?25000000:options.wallHeight;
+        this.armNuke = options.armNuke===undefined?false:options.armNuke;
         
         this.labComplex = options.labComplex===undefined?undefined:options.labComplex;
         this.makeResource = options.makeResource===undefined?undefined:options.makeResource;
         this.splitResource = options.splitResource===undefined?undefined:options.splitResource;
         this.exports = options.exports===undefined?[]:options.exports;
         this.imports = options.imports===undefined?[]:options.imports;
+        
+        this.trader = options.trader===undefined?undefined:options.trader;
+        this.orders = [];
+        if(this.trader){
+            this.orders = this.trader.getOrderIDsByRoomName(this.coreRoomName);
+        }
         
         this.readInStore();
         
@@ -178,14 +186,16 @@ class RoomNode{
                 
                 if(this.extractorComplex.isOn()){
                     
-                    this.extractorComplex.runTick();
                     
+                    // this is checked before run, in order to stop it getting turned back on when windDown==0
                     if( mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
-                        clog("winding down",this.name)
+                        clog("winding down. We have enough resources. Current timer:"+this.extractorComplex.windDownTimer,this.name)
                         this.extractorComplex.windDown();
                     }
+                    this.extractorComplex.runTick();
                 }
-                else if( mineral.mineralAmount<10000 || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ){
+                // drain the last out, so we get a big refill OR only mine what we need
+                else if( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ){
                     this.extractorComplex.turnOn();
                 }
             }
@@ -491,11 +501,18 @@ class RoomNode{
     }
         
     storage(){
-        return Game.rooms[this.coreRoomName].storage;
+        return this.room().storage;
+    }
+    terminal(){
+        return this.room().terminal;
+    }
+    room(){
+        return Game.rooms[this.coreRoomName];
     }
     controller(){
-        if(!Game.rooms[this.coreRoomName])return false;
-        return Game.rooms[this.coreRoomName].controller;
+        
+        //if(!Game.rooms[this.coreRoomName])return false; >> not sure why this line was here. comment it next dufus, when its a bug
+        return this.room().controller;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Filler Code
@@ -540,7 +557,7 @@ class RoomNode{
         if(spawnName=='Zeta-3'||spawnName=='Theta-3')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,TOP,TOP_RIGHT];
         if(spawnName=='Iota-2'||spawnName=='Lambda-2')Game.spawns[spawnName].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
         if(spawnName=='Theta-2')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,LEFT,BOTTOM_LEFT];
-        if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2'].includes(spawnName))
+        if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
             Game.spawns[spawnName].forceDirectionHack = [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
         
                
@@ -555,7 +572,7 @@ class RoomNode{
             
              if(spawnName=='Zeta-3')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[BOTTOM_LEFT,BOTTOM_RIGHT]);
-            else if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2'].includes(spawnName))
+            else if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,TOP_RIGHT]);
             else if(spawnName=='Iota-2'||spawnName=='Lambda-2')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,BOTTOM_LEFT]);
@@ -623,6 +640,7 @@ class RoomNode{
                     allSourcesBuilt:this.allSourcesBuilt,
                     spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
+                    armNuke:this.armNuke,
                     retreatSpot:this.retreatSpot,
                     funnelRoomName:this.funnelRoomName,
                     upgradeRate:this.upgradeRate,
@@ -743,7 +761,7 @@ class RoomNode{
             this.workforce_quota.builder.required = (this.energySurplus > 5000)?1:0;
         } 
         
-        if(this.haveStorage && this.spaceInStorage<50000){
+        if(this.haveStorage && this.spaceInStorage<50000 && this.energySurplus > 50000){
             this.workforce_quota.harvester.required=0;
         }
         
@@ -795,6 +813,9 @@ class RoomNode{
                this.workforce_quota.upgrader.required = 0;
            }else{
                this.workforce_quota.upgrader.required = this.allSourcesBuilt?1:0;
+               if(this.haveStorage && this.energySurplus<25000){
+                   this.workforce_quota.upgrader.required = 0;
+               }
            }
            
             //////////////////////////////////////////////////////////////////////////////////
@@ -813,15 +834,94 @@ class RoomNode{
 
     }
     
+    decideResourceNeeds(){
+        this.wants =[];
+        let terminal = this.terminal();
+        let storage = this.storage();
+        // we can't import/export until we have both of these.
+        if(!terminal || !storage)return;
+        
+        for(let resource_type in this._decideBaseResources()){
+            if(r.resource_type != this.homeMineralType){
+                this.wants.push(r);
+            }
+        }
+        
+        // wants +- haves = exports & imports
+        // basic military compounds: LO / UH / ZH / ZO >> based on tier
+        // advanced : KH?
+        // base compounds: O / H / OH / U / Z / L / K
+        // economy compounds : GH* / UO 
+        
+        /* 
+        
+        let resources = decideWants();
+        for( haves ){
+            if( resources[ r ]  ){
+                resources[ r ].have = have[r].amount;
+                
+                if( resources[ r ].have > resources[ r ].want ){
+                    resources[ r ].exporting = true;
+                    resources[ r ].importing = false;
+                }
+                else if( resources[ r ].have < resources[ r ].want ){
+                    resources[ r ].importing = true;
+                    resources[ r ].exporting = false;
+                }
+            }
+            
+            else resources[r] = { want:0, have:haves[r].amount, export:true },
+        }
+        
+        
+        haves.amount = terminal.amount + storage.amount
+        wants.amount = decideConfig()
+        
+         storageCap >> the amount to import. Replaced by wants.amount ? 
+         imports.amount = wants.amount - have.amount
+         exporting
+         
+         if( haves.amount < wants.amount )
+            imports.amount = wants.amount - haves.amount
+         
+         
+        imports:[
+                {resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
+                {resource_type:RESOURCE_HYDROXIDE,storageCap:24000}, 
+            ],
+            // batchSize >> the amount to store in terminal. replaced by fixed amount ?...6k ?
+            // exportOver >> how much to keep in storage, replaced by wants.want
+            exports:[
+                {resource_type:RESOURCE_ZYNTHIUM_OXIDE,exportOver:6000,batchSize:12000},
+                {resource_type:RESOURCE_ZYNTHIUM_ACID,exportOver:6000,batchSize:12000},
+            ]
+        
+        */
+        
+        
+        // if RCL 8 : G
+        
+        
+    }
+    _decideBaseResources(){
+        let r={};
+        this._setupWant(r,RESOURCE_ENERGY,50000);
+        this._setupWant(r,RESOURCE_HYDROGEN,12000);
+        this._setupWant(r,RESOURCE_OXYGEN,12000);
+        this._setupWant(r,RESOURCE_UTRIUM,6000);
+        this._setupWant(r,RESOURCE_LEMERGIUM,6000);
+        this._setupWant(r,RESOURCE_ZYNTHIUM,6000);
+        
+        return r;
+    }
+    _setupWant(store,resource_type,amount){
+        if(resource_type != this.homeMineralType)
+            store[resource_type] = {want:amount,have:0,import_order_id:false,export_order_id:false}
+    }
+    
     getSpawnBudget(){
         let capacity = Game.rooms[this.coreRoomName].energyCapacityAvailable;
         let stored = Game.rooms[this.coreRoomName].energyAvailable;
-        /*
-        let objs = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION,STRUCTURE_SPAWN] });
-        for(let obj of objs){
-            capacity+= obj.store.getCapacity(RESOURCE_ENERGY);
-            stored+= obj.store.getUsedCapacity(RESOURCE_ENERGY);
-        }*/
         return (this.inRecoveryMode)?stored: capacity;
     }
 

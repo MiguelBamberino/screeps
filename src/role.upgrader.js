@@ -51,7 +51,7 @@ var role = {
          
         
         let controller = config.controller;
-        if(config.coreRoomName==='W42N53')clog(controller.id,creep.name)
+        //if(config.coreRoomName==='W43N51')clog(controller.id,creep.name)
         let container = controller.getContainer();
         
         //if(config.coreRoomName==='W42N53')clog(container.id,creep.name)
@@ -96,10 +96,15 @@ var role = {
                     let drop = spot.lookForNearbyResource(RESOURCE_ENERGY);
                     if(drop){
                         creep.actOrMoveTo("pickup",drop);
+                    }else{
+                        // if we have no dropped E waiting for us, then go get some
+                        creep.getEnergy([config.coreRoomName]);   
                     }
+                }else{
+                    creep.say("!spot")
                 }
                 
-                //creep.getEnergy([config.coreRoomName]);
+                //
             }
             return;
             

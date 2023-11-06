@@ -49,7 +49,7 @@ module.exports =class ExtractorComplex extends AbstractComplex{
         
         for(let i in this.standingSpots){
             let cname = this.spawnName.charAt(0)+'-ex-'+i;
-            if(!Game.creeps[cname]  && !this.isWindingDown() ){
+            if(!Game.creeps[cname]  && !this.isWindingDown() && mineral.mineralAmount>0){
                 let bodyPlan = '20w1c5m';
                 if( this.room().energyCapacityAvailable >= 4450 )bodyPlan='39w1c10m';
                 else if( this.room().energyCapacityAvailable >= 4450 )bodyPlan='39w1c10m';
