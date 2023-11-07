@@ -2,3 +2,4 @@ vendor
 .sync
 .idea
 default
+node_modules

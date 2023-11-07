@@ -1,9 +1,15 @@
+const {ERR_INVALID_ARGS} = require("@screeps/common/lib/constants");
+
 class Trader {
     constructor() {
         this.orders = {}; // Store orders in an object with IDs as keys
     }
     
     createOrder(roomName, resourceType, amount) {
+
+        if(!roomName || roomName.length<4 || roomName.length>6)return ERR_INVALID_ARGS;
+        if(amount<1||amount>250000)return ERR_INVALID_ARGS;
+
         // Create a unique ID for the order based on roomName, resourceType, and Game.time
         const id = `${roomName}_${resourceType}_${Game.time}`;
         
@@ -20,7 +26,7 @@ class Trader {
         this.orders[id] = order;
         
         // Return the newly created order
-        return order;
+        return id;
     }
 
     getOrders(filters = []) {

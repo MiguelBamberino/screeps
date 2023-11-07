@@ -1,0 +1,23 @@
+{
+  "name": "maddokmike-screeps",
+  "version": "19.4.0",
+  "description": "my screeps bot",
+  "main": "main.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiguelBamberino/screeps.git"
+  },
+  "author": "Mike  Bamber <mikebamber@live.com>",
+  "bugs": {
+    "url": "https://github.com/yourusername/your-project-name/issues"
+  },
+  "homepage": "https://github.com/yourusername/your-project-name#readme",
+  "devDependencies": {
+    "@screeps/common": "github:screeps/common",
+    "jest": "^26.0.0"
+  }
+}
