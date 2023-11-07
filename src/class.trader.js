@@ -22,11 +22,23 @@ class Trader {
             roomName,
             resourceType,
             amount,
+            fulfilledBy:null,
             fulfilledAt: null
         };
         this.orderDups[roomName+resourceType]=true;
         // Return the newly created order
         return id;
+    }
+
+    _fulfillOrder(orderId,roomName){
+        if(!this.orders[orderId])return ERR_NOT_FOUND;
+        if(this.orders[orderId].fulfilledAt)return ERR_INVALID_TARGET;
+        if(this.orders[orderId].roomName===roomName)return ERR_INVALID_TARGET;
+
+        this.orders[orderId].fulfilledAt = Game.time;
+        this.orders[orderId].fulfilledBy = roomName;
+        delete this.orderDups[ this.orders[orderId].roomName+this.orders[orderId].resourceType ]
+        return OK;
     }
 
     getOrders(filters = []) {
