@@ -2,7 +2,22 @@ var role = {
 
 
     getParts: function(budget){
-        return Creep.prototype.getDefaultParts(budget);
+        if(budget >=2750){
+            return '10w20c15m';
+        }
+        else if(budget >= 1300 ){ // RCL 4 - 600 + 300 + 300 = 1200/1300 20 ext
+            return [WORK,WORK,WORK,WORK,WORK,WORK, CARRY,CARRY,CARRY,CARRY,CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE]; 
+        }
+        else if(budget >= 800 ){ // RCL 3 - 400 + 200 + 200 =  800/800 10 ext
+            return [WORK,WORK,WORK,WORK, CARRY,CARRY,CARRY,CARRY, MOVE,MOVE,MOVE,MOVE]; 
+        }
+        else if(budget >= 550){ // RCL 2 - 200 + 200 + 150 =  550/550 5 ext
+            return [WORK,WORK, CARRY,CARRY,CARRY,CARRY, MOVE,MOVE,MOVE]; 
+        }
+        else{ // RCL 1 - 250/300 , assume no roads early on
+            return [WORK, CARRY, MOVE,MOVE]; 
+        }
+
     },
     run: function(creep,config) {
         

@@ -109,7 +109,7 @@ global.mb = {
                 controller:controllerStruct,
                 storage_id:'',
                 terminal_id:'',
-                nuker_id:'',
+				nuker_id:'',
                 mineral_id:mineralID
             };
            
@@ -353,7 +353,7 @@ global.mb = {
             if(obj.structureType===STRUCTURE_TERMINAL){
                 room.terminal_id = obj.id;
             }
-            if(obj.structureType===STRUCTURE_NUKER){
+			if(obj.structureType===STRUCTURE_NUKER){
                 room.nuker_id = obj.id;
             }
 

@@ -110,6 +110,12 @@ module.exports.loop = function () {
         
         gui.renderComplexStats(nodes.m.extractorComplex)
         gui.renderComplexStats(nodes.i.labComplex)
+
+        gui.renderComplexStats(nodes.z.extractorComplex)
+        gui.renderComplexStats(nodes.k.extractorComplex)
+
+        gui.renderComplexStats(nodes.m.extractorComplex)
+        gui.renderComplexStats(nodes.i.labComplex)
         
         let senderRoom = 'W45N55';
         let receiverRoom = 'W45N54';
@@ -157,7 +163,8 @@ module.exports.loop = function () {
         drawRoomTradeStatsOnMap('W46N53',tradeStats)
         let tradeLogs = [{sourceRoom:'W48N54',targetRoom:'W46N53',resource_type:RESOURCE_ENERGY,sentAt:52468960}];
         drawTradeLogs(tradeLogs)
-         
+
+
     }
     
 }

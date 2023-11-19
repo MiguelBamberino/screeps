@@ -51,10 +51,9 @@ var role = {
          
         
         let controller = config.controller;
-        //if(config.coreRoomName==='W43N51')clog(controller.id,creep.name)
+
         let container = controller.getContainer();
         
-        //if(config.coreRoomName==='W42N53')clog(container.id,creep.name)
         
         if(container){
             //container.allowOverBooking(0)
@@ -103,8 +102,7 @@ var role = {
                 }else{
                     creep.say("!spot")
                 }
-                
-                //
+
             }
             return;
             

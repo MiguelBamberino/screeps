@@ -37,8 +37,6 @@ class AbstractComplex{
             this.runCoolDown--;
             return this.lastResult;
         }
-        
-        
         // THEN if the complex has wound down, we do not run it. this means, that if it winds down THIS tick,
         // then we don't run that last tick. Previously this was causing a problem, where extractors were continuously keeping themselves online
         if(this.windDownTimer===0)return ERR_OFF;
@@ -60,10 +58,9 @@ class AbstractComplex{
         }
         
         this.lastResult = this.runComplex();
-        
-        // firstly check and update timer. 
-        if(this.windDownTimer!=RUN_FOREVER && this.windDownTimer>0)this.windDownTimer--;
-        
+
+		if(this.windDownTimer!=RUN_FOREVER && this.windDownTimer>0)this.windDownTimer--;
+
         return this.lastResult;
     }
     isOn(){

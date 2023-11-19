@@ -1,16 +1,20 @@
 ===================================
 = Version 19.4.alpha
 ===================================
+- added unit tests to code base
+- added trader class
+
+===================================
+= Version 19.3.2
+===================================
 - BUG Fix: when extractors were infinite due to windDown bug
 - Tweak: harvesters now stay online when storageSpace < 50k but have no E surplus 
 - Tweak: upgraders shutdown if E surplus < 25k & rate=SLOW 
 - Tweak: farmStructureThenTransfer() now supports a standingSpot
 - Feature: armNuke option to rooms 
 - some server config changes for shard3
-- wip trader prototype
-- wip map trade renders
-- added mu-2  for shard3 
-
+- added mu-2  for shard3  
+- fixed bug with labs being off() since abstract.complex udates
  
 ===================================
 = Version 19.3.1 

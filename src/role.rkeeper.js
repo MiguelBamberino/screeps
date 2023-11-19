@@ -127,8 +127,8 @@ var roleTanker = {
                 }
             }
         }
-        
-        if(config.armNuke && !creep.memory.job){
+
+		if(config.armNuke && !creep.memory.job){
             let nuker = mb.getNukerForRoom(config.coreRoomName);
             if(nuker){
                 if(!nuker.isFull(RESOURCE_ENERGY)){
@@ -138,8 +138,6 @@ var roleTanker = {
                 }
             }
         }
-        
-        
         /////// Import Jobs //////////////////////////////////
         if(!creep.memory.job){
             for(let importConf of config.imports){

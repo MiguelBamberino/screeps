@@ -40,40 +40,19 @@ module.exports = {
             this.farmStructureThenTransfer('Alpha','Af0','20w1c10m',['62abbe57340721bd4f261bd9','62aa95074923f007cf85894c','62aa950aff3a5e3d1e630975','62aa951a55ae89e3fa8a5ae1'],'6530f95d0f89149d14e6b117',rp(23,1,'W42N53'))
         if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').haveSpaceFor(100000) && Game.cpu.bucket>6000))
             this.farmStructureThenTransfer('Alpha','Af1','20w1c10m',['62abbe57340721bd4f261bd9','62abbaef9fd4164a8e2db3e8','62aa9526e40d483e998ed25c'],'6530f95d0f89149d14e6b117',rp(21,3,'W42N53'))
-        
 
-        //this.withdrawThenUpgrade('Lambda','Lux1','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,42,'W48N52'))
-       // if(Game.creeps['Mux1'] || Game.cpu.bucket>4000)
-           // this.withdrawThenUpgrade('Mu','Mux1','20w1c5m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(6,14,'W43N51'))
-       // if(Game.creeps['Mux2'] || Game.cpu.bucket>4000)
-           // this.withdrawThenUpgrade('Mu','Mux2','20w1c5m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(8,14,'W43N51'))
-       // if(Game.creeps['Mux3'] || Game.cpu.bucket>6000)
-           // this.withdrawThenUpgrade('Mu','Mux3','20w1c5m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(7,14,'W43N51'))
-        
-        
-       
          //this.harvestAndCollectCentreSectorMineral('Theta-3','5bbcb16540062e4259e92e94',rp(41,1,'W45N51'),'64e672e8ff9345439bb731e3',RESOURCE_UTRIUM,'5m5c','30W5c15m','-U',2)
       
         
         if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaac09099fc012e63221b').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer1','Mx1','1w1c','64d4a6df69e9867caf3a3604','5bbcaac09099fc012e63221b')
         if(Game.creeps['Mx2']|| (Game.cpu.bucket>5000 && gob('5bbcaab49099fc012e63208a').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
-        if(Game.creeps['Mx3']|| (Game.cpu.bucket>5000 /*&& gob('5bbcaac09099fc012e632211').ticksToDowngrade<10000*/) )this.withdrawThenUpgrade('Maintainer3','Mx3','1w1c','64eba8b3511e240c621b3cc4','5bbcaac09099fc012e632211')
         
         //this.haulResources('Mu','Mtx1','20c10m',gob('6523463c3085921d30ef1ffc'),gob('6530e2d4623ff2c4997294bd'),[RESOURCE_ENERGY],[],5000,100)
         
         //if(Game.creeps['Ztx1'])
         //this.haulResources('Lambda-2','Ltx1','25*1c1m',gob('651bc3a17484a4b6bcd123d0'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
 
-        
-        this.rotateCreep('Zux', function(activeCreepName){
-            if(Game.creeps[activeCreepName] )
-             thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','651bc3a17484a4b6bcd123d0','650cccba513daa78ea58d199',true,rp(6,14,'W43N51'))
-        },300)
 
-       
-        
-       // this.spawnHarvest('Zeta-2','Boost','W43N51-h0','5bbcaaa99099fc012e631f0b')
-        
         let hostileIds = Game.rooms['W43N51'].getNoneAllyCreeps();
         if(hostileIds.length>0 && gob('651d16f663f96bf75536f5dd'))gob('651d16f663f96bf75536f5dd').attack(gob(hostileIds[0]))
         
@@ -2738,6 +2717,11 @@ module.exports = {
         
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
+			
+			if(standingSpot && !creep.pos.isEqualTo(standingSpot)){
+                creep.moveToPos(standingSpot);
+                return;
+            }
             
             if(standingSpot && !creep.pos.isEqualTo(standingSpot)){
                 creep.moveToPos(standingSpot);
