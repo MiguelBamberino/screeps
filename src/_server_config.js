@@ -322,7 +322,13 @@ module.exports = {
                                         extraFastFillSpots:[],
                                         buildFast:false,
                                         upgradeRate:RATE_VERY_SLOW,
-                                        terminalEnergyCap:20000
+                                        terminalEnergyCap:20000,
+                                        
+										imports:[
+                                            {resource_type:RESOURCE_ENERGY,storageCap:100000}
+                                        ],
+                                        exports:[
+                                        ]
                                     }
         );
         

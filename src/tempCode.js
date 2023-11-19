@@ -117,7 +117,8 @@ module.exports = {
                 {importer:'Iota',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
                 {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 
-                /*{importer:'Mu',resource_type:RESOURCE_ENERGY,storageCap:200000},*/
+                {importer:'Lambda',resource_type:RESOURCE_ENERGY,storageCap:100000},
+                {importer:'Mu',resource_type:RESOURCE_ENERGY,storageCap:100000},
                 {importer:'Kappa',resource_type:RESOURCE_ENERGY,storageCap:100000},
             ],
             // atm, Alpha is getting all the flah and exporting for E, even if its not got much in terrminal. code needs to check terminals cap.
