@@ -110,6 +110,7 @@ global.mb = {
                 controller:controllerStruct,
                 storage_id:'',
                 terminal_id:'',
+				nuker_id:'',
                 mineral_id:mineralID
             };
            
@@ -197,7 +198,14 @@ global.mb = {
         }
         return false;
     },
-
+    getNukerForRoom: function(roomName){
+        let room = this.getRoom(roomName);
+        if(room){
+            let obj = Game.getObjectById(room.nuker_id);
+            return (obj)?obj:false;
+        }
+        return false;
+    },
     //////////////////////////////////////////////////////////////////////////////////////////
     // Source Functions
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -344,6 +352,9 @@ global.mb = {
             }
             if(obj.structureType===STRUCTURE_TERMINAL){
                 room.terminal_id = obj.id;
+            }
+			if(obj.structureType===STRUCTURE_NUKER){
+                room.nuker_id = obj.id;
             }
 
             // store id in a quick lookup cache

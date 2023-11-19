@@ -102,6 +102,11 @@ module.exports.loop = function () {
         
         gui.render();
         gui.renderComplexStats(nodes.i.extractorComplex)
+		gui.renderComplexStats(nodes.z.extractorComplex)
+        gui.renderComplexStats(nodes.k.extractorComplex)
+
+        gui.renderComplexStats(nodes.m.extractorComplex)
+        gui.renderComplexStats(nodes.i.labComplex)
     }
     
 }

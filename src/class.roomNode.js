@@ -30,6 +30,7 @@ class RoomNode{
             terminalEnergyCap:15000 >> The amount to be kept in reserve in the terminal
             towersBuildWalls:false  >> If true, then the towers will build up the walls in peace time
             wallHeight:25000000     >> How hight the walls should be 
+			armNuke:false >> Whether this rooms Nuke should be kept armed
             labComplex:undefined    >> if set, then it will be used to run reactions
             makeResource:undefined  >> if set, then this resource will be made in the labComplex
             exports:[]              >> a list of export instructions. Each instruction looks like:  {resource_type:RESOURCE_GHODIUM,exportOver:0,batchSize:50000},
@@ -69,6 +70,7 @@ class RoomNode{
         
         this.towersBuildWalls = options.towersBuildWalls===undefined?false:options.towersBuildWalls;
         this.wallHeight = options.wallHeight===undefined?25000000:options.wallHeight;
+		this.armNuke = options.armNuke===undefined?false:options.armNuke;
         
         this.labComplex = options.labComplex===undefined?undefined:options.labComplex;
         this.makeResource = options.makeResource===undefined?undefined:options.makeResource;
@@ -166,11 +168,16 @@ class RoomNode{
         //// Manage Mineral activities /////////////////////////////////////////////////////////////
         if(this.haveStorage){  
             if(this.makeResource && this.labComplex){
-                
+				
+                 this.labComplex.turnOn();
                 this.labComplex.make(this.makeResource);
             }else if(this.splitResource && this.labComplex){
+				 this.labComplex.turnOn();
                 this.labComplex.split(this.splitResource);
-            }
+            }else if(this.labComplex){
+                this.labComplex.turnOff();
+             }
+
             
            if(this.extractorComplex){ 
                 // keep it ticking, if we only have a small amount left
@@ -178,14 +185,16 @@ class RoomNode{
                 
                 if(this.extractorComplex.isOn()){
                     
-                    this.extractorComplex.runTick();
-                    
+                    // this is checked before run, in order to stop it getting turned back on when windDown==0
                     if( mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
                         clog("winding down",this.name)
                         this.extractorComplex.windDown();
                     }
+					
+					this.extractorComplex.runTick();
                 }
-                else if( mineral.mineralAmount<10000 || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ){
+				// drain the last out, so we get a big refill OR only mine what we need
+                else if( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ){
                     this.extractorComplex.turnOn();
                 }
             }
@@ -491,11 +500,17 @@ class RoomNode{
     }
         
     storage(){
-        return Game.rooms[this.coreRoomName].storage;
+        return this.room().storage;
+    }
+    terminal(){
+        return this.room().terminal;
+    }
+    room(){
+        return Game.rooms[this.coreRoomName];
     }
     controller(){
-        if(!Game.rooms[this.coreRoomName])return false;
-        return Game.rooms[this.coreRoomName].controller;
+        //if(!Game.rooms[this.coreRoomName])return false; >> not sure why this line was here. comment it next dufus, when its a bug
+        return this.room().controller;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Filler Code
@@ -540,10 +555,11 @@ class RoomNode{
         if(spawnName=='Zeta-3'||spawnName=='Theta-3')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,TOP,TOP_RIGHT];
         if(spawnName=='Iota-2'||spawnName=='Lambda-2')Game.spawns[spawnName].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
         if(spawnName=='Theta-2')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,LEFT,BOTTOM_LEFT];
-        if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2'].includes(spawnName))
+        if(['Zeta-2','Beta-2','Alpha-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
             Game.spawns[spawnName].forceDirectionHack = [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
         
-               
+		 if(spawnName=='Beta-3')Game.spawns[spawnName].forceDirectionHack = [BOTTOM];
+		
         if(!Game.creeps[creepName]){
             let bodyPlan = creepRoles['filler'].getParts(0,this.getConfig());
             let dirs = (moveToSpot)?this.getMainSpawnSpots():this.getMainSpawnFillerSpots();
@@ -555,12 +571,15 @@ class RoomNode{
             
              if(spawnName=='Zeta-3')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[BOTTOM_LEFT,BOTTOM_RIGHT]);
-            else if(['Zeta-2','Beta-2','Beta-3','Alpha-2','Delta-2','Epsilon-2','Kappa-2'].includes(spawnName))
+            else if(['Zeta-2','Beta-2','Alpha-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,TOP_RIGHT]);
             else if(spawnName=='Iota-2'||spawnName=='Lambda-2')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,BOTTOM_LEFT]);
             else if(spawnName=='Theta-2')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_RIGHT,BOTTOM_RIGHT]);
+			 else if(['Beta-3','Kappa-3','Mu-3'].includes(spawnName))
+                Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[LEFT,RIGHT]);
+
             else{ 
                 
                 let res = Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs);
@@ -623,6 +642,7 @@ class RoomNode{
                     allSourcesBuilt:this.allSourcesBuilt,
                     spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
+					armNuke:this.armNuke,
                     retreatSpot:this.retreatSpot,
                     funnelRoomName:this.funnelRoomName,
                     upgradeRate:this.upgradeRate,
@@ -743,7 +763,7 @@ class RoomNode{
             this.workforce_quota.builder.required = (this.energySurplus > 5000)?1:0;
         } 
         
-        if(this.haveStorage && this.spaceInStorage<50000){
+        if(this.haveStorage && this.spaceInStorage<50000 && this.energySurplus > 50000){
             this.workforce_quota.harvester.required=0;
         }
         
@@ -795,6 +815,9 @@ class RoomNode{
                this.workforce_quota.upgrader.required = 0;
            }else{
                this.workforce_quota.upgrader.required = this.allSourcesBuilt?1:0;
+			   if(this.haveStorage && this.energySurplus<25000){
+                   this.workforce_quota.upgrader.required = 0;
+               }
            }
            
             //////////////////////////////////////////////////////////////////////////////////

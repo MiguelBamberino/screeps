@@ -36,41 +36,23 @@ module.exports = {
         //this.startupRoomWithVision('Zeta-2','W43N51', {workerCount:0,workerBody:'10w10c10m',defend:true,defenderSpot:{x:13,y:16}})
    
         
-        if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').storedAmount()<600000 && Game.cpu.bucket>6000))
-            this.farmStructureThenTransfer('Alpha','Af0','20w1c10m',['62aa95635d8a323481c138bb','62aa955ce2e2855ce315256a','62aa95557c404d6a8c7029e0'],'64d3a146a4357404b77dabab')
-        if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').storedAmount()<600000 && Game.cpu.bucket>6000))
-            this.farmStructureThenTransfer('Alpha','Af1','20w1c10m',['62aa954c5ae7b06a395d48d5','62aa954fc44b546bf0aa175e','62aa953ec7649673fcfe5ff9'],'64d3ad9d691b1e72a6839726')
-        
+        if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').haveSpaceFor(100000) && Game.cpu.bucket>6000))
+            this.farmStructureThenTransfer('Alpha','Af0','20w1c10m',['62abbe57340721bd4f261bd9','62aa95074923f007cf85894c','62aa950aff3a5e3d1e630975','62aa951a55ae89e3fa8a5ae1'],'6530f95d0f89149d14e6b117',rp(23,1,'W42N53'))
+        if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').haveSpaceFor(100000) && Game.cpu.bucket>6000))
+            this.farmStructureThenTransfer('Alpha','Af1','20w1c10m',['62abbe57340721bd4f261bd9','62abbaef9fd4164a8e2db3e8','62aa9526e40d483e998ed25c'],'6530f95d0f89149d14e6b117',rp(21,3,'W42N53'))
 
-        //this.withdrawThenUpgrade('Lambda','Lux1','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,42,'W48N52'))
-        if(Game.creeps['Lux2'] || Game.cpu.bucket>4000)
-            this.withdrawThenUpgrade('Lambda','Lux2','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,41,'W48N52'))
         
-        if(Game.creeps['Lux3'] || Game.cpu.bucket>6000)
-            this.withdrawThenUpgrade('Lambda','Lux3','20w1c5m','651bc3a17484a4b6bcd123d0','5bbcaa6c9099fc012e63153a',true,rp(34,40,'W48N52'))
-        
-       
          //this.harvestAndCollectCentreSectorMineral('Theta-3','5bbcb16540062e4259e92e94',rp(41,1,'W45N51'),'64e672e8ff9345439bb731e3',RESOURCE_UTRIUM,'5m5c','30W5c15m','-U',2)
       
         
         if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaac09099fc012e63221b').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer1','Mx1','1w1c','64d4a6df69e9867caf3a3604','5bbcaac09099fc012e63221b')
-        if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaab49099fc012e63208a').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
-        if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaac09099fc012e632211').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer3','Mx3','1w1c','64eba8b3511e240c621b3cc4','5bbcaac09099fc012e632211')
+        if(Game.creeps['Mx2']|| (Game.cpu.bucket>5000 && gob('5bbcaab49099fc012e63208a').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
         
         //this.haulResources('Kappa','Ktx1','25*1c1m',gob('6504346920565f7971fca016'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
         
         if(Game.creeps['Ztx1'])
         this.haulResources('Zeta-2','Ztx1','25*1c1m',gob('64de8f2c3c187d2cb5df12b0'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
 
-        
-        this.rotateCreep('Zux', function(activeCreepName){
-            if(Game.creeps[activeCreepName] )
-             thing.withdrawThenUpgrade('Zeta-2',activeCreepName,'20w5c10m','6523463c3085921d30ef1ffc','5bbcaaa99099fc012e631f0a',true,rp(6,14,'W43N51'))
-        },300)
-
-       
-        
-       // this.spawnHarvest('Zeta-2','Boost','W43N51-h0','5bbcaaa99099fc012e631f0b')
         
         let hostileIds = Game.rooms['W43N51'].getNoneAllyCreeps();
         if(hostileIds.length>0 && gob('651d16f663f96bf75536f5dd'))gob('651d16f663f96bf75536f5dd').attack(gob(hostileIds[0]))
@@ -95,7 +77,7 @@ module.exports = {
                 {importer:'Alpha',resource_type:RESOURCE_GHODIUM,storageCap:6000},
              
                 
-                {importer:'Beta',resource_type:RESOURCE_ENERGY,storageCap:100000},
+                {importer:'Beta',resource_type:RESOURCE_ENERGY,storageCap:50000},
                 {importer:'Beta',resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
                 {importer:'Beta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000}, 
                 {importer:'Beta',resource_type:RESOURCE_ZYNTHIUM,storageCap:24000},  
@@ -135,10 +117,11 @@ module.exports = {
                 {importer:'Iota',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
                 {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 
-                {importer:'Lambda',resource_type:RESOURCE_ENERGY,storageCap:200000},
+                /*{importer:'Mu',resource_type:RESOURCE_ENERGY,storageCap:200000},*/
+                {importer:'Kappa',resource_type:RESOURCE_ENERGY,storageCap:100000},
             ],
             // atm, Alpha is getting all the flah and exporting for E, even if its not got much in terrminal. code needs to check terminals cap.
-            [/*'Alpha',*/'Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota','Kappa']);
+            ['Alpha','Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota','Kappa','Lambda']);
     
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         
@@ -2600,7 +2583,8 @@ module.exports = {
                         }
                         
                     }
-                    creep.actOrMoveTo('upgradeController',controller);
+                    if(standingSpot)creep.act('upgradeController',controller);
+                    else creep.actOrMoveTo('upgradeController',controller);
                 }
                 if( (container.hitsMax-container.hits) > 1000){
                     creep.repair(container);
@@ -2718,7 +2702,7 @@ module.exports = {
     },
     
     // dismantle a structure then transfer the energy to an object with store
-    farmStructureThenTransfer: function(spawnName,cname,parts,old_wall_ids,transfer_id,speedy=false){
+    farmStructureThenTransfer: function(spawnName,cname,parts,old_wall_ids,transfer_id,standingSpot=false,speedy=false){
 
          let oldWall=false;
         for(let old_wall_id of old_wall_ids ){
@@ -2734,6 +2718,11 @@ module.exports = {
         
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
+			
+			if(standingSpot && !creep.pos.isEqualTo(standingSpot)){
+                creep.moveToPos(standingSpot);
+                return;
+            }
             
             if(Game.time%10===0){     
                 let blobs = objWithStore.pos.lookFor(LOOK_ENERGY);

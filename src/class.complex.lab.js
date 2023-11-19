@@ -325,6 +325,7 @@ class LabComplex extends AbstractComplex{
        
         
         if(product===RESOURCE_GHODIUM_HYDRIDE) return [RESOURCE_GHODIUM,RESOURCE_HYDROGEN]
+		if(product===RESOURCE_LEMERGIUM_HYDRIDE) return [RESOURCE_LEMERGIUM,RESOURCE_HYDROGEN]
         if(product===RESOURCE_UTRIUM_HYDRIDE) return [RESOURCE_UTRIUM,RESOURCE_HYDROGEN]
         if(product===RESOURCE_ZYNTHIUM_HYDRIDE) return [RESOURCE_ZYNTHIUM,RESOURCE_HYDROGEN]
         
