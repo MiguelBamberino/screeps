@@ -2,7 +2,11 @@
 class Trader {
     constructor() {
         this.orders = {}; // Store orders in an object with IDs as keys
-        this.orderDups = {};
+        this.orderLookup = {};
+        this.exports = [];
+    }
+    setExporters(roomNames){
+        this.exporters = roomNames;
     }
     
     createOrder(roomName, resourceType, amount) {
@@ -11,7 +15,7 @@ class Trader {
         if( !['W','E'].includes(roomName.charAt(0)) )return ERR_INVALID_ARGS;
         if(amount<1||amount>250000)return ERR_INVALID_ARGS;
         if(resourceType!==RESOURCE_ENERGY && !REACTIONS[resourceType])return ERR_INVALID_ARGS;
-        if(this.orderDups[roomName+resourceType])return ERR_NAME_EXISTS;
+        if(this.orderLookup[roomName+resourceType])return ERR_NAME_EXISTS;
 
         // Create a unique ID for the order based on roomName, resourceType, and Game.time
         const id = `${roomName}_${resourceType}_${Game.time}`;
@@ -25,7 +29,7 @@ class Trader {
             fulfilledBy:null,
             fulfilledAt: null
         };
-        this.orderDups[roomName+resourceType]=true;
+        this.orderLookup[roomName+resourceType]=id;
         // Return the newly created order
         return id;
     }
@@ -37,7 +41,7 @@ class Trader {
 
         this.orders[orderId].fulfilledAt = Game.time;
         this.orders[orderId].fulfilledBy = roomName;
-        delete this.orderDups[ this.orders[orderId].roomName+this.orders[orderId].resourceType ]
+        delete this.orderLookup[ this.orders[orderId].roomName+this.orders[orderId].resourceType ]
         return OK;
     }
 
@@ -55,20 +59,26 @@ class Trader {
           });
         });
     }
-    getOrderIDsByRoomName(roomName) {
-        // Return only the IDs of the orders for the given roomName
-        const orderIDs = [];
-        for (let id in this.orders) {
-            if (this.orders[id].roomName === roomName) {
-                orderIDs.push(id);
-            }
-        }
-        return orderIDs;
-    }
-
-    getOrder(id) {
+    getOrderByID(id) {
         // Return the order with the given ID, or undefined if it doesn't exist
         return this.orders[id];
+    }
+    getOpenOrderByDetail(roomName,resourceType){
+
+        if(this.orderLookup[roomName+resourceType]){
+            return this.getOrderByID(this.orderLookup[roomName+resourceType])
+        }
+        return false;
+    }
+
+    clearOldOrders(expiryTime){
+        if(!isNaN(expiryTime) && expiryTime>0){
+            for(let id in this.orders){
+                if(this.orders[id].fulfilledAt && this.orders[id].fulfilledAt<(Game.time-expiryTime)){
+                    delete this.orders[id];
+                }
+            }
+        }
     }
 }
 
