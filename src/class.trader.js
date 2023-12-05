@@ -79,21 +79,26 @@ class Trader {
         for(let id in this.orders){
             let order = this.orders[id];
             if(this.exports[order.resourceType]){
-                for(let roomName of this.exports[order.resourceType]){
+                for(let exporterRoom of this.exports[order.resourceType]){
+                    //console.log("order-id",id,"exporterRoom",exporterRoom,"unusableTerminals",unusableTerminals)
+                    if(unusableTerminals[exporterRoom])continue;
+                    if(this.orders[id].fulfilledBy)continue;
+                    if(this.orders[id].roomName === exporterRoom)continue;
 
-                    if(unusableTerminals[roomName])continue;
-
-                    let terminal = Game.rooms[roomName].terminal;
+                    let terminal = Game.rooms[exporterRoom]?Game.rooms[exporterRoom].terminal:null;
+                    
                     if(terminal && terminal.storingAtLeast(order.amount,order.resourceType) ){
                         let res = terminal.send(order.resourceType,order.amount,order.roomName);
                         if(res===OK){
+                            //console.log("satisfied:",id,"with:",exporterRoom);
                             this.orders[id].fulfilledAt="pending";
-                            this.orders[id].fulfilledBy=roomName;
-                            unusableTerminals[roomName]=true;
+                            this.orders[id].fulfilledBy=exporterRoom;
+                            unusableTerminals[exporterRoom]=true;
                         }
                         if(res===ERR_TIRED){
                             // save later loops
-                            unusableTerminals[roomName]=true;
+                            unusableTerminals[exporterRoom]=true;
+                            //connsole.log("tired:",exporterRoom)
                         }
                     }
                 }
