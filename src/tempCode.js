@@ -59,12 +59,35 @@ module.exports = {
         
        // this.streamResource('Iota','Theta',RESOURCE_ENERGY,400000,300000);
         
-        this.rotateCreep('Peltast1-', function(activeCreepName){
-            // 'W4N51','W46N51''W46N50','W47N50','W48N50','W49N50','W49N51','W49N52'
-            //thing.killCreepsBreakTarget('Theta-3',activeCreepName,'5*1t1m+20*1a1m','W49N52',['64f890b684ddee8fd008c749','63f771515f51114525f722f2'],['W45N51','W46N51','W46N50','W47N50','W48N50','W49N50','W49N51','W49N52'], true)
-            //thing.constantGuardRoom('Theta-3',activeCreepName,'W49N52','10a10m1h1m',{x:44,y:46},false,true,25);
-        },400)
+        gob('63fd1ff656dfcecb6ce9893a').observeRoom('W39N49');
+        this.rotateCreep('Guard1-', function(activeCreepName){
+          //  Game.creeps[activeCreepName].moveTo(gob('5bbcaad79099fc012e63242d'))
+              //  Game.creeps[activeCreepName].signController(gob('5bbcaad79099fc012e63242d'),"room defeated")
+            if(gob('5bbcaad79099fc012e63242d').safeMode===undefined)
+                thing.killCreepsBreakTarget('Beta-3',activeCreepName,'24*1a1m+1h1m','W39N49',['655c156455d0c39b456ba99a'],[], 4,{x:37,y:21})
+            
+               // thing.constantGuardRoom('Beta-2',activeCreepName,'W39N49','24*1a1m+1h1m',{x:42,y:22},false,true,4)
+        },350)
+        /*
+         this.rotateCreep('Breaker1-', function(activeCreepName){
+            if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>3000) )
+                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655abaf2782384d602dacb1b']);
+        },350)
+         this.rotateCreep('Breaker2-', function(activeCreepName){
+           if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>4000) )
+                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655abaf2782384d602dacb1b']);
+        },350)
+        this.rotateCreep('Breaker3-', function(activeCreepName){
+           if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>5000) )
+                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655abaf2782384d602dacb1b']);
+        },350)
         
+        this.rotateCreep('Breaker4-', function(activeCreepName){
+           if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>6000) )
+                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655c156455d0c39b456ba99a']);
+        },350)
+        */
+        //constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:25,y:25},allyName=false,killCivilians=false, maxDistance=75 , roomTraversal=[])
  
     /**
      * manage the config of what resources different rooms want. This assumes they've already been hauled to the terminal.
@@ -77,7 +100,7 @@ module.exports = {
                 {importer:'Alpha',resource_type:RESOURCE_GHODIUM,storageCap:6000},
              
                 
-                {importer:'Beta',resource_type:RESOURCE_ENERGY,storageCap:50000},
+                
                 {importer:'Beta',resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
                 {importer:'Beta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000}, 
                 {importer:'Beta',resource_type:RESOURCE_ZYNTHIUM,storageCap:24000},  
@@ -85,11 +108,15 @@ module.exports = {
                 
                 {importer:'Beta',resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:12000},
                 {importer:'Beta',resource_type:RESOURCE_KEANIUM,storageCap:24000},
+                {importer:'Beta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 
                 {importer:'Epsilon',resource_type:RESOURCE_OXYGEN,storageCap:12000},
+                {importer:'Epsilon',resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:24000},
+                {importer:'Epsilon',resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:24000},
                 {importer:'Epsilon',resource_type:RESOURCE_ENERGY,storageCap:200000},
                 
                 {importer:'Iota',resource_type:RESOURCE_HYDROGEN,storageCap:24000},
+                {importer:'Iota',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 
                 
                 
@@ -97,6 +124,7 @@ module.exports = {
                 {importer:'Theta',resource_type:RESOURCE_OXYGEN,storageCap:12000},
                 {importer:'Theta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
                 {importer:'Theta',resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
+                {importer:'Theta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 
                 /*
                 {importer:'Zeta',resource_type:RESOURCE_OXYGEN,storageCap:24000},
@@ -108,6 +136,7 @@ module.exports = {
                 {importer:'Zeta',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                 {importer:'Zeta',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
                 {importer:'Zeta',resource_type:RESOURCE_ENERGY,storageCap:24000},
+                {importer:'Zeta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 /*
                 {importer:'Theta',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 {importer:'Theta',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
@@ -118,16 +147,32 @@ module.exports = {
                 {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 
                 {importer:'Lambda',resource_type:RESOURCE_ENERGY,storageCap:100000},
+                {importer:'Lambda',resource_type:RESOURCE_GHODIUM,storageCap:6000},
+                {importer:'Kappa',resource_type:RESOURCE_GHODIUM,storageCap:6000},
+                {importer:'Kappa',resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
                 {importer:'Mu',resource_type:RESOURCE_ENERGY,storageCap:100000},
-                {importer:'Kappa',resource_type:RESOURCE_ENERGY,storageCap:100000},
+                /*{importer:'Kappa',resource_type:RESOURCE_ENERGY,storageCap:100000},*/
             ],
             // atm, Alpha is getting all the flah and exporting for E, even if its not got much in terrminal. code needs to check terminals cap.
             ['Alpha','Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota','Kappa','Lambda']);
     
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+        this.runFactory('Alpha',RESOURCE_BATTERY) 
+        this.runFactory('Epsilon',RESOURCE_BATTERY) 
+        
+        this.runFactory('Zeta',RESOURCE_BATTERY)
+        this.runFactory('Kappa',RESOURCE_BATTERY) 
+        
         
        },
-
+    runFactory:function(spawnName,resource){
+        if(!Game.spawns[spawnName])return;
+        
+        let factory = mb.getFactoryForRoom(Game.spawns[spawnName].pos.roomName);
+        if(factory){
+            factory.produce(resource)
+        }
+    },
     botArenaForRoomNode:function(node){
         if(!node)return
         let spawn = Game.spawns[node.name];
@@ -1013,16 +1058,16 @@ module.exports = {
             if(Game.creeps['Slammy1'])
             this.breakStructures('Beta-3','Slammy1','25*1w1m',slammysRoom,target_ids);
            if(Game.creeps['Fighty1'])
-            this.killCreepsBreakTarget('Beta-2','Fighty1','10*1a1m',slammysRoom,target_ids,[], true,rp(43,21,slammysRoom))
+            this.killCreepsBreakTarget('Beta-2','Fighty1','10*1a1m',slammysRoom,target_ids,[], 50,rp(43,21,slammysRoom))
             /*this.breakStructures('Beta-3','Slammy2','25w25m',slammysRoom,target_ids);
             this.breakStructures('Beta-2','Slammy3','25w25m',slammysRoom,target_ids);
             if(Game.creeps['Slammy4'])this.breakStructures('Beta-2','Slammy4','25w25m',slammysRoom,target_ids);
           */
             
             if(Game.creeps['Fighty2'])
-            this.killCreepsBreakTarget('Beta-3','Fighty2','25*1a1m',slammysRoom,target_ids,[], true)
-            if(Game.creeps['Fighty3'])this.killCreepsBreakTarget('Beta-2','Fighty3','25*1a1m',slammysRoom,target_ids,[], true)
-            if(Game.creeps['Fighty4'])this.killCreepsBreakTarget('Beta-3','Fighty4','25*1a1m',slammysRoom,target_ids,[], true)
+            this.killCreepsBreakTarget('Beta-3','Fighty2','25*1a1m',slammysRoom,target_ids,[], 50)
+            if(Game.creeps['Fighty3'])this.killCreepsBreakTarget('Beta-2','Fighty3','25*1a1m',slammysRoom,target_ids,[], 50)
+            if(Game.creeps['Fighty4'])this.killCreepsBreakTarget('Beta-3','Fighty4','25*1a1m',slammysRoom,target_ids,[], 50)
             
         
        },
@@ -3858,7 +3903,7 @@ module.exports = {
             }
         }
     },
-    killCreepsBreakTarget:function(spawnName,cname,parts,roomName,target_ids,roomTraversal=[], killCreeps=true,waitingSpot={x:25,y:25},dontFlee=false,kamakaziPos=false,publicMsg=false){
+    killCreepsBreakTarget:function(spawnName,cname,parts,roomName,target_ids,roomTraversal=[], maxRange=75,waitingSpot={x:25,y:25},dontFlee=false,kamakaziPos=false,publicMsg=false){
         if(!Game.creeps[cname]){
 
             clog(Game.spawns[spawnName].spawnCreepX(parts,cname),cname);
@@ -3900,9 +3945,11 @@ module.exports = {
     	        let closestFighter = false;
     	        let shootTarget = false;
     	        let creepsIn3 = 0;
-    	        if(killCreeps)
+    	        
     	        for(var ref in hostiles){
     	            let range = creep.pos.getRangeTo(hostiles[ref]);
+    	            
+    	            if(range>maxRange)continue;
     	            
     	            if(range<=3){
     	                creepsIn3++;
@@ -3910,9 +3957,10 @@ module.exports = {
     	            if(
     	                hostiles[ref].owner.username=='Source Keeper' || 
     	                hostiles[ref].owner.username=='GT500'|| 
-    	                 hostiles[ref].owner.username=='Trepidimous' ||
-    	                hostiles[ref].owner.username=='joethebarber')continue;
-    	            if(hostiles[ref].partCount(RANGED_ATTACK)>0 || hostiles[ref].partCount(ATTACK)>0|| hostiles[ref].partCount(HEAL)>0){
+    	                 hostiles[ref].owner.username=='Trepidimous' 
+    	                )continue;
+    	                
+    	            if(hostiles[ref].partCount(RANGED_ATTACK)>0 || hostiles[ref].partCount(ATTACK)>0|| hostiles[ref].partCount(HEAL)>0 ){
     	                if(range<distF){
         	                distF = range;
         	                closestFighter = hostiles[ref];

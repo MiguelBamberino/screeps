@@ -167,11 +167,10 @@ class RoomNode{
         
         //// Manage Mineral activities /////////////////////////////////////////////////////////////
         if(this.haveStorage){  
-            if(this.makeResource && this.labComplex){
-				
+            if(this.makeResource && this.labComplex && Game.cpu.bucket>2000){
                  this.labComplex.turnOn();
                 this.labComplex.make(this.makeResource);
-            }else if(this.splitResource && this.labComplex){
+            }else if(this.splitResource && this.labComplex && Game.cpu.bucket>2000){
 				 this.labComplex.turnOn();
                 this.labComplex.split(this.splitResource);
             }else if(this.labComplex){
@@ -547,10 +546,12 @@ class RoomNode{
     }
     runFiller(spawnName,creepName,moveToSpot=false){
         
+        if(!Game.spawns[spawnName])return;
+        
         // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
         // nob heads!
         
-        if(Game.spawns[spawnName])Game.spawns[spawnName].forceDirectionHack = this.getMainSpawnSpots();
+        Game.spawns[spawnName].forceDirectionHack = this.getMainSpawnSpots();
         
         if(spawnName=='Zeta-3'||spawnName=='Theta-3')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,TOP,TOP_RIGHT];
         if(spawnName=='Iota-2'||spawnName=='Lambda-2')Game.spawns[spawnName].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
@@ -741,7 +742,7 @@ class RoomNode{
         }
 
    
-        if(this.buildFast && !this.inRecoveryMode){
+        if(this.buildFast && !this.inRecoveryMode && Game.cpu.bucket>3000){
             if(this.haveStorage){
                 // at higher RCL, builder can consume too quick and dry out system
                 if(this.energySurplus > 50000)

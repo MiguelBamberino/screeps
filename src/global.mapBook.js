@@ -109,6 +109,7 @@ global.mb = {
                 sources:srcCache,
                 controller:controllerStruct,
                 storage_id:'',
+                factory_id:'',
                 terminal_id:'',
 				nuker_id:'',
                 mineral_id:mineralID
@@ -202,6 +203,15 @@ global.mb = {
         let room = this.getRoom(roomName);
         if(room){
             let obj = Game.getObjectById(room.nuker_id);
+            return (obj)?obj:false;
+        }
+        return false;
+    },
+    
+    getFactoryForRoom: function(roomName){
+        let room = this.getRoom(roomName);
+        if(room){
+            let obj = Game.getObjectById(room.factory_id);
             return (obj)?obj:false;
         }
         return false;
@@ -355,6 +365,9 @@ global.mb = {
             }
 			if(obj.structureType===STRUCTURE_NUKER){
                 room.nuker_id = obj.id;
+            }
+			if(obj.structureType===STRUCTURE_FACTORY){
+                room.factory_id = obj.id;
             }
 
             // store id in a quick lookup cache
