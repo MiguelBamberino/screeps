@@ -1,4 +1,25 @@
 ===================================
+= Version 19.3.3 
+===================================
+- Tweak: rooms only run labs >2k cpu in bucket
+- Tweak: only buildFast >3k cpu bucket
+- Feature: prototype for factorys creating batteries
+- Config: trading config
+
+===================================
+= Version 19.3.2 
+===================================
+- Fix: when extractors were infinite due to windDown bug
+- Fix: bug with labs being off() since abstract.complex udates
+- Tweak: harvesters now stay online when storageSpace < 50k but have no E surplus 
+- Tweak: upgraders shutdown if E surplus < 25k & rate=SLOW 
+- Tweak: farmStructureThenTransfer() now supports a standingSpot
+- Feature: armNuke option to rooms
+- Config: some server config changes for shard3
+- Config: added mu-2  for shard3  
+
+
+===================================
 = Version 19.3.2 
 ===================================
 - Fix: when extractors were infinite due to windDown bug
