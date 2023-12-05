@@ -32,6 +32,7 @@ var roleTanker = {
         
         let storage = mb.getStorageForRoom(config.coreRoomName)
         let terminal = mb.getTerminalForRoom(config.coreRoomName)
+        let factory = mb.getFactoryForRoom(creep.pos.roomName);
         let creepSpace =  creep.store.getCapacity();
         let energyInStorage = storage.storedAmount(RESOURCE_ENERGY)
         let stored_type=false;
@@ -110,10 +111,21 @@ var roleTanker = {
         // if carrying some RESOURCE_ENERGY, but no job after all fill look ups, then go put it back in storage
         if(!creep.memory.job && stored_type===RESOURCE_ENERGY){
             creep.memory.job = {target_id:'nope',resource_type:stored_type,action:'empty'}
-        }  
+        } 
+        
         
         /////// RESOURCE_* Jobs //////////////////////////////////
         
+        if(config.armNuke && !creep.memory.job){
+            let nuker = mb.getNukerForRoom(config.coreRoomName);
+            if(nuker){
+                if(!nuker.isFull(RESOURCE_ENERGY) && storage.storingAtleast(creepSpace,RESOURCE_ENERGY)){
+                    creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_ENERGY, action:'fill' };
+                }else if(!nuker.isFull(RESOURCE_GHODIUM) && storage.storingAtleast(creepSpace,RESOURCE_GHODIUM)){
+                    creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_GHODIUM, action:'fill' };
+                }
+            }
+        }
         
         if(config.labComplex && !creep.memory.job){
             let haulJob = config.labComplex.takeJob()
@@ -128,16 +140,6 @@ var roleTanker = {
             }
         }
 
-		if(config.armNuke && !creep.memory.job){
-            let nuker = mb.getNukerForRoom(config.coreRoomName);
-            if(nuker){
-                if(!nuker.isFull(RESOURCE_ENERGY)){
-                    creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_ENERGY, action:'fill' };
-                }else if(!nuker.isFull(RESOURCE_GHODIUM)){
-                    creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_GHODIUM, action:'fill' };
-                }
-            }
-        }
         /////// Import Jobs //////////////////////////////////
         if(!creep.memory.job){
             for(let importConf of config.imports){
@@ -165,6 +167,21 @@ var roleTanker = {
                 }
             }
         }
+        /////// Factory Jobs //////////////////////////////////
+        if(factory && !creep.memory.job && energyInStorage>=100000){
+            
+            if(factory.haveSpaceFor(10000)){
+                creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_ENERGY,action:'fill'}
+            }
+        }
+                
+        if(factory && !creep.memory.job){
+            
+            if(factory.storingAtleast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace,RESOURCE_BATTERY)){
+                creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_BATTERY,action:'empty'}
+            }
+        }
+        
         
         if(creep.memory.job){
             this.doJob(creep,storage)
