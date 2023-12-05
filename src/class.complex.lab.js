@@ -90,7 +90,7 @@ class LabComplex extends AbstractComplex{
             // they should all stay in sync, but if not, lets process the ones off cooldown
             if(reactor.cooldown===0){
                 if(this.mode=='make')reactor.runReaction(feederLabs[0],feederLabs[1])
-                else if(this.mode=='split' && reactor.storingAtleast(1,this.makingResource))reactor.reverseReaction(feederLabs[0],feederLabs[1])
+                else if(this.mode=='split' && reactor.storingAtLeast(1,this.makingResource))reactor.reverseReaction(feederLabs[0],feederLabs[1])
                 this.runCoolDown = REACTION_TIME[this.makingResource];
                 
                 if(this.haulJob)continue;// don't bother looking for a haul job, if we have one

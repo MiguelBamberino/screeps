@@ -1,16 +1,12 @@
-const DOC_ROOT = "../";
+require('./mocks/Global')
 
-// Build global state
-global.Game = require(DOC_ROOT+"tests/mocks/Game.js")
-const constants = require('@screeps/common/lib/constants');
 const {RESOURCE_UTRIUM, ERR_INVALID_ARGS, RESOURCE_ZYNTHIUM, RESOURCE_ENERGY, ERR_NAME_EXISTS, ERR_NOT_FOUND,
-    ERR_INVALID_TARGET
+    ERR_INVALID_TARGET, ERR_NOT_ENOUGH_RESOURCES, ERR_TIRED
 } = require("@screeps/common/lib/constants");
-// Append each attribute from the module to the global scope
-Object.assign(global, constants);
+
 
 // load in test class
-const traderClass = require(DOC_ROOT+'src/class.trader');
+const traderClass = require('../src/class.trader');
 
 let trader = new traderClass();
 let dataProvider = [
@@ -276,40 +272,366 @@ describe('tr.5 > clearOldOrders()',()=>{
 })
 
 describe('tr.6 > processOrders()',()=>{
-    it.todo('tr.6.1 > no exporters. no orders')
-    it.todo('tr.6.2 > no exporters. 1 order.')
-    it.todo('tr.6.3 > 1 exporter. no orders.')
-    it.todo('tr.6.4 > exporter room missing terminal. 1 order.')
+    it('tr.6.1 > no exporters. no orders',()=>{
+        // EXPECT: processOrders() to run without error
+        Game.time=1;
+        let trader = new traderClass();
+        trader.processOrders();
+        expect("no error").toBe("no error");
+    })
+    it('tr.6.2 > no exporters. 1 order.',()=>{
+        // EXPECT: order is not changed.
+        Game.time=1;
+        let trader = new traderClass();
+        trader.createOrder("W1N1",RESOURCE_ENERGY,1);
+        trader.processOrders();
+        expect(trader.getOrderByID("W1N1_energy_1")).toStrictEqual({id:"W1N1_energy_1",roomName:"W1N1",resourceType:"energy",amount:1,fulfilledBy:null,fulfilledAt:null});
+    })
+    it('tr.6.3 > 1 exporter. no orders.',()=>{
+        // EXPECT: processOrders() to run without error
+        Game.time=1;
+        let trader = new traderClass();
+        trader.offerExport(RESOURCE_ENERGY,"W1N1");
+        trader.processOrders();
+        expect("no error").toBe("no error");
+    })
+    it('tr.6.4 > exporter room missing terminal. 1 order.',()=>{
+        // EXPECT: processOrders() to run without error & order stays the same
+        Game._resetData();
+        Game._addPlayerRoom('W1N2',1,"MadDokMike");
 
-    it.todo('tr.6.5 > 1 exporter, 1 order satisfiable by exporter. exporter.amount>order.amount')
-    it.todo('tr.6.6 > 1 exporter, 1 order satisfiable by exporter. exporter.amount=order.amount')
-    it.todo('tr.6.7 > 1 exporter, 1 order not satisfiable by exporter. exporter.amount<order.amount')
-    it.todo('tr.6.8 > 1 exporter, 2 orders. 1 satisfiable by exporter')
-    it.todo('tr.6.9 > 1 exporter, 2 orders. both satisfiable by exporter')
+        let trader = new traderClass();
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,1);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:"Z",amount:1,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
 
-    it.todo('tr.6.10 > 1 tired exporter, 1 order satisfiable by exporter')
-    it.todo('tr.6.11 > 1 exporter /wo energy, 1 order satisfiable by exporter')
-    it.todo('tr.6.12 > 1 exporter not enough energy, 1 order satisfiable by exporter')
-    it.todo('tr.6.13 > 2 exporters, 1st tired, 1 order satisfiable by exporter 2nd')
-    it.todo('tr.6.14 > 2 exporters, 1st not enough energy, 1 order satisfiable by exporter 2nd')
+    it('tr.6.5 > 1 exporter, 1 order satisfiable by exporter. exporter.amount>order.amount',()=>{
+        // EXPECT: exporter to satisfy order. order.fulfilledAt=pending
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=10000;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
 
-    it.todo('tr.6.15 > 2 exporters, 1 order satisfiable by either exporter')
-    it.todo('tr.6.16 > 2 exporters, 1 order satisfiable by 1st exporter')
-    it.todo('tr.6.17 > 2 exporters, 1 order satisfiable by 2nd exporter')
-    it.todo('tr.6.18 > 2 exporters, 2 orders, both satisfiable, different rooms, different resource.')
-    it.todo('tr.6.19 > 2 exporters, 2 orders, both satisfiable, same room, different resource.')
-    it.todo('tr.6.20 > 2 exporters, 2 orders, both satisfiable, different rooms, same resource.')
-    it.todo('tr.6.21 > 2 exporters, 2 orders, 0 satisfiable.')
-    it.todo('tr.6.22 > 2 exporters, 2 orders, 1 satisfiable.')
-    it.todo('tr.6.23 > 2 exporters, 1 order satisfiable, target room = 1st exporter.')
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:"Z",amount:10,
+            fulfilledBy:"W1N2",fulfilledAt:"pending"
+        });
+    })
+    it('tr.6.6 > 1 exporter, 1 order satisfiable by exporter. exporter.amount=order.amount',()=>{
+        // EXPECT: exporter to satisfy order. order.fulfilledAt=pending
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=10000;
+        resources[RESOURCE_ZYNTHIUM]=10;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
 
-    it.todo('tr.6.24 > 1 exporter, 1 order satisfiable, room.')
-    it.todo('tr.6.25 > 1 exporter, 1 order satisfiable, to non owned room.')
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:"Z",amount:10,
+            fulfilledBy:"W1N2",fulfilledAt:"pending"
+        });
+    })
+    it('tr.6.7 > 1 exporter, 1 order not satisfiable by exporter. exporter.amount<order.amount',()=>{
+        // EXPECT: exporter NOT to satisfy order. order.fulfilledAt=null
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=10000;
+        resources[RESOURCE_ZYNTHIUM]=9;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:"Z",amount:10,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+    it('tr.6.8 > 1 exporter, 2 orders. 2nd order satisfiable by exporter',()=>{
+        // EXPECT: exporter to satisfy 2nd order. order.fulfilledAt=Pending
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=10000;
+        resources[RESOURCE_ZYNTHIUM]=9;
+        resources[RESOURCE_UTRIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        let id2 = trader.createOrder("W1N1",RESOURCE_UTRIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.offerExport(RESOURCE_UTRIUM,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:"Z",amount:10,
+            fulfilledBy:null,fulfilledAt:null
+        });
+        expect(trader.getOrderByID(id2)).toStrictEqual({
+            id:"W1N1_U_1",roomName:"W1N1",resourceType:"U",amount:10,
+            fulfilledBy:"W1N2",fulfilledAt:"pending"
+        });
+    })
+    it('tr.6.9 > 1 exporter, 2 orders. both satisfiable by exporter',()=>{
+        // EXPECT: exporter to satisfy 1st order. order.fulfilledAt=Pending
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=10000;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        resources[RESOURCE_UTRIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        let id2 = trader.createOrder("W1N1",RESOURCE_UTRIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.offerExport(RESOURCE_UTRIUM,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:"Z",amount:10,
+            fulfilledBy:"W1N2",fulfilledAt:"pending"
+        });
+        expect(trader.getOrderByID(id2)).toStrictEqual({
+            id:"W1N1_U_1",roomName:"W1N1",resourceType:"U",amount:10,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+    it('tr.6.10 > 1 exporter, 1 order for E, exporter has enough to send & transport',()=>{
+        // EXPECT: exporter to satisfy the order. order.fulfilledAt=Pending
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=10000;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+
+        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,10);
+        trader.offerExport(RESOURCE_ENERGY,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_energy_1",roomName:"W1N1",resourceType:RESOURCE_ENERGY,amount:10,
+            fulfilledBy:"W1N2",fulfilledAt:"pending"
+        });
+    })
+    it('tr.6.11 > 1 exporter, 1 order for E, exporter doesnt have enough to send & transport',()=>{
+        // EXPECT: exporter NOT to satisfy the order. order.fulfilledAt=null
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=1000;
+        Game._addPlayerRoom('W1N200',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N200'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,990);
+        trader.offerExport(RESOURCE_ENERGY,"W1N200");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_energy_1",roomName:"W1N1",resourceType:RESOURCE_ENERGY,amount:990,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+
+    it('tr.6.12 > 1 tired exporter, 1 order satisfiable by exporter',()=>{
+        // EXPECT: exporter NOT to satisfy the order. order.fulfilledAt=null
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,10);
+        trader.offerExport(RESOURCE_ENERGY,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_energy_1",roomName:"W1N1",resourceType:RESOURCE_ENERGY,amount:10,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+    it('tr.6.13 > 1 exporter /wo energy, 1 order satisfiable by exporter',()=>{
+        // EXPECT: exporter NOT to satisfy the order. order.fulfilledAt=null
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ZYNTHIUM]=100;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N2'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+    it('tr.6.14 > 1 exporter not enough energy, 1 order satisfiable by exporter',()=>{
+        // EXPECT: exporter NOT to satisfy the order. order.fulfilledAt=null
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=10;
+        resources[RESOURCE_ZYNTHIUM]=1000;
+        Game._addPlayerRoom('W1N200',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N200'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,1000);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N200");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:1000,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+    it('tr.6.15 > 2 exporters, 1st tired, 1 order satisfiable by exporter 2nd',()=>{
+        // EXPECT: exporterA NOT to satisfy the order, but exportB does
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=1000;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+
+        Game._addPlayerRoom('W1N3',6,"MadDokMike")._addTerminal(resources);
+
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N3");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:"W1N3",fulfilledAt:"pending"
+        });
+    })
+    it('tr.6.16 > 2 exporters, 1st not enough energy, 1 order satisfiable by exporter 2nd',()=>{
+        // EXPECT: exporterA NOT to satisfy the order, but exportB does
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=1;
+        resources[RESOURCE_ZYNTHIUM]=1000;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N2'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+
+        resources[RESOURCE_ENERGY]=100
+        Game._addPlayerRoom('W1N3',6,"MadDokMike")._addTerminal(resources);
+
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,100);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N3");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:100,
+            fulfilledBy:"W1N3",fulfilledAt:"pending"
+        });
+    })
+
+    it('tr.6.16 > 2 exporters, 1 order satisfiable by either exporter',()=>{
+        // EXPECT: exporterA|exportB NOT to satisfy the order
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=1;
+        resources[RESOURCE_ZYNTHIUM]=1000;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N2'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+
+        Game._addPlayerRoom('W1N3',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N3'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,1000);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N3");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:1000,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+    it('tr.6.17 > 2 exporters, 1 order satisfiable by 1st exporter',()=>{
+        // EXPECT: exporterA to satisfy the order
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=1000;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+
+        resources[RESOURCE_ZYNTHIUM]=9;
+        Game._addPlayerRoom('W1N3',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N3'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N3");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:"W1N2",fulfilledAt:"pending"
+        });
+    })
+    it('tr.6.18 > 2 exporters, 1 order satisfiable by 2nd exporter',()=>{
+        // EXPECT: exporterA to satisfy the order
+        Game._resetData();
+        Game.time=1;
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=9;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game.rooms['W1N2'].terminal.__send_response=ERR_NOT_ENOUGH_RESOURCES;
+
+        resources[RESOURCE_ZYNTHIUM]=11;
+        Game._addPlayerRoom('W1N3',6,"MadDokMike")._addTerminal(resources);
+
+        let id = trader.creatnpcrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N2");
+        trader.offerExport(RESOURCE_ZYNTHIUM,"W1N3");
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:"W1N3",fulfilledAt:"pending"
+        });
+    })
+    it.todo('tr.6.19 > 2 exporters, 2 orders, both satisfiable, different rooms, different resource.')
+    it.todo('tr.6.20 > 2 exporters, 2 orders, both satisfiable, same room, different resource.')
+    it.todo('tr.6.21 > 2 exporters, 2 orders, both satisfiable, different rooms, same resource.')
+    it.todo('tr.6.22 > 2 exporters, 2 orders, 0 satisfiable.')
+    it.todo('tr.6.23 > 2 exporters, 2 orders, 1 satisfiable.')
+    it.todo('tr.6.24 > 2 exporters, 1 order satisfiable, target room = 1st exporter.')
+
+    it.todo('tr.6.25 > 1 exporter, 1 order satisfiable, room.')
+    it.todo('tr.6.26 > 1 exporter, 1 order satisfiable, to non owned room.')
+
+    it.todo('tr.6.27 > exporter room visibility lost.')
 
     /////////// Confirm Pending ////////////////////////////////
-    it.todo('tr.6.26 > no pending order')
-    it.todo('tr.6.27 > pending order sent successfully')
-    it.todo('tr.6.28 > pending order sent unsuccessfully')
+    it.todo('tr.6.28 > no pending order')
+    it.todo('tr.6.29 > pending order sent successfully')
+    it.todo('tr.6.30 > pending order sent unsuccessfully')
 })
 
 

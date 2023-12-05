@@ -1166,7 +1166,7 @@ module.exports = {
                 if(controller.level<6){
                     
                     let sPutIn =controller.getContainer();
-                    if(strippedStorage && sPutIn.storingAtleast(1500)){
+                    if(strippedStorage && sPutIn.storingAtLeast(1500)){
                         sPutIn = strippedStorage
                     }
                     
@@ -1319,7 +1319,7 @@ module.exports = {
             return;
         }
         let goFullTilt=true;
-        if(!feederStorage.storingAtleast(feederStorageSafetyCap)){
+        if(!feederStorage.storingAtLeast(feederStorageSafetyCap)){
             goFullTilt=false;
             if(Game.time%10==0)clog('funneling slowing down. feederStorage < '+feederStorageSafetyCap,'funnelUpgradeRoom:'+targetRoom);
         }
@@ -1451,10 +1451,10 @@ module.exports = {
               if(config.importer=='xx' && config.resource_type==RESOURCE_ENERGY/* && exportTerminal.pos.roomName=='W13N15'*/){
                   clog(config,'exporter '+exportCluster);
                   clog(spaceToReceive,'spaceToReceive')
-                  clog(exportTerminal.storingAtleast( exportBatchSize, config.resource_type ),'exportTerminal.storingAtleast( exportBatchSize, config.resource_type )')
+                  clog(exportTerminal.storingAtLeast( exportBatchSize, config.resource_type ),'exportTerminal.storingAtLeast( exportBatchSize, config.resource_type )')
               }
               
-            if( spaceToReceive && exportTerminal.storingAtleast( exportBatchSize, config.resource_type ) ){
+            if( spaceToReceive && exportTerminal.storingAtLeast( exportBatchSize, config.resource_type ) ){
                     
                     let res = exportTerminal.send(config.resource_type,exportBatchSize,roomName)
                     if(res===OK){
@@ -1523,7 +1523,7 @@ module.exports = {
            // if(clusterName==='Beta')return
             if( haulJob ){
                 //clog('collected new job')
-                if(haulJob.action =='fill' && storage.storingAtleast(creepSpace,haulJob.resource_type)){
+                if(haulJob.action =='fill' && storage.storingAtLeast(creepSpace,haulJob.resource_type)){
                  creep.memory.job ={ target_id:haulJob.id, resource_type:haulJob.resource_type, action:haulJob.action };
                 }
                 if(haulJob.action =='empty' && storage.haveSpaceFor(creepSpace,haulJob.resource_type)){
@@ -1540,12 +1540,12 @@ module.exports = {
                 let obj = Game.getObjectById(config.id);
                 if(obj){
                     let pickupAmount = config.phaseOut?1:creepSpace;
-                    if(config.action=='empty' && storage.haveSpaceFor(creepSpace,config.resource_type) && obj.storingAtleast(pickupAmount,config.resource_type) ){
+                    if(config.action=='empty' && storage.haveSpaceFor(creepSpace,config.resource_type) && obj.storingAtLeast(pickupAmount,config.resource_type) ){
                         creep.memory.job = { target_id:config.id, resource_type:config.resource_type, action:'empty' };
                         break;
                     }
                      let dropAmount = config.fillup?1:creepSpace;
-                    if(config.action=='fill' && storage.storingAtleast(creepSpace,config.resource_type) && obj.haveSpaceFor(dropAmount,config.resource_type) ){
+                    if(config.action=='fill' && storage.storingAtLeast(creepSpace,config.resource_type) && obj.haveSpaceFor(dropAmount,config.resource_type) ){
                         creep.memory.job = { target_id:config.id, resource_type:config.resource_type, action:'fill' };
                         break;
                     }
@@ -1555,7 +1555,7 @@ module.exports = {
         // now lets look for any import jobs
         if(!creep.memory.job){
             for(let resource_type of imports){
-                if(terminal.storingAtleast(1,resource_type)){
+                if(terminal.storingAtLeast(1,resource_type)){
                     creep.memory.job = {target_id:terminal.id,resource_type:resource_type,action:'empty'};
                     break;
                 }
@@ -1566,7 +1566,7 @@ module.exports = {
             for(let exportConf of exports){
 
                 if( 
-                    storage.storingAtleast((exportConf.exportOver+creepSpace),exportConf.resource_type) 
+                    storage.storingAtLeast((exportConf.exportOver+creepSpace),exportConf.resource_type) 
                     && terminal.storingLessThan(exportConf.batchSize,exportConf.resource_type)
                     && terminal.haveSpaceFor(creepSpace,exportConf.resource_type)
                     ){
@@ -1671,7 +1671,7 @@ module.exports = {
             this.haulResources(srcClusterName, creepName, bodyPlan, storage, terminal, [resource_type] );
             
             // when we have enough to send, then pip over the batch
-            if(terminal.storingAtleast(batchSize,resource_type) && terminal.storingAtleast(sendEnergyCost,RESOURCE_ENERGY)){
+            if(terminal.storingAtLeast(batchSize,resource_type) && terminal.storingAtLeast(sendEnergyCost,RESOURCE_ENERGY)){
                 let res = terminal.send(resource_type, batchSize, targetRoomName);
                 if(res===OK)clog(res,srcClusterName+' Sending >>['+batchSize+' '+resource_type+']>> '+targetClusterName) ;
              }
@@ -1684,8 +1684,8 @@ module.exports = {
             storage.setMetaAttr('streaming',false);
             return;
         }
-        //clog(storage.storingAtleast(startAt,resource_type),'storage.storingAtleast('+startAt+','+resource_type+')')
-        if(!storage.getMeta().streaming && storage.storingAtleast(startAt,resource_type)){
+        //clog(storage.storingAtLeast(startAt,resource_type),'storage.storingAtLeast('+startAt+','+resource_type+')')
+        if(!storage.getMeta().streaming && storage.storingAtLeast(startAt,resource_type)){
             clog(storage.id+'='+storage.store.getUsedCapacity(resource_type),'over '+startAt+'. Streaming  ON : '+srcClusterName+' >>['+resource_type+']>> '+targetClusterName)
             storage.setMetaAttr('streaming',true);
             return;
@@ -1702,7 +1702,7 @@ module.exports = {
         let terminal = mb.getTerminalForRoom(roomName);
         let creep = Game.creeps[cname];
         // only transfer the specified amount, then stop
-        if(terminal.storingAmount(resource_type)<amount || (creep && creep.storingAtleast(1,resource_type)) || amount==undefined){
+        if(terminal.storingAmount(resource_type)<amount || (creep && creep.storingAtLeast(1,resource_type)) || amount==undefined){
             this.haulResources(spawnName,cname,'1m20c',storage,terminal,[resource_type]);
         }
     },
@@ -1956,7 +1956,7 @@ module.exports = {
                     roomNames:[roomName],
                     // doesn't play well once you start building own stuff. designed to steal other users stuff
                     types:[STRUCTURE_TOWER,STRUCTURE_EXTENSION,STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TERMINAL],
-                    filters:[{attribute:'storingAtleast',operator:'fn',value:[1]}]
+                    filters:[{attribute:'storingAtLeast',operator:'fn',value:[1]}]
                     
                 });
                 for(let obj of structures){
@@ -1978,7 +1978,7 @@ module.exports = {
                     roomNames:[roomName],
                     // doesn't play well once you start building own stuff. designed to steal other users stuff
                     types:[STRUCTURE_CONTAINER],
-                    filters:[{attribute:'isMineStore',operator:'fn',value:[]},{attribute:'storingAtleast',operator:'fn',value:[250]}]
+                    filters:[{attribute:'isMineStore',operator:'fn',value:[]},{attribute:'storingAtLeast',operator:'fn',value:[250]}]
                     
                 });
                // clog(containers.length,'containers')
@@ -2362,7 +2362,7 @@ module.exports = {
                             [STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_STORAGE,STRUCTURE_TERMINAL,STRUCTURE_LINK],
                             [roomName],
                             [
-                                {attribute:'storingAtleast',operator:'fn',value:[1]}]
+                                {attribute:'storingAtLeast',operator:'fn',value:[1]}]
                             );
                         
                         if(obj){

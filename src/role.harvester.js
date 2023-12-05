@@ -81,7 +81,7 @@ var roleHarvester = {
                 }
             }
         }
-        if(creep.memory.rampart_ids && creep.memory.rampart_ids.length>0 && creep.storingAtleast(50)){
+        if(creep.memory.rampart_ids && creep.memory.rampart_ids.length>0 && creep.storingAtLeast(50)){
             for(let id of creep.memory.rampart_ids){
                 let rampart = Game.getObjectById(id);
                 if(rampart && rampart.hits<config.wallHeight){
@@ -109,7 +109,7 @@ var roleHarvester = {
             creep.actOrMoveTo('dropHarvest',src);
        }
        
-        if(creep.storingAtleast(50)){
+        if(creep.storingAtLeast(50)){
             let target = this.getExtToCharge(creep);
             if(target){
                 return creep.transfer(target,RESOURCE_ENERGY);

@@ -64,7 +64,7 @@ Creep.prototype.isCivilian = function(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Store Helper Funcs
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-Creep.prototype.storingAtleast = function(amount,type=RESOURCE_ENERGY){
+Creep.prototype.storingAtLeast = function(amount,type=RESOURCE_ENERGY){
     return ( this.store.getUsedCapacity(type) >= amount);
 }
 Creep.prototype.storingLessThan = function(amount,type=RESOURCE_ENERGY){
@@ -80,7 +80,7 @@ Creep.prototype.isEmpty = function(type=RESOURCE_ENERGY){
     return ( this.store.getUsedCapacity(type) == 0);
 }
 Creep.prototype.carryingAtleast = function(amount,type=RESOURCE_ENERGY){
-    return this.storingAtleast(amount,type);
+    return this.storingAtLeast(amount,type);
 }
 Creep.prototype.storedAmount=function(type=RESOURCE_ENERGY){
     return this.store.getUsedCapacity(type);

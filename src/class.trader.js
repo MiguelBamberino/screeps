@@ -3,10 +3,13 @@ class Trader {
     constructor() {
         this.orders = {}; // Store orders in an object with IDs as keys
         this.orderLookup = {};
-        this.exports = [];
+        this.exports = {};
     }
-    setExporters(roomNames){
-        this.exporters = roomNames;
+    offerExport(resourceType,roomName){
+        if(!this.exports[resourceType]){
+            this.exports[resourceType] = [];
+        }
+        this.exports[resourceType].push(roomName);
     }
     
     createOrder(roomName, resourceType, amount) {
@@ -69,6 +72,33 @@ class Trader {
             return this.getOrderByID(this.orderLookup[roomName+resourceType])
         }
         return false;
+    }
+
+    processOrders(){
+        let unusableTerminals={};
+        for(let id in this.orders){
+            let order = this.orders[id];
+            if(this.exports[order.resourceType]){
+                for(let roomName of this.exports[order.resourceType]){
+
+                    if(unusableTerminals[roomName])continue;
+
+                    let terminal = Game.rooms[roomName].terminal;
+                    if(terminal && terminal.storingAtLeast(order.amount,order.resourceType) ){
+                        let res = terminal.send(order.resourceType,order.amount,order.roomName);
+                        if(res===OK){
+                            this.orders[id].fulfilledAt="pending";
+                            this.orders[id].fulfilledBy=roomName;
+                            unusableTerminals[roomName]=true;
+                        }
+                        if(res===ERR_TIRED){
+                            // save later loops
+                            unusableTerminals[roomName]=true;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     clearOldOrders(expiryTime){
