@@ -26,12 +26,12 @@ module.exports = {
     },
     _createStorage(roomName,resources={}){
         let s = this._create(STRUCTURE_STORAGE,roomName);
-        s._createStore(resources)._setTotalCapacity(10000);
+        s._createStore(resources)._setTotalCapacity(1000000);
         return s;
     },
     _createTerminal(roomName,resources={}){
         let t = this._create(STRUCTURE_TERMINAL,roomName);
-        t._createStore(resources)._setTotalCapacity(10000);
+        t._createStore(resources)._setTotalCapacity(300000);
         t.cooldown = 0;
         t.__send_response = OK;
         t.send= function(resourceType, amount, destination){

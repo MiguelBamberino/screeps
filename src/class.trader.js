@@ -1,3 +1,4 @@
+const {ERR_INVALID_TARGET} = require("@screeps/common/lib/constants");
 
 class Trader {
     constructor() {
@@ -16,6 +17,11 @@ class Trader {
 
         if( !roomName || roomName.length<4 || roomName.length>6 )return ERR_INVALID_ARGS;
         if( !['W','E'].includes(roomName.charAt(0)) )return ERR_INVALID_ARGS;
+        if(!Game.rooms[roomName])return ERR_INVALID_TARGET;
+        if(!Game.rooms[roomName].controller)return ERR_INVALID_TARGET;
+        if(!Game.rooms[roomName].controller.owner)return ERR_INVALID_TARGET;
+        if(Game.rooms[roomName].controller.owner.username!=="MadDokMike")return ERR_INVALID_TARGET;
+        if(!Game.rooms[roomName].terminal)return ERR_INVALID_TARGET;
         if(amount<1||amount>250000)return ERR_INVALID_ARGS;
         if(resourceType!==RESOURCE_ENERGY && !REACTIONS[resourceType])return ERR_INVALID_ARGS;
         if(this.orderLookup[roomName+resourceType])return ERR_NAME_EXISTS;
@@ -37,13 +43,21 @@ class Trader {
         return id;
     }
 
-    _fulfillOrder(orderId,roomName){
+    _fulfillOrder(orderId,fulfilledBy,time){
         if(!this.orders[orderId])return ERR_NOT_FOUND;
-        if(this.orders[orderId].fulfilledAt)return ERR_INVALID_TARGET;
-        if(this.orders[orderId].roomName===roomName)return ERR_INVALID_TARGET;
+        if(this.orders[orderId].fulfilledAt!=="pending" && this.orders[orderId].fulfilledAt!==null)return ERR_INVALID_TARGET;
+        if(this.orders[orderId].roomName===fulfilledBy)return ERR_INVALID_TARGET;
 
-        this.orders[orderId].fulfilledAt = Game.time;
-        this.orders[orderId].fulfilledBy = roomName;
+        this.orders[orderId].fulfilledAt = time?time:Game.time;
+        this.orders[orderId].fulfilledBy = fulfilledBy;
+        delete this.orderLookup[ this.orders[orderId].roomName+this.orders[orderId].resourceType ]
+        return OK;
+    }
+    _markOrderFailed(orderId,time){
+        if(!this.orders[orderId])return ERR_NOT_FOUND;
+        if(this.orders[orderId].fulfilledAt!=="pending")return ERR_INVALID_TARGET;
+        this.orders[orderId].fulfilledBy +="-attempted-at-"+time;
+        this.orders[orderId].fulfilledAt = "ERROR";
         delete this.orderLookup[ this.orders[orderId].roomName+this.orders[orderId].resourceType ]
         return OK;
     }
@@ -73,26 +87,60 @@ class Trader {
         }
         return false;
     }
-
     processOrders(){
         let unusableTerminals={};
+        let reserves={};
+        let outGoingOrdersLastTick={};
+        for(let order of Game.market.outgoingTransaction){
+            if(order.time===(Game.time-1))
+                outGoingOrdersLastTick[ order.from ] = order;
+        }
+        //console.log(Game.time);
+        //console.log(outGoingOrdersLastTick);
+        //console.log("this.orders",this.orders)
         for(let id in this.orders){
             let order = this.orders[id];
-            if(this.exports[order.resourceType]){
+            //  reconcile previous orders.
+            if(order.fulfilledAt==="pending"){
+                if(outGoingOrdersLastTick[ order.fulfilledBy ]  ){
+                    this._fulfillOrder(id,order.fulfilledBy,Game.time-1)
+                    //console.log("this.orders",this.orders)
+                   // console.log("this.orderLookup",this.orderLookup)
+                }else{
+                    this._markOrderFailed(id,Game.time-1)
+                }
+            }
+            // skip any orders that have been placed.
+            if(order.fulfilledAt!==null){
+                continue
+            }
+
+            if(!reserves[order.roomName])reserves[order.roomName]=0;
+            if(this.exports[order.resourceType] && Game.rooms[order.roomName]){
+
+                let importTerminal = Game.rooms[order.roomName].terminal;
+                if(!importTerminal)continue;
+
                 for(let exporterRoom of this.exports[order.resourceType]){
                     //console.log("order-id",id,"exporterRoom",exporterRoom,"unusableTerminals",unusableTerminals)
                     if(unusableTerminals[exporterRoom])continue;
                     if(this.orders[id].fulfilledBy)continue;
                     if(this.orders[id].roomName === exporterRoom)continue;
+                    let exporterTerminal = Game.rooms[exporterRoom]?Game.rooms[exporterRoom].terminal:null;
+                    if(!exporterTerminal)continue;
+                    //console.log("id=",order.id," exporter=",exporterRoom)
+                    //console.log(reserves);
+                    //console.log("order.amount+reserves[order.roomName]",order.amount+reserves[order.roomName])
+                    //console.log("importTerminal.haveSpaceFor(order.amount+reserves[order.roomName],order.resourceType)",importTerminal.haveSpaceFor(order.amount+reserves[order.roomName],order.resourceType))
+                    if( importTerminal.haveSpaceFor(order.amount+reserves[order.roomName],order.resourceType) &&
+                        exporterTerminal.storingAtLeast(order.amount,order.resourceType) ){
 
-                    let terminal = Game.rooms[exporterRoom]?Game.rooms[exporterRoom].terminal:null;
-                    
-                    if(terminal && terminal.storingAtLeast(order.amount,order.resourceType) ){
-                        let res = terminal.send(order.resourceType,order.amount,order.roomName);
+                        let res = exporterTerminal.send(order.resourceType,order.amount,order.roomName);
                         if(res===OK){
                             //console.log("satisfied:",id,"with:",exporterRoom);
                             this.orders[id].fulfilledAt="pending";
                             this.orders[id].fulfilledBy=exporterRoom;
+                            reserves[order.roomName]+=order.amount;
                             unusableTerminals[exporterRoom]=true;
                         }
                         if(res===ERR_TIRED){
@@ -101,7 +149,9 @@ class Trader {
                             //connsole.log("tired:",exporterRoom)
                         }
                     }
+
                 }
+
             }
         }
     }
