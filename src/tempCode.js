@@ -48,7 +48,7 @@ module.exports = {
         if(Game.creeps['Mx1']|| (Game.cpu.bucket>5000 && gob('5bbcaac09099fc012e63221b').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer1','Mx1','1w1c','64d4a6df69e9867caf3a3604','5bbcaac09099fc012e63221b')
         if(Game.creeps['Mx2']|| (Game.cpu.bucket>5000 && gob('5bbcaab49099fc012e63208a').ticksToDowngrade<10000) )this.withdrawThenUpgrade('Maintainer2','Mx2','1w1c','64eb56bf2bd85d7bf7b94148','5bbcaab49099fc012e63208a')
         
-        //this.haulResources('Kappa','Ktx1','25*1c1m',gob('6504346920565f7971fca016'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
+        this.haulResources('Alpha','Atx1','20c1m',gob('62dcd8f53b550551e96c02fe'),gob('6411a983df83b07a4d870320'),[RESOURCE_OXYGEN,RESOURCE_GHODIUM_OXIDE],[],1000,200)
         
         if(Game.creeps['Ztx1'])
         this.haulResources('Zeta-2','Ztx1','25*1c1m',gob('64de8f2c3c187d2cb5df12b0'),gob('6523463c3085921d30ef1ffc'),[RESOURCE_ENERGY],[],5000,200)
@@ -59,34 +59,16 @@ module.exports = {
         
        // this.streamResource('Iota','Theta',RESOURCE_ENERGY,400000,300000);
         
-        gob('63fd1ff656dfcecb6ce9893a').observeRoom('W39N49');
+        /*gob('63fd1ff656dfcecb6ce9893a').observeRoom('W39N49');
         this.rotateCreep('Guard1-', function(activeCreepName){
           //  Game.creeps[activeCreepName].moveTo(gob('5bbcaad79099fc012e63242d'))
               //  Game.creeps[activeCreepName].signController(gob('5bbcaad79099fc012e63242d'),"room defeated")
-            if(gob('5bbcaad79099fc012e63242d').safeMode===undefined)
+            if(gob('5bbcaad79099fc012e63242d') && gob('5bbcaad79099fc012e63242d').safeMode===undefined)
                 thing.killCreepsBreakTarget('Beta-3',activeCreepName,'24*1a1m+1h1m','W39N49',['655c156455d0c39b456ba99a'],[], 4,{x:37,y:21})
             
                // thing.constantGuardRoom('Beta-2',activeCreepName,'W39N49','24*1a1m+1h1m',{x:42,y:22},false,true,4)
-        },350)
-        /*
-         this.rotateCreep('Breaker1-', function(activeCreepName){
-            if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>3000) )
-                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655abaf2782384d602dacb1b']);
-        },350)
-         this.rotateCreep('Breaker2-', function(activeCreepName){
-           if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>4000) )
-                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655abaf2782384d602dacb1b']);
-        },350)
-        this.rotateCreep('Breaker3-', function(activeCreepName){
-           if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>5000) )
-                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655abaf2782384d602dacb1b']);
-        },350)
-        
-        this.rotateCreep('Breaker4-', function(activeCreepName){
-           if( gob('5bbcaad79099fc012e63242d').safeMode===undefined &&  (Game.creeps[activeCreepName] || Game.cpu.bucket>6000) )
-                thing.breakStructures('Beta-3',activeCreepName,'25*1w1m','W39N49',['655c156455d0c39b456ba99a']);
-        },350)
-        */
+        },350)*/
+       
         //constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:25,y:25},allyName=false,killCivilians=false, maxDistance=75 , roomTraversal=[])
  
     /**
@@ -162,6 +144,7 @@ module.exports = {
         
         this.runFactory('Zeta',RESOURCE_BATTERY)
         this.runFactory('Kappa',RESOURCE_BATTERY) 
+        this.runFactory('Lambda',RESOURCE_BATTERY) 
         
         
        },

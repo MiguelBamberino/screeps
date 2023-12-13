@@ -31,6 +31,8 @@ var roleTanker = {
         //clog(creep.name)
         
         let storage = mb.getStorageForRoom(config.coreRoomName)
+        // keep some space in the storage, so it doesn't fill up.
+        let storageBufferSpace = 10000;
         let terminal = mb.getTerminalForRoom(config.coreRoomName)
         let factory = mb.getFactoryForRoom(creep.pos.roomName);
         let creepSpace =  creep.store.getCapacity();
@@ -146,7 +148,7 @@ var roleTanker = {
             for(let importConf of config.imports){
                 // 
                 if(importConf.resource_type===RESOURCE_ENERGY)continue;
-                if(terminal.storingAtleast(1,importConf.resource_type)){
+                if( terminal.storingAtleast(1,importConf.resource_type) && storage.haveSpaceFor(creepSpace,importConf.resource_type) ){
                     creep.memory.job = {target_id:terminal.id,resource_type:importConf.resource_type,action:'empty'};
                     break;
                 }
@@ -178,7 +180,7 @@ var roleTanker = {
                 
         if(factory && !creep.memory.job){
             
-            if(factory.storingAtleast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace,RESOURCE_BATTERY)){
+            if(factory.storingAtleast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)){
                 creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_BATTERY,action:'empty'}
             }
         }

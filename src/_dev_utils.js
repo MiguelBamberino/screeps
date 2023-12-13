@@ -21,7 +21,74 @@ global.rp = function(x,y,r){
 }
 global.gob = function(id){
     return Game.getObjectById(id)
-} 
+}
+global.findGoodOrder=function(nodeName,type,resourceType,minPrice,maxDistance=30){
+    
+    logs.startCPUTracker('findGoodOrder');
+    if(!Game.spawns[nodeName]){clog("no Spawn",nodeName); return;}
+    let srcRoomName = Game.spawns[nodeName].pos.roomName;
+    let terminal = Game.rooms[srcRoomName].terminal;
+    if(!terminal){clog("no Terminal",nodeName); return;}
+    
+    if(terminal.cooldown>0){clog("Terminal Cooling down",nodeName); return;}
+    
+    let energyBasePrice = 11;
+    let orders = Game.market.getAllOrders({type:type,resourceType:resourceType});
+    let filtered = [];
+    let closesttDistance=maxDistance+1;
+    let closestOrder=false;
+    //let orders = Game.market.getAllOrders(order =>order.type===ORDER_BUY && order.resourceType==RESOURCE_HYDROGEN && order.price>75);
+    
+    for(let i in orders){
+        let dist = Game.map.getRoomLinearDistance(srcRoomName, orders[i].roomName, true)
+        if(orders[i].price >= minPrice && dist<=maxDistance && orders[i].amount>500){
+            if(dist < closesttDistance){
+                closesttDistance=dist
+                closestOrder = orders[i];
+            }
+            filtered.push(orders[i])
+        }
+    }
+    console.log("---------------",nodeName," : ", resourceType,"---------")
+    console.log(" min price:",minPrice," max Dist:",maxDistance," Order(s) Matches: ",filtered.length)
+    let res = ERR_NOT_FOUND;
+    if(closestOrder){
+        let eCost = Game.market.calcTransactionCost(closestOrder.amount,srcRoomName,closestOrder.roomName);
+        console.log("Best: price=",closestOrder.price," amount=",closestOrder.amount," dist=",closesttDistance," to=",closestOrder.roomName)
+        let saleGross = closestOrder.amount*closestOrder.price;
+        let baseLineGross = closestOrder.amount*energyBasePrice;
+        let diffFromBaseline = saleGross - baseLineGross;
+        let profit = diffFromBaseline - (eCost*energyBasePrice)
+         
+         console.log("Gross=",saleGross,"cr transfer E=",eCost,"e baseline=",baseLineGross,"cr profit=",profit,"cr")
+        res = Game.market.deal(closestOrder.id,terminal.store[resourceType] ,srcRoomName)
+        clog(res,"terminal Response:")
+    }
+    logs.stopCPUTracker('findGoodOrder',true);
+    return res;
+    
+}
+global.createOrder=function(resourceType,roomName,price,totalAmount){
+    return Game.market.createOrder({
+        type: ORDER_SELL,
+        resourceType: resourceType,
+        price: price,
+        totalAmount: totalAmount,
+        roomName: roomName   
+    });
+}
+global.runMarket=function(){
+    console.log("========= Market Code Run ==================")
+    console.log("Tick:",Game.time);
+    let res = findGoodOrder("Epsilon","buy",RESOURCE_HYDROGEN,75,40)
+    if(res!==OK)findGoodOrder("Epsilon","buy",RESOURCE_GHODIUM,200,50)
+    findGoodOrder("Alpha","buy",RESOURCE_OXYGEN,35,25)
+    findGoodOrder("Lambda","buy",RESOURCE_LEMERGIUM,48,25)
+    findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
+    //findGoodOrder("Epsilon","buy",RESOURCE_ENERGY,11,25)
+    
+    console.log("===========================================")
+}
 global.sendX=function(fromClusterName,resource,amount,toClusterName){
     let term = mb.getTerminalForRoom(Game.spawns[fromClusterName].pos.roomName)
     return term.send(resource,amount,Game.spawns[toClusterName].pos.roomName)

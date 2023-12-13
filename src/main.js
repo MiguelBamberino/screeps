@@ -84,7 +84,7 @@ module.exports.loop = function () {
         mb.runTick();
         logs.stopCPUTracker('map.runTick');
         
-        if(Game.cpu.bucket>2000){
+        if(Game.cpu.bucket>1000){
             logs.startCPUTracker('tempCode');
             tempCode.run();
             logs.stopCPUTracker('tempCode',false);

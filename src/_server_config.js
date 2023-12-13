@@ -93,7 +93,7 @@ module.exports = {
                                         spawnFacing:TOP,
                                         retreatSpot:rp(17,25,'W42N53'),
                                         extraFastFillSpots:[],
-                                        upgradeRate:RATE_VERY_SLOW,
+                                        upgradeRate:RATE_SLOW,
                                         buildFast:false,
                                         armNuke:true,
                                         wallHeight:10010001,
@@ -122,17 +122,15 @@ module.exports = {
                                         makeResource:RESOURCE_ZYNTHIUM_KEANITE,
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
-											{resource_type:RESOURCE_KEANIUM,storageCap:6000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
                                             {resource_type:RESOURCE_HYDROXIDE,storageCap:24000}, 
-                                            {resource_type:RESOURCE_ZYNTHIUM,storageCap:24000},  
-                                            {resource_type:RESOURCE_LEMERGIUM,storageCap:24000}, 
+                                            {resource_type:RESOURCE_KEANIUM,storageCap:6000},  
                                             // military
                                             
                                         ],
                                         exports:[
-                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:0,batchSize:50000},
-                                            {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:50000},
+                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:1,batchSize:50000},
+                                            {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:1,batchSize:50000},
 											{resource_type:RESOURCE_OXYGEN,exportOver:24000,batchSize:50000},
                                             {resource_type:RESOURCE_ZYNTHIUM_OXIDE,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_ZYNTHIUM_ACID,exportOver:6000,batchSize:12000},
@@ -170,10 +168,12 @@ module.exports = {
                                         remoteRoomNames:[],
                                         funnelRoomName:'',
                                         labComplex:new LabComplex(rp(18,18,'W41N55'),TOP_RIGHT),
+                                        makeResource:RESOURCE_ZYNTHIUM_KEANITE,
                                         exports:[
 											{resource_type:RESOURCE_ZYNTHIUM,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_HYDROGEN,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_KEANIUM,exportOver:6000,batchSize:12000},
+                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:6000,batchSize:12000},
                                         ]
                                     }
         );
@@ -187,14 +187,15 @@ module.exports = {
                                         upgradeRate:RATE_VERY_SLOW,
                                         armNuke:true,
                                         extraFastFillSpots:[],
+                                        terminalEnergyCap:120000,
                                         labComplex:new LabComplex(rp(37,26,'W41N54'),TOP_LEFT),
                                         makeResource:RESOURCE_GHODIUM,
                                         imports:[
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000},
                                             {resource_type:RESOURCE_GHODIUM_OXIDE,storageCap:12000},
                                             
-                                            {resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:24000},
-                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:24000},
+                                            {resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:12000},
+                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:12000},
                                             // military
                                             {resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                                             {resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
@@ -204,7 +205,7 @@ module.exports = {
                                         ],
                                         exports:[
                                             {resource_type:RESOURCE_GHODIUM,exportOver:12000,batchSize:50000},
-                                            {resource_type:RESOURCE_HYDROGEN,exportOver:24000,batchSize:24000},
+                                            {resource_type:RESOURCE_HYDROGEN,exportOver:24000,batchSize:48000},
                                             {resource_type:RESOURCE_HYDROXIDE,exportOver:24000,batchSize:24000}
                                             ]
                                     }
@@ -257,7 +258,6 @@ module.exports = {
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:12000},
                                             {resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
-                                            {resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
                                             // military
                                             {resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                                             {resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
@@ -329,7 +329,8 @@ module.exports = {
                                         spawnFacing:LEFT,
                                         retreatSpot:rp(32,13,'W48N52'),
                                         extraFastFillSpots:[],
-                                        buildFast:true,
+                                        buildFast:false,
+                                        armNuke:true,
                                         upgradeRate:RATE_VERY_SLOW,
                                         terminalEnergyCap:20000,
 										imports:[
@@ -339,6 +340,7 @@ module.exports = {
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000}
                                         ],
                                         exports:[
+                                            {resource_type:RESOURCE_LEMERGIUM,exportOver:50000,batchSize:24000},
                                         ]
 
                                     }
@@ -356,6 +358,7 @@ module.exports = {
                                             {resource_type:RESOURCE_ENERGY,storageCap:100000}
                                         ],
                                         exports:[
+                                            {resource_type:RESOURCE_CATALYST,exportOver:24000,batchSize:50000},
                                         ]
                                     }
         );
