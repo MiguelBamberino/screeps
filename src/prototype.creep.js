@@ -402,7 +402,7 @@
             let withdrawLimit = storage?15000:1000;
             if(!storage || (storage && !storage.getMeta().streaming) ){
     	        let terminal = mb.getTerminalForRoom(this.pos.roomName);
-                if(terminal && terminal.storingAtleast(withdrawLimit)){
+                if(terminal && terminal.storingAtLeast(withdrawLimit)){
                     target = this.reserveWithdrawalFromTerminal(this.pos.roomName);
                 }
 	        }

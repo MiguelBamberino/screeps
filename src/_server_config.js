@@ -223,6 +223,7 @@ module.exports = {
                                         funnelRoomName:'',
                                         terminalEnergyCap:15000,
                                         wallHeight:3000000,
+                                        armNuke:true,
                                         labComplex:new LabComplex(rp(20,36,'W42N52'),BOTTOM_RIGHT),
                                         //makeResource:RESOURCE_,
                                         imports:[

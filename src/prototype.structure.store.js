@@ -3,7 +3,7 @@ Structure.prototype.storedAmount=function(type=RESOURCE_ENERGY){
     return !a?0:a;
 }
 
-Structure.prototype.storingAtleast = function(amount,type=RESOURCE_ENERGY){
+Structure.prototype.storingAtLeast = function(amount,type=RESOURCE_ENERGY){
     return ( this.store.getUsedCapacity(type) >= amount);
 }
 Structure.prototype.storingLessThan = function(amount,type=RESOURCE_ENERGY){

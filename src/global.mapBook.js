@@ -1,8 +1,5 @@
 global.ERR_ROOM_NOT_SCANNED=-16;
 global.STRUCTURE_DEPOT="depot";
-//global.STRUCTURE_MINE_STORE="mine_store";
-//global.STRUCTURE_FILLER_STORE="filler_store";
-//global.STRUCTURE_UPGRADER_STORE="upgrader_store";
 global.DESC='desc';
 global.ASC='asc';
 
@@ -61,6 +58,8 @@ global.mb = {
         }
     },
     initiate: function(){
+
+        this.heap_rooms={};
 
         if(!Memory.mapBook){
             Memory.mapBook = {
@@ -207,7 +206,6 @@ global.mb = {
         }
         return false;
     },
-    
     getFactoryForRoom: function(roomName){
         let room = this.getRoom(roomName);
         if(room){
@@ -923,9 +921,4 @@ mb.initiate();
 
 
 
-Structure.prototype.shortName=function(){
-    return mb.getShortNameForStructure(this);
-}
-Structure.prototype.ref=function(){
-    return mb.getRefForStructure(this);
-}
+

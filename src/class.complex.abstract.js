@@ -58,9 +58,9 @@ class AbstractComplex{
         }
         
         this.lastResult = this.runComplex();
-		
+
 		if(this.windDownTimer!=RUN_FOREVER && this.windDownTimer>0)this.windDownTimer--;
-		
+
         return this.lastResult;
     }
     isOn(){

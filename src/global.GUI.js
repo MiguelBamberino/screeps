@@ -569,3 +569,10 @@ Room.prototype.renderGUITable =function(anchor,data,title=undefined,includeHeadi
 }
 
 module.exports = gui;
+
+Structure.prototype.shortName=function(){
+    return mb.getShortNameForStructure(this);
+}
+Structure.prototype.ref=function(){
+    return mb.getRefForStructure(this);
+}

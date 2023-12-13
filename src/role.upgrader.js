@@ -51,6 +51,7 @@ var role = {
          
         
         let controller = config.controller;
+
         let container = controller.getContainer();
         
         
@@ -101,7 +102,7 @@ var role = {
                 }else{
                     creep.say("!spot")
                 }
-                
+
             }
             return;
             
@@ -109,7 +110,7 @@ var role = {
           
         if(creep.isWorking()){
            
-            if(creep.storingAtleast(50)){
+            if(creep.storingAtLeast(50)){
                 let ext = this.getExtToCharge(creep);
                 if(ext){
                     creep.transfer(ext,RESOURCE_ENERGY);

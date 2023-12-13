@@ -138,7 +138,7 @@ var role = {
             if(creep.memory.fillingInProgress){
                 for(let id of creep.memory.extension_ids){
                     let extension = Game.getObjectById(id);
-                    if(extension && creep.storingAtleast(1,RESOURCE_ENERGY) && extension.haveSpaceFor(1,RESOURCE_ENERGY)){
+                    if(extension && creep.storingAtLeast(1,RESOURCE_ENERGY) && extension.haveSpaceFor(1,RESOURCE_ENERGY)){
                         if(creep.act("transfer",extension,RESOURCE_ENERGY)===OK){
                            return ;
                         }
@@ -173,7 +173,7 @@ var role = {
             let terminal = Game.getObjectById(creep.memory.terminal_id);
             
             // if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':terminal1');
-            if(terminal && container.storingAtleast(2000) && terminal.storingLessThan(config.terminalEnergyCap,RESOURCE_ENERGY)){
+            if(terminal && container.storingAtLeast(2000) && terminal.storingLessThan(config.terminalEnergyCap,RESOURCE_ENERGY)){
                 let resStatus = creep.reserveTransfer(terminal);
                 if( resStatus===OK){
                     let r = creep.act("transferX",terminal,RESOURCE_ENERGY);
@@ -199,7 +199,7 @@ var role = {
             
             //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':terminal2');
             let withdrawLimit = config.terminalEnergyCap+1+creep.store.getCapacity()
-            if(terminal && terminal.storingAtleast(withdrawLimit,RESOURCE_ENERGY)){
+            if(terminal && terminal.storingAtLeast(withdrawLimit,RESOURCE_ENERGY)){
                 let resStatus = creep.reserveTransfer(container);
                 if( resStatus===OK){
                     let r = creep.act("transferX",container,RESOURCE_ENERGY);
@@ -226,7 +226,7 @@ var role = {
                 let terminal = Game.getObjectById(creep.memory.terminal_id);
                 let withdrawLimit = config.terminalEnergyCap+1+creep.store.getCapacity()
                
-                if(terminal && terminal.storingAtleast(withdrawLimit,RESOURCE_ENERGY)){
+                if(terminal && terminal.storingAtLeast(withdrawLimit,RESOURCE_ENERGY)){
                     return creep.act("withdraw",terminal,RESOURCE_ENERGY);
                 }
 	            

@@ -161,7 +161,7 @@ var roleTanker = {
             let storage = mb.getStorageForRoom(config.coreRoomName)
             if(!target && storage && !storage.getMeta().streaming){
     	        let terminal = mb.getTerminalForRoom(config.coreRoomName);
-                if(terminal && terminal.storingAtleast(15000)){
+                if(terminal && terminal.storingAtLeast(15000)){
                     target = creep.reserveWithdrawalFromTerminal(config.coreRoomName);
                 }
 	        }*/

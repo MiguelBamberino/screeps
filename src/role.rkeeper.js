@@ -133,7 +133,7 @@ var roleTanker = {
             let haulJob = config.labComplex.takeJob()
             if( haulJob ){
                 // we check for atleast 5, to make sure we don't leave small crappy bits in the storage
-                if(haulJob.action =='fill' && storage.storingAtleast(5,haulJob.resource_type)){
+                if(haulJob.action =='fill' && storage.storingAtLeast(5,haulJob.resource_type)){
                  creep.memory.job ={ target_id:haulJob.id, resource_type:haulJob.resource_type, action:haulJob.action };
                 }
                 if(haulJob.action =='empty' && storage.haveSpaceFor(creepSpace,haulJob.resource_type)){
@@ -141,14 +141,15 @@ var roleTanker = {
                 }
             }
         }
-        
 
         /////// Import Jobs //////////////////////////////////
         if(!creep.memory.job){
             for(let importConf of config.imports){
                 // 
                 if(importConf.resource_type===RESOURCE_ENERGY)continue;
+
                 if( terminal.storingAtleast(1,importConf.resource_type) && storage.haveSpaceFor(creepSpace,importConf.resource_type) ){
+
                     creep.memory.job = {target_id:terminal.id,resource_type:importConf.resource_type,action:'empty'};
                     break;
                 }
@@ -161,7 +162,7 @@ var roleTanker = {
             for(let exportConf of config.exports){
 
                 if( 
-                    storage.storingAtleast( (exportConf.exportOver+creepSpace), exportConf.resource_type ) 
+                    storage.storingAtLeast( (exportConf.exportOver+creepSpace), exportConf.resource_type ) 
                     && terminal.storingLessThan( exportConf.batchSize, exportConf.resource_type )
                     && terminal.haveSpaceFor( creepSpace, exportConf.resource_type )
                     ){
