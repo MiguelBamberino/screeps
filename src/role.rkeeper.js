@@ -34,6 +34,7 @@ var roleTanker = {
         // keep some space in the storage, so it doesn't fill up.
         let storageBufferSpace = 10000;
         let terminal = mb.getTerminalForRoom(config.coreRoomName)
+       
         let factory = mb.getFactoryForRoom(creep.pos.roomName);
         let creepSpace =  creep.store.getCapacity();
         let energyInStorage = storage.storedAmount(RESOURCE_ENERGY)
@@ -121,9 +122,9 @@ var roleTanker = {
         if(config.armNuke && !creep.memory.job){
             let nuker = mb.getNukerForRoom(config.coreRoomName);
             if(nuker){
-                if(!nuker.isFull(RESOURCE_ENERGY) && storage.storingAtleast(creepSpace,RESOURCE_ENERGY)){
+                if(!nuker.isFull(RESOURCE_ENERGY) && storage.storingAtLeast(creepSpace,RESOURCE_ENERGY)){
                     creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_ENERGY, action:'fill' };
-                }else if(!nuker.isFull(RESOURCE_GHODIUM) && storage.storingAtleast(creepSpace,RESOURCE_GHODIUM)){
+                }else if(!nuker.isFull(RESOURCE_GHODIUM) && storage.storingAtLeast(creepSpace,RESOURCE_GHODIUM)){
                     creep.memory.job ={ target_id:nuker.id, resource_type:RESOURCE_GHODIUM, action:'fill' };
                 }
             }
@@ -147,8 +148,8 @@ var roleTanker = {
             for(let importConf of config.imports){
                 // 
                 if(importConf.resource_type===RESOURCE_ENERGY)continue;
-
-                if( terminal.storingAtleast(1,importConf.resource_type) && storage.haveSpaceFor(creepSpace,importConf.resource_type) ){
+                
+                if( terminal.storingAtLeast(1,importConf.resource_type) && storage.haveSpaceFor(creepSpace,importConf.resource_type) ){
 
                     creep.memory.job = {target_id:terminal.id,resource_type:importConf.resource_type,action:'empty'};
                     break;
@@ -181,7 +182,7 @@ var roleTanker = {
                 
         if(factory && !creep.memory.job){
             
-            if(factory.storingAtleast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)){
+            if(factory.storingAtLeast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)){
                 creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_BATTERY,action:'empty'}
             }
         }

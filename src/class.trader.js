@@ -1,4 +1,3 @@
-const {ERR_INVALID_TARGET} = require("@screeps/common/lib/constants");
 
 class Trader {
     constructor() {
