@@ -15,8 +15,12 @@ RoomPosition.prototype.getPosAtDistanceAndAngle = function(distance, angle) {
     const rad = (adjustedAngle * Math.PI) / 180;
 
     // Calculate the new x and y coordinates
-    const newX = Math.round(this.x + distance * Math.cos(rad));
-    const newY = Math.round(this.y + distance * Math.sin(rad));
+    let newX = Math.round(this.x + distance * Math.cos(rad));
+    if(newX>49)newX=49;
+    let newY = Math.round(this.y + distance * Math.sin(rad));
+    if(newY>49)newY=49;
+    //console.log("newX",newX);
+    //console.log("newY",newY);
 
     return new RoomPosition(newX, newY, this.roomName);
 }

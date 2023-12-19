@@ -22,13 +22,19 @@ global.rp = function(x,y,r){
 global.gob = function(id){
     return Game.getObjectById(id)
 }
-global.findGoodOrder=function(nodeName,type,resourceType,minPrice,maxDistance=30){
+global.findGoodOrder=function(nodeName,type,resourceType,minPrice,maxDistance=30,roomReserve=24000){
     
     logs.startCPUTracker('findGoodOrder');
+    console.log("---------------",nodeName," : ", resourceType,"---------")
     if(!Game.spawns[nodeName]){clog("no Spawn",nodeName); return;}
     let srcRoomName = Game.spawns[nodeName].pos.roomName;
     let terminal = Game.rooms[srcRoomName].terminal;
-    if(!terminal){clog("no Terminal",nodeName); return;}
+    let storage = Game.rooms[srcRoomName].storage;
+    if(!terminal){clog("no Terminal for Markets",nodeName); return;}
+    if(!storage){clog("no Storage for Markets",nodeName); return;}
+    if(!storage.storingAtLeast(roomReserve,resourceType)){clog("Storage doesn't have enough",nodeName); return;}
+    if(!terminal.storingAtLeast(roomReserve,resourceType)){clog("Terminal doesn't have enough",nodeName); return;}
+    
     
     if(terminal.cooldown>0){clog("Terminal Cooling down",nodeName); return;}
     
@@ -49,7 +55,7 @@ global.findGoodOrder=function(nodeName,type,resourceType,minPrice,maxDistance=30
             filtered.push(orders[i])
         }
     }
-    console.log("---------------",nodeName," : ", resourceType,"---------")
+    
     console.log(" min price:",minPrice," max Dist:",maxDistance," Order(s) Matches: ",filtered.length)
     let res = ERR_NOT_FOUND;
     if(closestOrder){
@@ -80,8 +86,9 @@ global.createOrder=function(resourceType,roomName,price,totalAmount){
 global.runMarket=function(){
     console.log("========= Market Code Run ==================")
     console.log("Tick:",Game.time);
-    let res = findGoodOrder("Epsilon","buy",RESOURCE_HYDROGEN,75,40)
-    if(res!==OK)findGoodOrder("Epsilon","buy",RESOURCE_GHODIUM,200,50)
+    let res = findGoodOrder("Epsilon","buy",RESOURCE_HYDROGEN,75,40,50000)
+    if(res!==OK)res = findGoodOrder("Epsilon","buy",RESOURCE_GHODIUM,200,50)
+    if(res!==OK)res = findGoodOrder("Epsilon","buy",RESOURCE_BATTERY,145,30)
     findGoodOrder("Alpha","buy",RESOURCE_OXYGEN,35,25)
     findGoodOrder("Lambda","buy",RESOURCE_LEMERGIUM,48,25)
     findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)

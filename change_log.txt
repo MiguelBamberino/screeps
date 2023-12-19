@@ -1,5 +1,14 @@
 ===================================
-= Version 19.4.alpha
+= Version 19.4.1
+===================================
+- Tweak - runMarket code to take stored volumes
+- Tweak - creeps now ignoreRoads if they have  the legs for it
+- Feature - added remoteHarrass()
+- Feature - made world map trade GUI live
+- Fix - typo in trader.processOrders
+
+===================================
+= Version 19.4.0
 ===================================
 - added unit tests to code base
 - added trader class

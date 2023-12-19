@@ -274,6 +274,11 @@ module.exports = function(){
                  
             }
             
+            if(creep.partCount(MOVE) >= (creep.body.length/2) ){
+          
+                opts.ignoreRoads = true;
+            }
+            
             let rn = target.roomName ?target.roomName :target.pos.roomName; 
             if(rn ==this.pos.roomName){
                 // this shrinks pathfinding and forces creep to stay in this room. It also avoid ERR_NO_PATH from weird terrain that

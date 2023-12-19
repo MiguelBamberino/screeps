@@ -28,7 +28,7 @@ module.exports = {
                                             spawnFacing:TOP,
                                             retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
                                             extraFastFillSpots:[],
-                                            upgradeRate:RATE_SLOW,
+                                            upgradeRate:RATE_VERY_SLOW,
                                             buildFast:false,/*
                                             labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
                                             makeResource: RESOURCE_HYDROXIDE*/
@@ -77,7 +77,7 @@ module.exports = {
                                         spawnFacing:TOP,
                                         retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
                                         extraFastFillSpots:[],
-                                        upgradeRate:RATE_SLOW,
+                                        upgradeRate:RATE_VERY_SLOW,
                                         buildFast:false,
                                         labComplex:new LabComplex(rp(spwn.pos.x+4,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
                                         makeResource: RESOURCE_HYDROXIDE
@@ -93,7 +93,7 @@ module.exports = {
                                         spawnFacing:TOP,
                                         retreatSpot:rp(17,25,'W42N53'),
                                         extraFastFillSpots:[],
-                                        upgradeRate:RATE_SLOW,
+                                        upgradeRate:RATE_VERY_SLOW,
                                         buildFast:false,
                                         armNuke:true,
                                         wallHeight:10010001,
@@ -124,7 +124,7 @@ module.exports = {
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
                                             {resource_type:RESOURCE_HYDROXIDE,storageCap:24000}, 
-                                            {resource_type:RESOURCE_KEANIUM,storageCap:6000},  
+                                            {resource_type:RESOURCE_ZYNTHIUM,storageCap:6000},  
                                             // military
                                             
                                         ],
@@ -162,18 +162,22 @@ module.exports = {
                                         spawnFacing:TOP,
                                         retreatSpot:rp(17,16,'W41N55'),
                                         buildFast:false,
-                                        upgradeRate:RATE_SLOW,
+                                        upgradeRate:RATE_VERY_SLOW,
                                         wallHeight:10000001,
                                         extraFastFillSpots:[],
                                         remoteRoomNames:[],
                                         funnelRoomName:'',
+                                        armNuke:true,
                                         labComplex:new LabComplex(rp(18,18,'W41N55'),TOP_RIGHT),
                                         makeResource:RESOURCE_ZYNTHIUM_KEANITE,
+                                        imports:[
+                                            {resource_type:RESOURCE_ZYNTHIUM,storageCap:12000},
+                                            {resource_type:RESOURCE_GHODIUM,storageCap:6000}
+                                        ],
                                         exports:[
-											{resource_type:RESOURCE_ZYNTHIUM,exportOver:6000,batchSize:12000},
+										    {resource_type:RESOURCE_KEANIUM,exportOver:24000,batchSize:12000},
                                             {resource_type:RESOURCE_HYDROGEN,exportOver:6000,batchSize:12000},
-                                            {resource_type:RESOURCE_KEANIUM,exportOver:6000,batchSize:12000},
-                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:6000,batchSize:12000},
+                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:1,batchSize:12000},
                                         ]
                                     }
         );
@@ -206,7 +210,8 @@ module.exports = {
                                         exports:[
                                             {resource_type:RESOURCE_GHODIUM,exportOver:12000,batchSize:50000},
                                             {resource_type:RESOURCE_HYDROGEN,exportOver:24000,batchSize:48000},
-                                            {resource_type:RESOURCE_HYDROXIDE,exportOver:24000,batchSize:24000}
+                                            {resource_type:RESOURCE_HYDROXIDE,exportOver:24000,batchSize:24000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                             ]
                                     }
         );
@@ -253,7 +258,7 @@ module.exports = {
                                         towersBuildWalls:false,
                                         armNuke:true,
                                         labComplex:new LabComplex(rp(4,13,'W45N51'),TOP_RIGHT),
-                                        makeResource:RESOURCE_UTRIUM_LEMERGITE,
+                                        makeResource:RESOURCE_LEMERGIUM_ALKALIDE,
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000},

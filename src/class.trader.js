@@ -90,21 +90,17 @@ class Trader {
         let unusableTerminals={};
         let reserves={};
         let outGoingOrdersLastTick={};
-        for(let order of Game.market.outgoingTransaction){
+        for(let order of Game.market.outgoingTransactions){
             if(order.time===(Game.time-1))
                 outGoingOrdersLastTick[ order.from ] = order;
         }
-        //console.log(Game.time);
-        //console.log(outGoingOrdersLastTick);
-        //console.log("this.orders",this.orders)
         for(let id in this.orders){
             let order = this.orders[id];
             //  reconcile previous orders.
             if(order.fulfilledAt==="pending"){
                 if(outGoingOrdersLastTick[ order.fulfilledBy ]  ){
                     this._fulfillOrder(id,order.fulfilledBy,Game.time-1)
-                    //console.log("this.orders",this.orders)
-                   // console.log("this.orderLookup",this.orderLookup)
+                  
                 }else{
                     this._markOrderFailed(id,Game.time-1)
                 }
@@ -121,22 +117,17 @@ class Trader {
                 if(!importTerminal)continue;
 
                 for(let exporterRoom of this.exports[order.resourceType]){
-                    //console.log("order-id",id,"exporterRoom",exporterRoom,"unusableTerminals",unusableTerminals)
                     if(unusableTerminals[exporterRoom])continue;
                     if(this.orders[id].fulfilledBy)continue;
                     if(this.orders[id].roomName === exporterRoom)continue;
                     let exporterTerminal = Game.rooms[exporterRoom]?Game.rooms[exporterRoom].terminal:null;
                     if(!exporterTerminal)continue;
-                    //console.log("id=",order.id," exporter=",exporterRoom)
-                    //console.log(reserves);
-                    //console.log("order.amount+reserves[order.roomName]",order.amount+reserves[order.roomName])
-                    //console.log("importTerminal.haveSpaceFor(order.amount+reserves[order.roomName],order.resourceType)",importTerminal.haveSpaceFor(order.amount+reserves[order.roomName],order.resourceType))
                     if( importTerminal.haveSpaceFor(order.amount+reserves[order.roomName],order.resourceType) &&
                         exporterTerminal.storingAtLeast(order.amount,order.resourceType) ){
 
                         let res = exporterTerminal.send(order.resourceType,order.amount,order.roomName);
                         if(res===OK){
-                            //console.log("satisfied:",id,"with:",exporterRoom);
+                            console.log("satisfied:",id,"with:",exporterRoom);
                             this.orders[id].fulfilledAt="pending";
                             this.orders[id].fulfilledBy=exporterRoom;
                             reserves[order.roomName]+=order.amount;
@@ -145,7 +136,6 @@ class Trader {
                         if(res===ERR_TIRED){
                             // save later loops
                             unusableTerminals[exporterRoom]=true;
-                            //connsole.log("tired:",exporterRoom)
                         }
                     }
 

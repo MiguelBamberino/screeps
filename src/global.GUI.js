@@ -1,4 +1,6 @@
 
+const guiWM = require('gui.worldmap')
+
 global.gui = {
     display:false,
     displayCreepDebugSay:false,
@@ -8,6 +10,8 @@ global.gui = {
     rb:false,
     rbFor:false,
     nodeStats:false,
+    tradeStats:false,
+    tradeHistoryLength:10,
     nodes:[],
     renderRooms:[],
     on: function(){
@@ -28,6 +32,8 @@ global.gui = {
         console.log('gui.creeptrack.on/off()');
         console.log('gui.rbFor=true/false');
         console.log('gui.nodeStats=true/false');
+        console.log('gui.tradeStats=true/false');
+        console.log('gui.tradeHistoryLength=10');
     },
     debugSay:function(val=true){
         this.displayCreepDebugSay = val;
@@ -119,7 +125,11 @@ global.gui = {
     //logs.startCPUTracker('gui.renderRoomNodeStats');
         this.renderRoomNodeStats();
     //logs.stopCPUTracker('gui.renderRoomNodeStats',true);
-        
+    
+    
+    //logs.startCPUTracker('gui.renderTradeStats');
+        this.renderTradeStats();
+    //logs.stopCPUTracker('gui.renderTradeStats',false);    
         //this.renderSourceStatTest();
         
     //logs.startCPUTracker('gui.renderReserveBookOverview');    
@@ -149,7 +159,32 @@ global.gui = {
         logs.guiCPU= u;
         //console.log("GUI-CPU-used: "+u);  
     },
-    
+    renderTradeStats:function(){
+        
+        if(this.tradeStats){
+            let counter=0;
+            for(let t of Game.market.outgoingTransactions){
+                
+                if(t.time< (Game.time-this.tradeHistoryLength) )break;
+                
+                guiWM.drawTransferLog({sourceRoom:t.from,targetRoom:t.to,resource_type:t.resourceType,sentAt:t.time})
+                counter++;
+            }
+
+            for(let n in this.nodes){
+                tradeStats = [];
+                for(let exp of this.nodes[n].exports){
+                    tradeStats.push({resource_type:exp.resource_type,demand_satisfied:false,importing:false,exporting:true})
+                }
+                for(let imp of this.nodes[n].imports){
+                    tradeStats.push({resource_type:imp.resource_type,demand_satisfied:false,importing:true,exporting:false})
+                }
+                guiWM.drawRoomTraderStatsOnMap(this.nodes[n].coreRoomName,tradeStats)
+            }
+            
+        }
+        
+    },
     renderComplexPlan: function(complex){
         for(let plan of complex.getLayoutPositions()){
             plan.pos.colourIn('#fff');

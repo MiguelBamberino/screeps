@@ -45,9 +45,11 @@ global.mb = {
     heap_rooms:{},
     
     runTick: function(){
+        logs.startCPUTracker('map.runTick');
         this.checkIntervals();
         this.checkRoomRepairs();
         this.reviewConstructions();
+        logs.stopCPUTracker('map.runTick');
     },
     checkIntervals: function(){
         for(let t in this.intervals){

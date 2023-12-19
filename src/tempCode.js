@@ -38,8 +38,10 @@ module.exports = {
         
         if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').haveSpaceFor(100000) && Game.cpu.bucket>6000))
             this.farmStructureThenTransfer('Alpha','Af0','20w1c10m',['62abbe57340721bd4f261bd9','62aa95074923f007cf85894c','62aa950aff3a5e3d1e630975','62aa951a55ae89e3fa8a5ae1'],'6530f95d0f89149d14e6b117',rp(23,1,'W42N53'))
-        if(Game.creeps['Af0']|| (gob('64d258b7ac37e86f64210866').haveSpaceFor(100000) && Game.cpu.bucket>6000))
-            this.farmStructureThenTransfer('Alpha','Af1','20w1c10m',['62abbe57340721bd4f261bd9','62abbaef9fd4164a8e2db3e8','62aa9526e40d483e998ed25c'],'6530f95d0f89149d14e6b117',rp(21,3,'W42N53'))
+        if(Game.creeps['Af1']|| (gob('64d258b7ac37e86f64210866').haveSpaceFor(100000) && Game.cpu.bucket>6000))
+            this.farmStructureThenTransfer('Alpha','Af1','20w1c10m',['62b6b38e9fd416e67531043c','62b6b38b567017e1cd9fab73','62a825e09443b3154bc6e749'],'654520af95252fcca8bf96a6',rp(28,46,'W42N53'))
+        if(Game.creeps['Af2']|| (gob('64d258b7ac37e86f64210866').haveSpaceFor(100000) && Game.cpu.bucket>6000))
+            this.farmStructureThenTransfer('Alpha','Af2','20w1c10m',['62b6b38b567017e1cd9fab73','62a825f46c6a81bc80fb527c','62a825fa8e16ad62e9a64d0e'],'654520af95252fcca8bf96a6',rp(30,46,'W42N53'))
 
          //this.harvestAndCollectCentreSectorMineral('Theta-3','5bbcb16540062e4259e92e94',rp(41,1,'W45N51'),'64e672e8ff9345439bb731e3',RESOURCE_UTRIUM,'5m5c','30W5c15m','-U',2)
       
@@ -58,19 +60,43 @@ module.exports = {
         let hostileIds = Game.rooms['W43N51'].getNoneAllyCreeps();
         if(hostileIds.length>0 && gob('651d16f663f96bf75536f5dd'))gob('651d16f663f96bf75536f5dd').attack(gob(hostileIds[0]))
         
+        let W41N53_to_W38N51 = ['W41N53','W40N53','W40N52','W40N51','W39N51','W38N51']
+        let W41N54_to_W39N53 = ['W41N54','W40N54','W40N55','W39N55','W38N55','W38N54','W39N54','W39N53']
+        let W41N53_to_W37N51 = ['W41N53','W40N53','W40N52','W40N51','W39N51'
+		,'W39N50','W38N50','W37N50','W37N51']
+        let kiterBody = "2a2m+10*1r1m+2h2m";
+        let fighterBody= "2t2m+10*1a1m+2h2m";
+        //if(Game.creeps['harrass-1'])
+        //this.harrassRemote('Beta-3','harrass-1','W39N51',[],rp(46,15,'W40N51'),"1a1m")
+        //this.harrassRemote('Beta-3','harrass-2','W38N51',W41N53_to_W38N51,rp(46,15,'W40N51'),fighterBody)
+        
+        //this.constantGuardRoom('Beta-2',"Atilla",'W39N51','2t2m+10*1a1m+2h2m',{x:10,y:21},false,true,10)
+        
+        // breakStructures: function(spawnName,cname,parts, roomName,ids)
+       // this.breakStructures('Beta-3','Slammy1','25*1w1m','W37N51',['6563f0fed44fa200128ca085']);
+        
+        
+        //this.harrassRemote('Epsilon-3','harrass-2','W39N53',W41N54_to_W39N53,rp(18,47,'W39N53'),'1a1m')
+        //this.mosquitoAttack('Beta-3','mosq-1',{id:'657c0ced40e951bc789b2ecc',pos:{x:11,y:19,roomName:'W39N51'}},[], rp(25,25,'W40N51'),rp(9,15,'W39N51') , '1m1c');
+        //this.mosquitoAttack('Beta-3','mosq-2',{id:'657c0c37bbed4c02f6d5bcdd',pos:{x:17,y:19,roomName:'W38N51'}},rave, rp(25,25,'W40N51'),rp(21,19,'W38N51') , '1m1c');
+        
        // this.streamResource('Iota','Theta',RESOURCE_ENERGY,400000,300000);
         
-        /*gob('63fd1ff656dfcecb6ce9893a').observeRoom('W39N49');
+        gob('63fd1ff656dfcecb6ce9893a').observeRoom('W39N55');
         this.rotateCreep('Guard1-', function(activeCreepName){
           //  Game.creeps[activeCreepName].moveTo(gob('5bbcaad79099fc012e63242d'))
-              //  Game.creeps[activeCreepName].signController(gob('5bbcaad79099fc012e63242d'),"room defeated")
-            if(gob('5bbcaad79099fc012e63242d') && gob('5bbcaad79099fc012e63242d').safeMode===undefined)
-                thing.killCreepsBreakTarget('Beta-3',activeCreepName,'24*1a1m+1h1m','W39N49',['655c156455d0c39b456ba99a'],[], 4,{x:37,y:21})
+            //Game.creeps[activeCreepName].signController(gob('5bbcaad79099fc012e63242d'),"room defeated")
+            if( gob('5bbcaad69099fc012e632419') && gob('5bbcaad69099fc012e632419').level>0 && gob('5bbcaad69099fc012e632419').safeMode===undefined)
+                thing.killCreepsBreakTarget('Epsilon-3',activeCreepName,'20*1a1m+4r4m+1h1m','W39N55',[],[], 20,{x:38,y:6})
             
                // thing.constantGuardRoom('Beta-2',activeCreepName,'W39N49','24*1a1m+1h1m',{x:42,y:22},false,true,4)
-        },350)*/
+        },350)
        
         //constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:25,y:25},allyName=false,killCivilians=false, maxDistance=75 , roomTraversal=[])
+    logs.startCPUTracker('manageInterRoomTrading2');
+    if(Game.time%10==0)this.manageInterRoomTrading2()
+    logs.stopCPUTracker('manageInterRoomTrading2',false);
+            
  
     /**
      * manage the config of what resources different rooms want. This assumes they've already been hauled to the terminal.
@@ -78,11 +104,11 @@ module.exports = {
      * importerConfigs - array of objs with this template: {importer:'Alpha',resource_type:RESOURCE_OXYGEN,storageCap:50000}
      * exporters - an array of rooms who are exporting, such as ['Alpha','Beta'...]
      */
+     
+     /*
         this.manageInterRoomTrading([ 
                 
                 {importer:'Alpha',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-             
-                
                 
                 {importer:'Beta',resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
                 {importer:'Beta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000}, 
@@ -96,7 +122,7 @@ module.exports = {
                 {importer:'Epsilon',resource_type:RESOURCE_OXYGEN,storageCap:12000},
                 {importer:'Epsilon',resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:24000},
                 {importer:'Epsilon',resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:24000},
-                {importer:'Epsilon',resource_type:RESOURCE_ENERGY,storageCap:200000},
+                
                 
                 {importer:'Iota',resource_type:RESOURCE_HYDROGEN,storageCap:24000},
                 {importer:'Iota',resource_type:RESOURCE_GHODIUM,storageCap:6000},
@@ -109,43 +135,39 @@ module.exports = {
                 {importer:'Theta',resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
                 {importer:'Theta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 
-                /*
+                
                 {importer:'Zeta',resource_type:RESOURCE_OXYGEN,storageCap:24000},
                 {importer:'Zeta',resource_type:RESOURCE_LEMERGIUM,storageCap:100000},
-                {importer:'Zeta',resource_type:RESOURCE_HYDROXIDE,storageCap:36000},*/
+                {importer:'Zeta',resource_type:RESOURCE_HYDROXIDE,storageCap:36000},
                 
-                /* Military imports */
+                // Military imports 
                 {importer:'Zeta',resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
                 {importer:'Zeta',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                 {importer:'Zeta',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
-                {importer:'Zeta',resource_type:RESOURCE_ENERGY,storageCap:24000},
+                
                 {importer:'Zeta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                /*
-                {importer:'Theta',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
-                {importer:'Theta',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
-                */
                 {importer:'Iota',resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
                 {importer:'Iota',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                 {importer:'Iota',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
                 {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                 
-                {importer:'Lambda',resource_type:RESOURCE_ENERGY,storageCap:100000},
+                
                 {importer:'Lambda',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 {importer:'Kappa',resource_type:RESOURCE_GHODIUM,storageCap:6000},
+                {importer:'Delta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
                 {importer:'Kappa',resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
-                {importer:'Mu',resource_type:RESOURCE_ENERGY,storageCap:100000},
-                /*{importer:'Kappa',resource_type:RESOURCE_ENERGY,storageCap:100000},*/
             ],
             // atm, Alpha is getting all the flah and exporting for E, even if its not got much in terrminal. code needs to check terminals cap.
-            ['Alpha','Beta'/*'Gamma','Delta'*/,'Epsilon','Zeta','Theta','Iota','Kappa','Lambda']);
-    
+            ['Alpha','Beta','Delta','Epsilon','Zeta','Theta','Iota','Kappa','Lambda']);
+        */
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         this.runFactory('Alpha',RESOURCE_BATTERY) 
         this.runFactory('Epsilon',RESOURCE_BATTERY) 
         
         this.runFactory('Zeta',RESOURCE_BATTERY)
         this.runFactory('Kappa',RESOURCE_BATTERY) 
-        this.runFactory('Lambda',RESOURCE_BATTERY) 
+        this.runFactory('Lambda',RESOURCE_BATTERY)  
+        this.runFactory('Mu',RESOURCE_BATTERY) 
         
         
        },
@@ -879,20 +901,20 @@ module.exports = {
             // Attack Logistics ////////////////////////////////////////
                 let go = (Memory.scheduledAttackState==='attacking');
                
-                let attackRoom = 'W39N49';
-                let musterSpot = rp(26,46,'W39N50');
+                let attackRoom = 'W39N55';
+                let musterSpot = rp(30,30,'W40N55');
                 //let retreatSpots = [rp(47,25,attackRoom),rp(26,10,attackRoom),rp(22,10,attackRoom)];
-                let retreatSpots = [rp(11,3,attackRoom),rp(11,5,attackRoom),rp(11,7,attackRoom)];
+                let retreatSpots = [rp(5,35,attackRoom),rp(11,5,attackRoom),rp(11,7,attackRoom)];
                 let roomTraversal=['W42N52','W42N51','W42N50','W41N50','W40N50','W39N50','W39N49'];    
                // roomTraversal=['W14N18','W14N19','W14N20','W14N21','W15N21','W15N22','W15N23','W15N24','W16N24','W16N25','W16N25','W15N26','W14N26'];
-               // roomTraversal=[];
+                roomTraversal=[];
                 
             // Attack Targets  //////////////////////////////////////// 
-                let target_ids = [];
+                let target_ids = ["657db53e94a168978e29edfb","657d2819571a840798b375fa"];
                 let destroyResourceBanks=false;
                 if(go){
                     // entry rampart
-                    let entryPoint = rp(34,4,attackRoom)
+                    let entryPoint = rp(31,34,attackRoom)
                     let entryWall = false;
                     if(Game.rooms[attackRoom]){
                         entryPoint.lookForStructure(STRUCTURE_WALL);
@@ -932,7 +954,7 @@ module.exports = {
                 logs.stopCPUTracker('scheduledAttack-prep',false);
                 
                let allDuoCreepNames = ['duoL1','duoH1'/*,'duoL2','duoH2','duoL3','duoH3'*/];
-               let renewSpawn = 'Zeta-3';
+               let renewSpawn = 'Epsilon';
                
                let duoCount = allDuoCreepNames.length/2;
                
@@ -943,13 +965,13 @@ module.exports = {
                let healerBoostPlan2 =[{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'648771d4ea93d5700d04f97d'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'648728193d915148ff1d3911'}];
                healerBoostPlan =[{resource_type:RESOURCE_LEMERGIUM_OXIDE,lab_id:'64d0d5e29994c05d6f9c9e68'}];
                healerBoostPlan2 =[{resource_type:RESOURCE_LEMERGIUM_OXIDE,lab_id:'64d1adace48efe57667b5921'}];
-               //healerBoostPlan=[];
+               healerBoostPlan=[];
                let dismantlerBody = '10*3w1m+5r5m';
                dismantlerBody='12*2w1m+4*2r1m+1w1m';
-               dismantlerBody='2r23w25m';
+               dismantlerBody='23w2r25m';
                let dismantlerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'648771d4ea93d5700d04f97d'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'6487f21514b4db61c6d46a2b'}];
                dismantlerBoostPlan=[];
-               dismantlerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'64d0aebf91220c75b2576df8'}];
+               //dismantlerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'64d0aebf91220c75b2576df8'}];
                let attackerBody = '12*2a1m+4*2r1m+1a1m';
                attackerBody='5r20a25m'; 
                let attackerBoostPlan = [{resource_type:RESOURCE_ZYNTHIUM_OXIDE,lab_id:'648771d4ea93d5700d04f97d'},{resource_type:RESOURCE_UTRIUM_ACID,lab_id:'6487afae7817371e6cef1dd8'}];
@@ -980,10 +1002,13 @@ module.exports = {
                 
         
                if(Game.creeps['duoL1'] || Memory.scheduledAttackState==='mustering')
-                    this.duoLeader('Zeta','duoL1',dismantlerBody,'duoH1',musterSpot,attackRoom,target_ids,retreatSpots[0],roomTraversal,go,renewSpawn,dismantlerBoostPlan,TOP)
+                    this.duoLeader('Epsilon','duoL1',dismantlerBody,'duoH1',musterSpot,attackRoom,target_ids,retreatSpots[0],roomTraversal,go,renewSpawn,dismantlerBoostPlan,TOP)
 
                 if(Game.creeps['duoH1'] || Memory.scheduledAttackState==='mustering')
-                    this.duoHealer('Zeta','duoH1',healerBody,'duoL1', false, allDuoCreepNames,renewSpawn,healerBoostPlan,TOP)
+                    this.duoHealer('Epsilon-2','duoH1',healerBody,'duoL1', false, allDuoCreepNames,renewSpawn,healerBoostPlan,TOP)
+                
+                if(Game.creeps['duoH1-2'] || Memory.scheduledAttackState==='mustering')
+                    this.duoHealer('Epsilon-3','duoH1-2',healerBody,'duoL1', false, allDuoCreepNames,renewSpawn,healerBoostPlan,TOP)
                     
                 /*
                if(Game.creeps['duoL2'] || Memory.scheduledAttackState==='mustering')
@@ -1035,25 +1060,6 @@ module.exports = {
                 this.lv4InvaderCoreRanger('Zeta-2','pokey4',pokeRoom,'20r25m5h',target_ids, musterSpot)*/
            }
            
-              
-           let slammysRoom = 'W39N49';
-           let target_ids = ['650a68359c9108f2ed9b5c4c','650a68469335d88cc4f06131','650a65df88fd0bfa231aeaf6','650a6446342b61d4bc8dcca1','6431e526aeebaa73ead5b5bd']
-            
-            if(Game.creeps['Slammy1'])
-            this.breakStructures('Beta-3','Slammy1','25*1w1m',slammysRoom,target_ids);
-           if(Game.creeps['Fighty1'])
-            this.killCreepsBreakTarget('Beta-2','Fighty1','10*1a1m',slammysRoom,target_ids,[], 50,rp(43,21,slammysRoom))
-            /*this.breakStructures('Beta-3','Slammy2','25w25m',slammysRoom,target_ids);
-            this.breakStructures('Beta-2','Slammy3','25w25m',slammysRoom,target_ids);
-            if(Game.creeps['Slammy4'])this.breakStructures('Beta-2','Slammy4','25w25m',slammysRoom,target_ids);
-          */
-            
-            if(Game.creeps['Fighty2'])
-            this.killCreepsBreakTarget('Beta-3','Fighty2','25*1a1m',slammysRoom,target_ids,[], 50)
-            if(Game.creeps['Fighty3'])this.killCreepsBreakTarget('Beta-2','Fighty3','25*1a1m',slammysRoom,target_ids,[], 50)
-            if(Game.creeps['Fighty4'])this.killCreepsBreakTarget('Beta-3','Fighty4','25*1a1m',slammysRoom,target_ids,[], 50)
-            
-        
        },
      stripMineRoomNodes:[],
      /**
@@ -1421,7 +1427,33 @@ module.exports = {
     },
     
 
-    
+    manageInterRoomTrading2:function(){
+        
+        let storages={};
+        let terminals={};
+        
+        // {resource_type:RESOURCE_GHODIUM,storageCap:6000}
+        
+        for(let n in nodes){
+            
+            if(!nodes[n].terminal() || !nodes[n].storage()){
+                continue;
+            }
+            for(let imp of nodes[n].imports){
+                if( !trader.getOpenOrderByDetail(nodes[n].room().name, imp.resource_type) ){
+                   let got = nodes[n].terminal().storedAmount(imp.resource_type) + nodes[n].storage().storedAmount(imp.resource_type);
+                   if(got < imp.storageCap){
+                       let want = imp.storageCap-got;
+                       let amount = want>6000?6000:want;
+                       trader.createOrder(nodes[n].room().name, imp.resource_type, amount);
+                   }
+                }
+                
+                
+            }
+        }
+        
+    },
     /**
      * manage the config of what resources different rooms want. This assumes they've already been hauled to the terminal.
      * see manageMineralHauling()
@@ -1479,7 +1511,7 @@ module.exports = {
               }
               
               let spaceToReceive = (config.storageCap >= (impStorage.storedAmount(config.resource_type) + impTerminal.storedAmount(config.resource_type) + exportBatchSize ));
-              if(config.importer=='xx' && config.resource_type==RESOURCE_ENERGY/* && exportTerminal.pos.roomName=='W13N15'*/){
+              if(config.importer=='xxx' && config.resource_type==RESOURCE_ZYNTHIUM_KEANITE/* && exportTerminal.pos.roomName=='W13N15'*/){
                   clog(config,'exporter '+exportCluster);
                   clog(spaceToReceive,'spaceToReceive')
                   clog(exportTerminal.storingAtLeast( exportBatchSize, config.resource_type ),'exportTerminal.storingAtLeast( exportBatchSize, config.resource_type )')
@@ -2910,8 +2942,155 @@ module.exports = {
             }
         }
     },
+      harrassRemote: function(spawnName,cname,targetRoom,roomTraversal=[],retreatSpot,bodyPlan='1m1a'){
+        
+        // pick closest hostile to fight
+        // if collective power of X creeps in 5 is too much, then dodge out
+        // dont go into other rooms, like neighboring deadly rooms
+        // when kiting, keep hostile in range
+        if(!Game.creeps[cname]){
+            Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
+        }
+        if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+            let creep = Game.creeps[cname];
+            
+          
+            if(creep.memory.flee_from_id){
+                let hostile = gob(creep.memory.flee_from_id);
+                if(hostile && creep.isMorePunchyThan(hostile)){
+                    // hostile has been wweakened. stop fleeing
+                    creep.memory.flee_from_id=false;
+                }
+                if(creep.memory.hostile_dies_at < Game.time){
+                    creep.memory.flee_from_id=false;
+                }else{
+                    creep.heal(creep);
+                    if(hostile && creep.partCount(RANGED_ATTACK))creep.rangedAttack(hostile);
+                    return creep.moveToPos(retreatSpot);
+                }
+            }
+            
+            
+            if(creep.pos.roomName===targetRoom){
+                
+                let target = false;
+                let closestTargetDistance = 99;
+                let flee = false;
+                
+                //////// Check Hostile Targets ///////////////////////////////////
+                let hostileIDs = (Game.rooms[targetRoom])?Game.rooms[targetRoom].getEnemyPlayerFighters():[];
+                
+                if(hostileIDs.length>0){
+                    
+                    for(let id of hostileIDs){
+                        let hostile = gob(id);
+                        if(!hostile)continue;
+                        let range = hostile.pos.getRangeTo(creep);
+                        
+                        // are we likely to get kited/out-shot? then run off early
+                        if(range <= 5 && hostile.isMoreShootyThan(creep)){
+                            flee = "too-op";   
+                        }
+                        // if hostile more puncy, but in shoot range we could flee and kite this bitch
+                        if(range <= 3 && hostile.isMorePunchyThan(creep)){
+                           flee = "kiteable";
+                        }
+                        
+                        if(flee){
+                            creep.memory.flee_reason = flee;
+                            creep.memory.flee_from_id = hostile.id;
+                            creep.memory.hostile_dies_at = Game.time + hostile.ticksToLive;
+                            // run awaaayyy
+                            return creep.moveToPos(retreatSpot); 
+                        }
+                        
+                        // if we can punch MF, then lets do that
+                        if(range < closestTargetDistance ){
+                            target = hostile;
+                            closestTargetDistance = range;
+                        }
+                    }
+                }
+                //////// Heal if safe from Hostiles ///////////////////////////////////
+                if( (closestTargetDistance > 1 || creep.partCount(ATTACK)===0 ) && creep.hits < creep.hitsMax){
+                    creep.heal(creep); // heal if hurt and out of punch range
+                }
+                else if(closestTargetDistance!==1 && closestTargetDistance < 4){
+                     creep.heal(creep);//pre-heal when close
+                }
+                
+                
+                if(!mb.hasRoom(targetRoom))mb.scanRoom(targetRoom);
+                
+                //////// Pick Civilian Target ///////////////////////////////////
+                let civilianIDs = Game.rooms[targetRoom].getEnemyPlayerCivilians();
+                if(!target){
+                    closestTargetDistance = 99;
+                    for(let id of civilianIDs){
+                        let civilian = gob(id);
     
-    emptyContainersInEnemyRemote:function(spawnName,cname,target,roomTraversal=[], retreatSpot=undefined, dropLocation=undefined , bodyPlan='1m1c'){
+                        if(civilian){
+                            let dist = creep.pos.getRangeTo(civilian);
+                            if(dist<closestTargetDistance){
+                                target = civilian;
+                                closestTargetDistance = dist;
+                                creep.memory.structure_id=false;
+                            }
+                        }
+                    }
+                }
+                
+                //////// ELSE Pick structure Target ///////////////////////////////////
+                if(!target && creep.memory.structure_id !=="none"){
+                     target = gob(creep.memory.structure_id);
+                     if(!target){
+                         target = mb.getNearestStructure(creep.pos,[STRUCTURE_CONTAINER,STRUCTURE_ROAD],[targetRoom]);
+                         if(target){
+                             creep.memory.structure_id= target.id;
+                         }else{
+                             creep.memory.structure_id="none"
+                         }
+                     }
+                }
+                
+                if(target){
+                    
+                    // if target is a creep:
+                    if(target.body){
+                        // don't move towards targets on/close to room edge, to avoid getting pinged out of the room    
+                        if(!target.onRoomEdge() && !target.nearRoomEdge()){
+                            // we want to always call a move intent, to insure we keep pace if its moving
+                            creep.moveTo(target);
+                        }
+                    }else if(closestTargetDistance>1){
+                        // non-creeps are fixed targets so just use normal pathing code
+                        creep.moveToPos(target);
+                    }
+                    
+                    if(closestTargetDistance===1)creep.attack(target);
+                    if(closestTargetDistance < 4 && creep.partCount(RANGED_ATTACK))creep.rangedAttack(target);
+                    
+                }else{
+                    creep.moveToPos(rp(25,25,targetRoom))
+                }
+                
+                
+            }else{
+                creep.moveOffRoomEdge();
+                if(roomTraversal.length>0){
+                    let res = this.traverseRooms(creep,roomTraversal);
+                    creep.say("trav:"+res);
+                }else{
+                   
+                    creep.moveToPos(rp(25,25,targetRoom))
+                }
+                
+            }
+            
+        }
+         
+    },
+    mosquitoAttack:function(spawnName,cname,target,roomTraversal=[], retreatSpot=undefined, dropLocation=undefined , bodyPlan='1m1c'){
         if(!Game.creeps[cname]){
             Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
         }
@@ -4671,7 +4850,7 @@ module.exports = {
             let res = creep.moveOffRoomEdge();
             //if(creep.name=='thor-0')clog(res,creep.name+'fff')
             if(res!==OK)
-                res = creep.moveToPos(new RoomPosition(25,25,roomNames[next]));
+                res = creep.moveToPos(new RoomPosition(15,15,roomNames[next]));
             
              
             //if(creep.name=='thor-0')clog(res,creep.name)

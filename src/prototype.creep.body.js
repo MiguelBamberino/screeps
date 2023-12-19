@@ -59,7 +59,14 @@ Creep.prototype.isScout = function(){
     return (this.partCount(MOVE)===this.body.length)
 }
 Creep.prototype.isCivilian = function(){
-    return (this.partCount(WORK)>0||this.partCount(CLAIM)>0||this.partCount(CARRY)>0)
+    return (this.partCount(ATTACK)==0&&this.partCount(RANGED_ATTACK)===0)
+}
+Creep.prototype.isMorePunchyThan = function(creep){
+    return ( (this.partCount(ATTACK)+this.partCount(TOUGH)) > (creep.partCount(ATTACK)+creep.partCount(TOUGH)) )
+}
+
+Creep.prototype.isMoreShootyThan = function(creep){
+    return (this.partCount(RANGED_ATTACK) > creep.partCount(RANGED_ATTACK))
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Store Helper Funcs

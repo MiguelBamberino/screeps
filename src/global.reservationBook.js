@@ -6,6 +6,8 @@ global.reservationBook = {
         }
     },
     runTick:function(){
+        
+        logs.startCPUTracker('rb.runTick');
         for(let id in Memory.reservationBook){
             for(let type in Memory.reservationBook[id]){
                 
@@ -34,6 +36,8 @@ global.reservationBook = {
 
             }
         }
+        
+        logs.stopCPUTracker('rb.runTick');
     },
     getPage:function(id){
         if(!Memory.reservationBook[id]){
