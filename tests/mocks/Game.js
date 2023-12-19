@@ -4,8 +4,8 @@ function
 __buildMarket(){
     return {
         credits:0,
-        incomingTransaction:[],
-        outgoingTransaction:[],
+        incomingTransactions:[],
+        outgoingTransactions:[],
     };
 }
 module.exports = {

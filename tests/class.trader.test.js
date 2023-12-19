@@ -1242,7 +1242,7 @@ describe('tr.6 > processOrders()',()=>{
         // send goods
         trader.processOrders();
         Game._tickOver();
-        Game.market.outgoingTransaction.push({
+        Game.market.outgoingTransactions.push({
             "time": 1,
             "sender": {
                 "username": "MadDokMike"
@@ -1257,7 +1257,7 @@ describe('tr.6 > processOrders()',()=>{
             "description": null,
             "transactionId": "657524dcd46465001287868f"
         })
-        Game.market.incomingTransaction.push({
+        Game.market.incomingTransactions.push({
             "time": 1,
             "sender": {
                 "username": "MadDokMike"
@@ -1311,7 +1311,7 @@ describe('tr.6 > processOrders()',()=>{
         // send goods
         trader.processOrders();
         Game._tickOver();
-        Game.market.incomingTransaction.push({
+        Game.market.incomingTransactions.push({
             "time": 1,
             "sender": {
                 "username": "MadDokMike"
@@ -1326,7 +1326,7 @@ describe('tr.6 > processOrders()',()=>{
             "description": "not-relevant order",
             "transactionId": "657524dcd46465001287868f"
         })
-        Game.market.outgoingTransaction.push({
+        Game.market.outgoingTransactions.push({
             "time": 1,
             "sender": {
                 "username": "MadDokMike"
