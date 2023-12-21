@@ -55,7 +55,6 @@ class Trader {
     _markOrderFailed(orderId,time){
         if(!this.orders[orderId])return ERR_NOT_FOUND;
         if(this.orders[orderId].fulfilledAt!=="pending")return ERR_INVALID_TARGET;
-        this.orders[orderId].fulfilledBy +="-attempted-at-"+time;
         this.orders[orderId].fulfilledAt = "ERROR";
         delete this.orderLookup[ this.orders[orderId].roomName+this.orders[orderId].resourceType ]
         return OK;
@@ -89,20 +88,20 @@ class Trader {
     processOrders(){
         let unusableTerminals={};
         let reserves={};
-        let outGoingOrdersLastTick={};
+        let outGoingOrders={};
         for(let order of Game.market.outgoingTransactions){
-            if(order.time===(Game.time-1))
-                outGoingOrdersLastTick[ order.from ] = order;
+            if(order.recipient.username==="MadDokMike" && order.sender.username==="MadDokMike")
+                outGoingOrders[ order.description ] = order;
         }
         for(let id in this.orders){
             let order = this.orders[id];
             //  reconcile previous orders.
             if(order.fulfilledAt==="pending"){
-                if(outGoingOrdersLastTick[ order.fulfilledBy ]  ){
-                    this._fulfillOrder(id,order.fulfilledBy,Game.time-1)
+                if(outGoingOrders[ order.id ]  ){
+                    this._fulfillOrder(id,order.fulfilledBy,outGoingOrders[ order.id ].time)
                   
                 }else{
-                    this._markOrderFailed(id,Game.time-1)
+                    this._markOrderFailed(id)
                 }
             }
             // skip any orders that have been placed.
@@ -125,7 +124,7 @@ class Trader {
                     if( importTerminal.haveSpaceFor(order.amount+reserves[order.roomName],order.resourceType) &&
                         exporterTerminal.storingAtLeast(order.amount,order.resourceType) ){
 
-                        let res = exporterTerminal.send(order.resourceType,order.amount,order.roomName);
+                        let res = exporterTerminal.send(order.resourceType,order.amount,order.roomName,id);
                         if(res===OK){
                             //console.log("satisfied:",id,"with:",exporterRoom);
                             this.orders[id].fulfilledAt="pending";
