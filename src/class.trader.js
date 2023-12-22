@@ -89,10 +89,13 @@ class Trader {
         let unusableTerminals={};
         let reserves={};
         let outGoingOrders={};
+
         for(let order of Game.market.outgoingTransactions){
+            if(this.transPointer ===order.transactionId)break;
             if(order.recipient.username==="MadDokMike" && order.sender.username==="MadDokMike")
                 outGoingOrders[ order.description ] = order;
         }
+        if(Game.market.outgoingTransactions[0])this.transPointer = Game.market.outgoingTransactions[0].transactionId;
         for(let id in this.orders){
             let order = this.orders[id];
             //  reconcile previous orders.
