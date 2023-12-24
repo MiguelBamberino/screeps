@@ -6,6 +6,8 @@
 - Feature - added remoteHarrass()
 - Feature - made world map trade GUI live
 - Fix - typo in trader.processOrders
+- Fix - trader will now delete old orders
+- Fix - trader will correctly fulfil orders across ticks
 
 ===================================
 = Version 19.4.0
