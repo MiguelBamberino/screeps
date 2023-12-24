@@ -4,6 +4,7 @@ class Trader {
         this.orders = {}; // Store orders in an object with IDs as keys
         this.orderLookup = {};
         this.exports = {};
+        this.expiryTime=10;
     }
     offerExport(resourceType,roomName){
         if(!this.exports[resourceType]){
@@ -60,6 +61,10 @@ class Trader {
         return OK;
     }
 
+    _deleteOrder(orderID){
+        delete this.orders[orderID];
+    }
+
     getOrders(filters = []) {
         // If no filters are provided, return all orders
         if (filters.length === 0) {
@@ -107,6 +112,10 @@ class Trader {
                     this._markOrderFailed(id)
                 }
             }
+            if( Number.isInteger(order.fulfilledAt) && (order.fulfilledAt+this.expiryTime) <= Game.time ){
+                this._deleteOrder(id)
+            }
+
             // skip any orders that have been placed.
             if(order.fulfilledAt!==null){
                 continue
@@ -147,15 +156,7 @@ class Trader {
         }
     }
 
-    clearOldOrders(expiryTime){
-        if(!isNaN(expiryTime) && expiryTime>0){
-            for(let id in this.orders){
-                if(this.orders[id].fulfilledAt && this.orders[id].fulfilledAt<(Game.time-expiryTime)){
-                    delete this.orders[id];
-                }
-            }
-        }
-    }
+
 }
 
 module.exports = Trader;

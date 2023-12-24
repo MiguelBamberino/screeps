@@ -23,6 +23,9 @@ module.exports = {
     _tickOver(){
         this.time++;
     },
+    _tickOverX(x){
+        for(let i=0;i<x;i++)this._tickOver();
+    },
     _addHallwayRoom(name){
         this.rooms[name] = RoomFactory._create(name);
         return this.rooms[name];

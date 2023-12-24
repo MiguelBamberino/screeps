@@ -230,118 +230,7 @@ describe('tr.4 > getOrderByX()',()=>{
         expect(trader.getOpenOrderByDetail("W1N1",RESOURCE_ENERGY)).toBeTruthy();
     })
 })
-describe('tr.5 > clearOldOrders()',()=>{
-    it('tr.5.1 > expireTime = 0',()=>{
-        let trader = new traderClass();
-        Game.time = 1;
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        trader._fulfillOrder(id, "W1N3");
-        Game.time = 2;
-        trader.clearOldOrders(0);
-        expect(trader.getOrderByID(id)).toBeTruthy();
-    })
-    it('tr.5.2 > expireTime < 0',()=>{
-        let trader = new traderClass();
-        Game.time = 1;
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        trader._fulfillOrder(id, "W1N3");
-        Game.time = 2;
 
-        trader.clearOldOrders(-1);
-        expect(trader.getOrderByID(id)).toBeTruthy();
-    })
-    it('tr.5.3 > no orders',()=>{
-
-        let trader = new traderClass();
-        trader.clearOldOrders(2);
-        expect(trader.getOrders()).toStrictEqual([]);
-    })
-    it('tr.5.4 > no orders fulfilled',()=>{
-        Game.time = 1;
-        let trader = new traderClass();
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        Game.time = 5;
-        trader.clearOldOrders(4)
-        expect(trader.getOrderByID(id)).toBeTruthy();
-    })
-    it('tr.5.5 > 1 pending order + 1 order fulfilled > expireTime',()=>{
-
-        let trader = new traderClass();
-        Game.time = 1;
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        Game._addPlayerRoom('W2N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        let id2 = trader.createOrder("W2N1",RESOURCE_ENERGY,1);
-        trader._fulfillOrder(id, "W1N3");
-        Game.time = 5;
-        trader.clearOldOrders(3);
-        expect(trader.getOrderByID(id)).toBeFalsy();
-        expect(trader.getOrderByID(id2)).toBeTruthy();
-    })
-    it('tr.5.6 > 1 pending order + 2 orders fulfilled > expireTime',()=>{
-
-        let trader = new traderClass();
-        Game.time = 1;
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        Game._addPlayerRoom('W2N1',6,"MadDokMike")._addTerminal();
-        Game._addPlayerRoom('W3N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        let id2 = trader.createOrder("W2N1",RESOURCE_ENERGY,1);
-        let id3 = trader.createOrder("W3N1",RESOURCE_ENERGY,1);
-        trader._fulfillOrder(id, "W1N3");
-        trader._fulfillOrder(id2, "W1N4");
-        Game.time = 5;
-        trader.clearOldOrders(3);
-        expect(trader.getOrderByID(id)).toBeFalsy();
-        expect(trader.getOrderByID(id2)).toBeFalsy();
-        expect(trader.getOrderByID(id3)).toBeTruthy();
-    })
-    it('tr.5.7 > 1 order fulfilled < expireTime + 1 order fulfilled > expireTime',()=>{
-
-        let trader = new traderClass();
-        Game.time = 1;
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        Game._addPlayerRoom('W2N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        let id2 = trader.createOrder("W2N1",RESOURCE_ENERGY,1);
-        trader._fulfillOrder(id, "W1N3");
-        Game.time = 4;
-        trader._fulfillOrder(id2, "W1N4");
-        Game.time = 5;
-        trader.clearOldOrders(2);
-        expect(trader.getOrderByID(id)).toBeFalsy();
-        expect(trader.getOrderByID(id2)).toBeTruthy();
-    })
-    it('tr.5.8 > expireTime = fulfilledAt',()=>{
-
-        let trader = new traderClass();
-        Game.time = 1;
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        Game._addPlayerRoom('W2N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        let id2 = trader.createOrder("W2N1",RESOURCE_ENERGY,1);
-        Game.time = 4;
-        trader._fulfillOrder(id2, "W1N4");
-        Game.time = 6;
-        trader.clearOldOrders(2); // expect it to clear only order fulfilled MORE than 2 ticks.
-        expect(trader.getOrderByID(id)).toBeTruthy();
-        expect(trader.getOrderByID(id2)).toBeTruthy();
-    })
-    it('tr.5.9 > pending = fulfilledAt',()=>{
-
-        let trader = new traderClass();
-        Game.time = 1;
-        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
-        let id = trader.createOrder("W1N1",RESOURCE_ENERGY,1);
-        trader.orders[id].fulfilledAt="pending";
-        Game.time = 6;
-        trader.clearOldOrders(2);
-        expect(trader.getOrderByID(id)).toBeTruthy();
-    })
-})
 
 describe('tr.6 > processOrders()',()=>{
     it('tr.6.1 > no exporters. no orders',()=>{
@@ -1504,6 +1393,431 @@ describe('tr.6 > processOrders()',()=>{
 
         });
     })
+    /////////// Expire orders ////////////////////////////////
+    it('tr.6.41 > dont expire pending orders',()=>{
+        // EXPECT no order to change
+        Game._resetData();
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+
+        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,'W1N2')
+        Game._tickOverX(6);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:'pending'
+        });
+        Game.market.incomingTransactions.push({
+            "time": 7,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.market.outgoingTransactions.push({
+            "time": 7,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+
+        // timeout =10, so lets make sure we are deffo over it
+        Game._tickOverX(6);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:7
+        });
+    })
+    it('tr.6.42 > dont expire error orders',()=>{
+        // EXPECT no order to change
+        Game._resetData();
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+
+        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,'W1N2')
+
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:'pending'
+        });
+        Game.market.incomingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "nope",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.market.outgoingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "nope",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+        Game._tickOver();
+        trader.processOrders();
+
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:"ERROR"
+        });
+        // timeout =10, so lets make sure we are deffo over it
+        Game._tickOverX(12);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:"ERROR"
+        });
+    })
+    it('tr.6.43 > dont expire unfulfilled orders',()=>{
+        // EXPECT no order to change
+        Game._resetData();
+        let trader = new traderClass();
+        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        // timeout =10, so lets make sure we are deffo over it
+        Game._tickOverX(12);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:null,fulfilledAt:null
+        });
+    })
+    it('tr.6.44 > dont expire fulfilled < expiry time orders',()=>{
+        // EXPECT no order to change
+        Game._resetData();
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,'W1N2')
+
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:'pending'
+        });
+        Game.market.incomingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.market.outgoingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+        Game._tickOver();
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:1
+        });
+        // timeout =10, tickedOver once already to T=2, so 7 more times, leaves us on T=9
+        Game._tickOverX(7);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:1
+        });
+    })
+    it('tr.6.45 > dont expire fulfilled == expiry time orders',()=>{
+        // EXPECT no order to change
+        Game._resetData();
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,'W1N2')
+
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:'pending'
+        });
+        Game.market.incomingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.market.outgoingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+        Game._tickOver();
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:1
+        });
+        // timeout =10, tickedOver once already to T=2, so 8 more times, leaves us on T=10
+        Game._tickOverX(7);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:1
+        });
+    })
+    it('tr.6.46 > expire fulfilled > expiry time orders',()=>{
+        // EXPECT no order to change
+        Game._resetData();
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,'W1N2')
+
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:'pending'
+        });
+        Game.market.incomingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.market.outgoingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+        Game._tickOver();
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:1
+        });
+        // timeout =10, tickedOver once already to T=2, so 9 more times, leaves us on T=11
+        Game._tickOverX(9);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toBeFalsy();
+    })
+    it('tr.6.47 > expire 2 orders fulfilled > expiry time',()=>{
+        // EXPECT no order to change
+        Game._resetData();
+        let trader = new traderClass();
+        let resources={};
+        resources[RESOURCE_ENERGY]=100;
+        resources[RESOURCE_ZYNTHIUM]=20;
+        resources[RESOURCE_UTRIUM]=20;
+        Game._addPlayerRoom('W1N2',6,"MadDokMike")._addTerminal(resources);
+        Game._addPlayerRoom('W1N3',6,"MadDokMike")._addTerminal(resources);
+        Game._addPlayerRoom('W1N1',6,"MadDokMike")._addTerminal();
+        let id = trader.createOrder("W1N1",RESOURCE_ZYNTHIUM,10);
+        let id2 = trader.createOrder("W1N1",RESOURCE_UTRIUM,10);
+        trader.offerExport(RESOURCE_ZYNTHIUM,'W1N2')
+        trader.offerExport(RESOURCE_UTRIUM,'W1N3')
+
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:'pending'
+        });
+        expect(trader.getOrderByID(id2)).toStrictEqual({
+            id:"W1N1_U_1",roomName:"W1N1",resourceType:RESOURCE_UTRIUM,amount:10,
+            fulfilledBy:'W1N3',fulfilledAt:'pending'
+        });
+        Game.market.incomingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.market.incomingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_UTRIUM,
+            "amount": 10,
+            "from": "W1N3",
+            "to": "W1N1",
+            "description": "W1N1_U_1",
+            "transactionId": "657524dcd46465001287868x"
+        })
+        Game.market.outgoingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_ZYNTHIUM,
+            "amount": 10,
+            "from": "W1N2",
+            "to": "W1N1",
+            "description": "W1N1_Z_1",
+            "transactionId": "657524dcd46465001287868f"
+        })
+        Game.market.outgoingTransactions.push({
+            "time": 1,
+            "sender": {
+                "username": "MadDokMike"
+            },
+            "recipient": {
+                "username": "MadDokMike"
+            },
+            "resourceType": RESOURCE_UTRIUM,
+            "amount": 10,
+            "from": "W1N3",
+            "to": "W1N1",
+            "description": "W1N1_U_1",
+            "transactionId": "657524dcd46465001287868x"
+        })
+
+        Game.rooms['W1N2'].terminal.__send_response=ERR_TIRED;
+        Game.rooms['W1N3'].terminal.__send_response=ERR_TIRED;
+        Game._tickOver();
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toStrictEqual({
+            id:"W1N1_Z_1",roomName:"W1N1",resourceType:RESOURCE_ZYNTHIUM,amount:10,
+            fulfilledBy:'W1N2',fulfilledAt:1
+        });
+        expect(trader.getOrderByID(id2)).toStrictEqual({
+            id:"W1N1_U_1",roomName:"W1N1",resourceType:RESOURCE_UTRIUM,amount:10,
+            fulfilledBy:'W1N3',fulfilledAt:1
+        });
+        // timeout =10, tickedOver once already to T=2, so 9 more times, leaves us on T=11
+        Game._tickOverX(9);
+        trader.processOrders();
+        expect(trader.getOrderByID(id)).toBeFalsy();
+        expect(trader.getOrderByID(id2)).toBeFalsy();
+    })
+
 })
 
 

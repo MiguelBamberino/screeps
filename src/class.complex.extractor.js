@@ -1,4 +1,4 @@
-const AbstractComplex = require('class.complex.abstract')
+const AbstractComplex = require('./class.complex.abstract')
 module.exports =class ExtractorComplex extends AbstractComplex{
     
     constructor(anchor,facing,spawnName,fillerSize=600){
