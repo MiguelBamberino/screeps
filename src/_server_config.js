@@ -1,11 +1,3 @@
-/*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports.thing = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('_shard_config');
- * mod.thing == 'a thing'; // true
- */
 
 const roomNode = require('class.roomNode');
 const LabComplex = require('class.complex.lab')
