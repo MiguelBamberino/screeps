@@ -1,17 +1,17 @@
-const ExtractorComplex = require('class.complex.extractor');
+const ExtractorComplex = require('./class.complex.extractor');
 
 var creepRoles ={
-    worker:require('role.worker'),
-    rkeeper:require('role.rkeeper'),
-    harvester:require('role.harvester'),
-    builder:require('role.builder'),
-    fixer:require('role.fixer'),
-    tanker:require('role.tanker'),
-    filler:require('role.filler'),
+    worker:require('./role.worker'),
+    rkeeper:require('./role.rkeeper'),
+    harvester:require('./role.harvester'),
+    builder:require('./role.builder'),
+    fixer:require('./role.fixer'),
+    tanker:require('./role.tanker'),
+    filler:require('./role.filler'),
     //claimer:require('role.claimer'),
-    reserver:require('role.reserver'),
-    upgrader:require('role.upgrader'),
-    recycle:require('role.recycle'),
+    reserver:require('./role.reserver'),
+    upgrader:require('./role.upgrader'),
+    recycle:require('./role.recycle'),
     };
     
 class RoomNode{

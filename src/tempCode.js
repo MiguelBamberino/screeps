@@ -52,9 +52,7 @@ module.exports = {
 
         //this.haulResources('Alpha','Atx1','20c1m',gob('62dcd8f53b550551e96c02fe'),gob('6411a983df83b07a4d870320'),[RESOURCE_OXYGEN,RESOURCE_GHODIUM_OXIDE],[],1000,200)
 
-        
-        //if(Game.creeps['Ztx1'])
-        //this.haulResources('Lambda-2','Ltx1','25*1c1m',gob('651bc3a17484a4b6bcd123d0'),gob('650cccba513daa78ea58d199'),[RESOURCE_ENERGY],[],5000,200)
+     
 
 
         let hostileIds = Game.rooms['W43N51'].getNoneAllyCreeps();
@@ -66,11 +64,17 @@ module.exports = {
 		,'W39N50','W38N50','W37N50','W37N51']
         let kiterBody = "2a2m+10*1r1m+2h2m";
         let fighterBody= "2t2m+10*1a1m+2h2m";
-        //if(Game.creeps['harrass-1'])
-        //this.harrassRemote('Beta-3','harrass-1','W39N51',[],rp(46,15,'W40N51'),"1a1m")
+        if(Game.creeps['harrass-1'])
+       // if(!Game.creeps['harrass-1'].memory.stepped){
+            this.harrassRemote('Beta-3','harrass-1','W39N51',[],rp(46,15,'W40N51'),fighterBody,{x:38,y:9})
+        //    Game.creeps['harrass-1'].memory.stepped = false;
+       // }
         //this.harrassRemote('Beta-3','harrass-2','W38N51',W41N53_to_W38N51,rp(46,15,'W40N51'),fighterBody)
-        
-        //this.constantGuardRoom('Beta-2',"Atilla",'W39N51','2t2m+10*1a1m+2h2m',{x:10,y:21},false,true,10)
+        Game.rooms['W41N54']._debugSetEnemies('enemyPlayerFighters',['bill'])
+       if(util.debug) this.harrassRemote('Epsilon-2','bob','W41N54',[],rp(15,18,'W42N54'),'4m4r',{x:15,y:19},false)
+        Game.rooms['W41N54']._debugSetEnemies('enemyPlayerFighters',['bob'])
+       if(util.debug) this.harrassRemote('Epsilon-3','bill','W41N54',[],rp(15,18,'W41N53'),'3t2a2r7m',{x:15,y:23},false)
+       // if(util.debug)this.killCreepsBreakTarget('Epsilon-3','bill','3t2a2r7m','W41N54',[],[], 75,{x:25,y:25},true)
         
         // breakStructures: function(spawnName,cname,parts, roomName,ids)
        // this.breakStructures('Beta-3','Slammy1','25*1w1m','W37N51',['6563f0fed44fa200128ca085']);
@@ -84,12 +88,14 @@ module.exports = {
         
         gob('63fd1ff656dfcecb6ce9893a').observeRoom('W39N55');
         this.rotateCreep('Guard1-', function(activeCreepName){
-          //  Game.creeps[activeCreepName].moveTo(gob('5bbcaad79099fc012e63242d'))
-            //Game.creeps[activeCreepName].signController(gob('5bbcaad79099fc012e63242d'),"room defeated")
-            if( gob('5bbcaad69099fc012e632419') && gob('5bbcaad69099fc012e632419').level>0 && gob('5bbcaad69099fc012e632419').safeMode===undefined)
-                thing.killCreepsBreakTarget('Epsilon-3',activeCreepName,'20*1a1m+4r4m+1h1m','W39N55',[],[], 20,{x:38,y:6})
+          
+          let controllerW39N55 = gob('5bbcaad69099fc012e632419');
+          
+            if( controllerW39N55 && controllerW39N55.level>=2 && controllerW39N55.safeMode===undefined  && controllerW39N55.progress > 35000 )
+                //thing.killCreepsBreakTarget('Epsilon-3',activeCreepName,'20*1a1m+4r4m+1h1m','W39N55',[],[], 20,{x:38,y:6})
+                
+                thing.harrassRemote('Epsilon-3',activeCreepName,'W39N55',[],rp(40,25,'W39N55'),'20*1a1m+4r4m+1h1m')
             
-               // thing.constantGuardRoom('Beta-2',activeCreepName,'W39N49','24*1a1m+1h1m',{x:42,y:22},false,true,4)
         },350)
        
         //constantGuardRoom:function(spawnName,cname,roomName,parts, waitingSpot={x:25,y:25},allyName=false,killCivilians=false, maxDistance=75 , roomTraversal=[])
@@ -162,12 +168,14 @@ module.exports = {
         */
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         this.runFactory('Alpha',RESOURCE_BATTERY) 
+        this.runFactory('Beta',RESOURCE_BATTERY) 
         this.runFactory('Epsilon',RESOURCE_BATTERY) 
         
         this.runFactory('Zeta',RESOURCE_BATTERY)
         this.runFactory('Kappa',RESOURCE_BATTERY) 
         this.runFactory('Lambda',RESOURCE_BATTERY)  
-        this.runFactory('Mu',RESOURCE_BATTERY) 
+        this.runFactory('Mu',RESOURCE_BATTERY)   
+        this.runFactory('Delta',RESOURCE_BATTERY) 
         
         
        },
@@ -2807,6 +2815,7 @@ module.exports = {
             }else {
 
                  if(oldWall){
+                     oldWall.notifyWhenAttacked(false);
                     if(oldWall.isNotMarkedForDismantle())oldWall.markForDismantling();
                     creep.actOrMoveTo('dismantle',oldWall);
                 }
@@ -2942,12 +2951,23 @@ module.exports = {
             }
         }
     },
-      harrassRemote: function(spawnName,cname,targetRoom,roomTraversal=[],retreatSpot,bodyPlan='1m1a'){
+      harrassRemote: function(spawnName,cname,targetRoom,roomTraversal=[],retreatSpot,bodyPlan='1m1a',waitingSpot={x:25,y:25},attackStructures=true){
         
-        // pick closest hostile to fight
-        // if collective power of X creeps in 5 is too much, then dodge out
-        // dont go into other rooms, like neighboring deadly rooms
-        // when kiting, keep hostile in range
+        // TEST: pick closest hostile to fight
+        // CODE: lock on civilian
+        // CODE: if collective power of X creeps in 5 is too much, then dodge out
+        // TEST: when kiting, keep hostile in range
+        // CODE: public message, 
+        // CODE: maxRange
+        // CODE: kamikazeSpot
+        // CODE: killCivilians
+        // CODE: flexible objectives
+        // CODE: ability to bounce between remotes
+        // CODE: track if they're kiting and abandon
+        // CODE : can catch if move speed is slower
+        // CODE: split flee code to kite and gfo. When kiting, want to keep dist=3. when gfo...gfo 
+        // CODE: maybe not turn around if enemy can still hurt us. just keep kiting until dead? we are getting chip dmg
+        
         if(!Game.creeps[cname]){
             Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
         }
@@ -2957,16 +2977,20 @@ module.exports = {
           
             if(creep.memory.flee_from_id){
                 let hostile = gob(creep.memory.flee_from_id);
-                if(hostile && creep.isMorePunchyThan(hostile)){
+                // are we now stronger?
+                if( hostile && creep.isMorePunchyThan(hostile) && creep.isMoreShootyThan(hostile) ){
                     // hostile has been wweakened. stop fleeing
                     creep.memory.flee_from_id=false;
+                    creep.memory.hostile_dies_at = false;
                 }
                 if(creep.memory.hostile_dies_at < Game.time){
                     creep.memory.flee_from_id=false;
+                    creep.memory.hostile_dies_at = false;
                 }else{
                     creep.heal(creep);
                     if(hostile && creep.partCount(RANGED_ATTACK))creep.rangedAttack(hostile);
-                    return creep.moveToPos(retreatSpot);
+                    if(creep.pos.getRangeTo(hostile)<=3)creep.moveToPos(retreatSpot);
+                    return;
                 }
             }
             
@@ -2976,6 +3000,7 @@ module.exports = {
                 let target = false;
                 let closestTargetDistance = 99;
                 let flee = false;
+                creep.memory.avoidEdges = true;
                 
                 //////// Check Hostile Targets ///////////////////////////////////
                 let hostileIDs = (Game.rooms[targetRoom])?Game.rooms[targetRoom].getEnemyPlayerFighters():[];
@@ -2987,13 +3012,24 @@ module.exports = {
                         if(!hostile)continue;
                         let range = hostile.pos.getRangeTo(creep);
                         
+                        // Rules to follow:
+                        // hostile IS more Punchy & more shooty >> ignore, then flee when close
+                        // hostile IS less Punchy & more shooty >> ignore, then flee when close
+                        // hostile IS more Punchy & less shooty >> approach, then kite
+                        // hostile IS less Punchy & less shooty >> approach, then chase
+                        // collapse above rules to this code:
+                        
                         // are we likely to get kited/out-shot? then run off early
-                        if(range <= 5 && hostile.isMoreShootyThan(creep)){
-                            flee = "too-op";   
+                        if(hostile.isMoreShootyThan(creep)){
+                            if(range <= 5 )
+                                flee = "too-op";
+                            else
+                                continue;//we don't want to select for a target. just ignore until closer
                         }
                         // if hostile more puncy, but in shoot range we could flee and kite this bitch
                         if(range <= 3 && hostile.isMorePunchyThan(creep)){
-                           flee = "kiteable";
+                            flee = "kiteable";// close enough to kite.
+                            creep.rangedAttack(hostile); // get a cheeky shot in
                         }
                         
                         if(flee){
@@ -3004,7 +3040,7 @@ module.exports = {
                             return creep.moveToPos(retreatSpot); 
                         }
                         
-                        // if we can punch MF, then lets do that
+                        // if we can punch MF, then lets punch the closest
                         if(range < closestTargetDistance ){
                             target = hostile;
                             closestTargetDistance = range;
@@ -3016,14 +3052,22 @@ module.exports = {
                     creep.heal(creep); // heal if hurt and out of punch range
                 }
                 else if(closestTargetDistance!==1 && closestTargetDistance < 4){
+                    console.log(creep.name," - pre-heal")
                      creep.heal(creep);//pre-heal when close
                 }
                 
                 
-                if(!mb.hasRoom(targetRoom))mb.scanRoom(targetRoom);
+                if(!creep.memory.scanned){
+                    mb.scanRoom(targetRoom);
+                    creep.memory.scanned=true;
+                }
                 
                 //////// Pick Civilian Target ///////////////////////////////////
                 let civilianIDs = Game.rooms[targetRoom].getEnemyPlayerCivilians();
+                if(!target){
+                    target = gob(creep.memory.civillian_id);
+                    if(target)closestTargetDistance = creep.pos.getRangeTo(target);
+                }
                 if(!target){
                     closestTargetDistance = 99;
                     for(let id of civilianIDs){
@@ -3034,6 +3078,7 @@ module.exports = {
                             if(dist<closestTargetDistance){
                                 target = civilian;
                                 closestTargetDistance = dist;
+                                creep.memory.civillian_id=target.id;
                                 creep.memory.structure_id=false;
                             }
                         }
@@ -3041,26 +3086,28 @@ module.exports = {
                 }
                 
                 //////// ELSE Pick structure Target ///////////////////////////////////
-                if(!target && creep.memory.structure_id !=="none"){
+                if(!target && attackStructures && creep.memory.structure_id !=="none"){
                      target = gob(creep.memory.structure_id);
+                     
                      if(!target){
-                         target = mb.getNearestStructure(creep.pos,[STRUCTURE_CONTAINER,STRUCTURE_ROAD],[targetRoom]);
+                         target = mb.getNearestStructure(creep.pos,[STRUCTURE_CONTAINER,STRUCTURE_ROAD,STRUCTURE_SPAWN,STRUCTURE_EXTENSION],[targetRoom]);
                          if(target){
                              creep.memory.structure_id= target.id;
                          }else{
                              creep.memory.structure_id="none"
                          }
                      }
+                     if(target)closestTargetDistance = creep.pos.getRangeTo(target)
                 }
                 
                 if(target){
-                    
+                    console.log(creep.name,"target:",target.id,target.name,target.pos, " range:",closestTargetDistance);
                     // if target is a creep:
                     if(target.body){
                         // don't move towards targets on/close to room edge, to avoid getting pinged out of the room    
-                        if(!target.onRoomEdge() && !target.nearRoomEdge()){
+                        if(!target.onRoomEdge() /*&& !target.nearRoomEdge()*/ ){
                             // we want to always call a move intent, to insure we keep pace if its moving
-                            creep.moveTo(target);
+                            creep.moveToPos(target);
                         }
                     }else if(closestTargetDistance>1){
                         // non-creeps are fixed targets so just use normal pathing code
@@ -3071,7 +3118,7 @@ module.exports = {
                     if(closestTargetDistance < 4 && creep.partCount(RANGED_ATTACK))creep.rangedAttack(target);
                     
                 }else{
-                    creep.moveToPos(rp(25,25,targetRoom))
+                    creep.moveToPos(rp(waitingSpot.x,waitingSpot.y,targetRoom))
                 }
                 
                 
@@ -3082,7 +3129,7 @@ module.exports = {
                     creep.say("trav:"+res);
                 }else{
                    
-                    creep.moveToPos(rp(25,25,targetRoom))
+                    creep.moveToPos(rp(waitingSpot.x,waitingSpot.y,targetRoom))
                 }
                 
             }
@@ -4099,6 +4146,7 @@ module.exports = {
                 creep.moveOffRoomEdge();
                 
                 var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+                if(Game.creeps['bob'])hostiles.push(Game.creeps['bob'])
                 let myCreeps = (Game.rooms[roomName])?Game.rooms[roomName].find(FIND_MY_CREEPS):[];
                 let healTarget=false;
                     for(let mine of myCreeps){

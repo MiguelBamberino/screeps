@@ -119,12 +119,6 @@ module.exports.loop = function () {
         gui.renderComplexStats(nodes.i.labComplex)
         
         ///////////////////////
-      
-        /*
-        use this to estimate your heap usage
-  const heapData = Game.cpu.getHeapStatistics!();
-  const heapUsed = (heapData.total_heap_size + heapData.externally_allocated_size) / heapData.heap_size_limit;
-        */
 
     }
     

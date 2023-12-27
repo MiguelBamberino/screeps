@@ -53,10 +53,10 @@ global.gui = {
         }
         
         this.summary = Object.create( require('global.GUI.partial'));
-        this.summary.headingConfig("Overview - V"+Memory.VERSION,true,{tick:3,reset:3,elapsed:2,cpu:2,memCPU:3,serverSpeed:3,bucket:2,rstCPU:2});
+        this.summary.headingConfig("Overview - V"+Memory.VERSION,true,{tick:3,reset:3,elapsed:2,cpu:2,memCPU:3,serverSpeed:3,bucket:2,rstCPU:2,heapUsed:2});
         this.summary.setRooms(this.renderRooms);
         
-        this.summary.atCoords(21,1);
+        this.summary.atCoords(18,1);
         this.summary.on();
         
         this.cpu = Object.create( require('global.GUI.partial'));
@@ -83,6 +83,7 @@ global.gui = {
        // this.creeptrack.on();
         
     },
+    
     render: function(){
       
         if(!this.display)return;
@@ -96,6 +97,14 @@ global.gui = {
     //logs.stopCPUTracker('gui.cpu',true);
         
     logs.startCPUTracker('gui.summary');
+       
+       if( this.heapUsed===undefined || Game.time%100===0){
+            // use this to estimate your heap usage 
+            const heapData = Game.cpu.getHeapStatistics();
+            const size = heapData.total_heap_size + heapData.externally_allocated_size;
+            this.heapUsed =  ( ( size / heapData.heap_size_limit)  *100 ).toFixed(2);
+       }
+        
         this.summary.setData([{
             tick:Game.time,
             reset:logs.globalResetTick,
@@ -104,7 +113,8 @@ global.gui = {
             memCPU:logs.cpuOnMem.toFixed(4),
             serverSpeed:(logs.msSinceLastTick/1000)+'s',
             bucket:Game.cpu.bucket,
-            rstCPU:logs.globalResetCPU.toFixed(4)
+            rstCPU:logs.globalResetCPU.toFixed(4),
+            heapUsed: this.heapUsed+'%'
         }]);
         
     //logs.stopCPUTracker('gui.summary',true);

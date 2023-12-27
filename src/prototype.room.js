@@ -103,6 +103,12 @@ Room.prototype._parseHostileCreeps=function(cacheSensitivity=5){
    return CREEPS_ROOM_CACHE[this.name];
 }
 
+Room.prototype._debugSetEnemies=function(category,creepNames){
+    CREEPS_ROOM_CACHE[this.name][category]=[];
+    for(let name of creepNames){
+        if(Game.creeps[name]&&!Game.creeps[name].spawning)CREEPS_ROOM_CACHE[this.name][category].push(Game.creeps[name].id);
+    }
+}
 
 Room.prototype.getAllyCreeps=function(cacheSensitivity=5){
     return this._parseHostileCreeps(cacheSensitivity).allies;

@@ -62,9 +62,11 @@ Creep.prototype.isCivilian = function(){
     return (this.partCount(ATTACK)==0&&this.partCount(RANGED_ATTACK)===0)
 }
 Creep.prototype.isMorePunchyThan = function(creep){
-    return ( (this.partCount(ATTACK)+this.partCount(TOUGH)) > (creep.partCount(ATTACK)+creep.partCount(TOUGH)) )
+    return  this.getPunchyness() > creep.getPunchyness()
 }
-
+Creep.prototype.getPunchyness = function(){
+    return (this.partCount(ATTACK)*30) + (this.partCount(TOUGH)*10) + (this.partCount(RANGED_ATTACK)*10)
+}
 Creep.prototype.isMoreShootyThan = function(creep){
     return (this.partCount(RANGED_ATTACK) > creep.partCount(RANGED_ATTACK))
 }
