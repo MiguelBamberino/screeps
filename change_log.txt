@@ -5,7 +5,12 @@
 - Tweak - creeps now ignoreRoads if they have  the legs for it
 - Feature - added remoteHarrass()
 - Feature - made world map trade GUI live
+- Feature - Added heap monitoring to GUI 
+- Feature - creeps can now opt in to avoid room edges in pathing
+- can now set own creeps to fake enemies 
 - Fix - typo in trader.processOrders
+- Fix - runMarket() was using wrong value for terminal resource check
+
 
 ===================================
 = Version 19.4.0
