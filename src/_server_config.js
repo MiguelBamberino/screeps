@@ -102,7 +102,8 @@ module.exports = {
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000}
                                         ],
                                         exports:[
-                                            {resource_type:RESOURCE_OXYGEN,exportOver:50000,batchSize:100000}
+                                            {resource_type:RESOURCE_OXYGEN,exportOver:50000,batchSize:100000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
                                     }
         );
@@ -258,7 +259,7 @@ module.exports = {
                                         towersBuildWalls:false,
                                         armNuke:true,
                                         labComplex:new LabComplex(rp(4,13,'W45N51'),TOP_RIGHT),
-                                        makeResource:RESOURCE_LEMERGIUM_ALKALIDE,
+                                        makeResource:RESOURCE_UTRIUM_LEMERGITE,
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000},
@@ -267,7 +268,7 @@ module.exports = {
                                             // military
                                             {resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                                             {resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
-                                            {resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
+                                            {resource_type:RESOURCE_LEMERGIUM,storageCap:6000},
                                             {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,storageCap:6000},
                                         ],
                                         exports:[
@@ -326,6 +327,7 @@ module.exports = {
                                         exports:[
                                             {resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,exportOver:12000,batchSize:24000},
                                             {resource_type:RESOURCE_ZYNTHIUM,exportOver:24000,batchSize:12000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
 
                                     }

@@ -262,12 +262,10 @@ module.exports = function(){
         if(useMapBook){
           result= this.moveToUsingMap(target);
         }else{
-            //  creep.pos.getRangeTo(hostile)<=10 && 
+         
             let creep = this;// so callback works
-            let hostiles = this.room.getHostiles().filter(function(hostile){return (hostile.partCount(ATTACK)>0||hostile.partCount(RANGED_ATTACK)>0) });
-           // if(this.name=='Fighty1')clog(hostiles,'moveToPos:hostiles')
-           // let reUse = 50; 
-          // let ignoreNoobs = true;
+            let hostileIDs = this.room.getDangerousCreeps();
+ 
             let opts = {
                 maxOps:7000,reusePath:10,ignoreCreeps:true,
                 visualizePathStyle: {stroke: '#ffffff'}
@@ -277,15 +275,37 @@ module.exports = function(){
             if(creep.partCount(MOVE) >= (creep.body.length/2) ){
           
                 opts.ignoreRoads = true;
+
             }
             
             let rn = target.roomName ?target.roomName :target.pos.roomName; 
+            //if(this.name==='harrass-1')console.log('rn',rn,target.name,target.id)
             if(rn ==this.pos.roomName){
                 // this shrinks pathfinding and forces creep to stay in this room. It also avoid ERR_NO_PATH from weird terrain that
                 // would make the creep leave the room to move around
                 opts.maxRooms = 1;
+                if(this.memory.avoidEdges){
+                    console.log(creep.name,"-moveToPos avoidingEdges with costCallback")
+                    opts.costCallback = function(roomName,costMatrix){
+                        // if we don't have vision, then use default for now
+                        if (! Game.rooms[roomName]) return costMatrix;
+                        
+                        for(let x=0; x<49;x++){
+                            rp(x,0,rn).colourIn('red')
+                            rp(x,49,rn).colourIn('red')
+                            costMatrix.set(x, 0, 255);
+                            costMatrix.set(x, 49, 255);
+                        }
+                        for(let y=0; y<49;y++){
+                            rp(0,y,rn).colourIn('red')
+                            rp(49,y,rn).colourIn('red')
+                            costMatrix.set(0, y, 255);
+                            costMatrix.set(49, y, 255);
+                        }
+                    }
+                }
             }
-            
+            //if(this.name==='harrass-1')clog(opts)
             
             if(Game.shard.name =='shard3'){
                 opts.reusePath = 50;
@@ -298,7 +318,10 @@ module.exports = function(){
                 opts.ignoreCreeps=false;
                 opts.reusePath = 5;
             }
-            if(hostiles.length>0 && Game.cpu.bucket>8000){
+            
+            
+            // this code is turned off and needs rewriting to match new stuff
+            if(false && hostiles.length>0 && Game.cpu.bucket>8000){
                 
                 opts.reusePath=2;
                 
@@ -334,9 +357,7 @@ module.exports = function(){
                         let theirTotalFightParts= hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
                         let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
                         
-                        if(creep.name=='Gt19'){
-                            clog(hostile.owner.username,'hostile.owner.username')
-                        }
+                      
                         if(
                             // only avoid creep that are stronger
                             myTotalFightyParts < theirTotalFightParts
@@ -363,9 +384,7 @@ module.exports = function(){
                     return costMatrix;
                 };
             }
-            if(this.name=='E-ha-0'){
-              //  clog(opts)
-            }
+   
             result= this.moveTo(target,opts);
             this.debugSay("M:"+result)
             if(result===OK){

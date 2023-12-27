@@ -33,7 +33,7 @@ global.findGoodOrder=function(nodeName,type,resourceType,minPrice,maxDistance=30
     if(!terminal){clog("no Terminal for Markets",nodeName); return;}
     if(!storage){clog("no Storage for Markets",nodeName); return;}
     if(!storage.storingAtLeast(roomReserve,resourceType)){clog("Storage doesn't have enough",nodeName); return;}
-    if(!terminal.storingAtLeast(roomReserve,resourceType)){clog("Terminal doesn't have enough",nodeName); return;}
+    if(!terminal.storingAtLeast(500,resourceType)){clog("Terminal doesn't have enough",nodeName); return;}
     
     
     if(terminal.cooldown>0){clog("Terminal Cooling down",nodeName); return;}
@@ -86,11 +86,16 @@ global.createOrder=function(resourceType,roomName,price,totalAmount){
 global.runMarket=function(){
     console.log("========= Market Code Run ==================")
     console.log("Tick:",Game.time);
-    let res = findGoodOrder("Epsilon","buy",RESOURCE_HYDROGEN,75,40,50000)
-    if(res!==OK)res = findGoodOrder("Epsilon","buy",RESOURCE_GHODIUM,200,50)
-    if(res!==OK)res = findGoodOrder("Epsilon","buy",RESOURCE_BATTERY,145,30)
-    findGoodOrder("Alpha","buy",RESOURCE_OXYGEN,35,25)
+    let resE = findGoodOrder("Epsilon","buy",RESOURCE_HYDROGEN,75,40,50000)
+    if(resE!==OK)resE = findGoodOrder("Epsilon","buy",RESOURCE_GHODIUM,200,50)
+    if(resE!==OK)resE = findGoodOrder("Epsilon","buy",RESOURCE_BATTERY,145,30)
+    
+    let resA = findGoodOrder("Alpha","buy",RESOURCE_OXYGEN,35,25)
+    if(resA!==OK)resA = findGoodOrder("Alpha","buy",RESOURCE_BATTERY,145,30)
+    
     findGoodOrder("Lambda","buy",RESOURCE_LEMERGIUM,48,25)
+    
+    findGoodOrder("Kappa","buy",RESOURCE_BATTERY,145,30)
     findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
     //findGoodOrder("Epsilon","buy",RESOURCE_ENERGY,11,25)
     

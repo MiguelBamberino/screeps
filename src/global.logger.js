@@ -99,6 +99,8 @@ global.logs = {
         }
         let crepes = Object.keys(Game.creeps).length;
         let deets = crepes+"*.2 = "+(crepes*0.2);
+        
+
        
         report.push({tag:'~intents',usage:deets})
         return report;
