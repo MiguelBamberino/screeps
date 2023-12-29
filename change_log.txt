@@ -1,5 +1,5 @@
 ===================================
-= Version 19.4.1.mmo
+= Version 19.4.2
 ===================================
 - Config - turned off making G,UL,ZK
 - Config - started trading Batteries
