@@ -12,16 +12,21 @@ module.exports = {
             this.shard3TempCode();
         }else if( util.getServerName()==='botarena' || util.getServerName()==='private'){
            this.shardBATempCode();
+        }else if( util.getServerName()==='swc'){
+            this.shardSWCTempCode();
         }
         //
         
         return;
     },
+    shardSWCTempCode:function(){
+        this.fullAutomateRoomNode(nodes.a);
+    },
     shardBATempCode:function(){
         
         //this.botArenaForRoomNode(nodes.a);
-        this.botArenaForRoomNode(nodes.b);
-        this.botArenaForRoomNode(nodes.g);
+        this.fullAutomateRoomNode(nodes.b);
+        this.fullAutomateRoomNode(nodes.g);
         //this.startupRoomNoVision('Alpha','W7N4', {workerCount:4,workerBody:'10w10c10m'})
         
     }, 
@@ -187,7 +192,7 @@ module.exports = {
             factory.produce(resource)
         }
     },
-    botArenaForRoomNode:function(node){
+    fullAutomateRoomNode:function(node){
         if(!node)return
         let spawn = Game.spawns[node.name];
         if(!spawn)return spawn
@@ -233,16 +238,10 @@ module.exports = {
             }
         }
         if(room.controller.level>=5){
-            node.wallHeight=500000;
+            node.wallHeight=500000; //500k
         }
         if(room.controller.level>=6){
-            node.wallHeight=10000000;//10m
-            /*let mineral = mb.getMineralForRoom(room.name);
-            if(!mineral.getStandingSpot()){
-                mineral.setStandingSpot( mineral.pos.lookForNearbyWalkable(false,false)[0])
-            }*/
-            //this.harvestAndCollectCentreSectorMineral(node.name,mineral.id,mineral.getStandingSpot(),storage.id,mineral.mineralType,'5m10c','16w5c8m','-'+mineral.mineralType,1)
-            //node.makeResource = mineral.mineralType;
+            node.wallHeight=5000000;//5m
         }
         
         if(Game.spawns[node.name+'-2']){
@@ -355,7 +354,8 @@ module.exports = {
                 if(!controller){
                     node.badRooms.push(roomName);continue;
                 }
-                
+
+                // rescore every 500t
                 if(Game.time%500==0 && controller.haveVision)this.scoreRemote(node,roomName);
                 
                 /////////////// Harvesters  ///////////////////////////////////////////////////////
@@ -371,13 +371,11 @@ module.exports = {
                     
                     this.harvestPoint(node.name,roomName+'-'+src.pos.x+'-'+src.pos.y+'-h',harvesterBodyPlan,src);
                     
-                    if(src.haveVision &&src.getMeta().pathed){
+                    if(src.haveVision && src.getMeta().pathed){
                         pathsToMaintain=true;
                     }
-                   // if(roomName==='W5N9')clog(src.getMeta(),roomName)
-                    //clog(currConSiteCount,'currConSiteCount')
-                    
-                    if(src.haveVision && Game.time%1000==0 && currConSiteCount ==0)src.setMetaAttr('pathed',false);
+
+                    if(src.haveVision && Game.time%1000===0 && currConSiteCount ===0)src.setMetaAttr('pathed',false);
                     
                     let conSpace = 100-currConSiteCount;
                     
@@ -415,7 +413,10 @@ module.exports = {
             }
         }
     },
-    
+    /**
+     * remove walls that have later ended up with a structure on then
+     * @param node
+     */
     removeRedundantRoads: function(node){
         let spawn = Game.spawns[node.name];
         let roads = mb.getStructures({roomNames:[node.coreRoomName],types:[STRUCTURE_ROAD]})
@@ -429,10 +430,13 @@ module.exports = {
             if(road.pos.isEqualTo(rp(spawn.pos.x+1,spawn.pos.y+3,spawn.pos.roomName)))road.destroy()
         }
     },
-    
+    /**
+     * manage building 3 layers of roads.
+     * @param node
+     */
     manageWalls:function(node){
         
-        // once all walls are heiggh enough, lets maybe build another
+        // once all walls are high enough, lets maybe build another
         if(Game.time%500==0 && node.defenceIntel.weakest_structure.hits>=node.wallHeight)this.wallCheck=undefined;
         let allRampsBuilt = true;
         if(this.wallCheck===undefined){
@@ -453,8 +457,13 @@ module.exports = {
             this.wallCheck = Game.time;
         }
         
-    },  
-    
+    },
+    /**
+     * build a ring of alternating walls for a given array of positions
+     * designed for building our wall rings, around bases ramparts
+     * @param node
+     * @param positions
+     */
     buildWallRing:function(node,positions){
         let ignoreSpots = [];
         let srcs = mb.getSources({roomNames:[node.coreRoomName]});
@@ -495,8 +504,14 @@ module.exports = {
         
         let bodyPlan = "2a2m";
         if(room.energyCapacityAvailable>=550){
-                 bodyPlan = "1t1m+3*1a1m";
-             }
+            bodyPlan = "1t1m+3a3m";
+        }else if(room.energyCapacityAvailable>=800){
+            bodyPlan = "6a6m";
+        }else if(room.energyCapacityAvailable>=1300){
+            bodyPlan = "10a10m";
+        }else if(room.energyCapacityAvailable>=1800){
+            bodyPlan = "2m13a13m";
+        }
              
         if(towers.length==0){
             // if we have no towers just charge and hope for best
@@ -508,7 +523,7 @@ module.exports = {
             let ramparts = mb.getStructures({roomNames:[room.name],types:[STRUCTURE_RAMPART]})
             if(ramparts.length<10){
                 // we dont have a full wall so keep near the tower and then fight 
-                for(let i in hostileIds){
+                for(let i=0; i<=(2*hostileIds.lengh); i++){
                     this.constantGuardRoom(node.name,"guard"+i,room.name,bodyPlan,towers[0].pos,false,false,10);
                 }
             }
