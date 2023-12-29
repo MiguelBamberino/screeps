@@ -1,22 +1,78 @@
 require('./Store');
-const {STRUCTURE_CONTROLLER, STRUCTURE_STORAGE, STRUCTURE_TERMINAL,OK} = require("@screeps/common/lib/constants");
+require('./RoomObject')
+const {STRUCTURE_CONTROLLER, STRUCTURE_STORAGE, STRUCTURE_TERMINAL,OK, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION,
+    RESOURCE_ENERGY
+} = require("@screeps/common/lib/constants");
 
-global.Structure=function(type,roomName){
-    this.id="c123456789"
-    this.structureType=type
-    this.pos={x:1,y:1,roomName:roomName}
+class Structure extends RoomObject{
+    constructor(id, type,room) {
+
+        super({x:1,y:1,roomName:room.name},room)
+        this.id=id;
+        this.structureType=type;
+        this.hits = 0;
+        this.hitsMax = 0;
+        /* @var Store|undefined */
+        this.store=undefined;
+    }
+    _setHits(hits,hitsMax=undefined){
+        this.hits = hits;
+        this.hitsMax= Number.isInteger(hitsMax)?hitsMax:this.hitsMax;
+    }
+    _setStore(resources={}){
+        this.store = new Store(resources);
+        return this.store;
+    }
+    destroy(){return this._func_fake("destroy",undefined,OK)}
 }
-Structure.prototype._setOwner=function(name){
-    this.my = (name==='MadDokMike');
-    this.owner={ username:name};
+class OwnedStructure extends Structure{
+    constructor(id,type,room,ownerName) {
+        super(id,type,room);
+        this._setOwner(ownerName);
+    }
+    _setOwner(name){
+        this.my = (name==='MadDokMike');
+        this.owner={ username:name};
+    }
 }
-Structure.prototype._createStore=function(resources={}){
-    this.store = new Store(resources);
-    return this.store;
+class StructureContainer extends Structure{
+    constructor(id,room) {
+        super(id,STRUCTURE_CONTAINER,room);
+        this._setHits(250000,250000);
+        this._setStore()._setTotalCapacity(2000);
+        this.ticksToDecay = 250000;
+    }
+}
+class StructureController extends Structure{
+    constructor(id,room,level=0,ownerName=undefined) {
+        super(id,STRUCTURE_CONTROLLER,room);
+        this.level = level;
+        this.progress=0;
+        this.progressTotal=200;
+        this.my=false;
+        this.safeMode=undefined;
+        this.safeModeAvailable=0;
+        this.ticksToDowngrade=0;
+        this.upgradeBlocked=0;
+        if(ownerName)this._setOwner(ownerName)
+    }
+    activateSafeMode(){return this._func_fake("activateSafeMode",undefined,OK)}
+    unclaim(){return this._func_fake("unclaim",undefined,OK)}
+}
+class StructureExtension extends Structure{
+    constructor(id,room,rcl=1) {
+        super(id,STRUCTURE_EXTENSION,room);
+        this._setStore()
+        if(rcl===8)this.store._setResourceCapacity(RESOURCE_ENERGY,200);
+        if(rcl===7)this.store._setResourceCapacity(RESOURCE_ENERGY,100);
+        else this.store._setResourceCapacity(RESOURCE_ENERGY,50);
+    }
 }
 
-// monkey-patch in additional prototypes
-require('../../src/prototype.structure.store.js');
+global.Structure = Structure;
+global.OwnedStructure = OwnedStructure;
+global.StructureContainer = StructureContainer;
+global.StructureController = StructureController;
 
 module.exports = {
     _createController(roomName,level=0){
@@ -38,8 +94,5 @@ module.exports = {
             return this.__send_response;
         }
         return t;
-    },
-    _create(type,roomName){
-        return new Structure(type,roomName);
     }
 }

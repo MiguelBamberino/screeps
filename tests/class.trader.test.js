@@ -1818,6 +1818,7 @@ describe('tr.6 > processOrders()',()=>{
         expect(trader.getOrderByID(id2)).toBeFalsy();
     })
 
+    it.todo('tr.6.48 > ignore undefined recipient or sender values in Market.outgoingTransactions ')
 })
 
 

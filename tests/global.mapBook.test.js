@@ -7,7 +7,7 @@ const {RESOURCE_UTRIUM, ERR_INVALID_ARGS, RESOURCE_ZYNTHIUM, RESOURCE_ENERGY, ER
 require('../src/global.mapBook');
 
 /////////////////////////////////////////////////////////////////
-// mb initiate()
+// mb vision()
 /////////////////////////////////////////////////////////////////
 describe('mb.0 > mb.havePermanentVision()', () => {
 
@@ -109,3 +109,50 @@ describe('mb.2 > mb.allRooms() ', () => {
     });
     it.todo('mb.2.1 > 1 owned, 1 Memory');
 })
+
+/////////////////////////////////////////////////////////////////
+// mb room danger levels
+/////////////////////////////////////////////////////////////////
+/*
+- sk rooms /wo paths
+- sk rooms /w paths
+- invaderCores
+- player room /w tower; rcl 3+
+- player room /wo tower; rcl 1,2
+- player room /wo spawn/towers [destroyed/attacked]
+- allied player
+- un-owned room
+- hallway - low
+- ally remote
+- my remote
+- enemy remote
+
+room
+    structures
+    con, term, store, nuke
+    threatData
+    lastVisionAt
+
+- current danger level
+- default danger level
+- expiry ...when to drop back to default
+- threats [creeps,towers]
+- category: [Mine,Ally,Enemy,Empty,]
+-
+
+rank by : danger level
+
+danger levels:
+ High - high damage threats, need healer
+ medium - enemies seen, civilians avoid
+ low - no enemies seen, low risk for civilians
+ none - ally/owned
+ unknown - we don't know enough to decide
+
+ mb.scanRoom(roomName)
+    >> creates default threat data
+    >> updates /w active threats
+ mb.reportThreat(roomName,creep)
+ mb.reportThreats(roomName,creeps)
+ mb.getThreatReport()
+*/
