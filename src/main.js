@@ -99,6 +99,11 @@ module.exports.loop = function () {
         if(Game.cpu.bucket>8000 && Game.time%100===0){
             runMarket();
         }
+        if(Game.cpu.bucket>5000 && Game.time%20===0){
+            logs.startCPUTracker('processOrders');
+            trader.processOrders();
+            logs.stopCPUTracker('processOrders',true);
+        }
         
         logs.mainLoopEnded();
         

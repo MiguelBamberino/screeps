@@ -8,10 +8,57 @@ module.exports = {
         if(shard==='private')return this.createLocalServerRoomNodes();
         if(shard==='sim')return this.createShardSimRoomNodes();
         if(shard==='botarena')return this.createBotArenaRoomNodes();
+        if(shard==='swc')return this.createSWCRoomNodes();
             
         return {};
     },
     createBotArenaRoomNodes:function(){
+        let nodes = {};
+        if(Game.spawns['Alpha']){
+                let spwn = Game.spawns['Alpha']
+                nodes['a']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_VERY_SLOW,
+                                            buildFast:false,/*
+                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_HYDROXIDE*/
+                                        }
+                    )
+        }
+        if(Game.spawns['Beta']){
+                let spwn = Game.spawns['Beta']
+                nodes['b']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_SLOW,
+                                            buildFast:false,/*
+                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_HYDROXIDE*/
+                                        }
+                    )
+        }
+        if(Game.spawns['Gamma']){
+                let spwn = Game.spawns['Gamma']
+                nodes['g']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_SLOW,
+                                            buildFast:false,/*
+                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_HYDROXIDE*/
+                                        }
+                    )
+        }
+        return nodes;
+    },
+    createSWCRoomNodes:function(){
         let nodes = {};
         if(Game.spawns['Alpha']){
                 let spwn = Game.spawns['Alpha']
@@ -112,7 +159,7 @@ module.exports = {
                                         armNuke:true,
                                         terminalEnergyCap:100000,
                                         labComplex:new LabComplex(rp(33,32,'W41N53'),TOP_LEFT),
-                                        makeResource:RESOURCE_ZYNTHIUM_KEANITE,
+                                        /*makeResource:RESOURCE_ZYNTHIUM_KEANITE,*/
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
@@ -162,7 +209,7 @@ module.exports = {
                                         funnelRoomName:'',
                                         armNuke:true,
                                         labComplex:new LabComplex(rp(18,18,'W41N55'),TOP_RIGHT),
-                                        makeResource:RESOURCE_ZYNTHIUM_KEANITE,
+                                        /*makeResource:RESOURCE_ZYNTHIUM_KEANITE,*/
                                         imports:[
                                             {resource_type:RESOURCE_ZYNTHIUM,storageCap:12000},
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000}
@@ -233,6 +280,7 @@ module.exports = {
                                             {resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
                                             {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,storageCap:6000},
                                             {resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ],
                                         exports:[
                                             {resource_type:RESOURCE_KEANIUM,exportOver:24000,batchSize:24000}
@@ -264,8 +312,9 @@ module.exports = {
                                             {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,storageCap:6000},
                                         ],
                                         exports:[
-                                            {resource_type:RESOURCE_UTRIUM_ACID,exportOver:6000,batchSize:24000},
-                                            {resource_type:RESOURCE_UTRIUM_ALKALIDE,exportOver:0,batchSize:24000},
+                                            {resource_type:RESOURCE_UTRIUM,exportOver:24000,batchSize:12000},
+                                            {resource_type:RESOURCE_UTRIUM_ACID,exportOver:6000,batchSize:12000},
+                                            {resource_type:RESOURCE_UTRIUM_ALKALIDE,exportOver:0,batchSize:12000},
                                             {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:12000}
                                         ]
                                     }
@@ -283,7 +332,6 @@ module.exports = {
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:12000},
-                                            {resource_type:RESOURCE_ENERGY,storageCap:200000},
                                             // military
                                             {resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
                                             {resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
@@ -311,7 +359,6 @@ module.exports = {
                                          makeResource:RESOURCE_ZYNTHIUM_ACID,
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                                            {resource_type:RESOURCE_ENERGY,storageCap:100000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:12000},
                                             {resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000}
@@ -336,7 +383,6 @@ module.exports = {
                                         terminalEnergyCap:20000,
 										imports:[
 										    {resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                                            {resource_type:RESOURCE_ENERGY,storageCap:100000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:12000},
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000}
                                         ],

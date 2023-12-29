@@ -97,7 +97,7 @@ class Trader {
 
         for(let order of Game.market.outgoingTransactions){
             if(this.transPointer ===order.transactionId)break;
-            if(order.recipient.username==="MadDokMike" && order.sender.username==="MadDokMike")
+            if(order.recipient && order.sender && order.recipient.username==="MadDokMike" && order.sender.username==="MadDokMike")
                 outGoingOrders[ order.description ] = order;
         }
         if(Game.market.outgoingTransactions[0])this.transPointer = Game.market.outgoingTransactions[0].transactionId;
@@ -138,7 +138,7 @@ class Trader {
 
                         let res = exporterTerminal.send(order.resourceType,order.amount,order.roomName,id);
                         if(res===OK){
-                            //console.log("satisfied:",id,"with:",exporterRoom);
+                            //console.log("satisfied:",id,"with:",exporterRoom," amount:",order.amount);
                             this.orders[id].fulfilledAt="pending";
                             this.orders[id].fulfilledBy=exporterRoom;
                             reserves[order.roomName]+=order.amount;
