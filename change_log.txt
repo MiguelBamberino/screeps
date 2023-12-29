@@ -1,4 +1,15 @@
 ===================================
+= Version 19.4.1.mmo
+===================================
+- Config - turned off making G,UL,ZK
+- Config - started trading Batteries
+- Config - added SWC config template
+- Feature - improved controller safemode to trigger Key building dmg or claim attacks
+- Feature - Trading coding now live for room resource balancing
+- Fix - bug where Game.market transactions have no sender/recipient
+- Tweak - changed isDismantler()
+
+===================================
 = Version 19.4.1
 ===================================
 - Tweak - runMarket code to take stored volumes

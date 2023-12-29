@@ -50,7 +50,8 @@ Creep.prototype.isFighter = function(){
     return (this.partCount(ATTACK)>0||this.partCount(RANGED_ATTACK)>0)
 }
 Creep.prototype.isDismantler = function(){
-    return (this.partCount(WORK)>=20)
+    // no reason for an attack dismantler to have carry
+    return (this.partCount(WORK)>=10 && this.partCount(CARRY)===0)
 }
 Creep.prototype.isHealer = function(){
     return (this.partCount(HEAL)>0)

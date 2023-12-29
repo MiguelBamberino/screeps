@@ -188,7 +188,7 @@ StructureLink.prototype.isSender = function () {
 StructureLink.prototype.isReceiver = function () {
     const meta = this.getMeta();
     return meta.subType === 'R';
-};
+}; 
 
 //  setAsSender method to the Link prototype
 StructureLink.prototype.setAsSender = function () {

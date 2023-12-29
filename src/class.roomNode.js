@@ -51,7 +51,7 @@ class RoomNode{
             this.extractorComplex = new ExtractorComplex(mineral.pos,Game.spawns[this.name].pos,name)
   
         this.totalEnergyAtSources=0;
-        this.homeMineralSurplus = 80001;
+        this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
         
         // options
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
@@ -248,6 +248,7 @@ class RoomNode{
         // safety repair, in case some event kills normal repair creeps and room is collapsing
         let repairTypes =[];
         let repairTarget=false;
+    
         if(playerFighters.length>1 || this.towersBuildWalls){
             
             repairTarget = Game.getObjectById(this.defenceIntel.weakest_structure.id);
@@ -259,28 +260,33 @@ class RoomNode{
                 repairTarget=decay_structs[0];
                 
         }
-
         
-        if(towers.length<2 && playerFighters.length>=4 ){
-            this.controller().activateSafeMode();
-        }
-        
-        if(towers.length==0)return;
         
     	let target = false;
+    	let claimAttackDetected = false;
+    	let enemyNearCoreSpawn = false;
 
         for(var id of hostileIds){
             let enemy = Game.getObjectById(id);
             if(!enemy)continue;
             
-            let range = towers[0].pos.getRangeTo(enemy);
+            let rangeToTower = towers.length>0?towers[0].pos.getRangeTo(enemy):99;
+            let rangeToCoreSpawn = Game.spawns[this.name]?Game.spawns[this.name].pos.getRangeTo(enemy):99;
+            
+            if(rangeToCoreSpawn<=2){
+                enemyNearCoreSpawn=true;
+            }
+            
+            if(!claimAttackDetected && enemy.partCount(CLAIM)>0 && enemy.pos.getRangeTo(this.controller().pos)===2 ){
+                claimAttackDetected=true;
+            }
     
            
             // shoot small NPCs at max range
             if(hostileIds.length<4 && enemy.owner.username==='Invader'){
                target= enemy;break;
             }
-            if(range<=15 ){
+            if(rangeToTower<=15 ){
                 
                if(enemy.hits < enemy.hitsMax){
                    target= enemy;break;// prioritise something we are already shooting
@@ -292,6 +298,45 @@ class RoomNode{
             } 
         }
         
+        //////////////////////////////////////////////////////////////////////
+        // Safe-mode checks
+        //////////////////////////////////////////////////////////////////////
+        if(playerFighters.length>1){
+            
+            let criticalStructureIDs = mb.getStructures({
+                roomNames:[this.coreRoomName],
+                type:[STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TERMINAL],
+                justIDs:true
+            });
+            for(let id of criticalStructureIDs){
+                let structure = gob(id);
+                if(!structure){
+                    // somethings been destroyed
+                    this.controller().activateSafeMode();break;
+                }
+                if(structure.hits<structure.hitsMax){
+                   // somethings is being destroyed
+                    this.controller().activateSafeMode();break; 
+                }
+            }
+            
+            
+        }
+        
+        if(this.controller().level < 4 && enemyNearCoreSpawn ){
+            // likely we will lose spawn if enemy is this close at low level
+            this.controller().activateSafeMode();
+        }
+        
+        if(claimAttackDetected){
+            this.controller().activateSafeMode();
+        }
+        
+        
+        //////////////////////////////////////////////////////////////////////////////////////
+        // Real Tower Code
+        //////////////////////////////////////////////////////////////////////////////////////
+        if(towers.length==0)return;
         
 	    let healTarget = false;
 	    for(const cname of this.creepNames){
@@ -301,7 +346,9 @@ class RoomNode{
                 healTarget = creep;
             }
         }
-
+        
+        
+        
         if(target || healTarget || repairTarget){
     	    for(var tower of  towers){
 
