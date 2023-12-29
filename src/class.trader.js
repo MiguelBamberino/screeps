@@ -138,7 +138,7 @@ class Trader {
 
                         let res = exporterTerminal.send(order.resourceType,order.amount,order.roomName,id);
                         if(res===OK){
-                            console.log("satisfied:",id,"with:",exporterRoom," amount:",order.amount);
+                            //console.log("satisfied:",id,"with:",exporterRoom," amount:",order.amount);
                             this.orders[id].fulfilledAt="pending";
                             this.orders[id].fulfilledBy=exporterRoom;
                             reserves[order.roomName]+=order.amount;
