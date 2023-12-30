@@ -1,6 +1,7 @@
 let tankerRole=require('role.tanker');
 const roomNode = require('class.roomNode');
 let harvesterRole = require('role.harvester');
+const {STRUCTURE_PORTAL} = require("@screeps/common/lib/constants");
 module.exports = {
     
 // attack on Game.time 1075909. invader quad
@@ -4894,32 +4895,69 @@ module.exports = {
     
     // when a target is far away, provide a bridging travel function, to avoid crazy CPU on moveTo pathfinding
     traverseRooms:function(creep,roomNames){
-       // if(creep.name=='Barry0')clog(roomNames,creep.name)
         let curr=-1;
         for(let i in roomNames){
             if(creep.pos.roomName===roomNames[i]){
                 curr = (1*i);break;
             }
         }
+        // sample portal journey:
+        // W4N5, W5N5,W5N5>portal>E5S5,E5S6,E5S7
+        // portal is W5N5>>E5S5. DONT put portal destination as movable room, we want to get out
+
         // IF curr=-1, then it becomes 0 and we move to the first room
         // IF curr+1 references a valid next room, then we try to move to that room
         // IF we don't get a room, then we assume we are at the end.
         let next = curr+1;
-        //if(creep.name=='Thor-guard')console.log(creep.pos)
-        //if(creep.name=='Thor-guard')console.log(roomNames)
-       //if(creep.name=='Thor-guard')console.log(roomNames[next])
-       
+        if(creep.name==='portal-scout')console.log(creep.pos,"next:",roomNames[next],"in:",roomNames)
+
         if(roomNames[next]){
-            let res = creep.moveOffRoomEdge();
-            //if(creep.name=='thor-0')clog(res,creep.name+'fff')
-            if(res!==OK)
-                res = creep.moveToPos(new RoomPosition(15,15,roomNames[next]));
-            
-             
-            //if(creep.name=='thor-0')clog(res,creep.name)
-            //creep.say(res);
+            let res = 404;
+            if( roomNames[next].includes('portal') ) {
+                if(mb.hasRoom(creep.pos.roomName))mb.scanRoom(creep.pos.roomName);
+                let portal = gob(creep.memory.portal_id);
+                if(!portal){
+                    portal = mb.getNearestStructure(creep.pos,
+                        [STRUCTURE_PORTAL],[creep.pos.roomName])
+                    if(portal){
+                        creep.memory.portal_id = portal.id;
+                    }
+                }
+                if(portal){
+                    if(creep.name==='portal-scout')console.log(creep.pos," moving-to-portal ",portal.pos)
+                    creep.moveToPos(portal)
+                }else{
+                    if(creep.name==='portal-scout')console.log(creep.pos," cant-find-portal ",roomNames)
+                    res = 505;
+                }
+
+            }else {
+
+                // we have a portal_id? but not on the traverse-portal-pointer?
+                // (we likely just came through. we are on exit)
+                if(creep.memory.portal_id){
+                    if(creep.name==='portal-scout')console.log(creep.pos," arrived-jump-off ",roomNames)
+
+                    let jumpOffSpots = creep.pos.getNearbyPositions();
+                    for(let pos of jumpOffSpots){
+                        if( pos.lookForStructure(STRUCTURE_PORTAL)===false && pos.isWalkable(true)){
+                            creep.memory.portal_id=false;
+                            if(creep.name==='portal-scout')console.log(creep.pos," jumping-to ",pos)
+                            res = creep.moveToPos(pos);
+                            break;
+                        }
+                    }
+                }else {
+                    res = creep.moveOffRoomEdge();
+                    if (res !== OK) {
+                        if(creep.name==='portal-scout')console.log(creep.pos," moving-to 25,25",roomNames[next])
+                        res = creep.moveToPos(new RoomPosition(25, 25, roomNames[next]));
+                    }
+                }
+            }
             return res;
         }else{
+            if(creep.name==='portal-scout')console.log(creep.pos," end-of-traverse ",roomNames)
             return 200;
         }
     },
