@@ -43,25 +43,29 @@ class StructureContainer extends Structure{
         this.ticksToDecay = 250000;
     }
 }
-class StructureController extends Structure{
+class StructureController extends OwnedStructure{
     constructor(id,room,level=0,ownerName=undefined) {
-        super(id,STRUCTURE_CONTROLLER,room);
+        super(id,STRUCTURE_CONTROLLER,room,ownerName);
         this.level = level;
         this.progress=0;
         this.progressTotal=200;
-        this.my=false;
+
         this.safeMode=undefined;
         this.safeModeAvailable=0;
         this.ticksToDowngrade=0;
         this.upgradeBlocked=0;
-        if(ownerName)this._setOwner(ownerName)
+        if(!ownerName){
+            this.my=false;
+            this.owner=undefined;
+        }
     }
     activateSafeMode(){return this._func_fake("activateSafeMode",undefined,OK)}
     unclaim(){return this._func_fake("unclaim",undefined,OK)}
 }
-class StructureExtension extends Structure{
-    constructor(id,room,rcl=1) {
-        super(id,STRUCTURE_EXTENSION,room);
+class StructureExtension extends OwnedStructure{
+    constructor(id,room,ownerName,rcl=1) {
+        super(id,STRUCTURE_EXTENSION,room,ownerName);
+        this._setHits(1000,1000);
         this._setStore()
         if(rcl===8)this.store._setResourceCapacity(RESOURCE_ENERGY,200);
         if(rcl===7)this.store._setResourceCapacity(RESOURCE_ENERGY,100);
@@ -73,6 +77,7 @@ global.Structure = Structure;
 global.OwnedStructure = OwnedStructure;
 global.StructureContainer = StructureContainer;
 global.StructureController = StructureController;
+global.StructureExtension = StructureExtension;
 
 module.exports = {
     _createController(roomName,level=0){

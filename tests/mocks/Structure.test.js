@@ -1,5 +1,5 @@
 let StructureFactory=require('./Structure');
-const {STRUCTURE_CONTROLLER, RESOURCE_ENERGY, OK} = require("@screeps/common/lib/constants");
+const {STRUCTURE_CONTROLLER, RESOURCE_ENERGY, OK, RESOURCE_GHODIUM} = require("@screeps/common/lib/constants");
 
 describe('mock.structure.1 > basic', () => {
     it("mock.structure.1.1 > default construction",()=>{
@@ -94,5 +94,29 @@ describe('mock.structure.2 > Typed Structures basic construction', () => {
         expect(c.store).toBeDefined();
         expect(c.ticksToDecay).toBeDefined();
         expect(c.store.getCapacity()).toBe(2000);
+    })
+    it("mock.structure.2.2 > container",()=>{
+        let s = new StructureExtension("123",{name:"W1N1"},"MadDokMike");
+        expect(s.hits).toBe(1000);
+        expect(s.hitsMax).toBe(1000);
+        expect(s.store).toBeDefined();
+        expect(s.store.getCapacity()).toBe(50);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(50);
+        expect(s.store.getCapacity(RESOURCE_GHODIUM)).toBe(undefined);
+        s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",2);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(50);
+        s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",3);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(50);
+        s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",4);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(50);
+        s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",5);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(50);
+        s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",6);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(50);
+        s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",7);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(100);
+        s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",8);
+        expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(200);
+
     })
 })
