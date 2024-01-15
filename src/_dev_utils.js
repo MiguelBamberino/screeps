@@ -93,10 +93,15 @@ global.runMarket=function(){
     let resA = findGoodOrder("Alpha","buy",RESOURCE_OXYGEN,35,25)
     if(resA!==OK)resA = findGoodOrder("Alpha","buy",RESOURCE_BATTERY,145,30)
     
-    findGoodOrder("Lambda","buy",RESOURCE_LEMERGIUM,48,25)
+    let resL = findGoodOrder("Lambda","buy",RESOURCE_LEMERGIUM,48,25)
+    if(resL!==OK)resL = findGoodOrder("Lambda","buy",RESOURCE_BATTERY,145,30);
     
-    findGoodOrder("Kappa","buy",RESOURCE_BATTERY,145,30)
-    findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
+    let resK = findGoodOrder("Kappa","buy",RESOURCE_BATTERY,145,30)
+   
+   let resD = findGoodOrder("Delta","buy",RESOURCE_BATTERY,145,30)
+    
+    let resM = findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
+    if(resM!==OK)resM = findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
     //findGoodOrder("Epsilon","buy",RESOURCE_ENERGY,11,25)
     
     console.log("===========================================")
