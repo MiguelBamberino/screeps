@@ -182,7 +182,10 @@ var roleTanker = {
                 
         if(factory && !creep.memory.job){
             
-            if(factory.storingAtLeast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)){
+            if(factory.storingAtLeast(creepSpace,RESOURCE_BATTERY) 
+            && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)
+            && storage.storedAmount(RESOURCE_BATTERY)<300000
+            ){
                 creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_BATTERY,action:'empty'}
             }
         }

@@ -176,6 +176,7 @@ module.exports = {
                                             {resource_type:RESOURCE_ZYNTHIUM_ACID,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_LEMERGIUM_OXIDE,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,exportOver:6000,batchSize:12000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
                                     }
         
@@ -218,6 +219,7 @@ module.exports = {
 										    {resource_type:RESOURCE_KEANIUM,exportOver:24000,batchSize:12000},
                                             {resource_type:RESOURCE_HYDROGEN,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:1,batchSize:12000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
                                     }
         );
@@ -283,7 +285,8 @@ module.exports = {
                                             {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ],
                                         exports:[
-                                            {resource_type:RESOURCE_KEANIUM,exportOver:24000,batchSize:24000}
+                                            {resource_type:RESOURCE_KEANIUM,exportOver:24000,batchSize:24000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
                                     }
         );
@@ -315,7 +318,8 @@ module.exports = {
                                             {resource_type:RESOURCE_UTRIUM,exportOver:24000,batchSize:12000},
                                             {resource_type:RESOURCE_UTRIUM_ACID,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_UTRIUM_ALKALIDE,exportOver:0,batchSize:12000},
-                                            {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:12000}
+                                            {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:12000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
                                     }
         );
@@ -341,7 +345,8 @@ module.exports = {
                                         ],
                                         exports:[
                                             {resource_type:RESOURCE_OXYGEN,exportOver:24000,batchSize:24000},
-                                            {resource_type:RESOURCE_HYDROXIDE,exportOver:24000,batchSize:24000}
+                                            {resource_type:RESOURCE_HYDROXIDE,exportOver:24000,batchSize:24000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                             ]
                                     }
         );
@@ -388,6 +393,7 @@ module.exports = {
                                         ],
                                         exports:[
                                             {resource_type:RESOURCE_LEMERGIUM,exportOver:50000,batchSize:24000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
 
                                     }
@@ -406,6 +412,7 @@ module.exports = {
                                         ],
                                         exports:[
                                             {resource_type:RESOURCE_CATALYST,exportOver:24000,batchSize:50000},
+                                            {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
                                     }
         );

@@ -10,8 +10,8 @@ global.gui = {
     rb:false,
     rbFor:false,
     nodeStats:false,
-    tradeStats:false,
-    tradeHistoryLength:10,
+    tradeStats:true,
+    tradeHistoryLength:24000,
     nodes:[],
     renderRooms:[],
     on: function(){
