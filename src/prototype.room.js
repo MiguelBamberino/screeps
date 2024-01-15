@@ -75,26 +75,32 @@ Room.prototype._parseHostileCreeps=function(cacheSensitivity=5){
             }
             else{
                 CREEPS_ROOM_CACHE[this.name].nonallies.push(creep.id);
-            } 
-            
-            if( creep.owner.username=='Source Keeper' ){
-                CREEPS_ROOM_CACHE[this.name].dangerousCreeps.push(creep.id);
-                CREEPS_ROOM_CACHE[this.name].skeepers.push(creep.id);
-            }
-            else if( creep.owner.username=='Invader' ){
-                CREEPS_ROOM_CACHE[this.name].dangerousCreeps.push(creep.id);
-                CREEPS_ROOM_CACHE[this.name].invaders.push(creep.id);
-            }else {
                 
-                CREEPS_ROOM_CACHE[this.name].enemyPlayerCreeps.push(creep.id);
-                if(creep.isFighter() || creep.isDismantler()){
+                
+                if( creep.owner.username=='Source Keeper' ){
                     CREEPS_ROOM_CACHE[this.name].dangerousCreeps.push(creep.id);
-                    CREEPS_ROOM_CACHE[this.name].enemyPlayerFighters.push(creep.id);
-                }else if(creep.isCivilian()){
-                    CREEPS_ROOM_CACHE[this.name].enemyPlayerCivilians.push(creep.id);
+                    CREEPS_ROOM_CACHE[this.name].skeepers.push(creep.id);
+                }
+                else if( creep.owner.username=='Invader' ){
+                    CREEPS_ROOM_CACHE[this.name].dangerousCreeps.push(creep.id);
+                    CREEPS_ROOM_CACHE[this.name].invaders.push(creep.id);
+                }else {
+                    
+                    
+                    
+                    CREEPS_ROOM_CACHE[this.name].enemyPlayerCreeps.push(creep.id);
+                    if( creep.isFighter() || creep.isDismantler() ){
+                        CREEPS_ROOM_CACHE[this.name].dangerousCreeps.push(creep.id);
+                        CREEPS_ROOM_CACHE[this.name].enemyPlayerFighters.push(creep.id);
+                    }else if(creep.isCivilian()){
+                        CREEPS_ROOM_CACHE[this.name].enemyPlayerCivilians.push(creep.id);
+                    }
+                    
                 }
                 
-            }
+            } 
+            
+            
             
         }
     }else{
@@ -103,11 +109,27 @@ Room.prototype._parseHostileCreeps=function(cacheSensitivity=5){
    return CREEPS_ROOM_CACHE[this.name];
 }
 
-Room.prototype._debugSetEnemies=function(category,creepNames){
-    CREEPS_ROOM_CACHE[this.name][category]=[];
+Room.prototype._debugSetHostiles=function(category,creepNames){
+    this._parseHostileCreeps();
+  
     for(let name of creepNames){
-        if(Game.creeps[name]&&!Game.creeps[name].spawning)CREEPS_ROOM_CACHE[this.name][category].push(Game.creeps[name].id);
+        if( Game.creeps[name] && !Game.creeps[name].spawning && !CREEPS_ROOM_CACHE[this.name][category].includes( Game.creeps[name].id ) ){
+           CREEPS_ROOM_CACHE[this.name][category].push( Game.creeps[name].id );
+        }
     }
+    //clog(CREEPS_ROOM_CACHE[this.name])
+}
+Room.prototype._debugSetEnemies=function(creepNames){
+    this._parseHostileCreeps();
+  
+    for(let name of creepNames){
+        if( Game.creeps[name] && !Game.creeps[name].spawning && !CREEPS_ROOM_CACHE[this.name].dangerousCreeps.includes( Game.creeps[name].id ) ){
+           CREEPS_ROOM_CACHE[this.name].nonallies.push( Game.creeps[name].id );
+           CREEPS_ROOM_CACHE[this.name].enemyPlayerFighters.push( Game.creeps[name].id );
+           CREEPS_ROOM_CACHE[this.name].dangerousCreeps.push( Game.creeps[name].id );
+        }
+    }
+    //clog(CREEPS_ROOM_CACHE[this.name])
 }
 
 Room.prototype.getAllyCreeps=function(cacheSensitivity=5){

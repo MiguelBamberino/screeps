@@ -11,7 +11,8 @@ global.gui = {
     rbFor:false,
     nodeStats:false,
     tradeStats:false,
-    tradeHistoryLength:10,
+    remoteStats:false,
+    tradeHistoryLength:1000,
     nodes:[],
     renderRooms:[],
     on: function(){
@@ -47,7 +48,7 @@ global.gui = {
         for(let id in this.nodes)
             this.renderRooms.push(this.nodes[id].coreRoomName);
         
-        if(Game.rooms['sim'] || util.getServerName()==='private'  || util.getServerName()==='botarena'){
+        if(Game.rooms['sim'] || util.getServerName()==='private'  || util.getServerName()==='botarena'|| util.getServerName()==='swc'){
             this.nodeStats=true;
             this.rbFor= true;
         }
@@ -153,22 +154,73 @@ global.gui = {
         //this.renderStructureRefs('W41N54')
         
     //logs.startCPUTracker('gui.renderReserveBookFor');
-    if(util.getServerName()=='private' || util.getServerName()==='botarena'){
-        if( nodes.a.controller().haveContainer() )
-            this.renderReserveBookFor(nodes.a.controller().getContainer().id);
+    if(util.getServerName()=='private' || util.getServerName()==='swc'){
+        for(let n in this.nodes){
+        if( this.nodes[n].controller().haveContainer() )
+            this.renderReserveBookFor(this.nodes[n].controller().getContainer().id);
+        }
         
         for(let src of mb.getAllSources()){
-            if(src.haveVision && src.haveContainer())this.renderReserveBookFor(src.getContainer().id);
+           // if(src.haveVision && src.haveContainer())this.renderReserveBookFor(src.getContainer().id);
         }
     }
+    
+    if(this.remoteStats)this.renderRemoteStats()
+    
     //logs.stopCPUTracker('gui.renderReserveBookFor',true);
-  
-       // this.renderDefenseDetails(nodes.a)
+        for(let n in this.nodes){
+            if(this.nodes[n].defenceIntel.priority_attacker_id){
+            
+                this.renderDefenseDetails(this.nodes[n])
+            }
+        }
         
         let u = Game.cpu.getUsed() - st;
         logs.guiCPU= u;
         //console.log("GUI-CPU-used: "+u);  
     },
+    
+    renderRemoteStats:function(){
+        
+        let doneRooms={};
+        for(let n in this.nodes){
+            let node = this.nodes[n]
+            let remoteFlip = {};
+            for( let i in node.remoteRoomNames){
+                remoteFlip[ node.remoteRoomNames[i] ] = i;
+            }
+            
+            for(let remoteRN in Memory.remotes[node.name] ){
+                let details = Memory.remotes[node.name][remoteRN];
+                
+                if(doneRooms[remoteRN]!==undefined && doneRooms[remoteRN]===false)continue;
+                
+                doneRooms[remoteRN] = details.online;
+                //if(remoteRN==='E6N4')clog(details,node.name+"-"+remoteRN)
+                let colour = '#ff0000';
+                if(details.online){
+                    colour = '#00ff00';
+                }
+                
+                Game.map.visual.rect(rp(1,1,remoteRN),30,20 ,{opacity:0.9} )
+                let textCSS = {fontSize:3,align:'left',color:'#444444'};
+                let totalE = 0;
+                let srcs = mb.getSources({roomNames:[remoteRN]});
+                for(let src of srcs)
+                    totalE += src.energyAwaitingCollection();
+                
+                Game.map.visual.text("Priority: "+remoteFlip[remoteRN],rp(2,3,remoteRN),textCSS)
+                 Game.map.visual.text("Score: "+details.score,rp(2,6,remoteRN),textCSS)
+                 Game.map.visual.text("Reason: "+details.reason,rp(2,9,remoteRN),textCSS)
+                 Game.map.visual.text("Energy: "+totalE,rp(2,12,remoteRN),textCSS)
+                guiWM.drawArrowFromRoomToRoom(node.coreRoomName,remoteRN,colour)
+                
+            }
+            
+        }
+        
+    },
+    
     renderTradeStats:function(){
         
         if(this.tradeStats){
@@ -182,6 +234,7 @@ global.gui = {
             }
 
             for(let n in this.nodes){
+                let node = this.nodes[n]
                 tradeStats = [];
                 for(let exp of this.nodes[n].exports){
                     tradeStats.push({resource_type:exp.resource_type,demand_satisfied:false,importing:false,exporting:true})
@@ -213,21 +266,58 @@ global.gui = {
     
     renderDefenseDetails: function(node){
         
-        let walls = mb.getStructures({roomNames:[node.coreRoomName],types:[STRUCTURE_WALL,STRUCTURE_RAMPART]});
-        for(let wall of walls){
-            let colour = 'white';
-            let diff= node.wallHeight - wall.hits;
-            let perc=100;
-            if(diff>0){
-                perc= (wall.hits/node.wallHeight)*100;
-                
-                    colour='rgb('+(200-(perc/2))+','+((perc*2)+1)+',1)';
-                
-            }else{
-                colour= 'rgb(100,255,1)';
+        let mainAttacker = gob(node.defenceIntel.priority_attacker_id);
+        let targetRamp = gob(node.defenceIntel.closest_ramp_id)
+        
+        if( mainAttacker && targetRamp ){
+            node.room().visual.line(mainAttacker.pos,targetRamp.pos)
+        }
+        if(mainAttacker){
+            
+            let towers = mb.getStructures({roomNames:[node.coreRoomName],types:[STRUCTURE_TOWER]})
+            let towerStats = "dist[";
+            for(let tower of towers){
+                let colour = 'red';
+                let dist = tower.pos.getRangeTo(mainAttacker);
+                if(dist<=15){
+                    colour = 'yellow';
+                }
+                if(dist<=5){
+                    colour = 'green';
+                }
+                towerStats+=dist+",";
+                node.room().visual.line(tower.pos,mainAttacker.pos,{color:colour})
             }
-            wall.pos.colourIn(colour);
-            wall.pos.text(perc.toFixed(0)+'%');
+            towerStats+="]"
+            node.room().visual.text(towerStats,rp(mainAttacker.pos.x+3,mainAttacker.pos.y,mainAttacker.pos.roomName) )
+            node.room().visual.text("dmg:"+node.defenceIntel.tower_dmg_on_priority,rp(mainAttacker.pos.x+3,mainAttacker.pos.y+1,mainAttacker.pos.roomName) )
+            
+            for(let id of node.defenceIntel.ramp_ids_to_defend){
+                let ramp = gob(id);
+                if(ramp){
+                    node.room().visual.text("🛡️",ramp.pos )
+                }
+            }
+            
+        }
+        
+        if(Game.time %20===0){
+            let walls = mb.getStructures({roomNames:[node.coreRoomName],types:[STRUCTURE_WALL,STRUCTURE_RAMPART]});
+            for(let wall of walls){
+                let colour = 'white';
+                let diff= node.wallHeight - wall.hits;
+                let perc=100;
+                if(diff>0){
+                    perc= (wall.hits/node.wallHeight)*100;
+                    
+                        colour='rgb('+(200-(perc/2))+','+((perc*2)+1)+',1)';
+                    
+                }else{
+                    colour= 'rgb(100,255,1)';
+                }
+                wall.pos.colourIn(colour);
+                wall.pos.text(perc.toFixed(0)+'%');
+            }
         }
     },
         
@@ -271,7 +361,8 @@ global.gui = {
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ key:node.name, value:val });
+                 let usage = (logs.spawnTimeTrackers[node.name].usage.toFixed(0))+'%'
+                lines.push({ key:node.name+' '+usage, value:val });
             }
             sp = Game.spawns[node.name+'-2'];
             if(sp){
@@ -279,7 +370,8 @@ global.gui = {
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ key:node.name+'-2', value: val});
+                let usage = (logs.spawnTimeTrackers[node.name+'-2'].usage.toFixed(0))+'%'
+                lines.push({ key:node.name+'-2'+' '+usage, value: val});
             }
             sp = Game.spawns[node.name+'-3'];
             if(sp){
@@ -287,7 +379,8 @@ global.gui = {
                 if( sp.spawning){
                     val = sp.spawning.remainingTime+'/'+sp.spawning.needTime+' '+sp.spawning.name;
                 }
-                lines.push({ key:node.name+'-3', value: val});
+                let usage = (logs.spawnTimeTrackers[node.name+'-3'].usage.toFixed(0))+'%'
+                lines.push({ key:node.name+'-3'+' '+usage, value: val});
             }
             
             
@@ -299,6 +392,7 @@ global.gui = {
             
             if(['W41N53','W41N54','W48N52'].includes(node.coreRoomName) )renderPos=rp(8,20,node.coreRoomName)
             if(node.coreRoomName=='W48N54')renderPos=rp(19,4,node.coreRoomName)
+            if(node.coreRoomName=='E3N5')renderPos=rp(1,25,node.coreRoomName)
             
             
             Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name+" - "+node.coreRoomName,true,{key:3,value:3});

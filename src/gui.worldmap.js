@@ -24,16 +24,18 @@ function drawTransferLog(log){
     let startPos = rp(25,25,log.sourceRoom);
     let endPos = rp(25,25,log.targetRoom);
     resourcePos = endPos;
+    let strNum =  Game.time.toString();
+    let interval = parseInt( strNum.charAt(strNum.length - 1)/3 );
     
-    if(ticksSinceSend==0){
+    if(interval==0){
         resourcePos = startPos;
-    }else if(ticksSinceSend==1){
+    }else if(interval==1){
         resourcePos = startPos.getPosAtDistanceAndAngle( 25, angle );
-    }else if(ticksSinceSend==2){
+    }else if(interval==2){
         resourcePos = endPos.getPosAtDistanceAndAngle( 25, invertAngle(angle) );
     }
-    if(ticksSinceSend<5)
-        drawResourceIconAtMapPos(resourcePos,log.resource_type);
+    
+    drawResourceIconAtMapPos(resourcePos,log.resource_type);
 }
 /**
  * Render the array of trade stats for a given room. Stats are renders a resource circles around the
@@ -78,8 +80,29 @@ function drawResourceIconAtMapPos(pos,resource_type,opacity=1,radius=4){
 
 }
 
+/**
+ * 
+ * @param String sourceRoom
+ * @param String targetRoom
+ * @param String colour - either hex colour / english colour word
+ * @param Number|false angle - if set the angle at which the rooms are to each other. 
+ *                              if ommited, it will be calculated. Used to set arrow head.
+ */ 
+function drawArrowFromRoomToRoom(sourceRoom,targetRoom,colour,angle=false){
 
-module.exports ={drawTransferLog,drawResourceIconAtMapPos,drawRoomTraderStatsOnMap}
+    let opac = Game.time%2==0?0.7:0.6;
+    
+    if(angle===false){
+        let ang = getAngleBetweenRooms(sourceRoom,targetRoom).toFixed(0)
+        angle = (ang/5).toFixed()*5;
+    }
+    Game.map.visual.line(rp(25,25,sourceRoom), rp(25,25,targetRoom).getPosAtDistanceAndAngle( 3, invertAngle(angle) ) ,{color:colour,width:2,opacity:opac})
+    Game.map.visual.poly(calculateTriangle(rp(25,25,targetRoom),angle),{fill:colour,opacity:opac,stroke:colour})
+    
+}
+
+
+module.exports ={drawTransferLog,drawResourceIconAtMapPos,drawRoomTraderStatsOnMap,drawArrowFromRoomToRoom}
 
 //////////// Private functions /////////////////////////////////////////////////////
 /**
@@ -167,26 +190,7 @@ function lookupResourceIconStyle(resource_type){
     }
 }
 
-/**
- * 
- * @param String sourceRoom
- * @param String targetRoom
- * @param String colour - either hex colour / english colour word
- * @param Number|false angle - if set the angle at which the rooms are to each other. 
- *                              if ommited, it will be calculated. Used to set arrow head.
- */ 
-function drawArrowFromRoomToRoom(sourceRoom,targetRoom,colour,angle=false){
 
-    let opac = Game.time%2==0?0.7:0.6;
-    
-    if(angle===false){
-        let ang = getAngleBetweenRooms(sourceRoom,targetRoom).toFixed(0)
-        angle = (ang/5).toFixed()*5;
-    }
-    Game.map.visual.line(rp(25,25,sourceRoom), rp(25,25,targetRoom).getPosAtDistanceAndAngle( 3, invertAngle(angle) ) ,{color:colour,width:2,opacity:opac})
-    Game.map.visual.poly(calculateTriangle(rp(25,25,targetRoom),angle),{fill:colour,opacity:opac,stroke:colour})
-    
-}
 /**
  * @param Number angle
  * @return the angle exactly 180 degrees opposite

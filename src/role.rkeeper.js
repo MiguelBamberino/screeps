@@ -44,6 +44,14 @@ var roleTanker = {
             stored_type=resource_type;
         }
         
+        if(!creep.memory.job && creep.ticksToLive<20){
+            creep.suicide();
+        }
+       /* let drop = creep.getDroppedResource(RESOURCE_ZYNTHIUM_ACID);
+        if(drop){
+            creep.moveTo(drop);
+            creep.pickup(drop)
+        }*/
         if(creep.memory.job){
             this.checkJobComplete(creep);
         }
@@ -132,6 +140,7 @@ var roleTanker = {
         
         if(config.labComplex && !creep.memory.job){
             let haulJob = config.labComplex.takeJob()
+            //if(creep.name==='G-rk-0')clog(haulJob);
             if( haulJob ){
                 // we check for atleast 5, to make sure we don't leave small crappy bits in the storage
                 if(haulJob.action =='fill' && storage.storingAtLeast(5,haulJob.resource_type)){
@@ -223,7 +232,14 @@ var roleTanker = {
             creep.memory.job= false;
             return;
         }
-        
+        if(jobTarget && !job.resource_type){
+            // not sure why the job is missing resource
+            if(Game.time%3==0)clog(creep.memory.job,creep.name+" !job.resource_type error :")
+            creep.memory.reserve_id = false;
+            creep.say('job err')
+            creep.memory.job= false;
+            return;
+        }
         
         if(job.doneLastTick && creep.memory.job.storedBefore!==creep.storedAmount(job.resource_type) ){
            // clog(job,creep.name)

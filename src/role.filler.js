@@ -173,7 +173,8 @@ var role = {
             let terminal = Game.getObjectById(creep.memory.terminal_id);
             
             // if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':terminal1');
-            if(terminal && container.storingAtLeast(2000) && terminal.storingLessThan(config.terminalEnergyCap,RESOURCE_ENERGY)){
+            // manuall set to 50k, to keep 50k in the storage
+            if(terminal && container.storingAtLeast(50000) && terminal.storingLessThan(config.terminalEnergyCap,RESOURCE_ENERGY)){
                 let resStatus = creep.reserveTransfer(terminal);
                 if( resStatus===OK){
                     let r = creep.act("transferX",terminal,RESOURCE_ENERGY);

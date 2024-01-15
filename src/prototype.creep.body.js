@@ -66,10 +66,34 @@ Creep.prototype.isMorePunchyThan = function(creep){
     return  this.getPunchyness() > creep.getPunchyness()
 }
 Creep.prototype.getPunchyness = function(){
-    return (this.partCount(ATTACK)*30) + (this.partCount(TOUGH)*10) + (this.partCount(RANGED_ATTACK)*10)
+    return (this.partCount(ATTACK)*30) + (this.partCount(TOUGH)*10)/* + (this.partCount(RANGED_ATTACK)*10)*/
 }
 Creep.prototype.isMoreShootyThan = function(creep){
     return (this.partCount(RANGED_ATTACK) > creep.partCount(RANGED_ATTACK))
+}
+Creep.prototype.canOutShoot = function(creep){
+    return ( (this.partCount(RANGED_ATTACK)+this.partCount(HEAL)) > (creep.partCount(RANGED_ATTACK)+creep.partCount(HEAL)) )
+}
+Creep.prototype.canMoveFullSpeed = function(){
+    if(this.partCount(MOVE) === (this.body.length/2) ){
+        return true;
+    }
+    
+    if(this.isEmpty() && (this.partCount(MOVE) + this.partCount(CARRY)) === this.body.length){
+        return true;
+    }
+    return false;
+}
+Creep.prototype.isASwampRat = function(){
+    // if we are only CARRY and MOVE and EMPTY
+    if(this.isEmpty() && (this.partCount(MOVE) + this.partCount(CARRY)) === this.body.length){
+        return true;
+    }
+    let weightedCount = this.body.length - this.partCount(MOVE);
+    if( (this.partCount(MOVE)/5) >= weightedCount  ){
+        return true;
+    }
+    return false;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Store Helper Funcs

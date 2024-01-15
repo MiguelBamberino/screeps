@@ -12,6 +12,175 @@ module.exports = {
             
         return {};
     },
+    
+    createSWCRoomNodes:function(){
+        let nodes = {};
+        if(Game.spawns['Alpha']){
+                let spwn = Game.spawns['Alpha']
+                nodes['a']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_OFF,
+                                            buildFast:false,
+                                            terminalEnergyCap:50000,
+                                            homeMineralSurplus:200000,
+                                            wallHeight:1000000,
+                                            rampHeight:5000000,
+                                            funnelRoomName:'E8N4',
+                                            labComplex:new LabComplex(rp(spwn.pos.x+2,spwn.pos.y-3,spwn.pos.roomName),BOTTOM_RIGHT),
+                                            makeResource: RESOURCE_HYDROXIDE,
+                                            
+                                            imports:[
+                                                 {resource_type:RESOURCE_ENERGY,storageCap:50000},
+                                                 // combat
+                                            ],
+                                            exports:[
+                                               /* {resource_type:RESOURCE_ENERGY,exportOver:50000,batchSize:10000},*/
+                                                
+                                                {resource_type:RESOURCE_HYDROGEN,exportOver:20000,batchSize:10000},
+                                                {resource_type:RESOURCE_OXYGEN,exportOver:20000,batchSize:10000},
+                                                
+                                                {resource_type:RESOURCE_KEANIUM,exportOver:0,batchSize:10000},
+                                                {resource_type:RESOURCE_ZYNTHIUM,exportOver:20000,batchSize:10000},
+                                                
+                                                {resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,exportOver:9000,batchSize:6000},
+                                                {resource_type:RESOURCE_HYDROXIDE,exportOver:0,batchSize:6000},
+                                                {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,exportOver:0,batchSize:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,exportOver:0,batchSize:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM_ACID,exportOver:0,batchSize:6000}
+                                            ]
+                                        }
+                    )
+        }
+        if(Game.spawns['Beta']){
+                let spwn = Game.spawns['Beta']
+                nodes['b']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_VERY_SLOW,
+                                             wallHeight:1000000,
+                                            rampHeight:5000000,
+                                            buildFast:false,
+                                            terminalEnergyCap:50000,
+                                            labComplex:new LabComplex(rp(spwn.pos.x+5,spwn.pos.y+3,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_ZYNTHIUM_ALKALIDE,
+                                            boostResources:[RESOURCE_ZYNTHIUM_ACID,RESOURCE_ZYNTHIUM_ALKALIDE,RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_CATALYZED_GHODIUM_ALKALIDE],
+                                            imports:[
+                                                {resource_type:RESOURCE_LEMERGIUM,storageCap:6000},
+                                                {resource_type:RESOURCE_HYDROXIDE,storageCap:10000},
+                                                {resource_type:RESOURCE_HYDROGEN,storageCap:6000},
+                                                
+                                                {resource_type:RESOURCE_CATALYZED_GHODIUM_ALKALIDE,storageCap:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM,storageCap:6000},
+                                                // combat
+                                                {resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,storageCap:6000},
+                                            ],
+                                            exports:[
+                                                
+                                                {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,exportOver:10000,batchSize:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,exportOver:9000,batchSize:6000},
+                                                
+                                                {resource_type:RESOURCE_ZYNTHIUM_ACID,exportOver:9000,batchSize:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM_OXIDE,exportOver:15000,batchSize:6000},
+                                                {resource_type:RESOURCE_OXYGEN,exportOver:20000,batchSize:10000},
+                                                
+                                            ]
+                                        }
+                    )
+        }
+        if(Game.spawns['Gamma']){
+                let spwn = Game.spawns['Gamma']
+                nodes['g']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_VERY_SLOW,
+                                            terminalEnergyCap:40000,
+                                            buildFast:false,
+                                             wallHeight:1000000,
+                                            rampHeight:5000000,
+                                            /* let lab = new LabComplex( rp( anchor.x-3,anchor.y-1,anchor.roomName ),BOTTOM_RIGHT,600,true)*/
+                            
+                                            labComplex:new LabComplex(rp(spwn.pos.x-3,spwn.pos.y-1,spwn.pos.roomName),BOTTOM_RIGHT),
+                                            makeResource: RESOURCE_HYDROXIDE,
+                                            boostResources:[RESOURCE_ZYNTHIUM_ACID,RESOURCE_ZYNTHIUM_ALKALIDE,RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_GHODIUM_ALKALIDE],
+                                             imports:[
+                                                {resource_type:RESOURCE_HYDROGEN,storageCap:10000},
+                                                // combat
+                                                {resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,storageCap:6000},
+                                                
+                                                {resource_type:RESOURCE_GHODIUM_ALKALIDE,storageCap:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
+                                                {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,storageCap:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,storageCap:3000},
+                                            ],
+                                            exports:[
+                                                {resource_type:RESOURCE_ENERGY,exportOver:50000,batchSize:10000},
+                                                {resource_type:RESOURCE_HYDROXIDE,exportOver:0,batchSize:10000},
+                                            ]
+                                        
+                                        }
+                    )
+        }
+        
+        if(Game.spawns['Delta']){
+                let spwn = Game.spawns['Delta']
+                nodes['d']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-1,spwn.pos.y-3,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_SLOW,
+                                             wallHeight:1000000,
+                                            rampHeight:5000000,
+                                            buildFast:false,
+                                            labComplex:new LabComplex(rp(spwn.pos.x-3,spwn.pos.y+6,spwn.pos.roomName),TOP_RIGHT),
+                                            makeResource: RESOURCE_LEMERGIUM_ALKALIDE,
+                                            boostResources:[RESOURCE_ZYNTHIUM_ACID,RESOURCE_ZYNTHIUM_ALKALIDE,RESOURCE_LEMERGIUM_ALKALIDE],
+                                             imports:[
+                                                {resource_type:RESOURCE_ENERGY,storageCap:200000},
+                                                {resource_type:RESOURCE_OXYGEN,storageCap:6000},
+                                                
+                                                {resource_type:RESOURCE_LEMERGIUM,storageCap:6000},
+                                                 {resource_type:RESOURCE_HYDROXIDE,storageCap:6000},
+                                                // combat
+                                                {resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
+                                                
+                                                {resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,storageCap:6000},
+                                                {resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,storageCap:6000},
+                                                 {resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
+                                                
+                                            ],
+                                            exports:[
+                                                {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:10000},
+                                                {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,exportOver:20000,batchSize:6000},
+                                                {resource_type:RESOURCE_CATALYZED_GHODIUM_ALKALIDE,exportOver:0,batchSize:6000},
+                                                {resource_type:RESOURCE_GHODIUM_ALKALIDE,exportOver:0,batchSize:6000}
+                                            ]
+                                        }
+                    )
+        }
+        if(Game.spawns['Epsilon']){
+                let spwn = Game.spawns['Epsilon']
+                nodes['e']= new roomNode(spwn.name,spwn.pos.roomName,
+                                        {
+                                            spawnFacing:TOP,
+                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            extraFastFillSpots:[],
+                                            upgradeRate:RATE_VERY_SLOW,
+                                            buildFast:false,/*
+                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_HYDROXIDE*/
+                                        }
+                    )
+        }
+        return nodes;
+    },
     createBotArenaRoomNodes:function(){
         let nodes = {};
         if(Game.spawns['Alpha']){
@@ -36,9 +205,9 @@ module.exports = {
                                             retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
                                             extraFastFillSpots:[],
                                             upgradeRate:RATE_SLOW,
-                                            buildFast:false,/*
-                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
-                                            makeResource: RESOURCE_HYDROXIDE*/
+                                            buildFast:false,
+                                            labComplex:new LabComplex(rp(spwn.pos.x+5,spwn.pos.y+3,spwn.pos.roomName),TOP_LEFT),
+                                            makeResource: RESOURCE_ZYNTHIUM_OXIDE
                                         }
                     )
         }
@@ -47,53 +216,7 @@ module.exports = {
                 nodes['g']= new roomNode(spwn.name,spwn.pos.roomName,
                                         {
                                             spawnFacing:TOP,
-                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
-                                            extraFastFillSpots:[],
-                                            upgradeRate:RATE_SLOW,
-                                            buildFast:false,/*
-                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
-                                            makeResource: RESOURCE_HYDROXIDE*/
-                                        }
-                    )
-        }
-        return nodes;
-    },
-    createSWCRoomNodes:function(){
-        let nodes = {};
-        if(Game.spawns['Alpha']){
-                let spwn = Game.spawns['Alpha']
-                nodes['a']= new roomNode(spwn.name,spwn.pos.roomName,
-                                        {
-                                            spawnFacing:TOP,
-                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
-                                            extraFastFillSpots:[],
-                                            upgradeRate:RATE_VERY_SLOW,
-                                            buildFast:false,/*
-                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
-                                            makeResource: RESOURCE_HYDROXIDE*/
-                                        }
-                    )
-        }
-        if(Game.spawns['Beta']){
-                let spwn = Game.spawns['Beta']
-                nodes['b']= new roomNode(spwn.name,spwn.pos.roomName,
-                                        {
-                                            spawnFacing:TOP,
-                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
-                                            extraFastFillSpots:[],
-                                            upgradeRate:RATE_SLOW,
-                                            buildFast:false,/*
-                                            labComplex:new LabComplex(rp(spwn.pos.x+3,spwn.pos.y+5,spwn.pos.roomName),TOP_LEFT),
-                                            makeResource: RESOURCE_HYDROXIDE*/
-                                        }
-                    )
-        }
-        if(Game.spawns['Gamma']){
-                let spwn = Game.spawns['Gamma']
-                nodes['g']= new roomNode(spwn.name,spwn.pos.roomName,
-                                        {
-                                            spawnFacing:TOP,
-                                            retreatSpot:rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName),
+                                            retreatSpot:rp(spwn.pos.x-1,spwn.pos.y-3,spwn.pos.roomName),
                                             extraFastFillSpots:[],
                                             upgradeRate:RATE_SLOW,
                                             buildFast:false,/*

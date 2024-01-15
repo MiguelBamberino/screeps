@@ -2,6 +2,7 @@
 global.logs = {
     cpuTrackers:{},
     creepTrackers:{},
+    spawnTimeTrackers:{},
     lastTickAt:0,
     msSinceLastTick:0,
     globalResetCPU:0,
@@ -15,6 +16,7 @@ global.logs = {
             Memory.logs={trace:false,stats:{}};
         }
         if(!Memory.logs.rclTimeline)Memory.logs.rclTimeline={}
+        if(!Memory.logs.errors)Memory.logs.errors=[]
     },
     log: function(category,msg){
         //console.log("GT:"+Game.time+": "+category+" : "+msg);
@@ -49,21 +51,27 @@ global.logs = {
             actualCPUProfit = Game.cpu.bucket - this.bucketAtLastLoopEnd
             this.cpuOnMem = this.expectedCPUProfit - actualCPUProfit - this.guiCPU;
         }
-        //clog(Game.cpu.bucket,'bucketAtLoopStart')
-        //clog(this.expectedCPUProfit,'expectedCPUProfit')
-        //clog(actualCPUProfit,'actualCPUProfit')
-        //clog(this.cpuOnMem,'cpuOnMem')
+      
         this.startCPUTracker('total');
     },
     mainLoopEnded: function(){
         let cpuUsed = this.stopCPUTracker('total');
         let cpuTickBudget = 20;
-        //clog('------------------')
-        //clog(cpuUsed,'cpuUsed')
         this.expectedCPUProfit = cpuTickBudget - cpuUsed;
         this.bucketAtLastLoopEnd = Game.cpu.bucket;
-        //clog(this.expectedCPUProfit,'expectedCPUProfit')
-        //clog(this.bucketAtLastLoopEnd,'bucketAtLastLoopEnd')
+        
+        let elapsed = Game.time-this.globalResetTick;
+        for(let spawnName in Game.spawns){
+            if(!this.spawnTimeTrackers[spawnName] ){
+                this.spawnTimeTrackers[spawnName] = {spawning:0,usage:0};
+            }
+            if(Game.spawns[spawnName].spawning){
+                this.spawnTimeTrackers[spawnName].spawning ++;
+            }
+            this.spawnTimeTrackers[spawnName].usage = (this.spawnTimeTrackers[spawnName].spawning/elapsed)*100;
+            
+        }
+       
     },
     totalCPUUsed:function(){
         return this.cpuTrackers['total'].stop - this.cpuTrackers['total'].start;

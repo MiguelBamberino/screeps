@@ -268,7 +268,7 @@ global.util = {
             console.log("Upgrade Failed. Must be on 19.2")
         }
     },
-    setLinksInRoom:function(roomName) {
+    setLinksInRoom:function(roomName, cloggy=true) {
         const room = Game.rooms[roomName];
         const links = mb.getStructures({
             types: [STRUCTURE_LINK],
@@ -301,7 +301,7 @@ global.util = {
                         senders.push(link);
                     }
 
-                    clog(link.pos+'','set as Sender  - Source')
+                    if(cloggy)clog(link.pos+'','set as Sender  - Source')
                     found=true;
                     foundOneSrc=true;
                 }
@@ -314,27 +314,27 @@ global.util = {
                     link.setPriority(4);
                     structure.setLink(link);
                     receivers.push(link);
-                    clog(link.pos+'','set as Receiver - Priority-4 - Storage')
+                    if(cloggy)clog(link.pos+'','set as Receiver - Priority-4 - Storage')
                     found=true;
                     break;
                 } else if (structure.structureType === STRUCTURE_SPAWN && link.pos.inRangeTo(structure, 2)) {
                     link.setAsReceiver();
                     link.setPriority(1);
                     receivers.push(link);
-                    clog(link.pos+'','set as Receiver - Priority-1 - Filler')
+                    if(cloggy)clog(link.pos+'','set as Receiver - Priority-1 - Filler')
                     found=true;
                     break;
                 }else if (structure.structureType === STRUCTURE_TOWER && link.pos.inRangeTo(structure, 1)) {
                     link.setAsReceiver();
                     link.setPriority(3);
                     receivers.push(link);
-                    clog(link.pos+'','set as Receiver - Priority-3 - Tower')
+                    if(clog)clog(link.pos+'','set as Receiver - Priority-3 - Tower')
                     found=true;
                     break;
                 }else if (structure.structureType === STRUCTURE_WALL && link.pos.inRangeTo(structure, 2)) {
                     link.setAsSender();
                     senders.push(link);
-                    clog(link.pos+'','set as Sender - Dismantler')
+                    if(cloggy)clog(link.pos+'','set as Sender - Dismantler')
                     found=true;
                     break;
                 }
@@ -346,14 +346,14 @@ global.util = {
                 controller.setLink(link);
                 receivers.push(link);
                 found=true;
-                clog(link.pos+'','set as Receiver- Priority-2 - Controller')
+                if(cloggy)clog(link.pos+'','set as Receiver- Priority-2 - Controller')
             }
             
             if (!found){
                 link.setAsReceiver();
                 link.setPriority(1);
                 receivers.push(link);
-                clog(link.pos+'','set as Receiver - Priority-1 - Assumed Filler')
+                if(cloggy)clog(link.pos+'','set as Receiver - Priority-1 - Assumed Filler')
                 found=true;
                    
             }

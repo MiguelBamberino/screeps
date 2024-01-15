@@ -12,6 +12,11 @@ global.mb = {
     
     paths:{},
     
+    mapRoutes:{},
+    
+    costMatrices:{},
+    deadlyRooms:{},
+    
     type_shorts_lookup:{
         'container':'CO',
         'controller':'CO',
@@ -214,6 +219,13 @@ global.mb = {
             let obj = Game.getObjectById(room.factory_id);
             return (obj)?obj:false;
         }
+        return false;
+    },
+    getInvaderCore:function(roomName){
+        let structures = mb.getStructures({ roomNames:[roomName],types:[STRUCTURE_INVADER_CORE] })
+        if(structures.length>0)
+            return structures[0];
+            
         return false;
     },
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -450,6 +462,9 @@ global.mb = {
         if(!query.filters){
             query.filters = [];
         }
+         if(query.requireVision===undefined)
+            query.requireVision=true;
+        
         if(blog)clog(JSON.stringify(query),"Query")
         let structures=[];
         let keyMap={};
@@ -474,6 +489,9 @@ global.mb = {
                             if(blog)clog(id,"type id:")
                             let obj = Game.getObjectById(id);
                             if(blog)console.log(obj)
+                            
+                            
+                            
                             if(obj ){
                                 if(this._matchObjectFilters(obj,query.filters)){
                                     if(query.orderBy){
@@ -491,6 +509,9 @@ global.mb = {
                                         else structures.push(obj);
                                     }
                                 }
+                            }else if(!query.requireVision){
+                                if(query.justIDs)structures.push(id);
+                                else structures.push( this.createNoVisionObject({id:id,coords:{x:1,y:1}},roomName) );
                             }
                         }
                     }
@@ -874,6 +895,56 @@ global.mb = {
         
         return { from:this.stringToPosition(bits[0]), to: this.stringToPosition(bits[1]) };
     },
+    //////////////////////////////////////////////////////////////////////////////////////////
+    // MapRoute Functions
+    //////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * @param array
+     */
+    createMapRoute: function(route){
+        if(route.length===1)return;
+        
+        if( !this.mapRoutes[ route[0] ] )this.mapRoutes[ route[0] ]={};
+        
+        this.mapRoutes[ route[0] ][ route[ (route.length-1) ] ] = route;
+    },
+    getMapRoute: function(from,to){
+        if(this.mapRoutes[from])
+            return (this.mapRoutes[from][to] )
+            
+        return undefined;
+    },
+    //////////////////////////////////////////////////////////////////////////////////////////
+    // CostMatrix Functions
+    //////////////////////////////////////////////////////////////////////////////////////////
+   markRoomDeadly: function(roomName){
+       let costMatrix = new PathFinder.CostMatrix;
+       for(let x=0; x<49;x++){
+            costMatrix.set(x, 0, 255);
+            costMatrix.set(x, 49, 255);
+        }
+        for(let y=0; y<49;y++){
+            costMatrix.set(0, y, 255);
+            costMatrix.set(49, y, 255);
+        }
+        this.deadlyRooms[roomName]=true;
+        this.createCostMatrix(roomName,costMatrix);
+   },
+   isDeadlyRoom:function(roomName){
+       return this.deadlyRooms[roomName]?true:false;
+   }, 
+   createCostMatrix: function(roomName,matrix){
+        
+        this.costMatrices[ roomName ]=matrix;
+        
+    },
+    getCostMatrix: function(roomName){
+        if(this.costMatrices[roomName])
+            return this.costMatrices[roomName];
+            
+        return undefined;
+    },
+    
     //////////////////////////////////////////////////////////////////////////////////////////
     // Core Functions
     //////////////////////////////////////////////////////////////////////////////////////////

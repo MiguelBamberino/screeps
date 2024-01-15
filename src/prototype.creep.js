@@ -90,12 +90,19 @@
 	                         plan.completed= true;this.say("rawwr")
 	                    }else{
 	                        let res = lab.boostCreep(this);
-	                        clog(res,this.name)
+	                        //clog(res,this.name)
 	                        if(res===ERR_NOT_ENOUGH_RESOURCES){
-	                            plan.completed= true;this.say("OOR!")
+	                            if(Game.time%2===0)this.say("OOR!");
+	                            else this.say("wait")
+	                            //plan.completed= true;
 	                        }
 	                        if(res===ERR_NOT_FOUND){
-	                            plan.completed= true;this.say("NBP!")
+	                            clog(this.memory.boostPlans,"boost error:boostPlans")
+	                            console.log(lab.id,lab.pos)
+	                            clog(lab.store,"boost error:lab")
+	                            plan.completed= true;
+	                             if(Game.time%2===0)this.say("ERR-NF!");
+	                            else this.say("wait")
 	                        }
 	                    }
 	                }else{
@@ -104,8 +111,8 @@
 	                
 	            }
 	        }
-	        clog(completedCount,this.name+' completedCount')
-	        clog(this.memory.boostPlans.length,this.name+' boostPlans.length')
+	        //clog(completedCount,this.name+' completedCount')
+	        //clog(this.memory.boostPlans.length,this.name+' boostPlans.length')
 	        if(completedCount==this.memory.boostPlans.length){
 	            delete this.memory.boostPlans;
 	            //this.goWork();

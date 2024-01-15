@@ -78,11 +78,23 @@ var roleTanker = {
                     creep.moveToPos(config.controller.getStandingSpot())
                     return;
                 }else{
-                    let roomNames = config.funnelRoomName==undefined?[config.coreRoomName]:[config.coreRoomName,config.funnelRoomName];
+                    let roomNames = [config.coreRoomName];
+                    if(config.funnelRoomName && Game.rooms[config.coreRoomName].storage && Game.rooms[config.coreRoomName].storage.storingAtLeast(50000)){
+	            
+                        roomNames = [config.coreRoomName,config.funnelRoomName];
+                    }
+                    //console.log(creep.name,roomNames)
                     target = creep.getUpgradeStoreToFill(roomNames);
                 }
                 
             }
+	        
+	        if(!target && config.funnelRoomName){
+	            if(Game.rooms[config.coreRoomName].storage && Game.rooms[config.coreRoomName].storage.storingAtLeast(50000)){
+	                //console.log(creep.name,"funneling")
+	                target = creep.reserveTransferToStorage(config.funnelRoomName);
+	            }
+	        }
 	        
 	        if(!target){
     	        let terminal = mb.getTerminalForRoom(config.coreRoomName);
@@ -110,20 +122,21 @@ var roleTanker = {
                 }else{
                                    //creep.say('bored')
                     if(config.controller.level<4 && config.controller.haveContainer()){
-                        
+                        /*
+                        Dunno why this code is here. it broke SWC
                         let idleSpot = false;
                         let distance = 999;
                         for(let pos of config.controller.getStandingSpot().getPositionsInRange(4)){
                             if(pos.isWalkable() && !pos.lookForStructure(STRUCTURE_ROAD)){
-                                let dist = pos.getRangeTo(Game.spawns['Alpha'].pos);
+                                let dist = pos.getRangeTo(Game.spawns[].pos);
                                 if(dist<distance){
                                     idleSpot=pos;
                                     distance=dist;
                                 }
                             }
                         }
-                        
-                        creep.moveToPos(idleSpot)
+                        */
+                        creep.moveToPos(config.retreatSpot)
                     }else{
                         creep.moveToPos(config.retreatSpot)
                     }
@@ -181,7 +194,7 @@ var roleTanker = {
     
             }else{
                 creep.say('bored')
-                if(config.controller.level<4 && config.controller.haveContainer()){
+                if(config.controller.level<4 && creep.isFull() && config.controller.haveContainer()){
                     creep.moveToPos(config.controller.getContainer())
                 }else{
                     creep.moveToPos(config.retreatSpot)
