@@ -402,7 +402,7 @@ module.exports = function(){
             
             
             // real hacky for now. Only runs if we're not a fighty boi
-            if(!this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
+            if(Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
                 
                 opts.reusePath=2;
                 
@@ -461,6 +461,7 @@ module.exports = function(){
                         
                       
                         if(
+                            Game.shard.name !=='shard3' &&
                             // only avoid creep that are stronger
                             myTotalFightyParts < theirTotalFightParts
                             // dont avoid if we opt in for risks or need to flee from an avoid area

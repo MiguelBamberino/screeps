@@ -66,71 +66,10 @@ for(let n in nodes){
     }
 }
 
-
-
-// BETA
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0'])
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E29N25'])
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E30N24'])
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E30N26','E30N27','E29N27','E28N25','E27N25','E27N26','E27N27'])
-
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E30N24','E29N24'])
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E30N26','E30N27','E29N27'])
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E30N24','E30N23','E29N23'])
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E29N25','E28N25','E27N25','E26N25','E26N24'])
-
-mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0','portal','E30N25','E29N25','E28N25'])
-
-// DELTA
-mb.createMapRoute(['E7N5','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E24N20','E23N20','E23N21'])
-mb.createMapRoute([ 'E7N5','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E24N20','E24N21'])
-
-// GAMMA
-mb.createMapRoute(['E3N5','E2N5','E1N5','E0N5'])
-
-mb.createMapRoute(['E3N5','E2N5','E1N5','E0N5','portal','E25N30'])
-mb.createMapRoute(['E3N5','E2N5','E1N5','E0N5','portal','E25N30','E25N29'])
-
-mb.createMapRoute(['E3N5','E2N5','E1N5','E0N5','portal','E25N30','E25N29','E25N28'])
-
-// ALPHA
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5'])
-mb.createMapRoute(['E7N4', 'E7E10N5N3','E7N2','E7N1','E7N0','E6N0','E5N0'])
-mb.createMapRoute(['E7N4', 'E7N3','E7N2','E8N2','E8N1','E8N0','E9N0','E10N0'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','portal','E26N20','E26N21'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E26N21','E26N22','E26N23'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E26N21','E26N22','E27N22'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E27N20','E28N20','E28N21'])
-
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E27N20','E27N21'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E24N20','E24N21'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E25N21'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E26N21','E26N22','E25N22'])
-
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E25N21','E25N22','E25N23'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E25N21','E25N22','E24N22'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E27N20'])
-
-
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E24N20','E23N20','E23N21'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E24N20','E23N20','E22N20','E21N20','E21N21'])
-
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E27N20','E28N20','E29N20','E29N21'])
-mb.createMapRoute(['E7N4', 'E8N4','E8N5','E9N5','E10N5','E10N5>portal>E25N20','E25N20','E26N20','E27N20','E28N20','E28N21','E28N22'])
-
-mb.createMapRoute(['E6N3', 'E6N2','E6N1','E6N0','E5N0','portal','E30N25'])
-
-let doCMS = true;
-
 module.exports.loop = function () {
     _memHak.pretick();
     if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
-    
-    if(doCMS){ 
-        mb.markRoomDeadly('E5N6')
-        doCMS=false;
-    }
-    
+
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
     //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E7N5']._debugSetEnemies(['bob']);
     
@@ -193,9 +132,8 @@ module.exports.loop = function () {
     
             gui.renderComplexStats(nodes.m.extractorComplex)
             gui.renderComplexStats(nodes.i.labComplex)
+            mb.renderKiteGroups('W41N54')
         }
-
-        
         ///////////////////////
         
     }
