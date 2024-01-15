@@ -122,7 +122,7 @@ module.exports.loop = function () {
 
         gui.renderComplexStats(nodes.m.extractorComplex)
         gui.renderComplexStats(nodes.i.labComplex)
-        
+        mb.renderKiteGroups('W41N54')
         ///////////////////////
 
     }
