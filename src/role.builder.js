@@ -53,7 +53,7 @@ var role = {
 	       
 	       if(!creep.memory.construction_site_id){
                 structure = this.targetDefenceToRepair(creep,config);
-                if(structure && structure.hits < 10000  || playerAttackers.length>0){
+                if(structure && structure.hits < 10000 && playerAttackers.length>0){
                     return creep.actOrMoveTo("repair",structure);
                 }
 	       }
@@ -147,52 +147,33 @@ var role = {
 	    return false;
 	},
 	targetDefenceToRepair: function(creep,config, types){
-	    let defenceStructure = Game.getObjectById(config.defenceIntel.weakest_structure.id);
-	    if(defenceStructure )
-	        return defenceStructure;
-	    return false;
-	    ///////////// OLD below ////////////////////////////////////////
 	    
-	    if(creep.memory.target_to_fix_id==='none' ){
-	        // CPU saver. if wall height has been reached, then we'll find nothing to repair but keep spending 0.7cpu/tick
-	        // to look for stuff. So lets only check back after some ticks when stuff decays
-	       if(Game.time%100===0)creep.memory.target_to_fix_id= false; 
-	       else return false;
+	    // prioritise the rampart that looks in danger
+	    let closestAttackRamp = Game.getObjectById(config.defenceIntel.closest_ramp_id);
+	    let weakest = Game.getObjectById(config.defenceIntel.weakest_structure.id);
+	    let structure = false;
+	    
+	    if(closestAttackRamp){
+	        if(closestAttackRamp.pos.getRangeTo(weakest)<4){
+	            structure = weakest; // if the weakest is on the front line, heal this
+	        }else{
+	            structure = closestAttackRamp; // heal the predicted rampart
+	        }
+	    }else{
+	        structure = weakest;// no enemies, just heal lowest
 	    }
 	    
-	    let target = Game.getObjectById(creep.memory.target_to_fix_id);
-	    if(target && target.hits<target.hitsMax){
-	        return target;
-	    }
-	    let rampart =  mb.getLowestHPStructure(creep.pos,[STRUCTURE_RAMPART],[config.coreRoomName],[
-	        {attribute:'isNotMarkedForDismantle',operator:'fn',value:[]},
-	        {attribute:'hits',operator:'<',value:[config.wallHeight]}
-	        ]);
+	    
+
+	    if(structure ){
 	        
-	    if(rampart && rampart.hits < 20000){
-	        creep.memory.target_to_fix_id = rampart.id;
-	         return rampart;
-	    }
-	    
-	    let wall =  mb.getLowestHPStructure(creep.pos,[STRUCTURE_WALL],[config.coreRoomName],[
-	        {attribute:'isNotMarkedForDismantle',operator:'fn',value:[]},
-	        {attribute:'hits',operator:'<',value:[config.wallHeight]}
-	        ]);
-	    
-	    if(wall){
-	        if( wall.hits < rampart.hits){
-	            creep.memory.target_to_fix_id = wall.id;
-	            return wall;
-    	    }else{
-    	        creep.memory.target_to_fix_id = rampart.id;
-    	         return rampart;
-    	    }
-	    }
+	        if(structure.structureType===STRUCTURE_RAMPART && structure.hits > config.defenceIntel.rampHeight)return false;
+            if(structure.structureType===STRUCTURE_WALL && structure.hits > config.defenceIntel.wallHeight)return false;
 	        
-        // cache that there is nothing at all to repair
-        creep.memory.target_to_fix_id = 'none';
-	    
+	        return structure;
+	    }
 	    return false;
+	  
 	    
 	}
 };

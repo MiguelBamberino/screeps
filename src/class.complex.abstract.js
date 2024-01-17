@@ -4,7 +4,7 @@ const ERR_OFF=-16;
 
 class AbstractComplex{
     
-    constructor(anchor,facing){
+    constructor(anchor,facing, draft=false){
         
         this.anchor = anchor;
         // this is used to power down slowly, if we still have workers alive
@@ -13,6 +13,7 @@ class AbstractComplex{
         this.runCoolDown=0;
         
         this.lastResult = OK;
+        this.draft = draft;
         
         this.standingSpot = this._getStandingSpot(facing);
         this.facing = facing;
@@ -113,7 +114,7 @@ class AbstractComplex{
                     }
                 }else{
                     if(plan.required===true)this.allRequiredStructuresBuilt=false;
-                    plan.pos.createConstructionSite(plan.type)
+                    if(!this.draft)plan.pos.createConstructionSite(plan.type)
                 }
             }
         }

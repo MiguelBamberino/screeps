@@ -62,6 +62,20 @@ for(let funcName in extraFunctions){
     RoomObject.prototype[funcName] = extraFunctions[funcName]
 }*/
 //#######################################################
+// RoomObject SK Metas
+//#######################################################
+// get the SKeeper lair associated with this source/mineral
+RoomObject.prototype.getLair=function(){
+    
+    let meta = this.getMeta();
+    if(meta.lair_id)return Game.getObjectById(meta.lair_id);
+    
+}
+// set the SKeeper lair associated with this source/mineral
+RoomObject.prototype.setLair=function(obj){
+    return this.setMetaAttr('lair_id',obj.id);
+}
+//#######################################################
 // RoomObject isActive Metas
 //#######################################################
 RoomObject.prototype.isActive=function(){

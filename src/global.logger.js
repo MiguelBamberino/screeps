@@ -2,6 +2,7 @@
 global.logs = {
     cpuTrackers:{},
     creepTrackers:{},
+    spawnTimeTrackers:{},
     lastTickAt:0,
     msSinceLastTick:0,
     globalResetCPU:0,
@@ -15,6 +16,7 @@ global.logs = {
             Memory.logs={trace:false,stats:{}};
         }
         if(!Memory.logs.rclTimeline)Memory.logs.rclTimeline={}
+        if(!Memory.logs.errors)Memory.logs.errors=[]
     },
     log: function(category,msg){
         //console.log("GT:"+Game.time+": "+category+" : "+msg);
@@ -49,21 +51,61 @@ global.logs = {
             actualCPUProfit = Game.cpu.bucket - this.bucketAtLastLoopEnd
             this.cpuOnMem = this.expectedCPUProfit - actualCPUProfit - this.guiCPU;
         }
-        //clog(Game.cpu.bucket,'bucketAtLoopStart')
-        //clog(this.expectedCPUProfit,'expectedCPUProfit')
-        //clog(actualCPUProfit,'actualCPUProfit')
-        //clog(this.cpuOnMem,'cpuOnMem')
+      
         this.startCPUTracker('total');
     },
     mainLoopEnded: function(){
         let cpuUsed = this.stopCPUTracker('total');
         let cpuTickBudget = 20;
-        //clog('------------------')
-        //clog(cpuUsed,'cpuUsed')
         this.expectedCPUProfit = cpuTickBudget - cpuUsed;
         this.bucketAtLastLoopEnd = Game.cpu.bucket;
-        //clog(this.expectedCPUProfit,'expectedCPUProfit')
-        //clog(this.bucketAtLastLoopEnd,'bucketAtLastLoopEnd')
+        
+        let elapsed = Game.time-this.globalResetTick;
+        for(let spawnName in Game.spawns){
+            if(!this.spawnTimeTrackers[spawnName] ){
+                this.spawnTimeTrackers[spawnName] = {spawning:0,usage:0};
+            }
+            if(Game.spawns[spawnName].spawning){
+                this.spawnTimeTrackers[spawnName].spawning ++;
+            }
+            this.spawnTimeTrackers[spawnName].usage = (this.spawnTimeTrackers[spawnName].spawning/elapsed)*100;
+            
+        }
+        if(cpuUsed>18){
+            console.log('-------------------------------------')
+            console.log( JSON.stringify( this.getCPULog() ) )
+            console.log('-------------------------------------')
+            //this.printAsciiTable(this.getCPULog(),{tag:25,usage:10})
+        }
+    },
+    printAsciiTable:function(records, columnConfig = {}) {
+        if (!records || !records.length) {
+            console.log("No records to display");
+            return;
+        }
+    
+        // Get unique keys as columns using map and reduce
+        const columns = Array.from(records.reduce((acc, obj) => {
+            Object.keys(obj).forEach(key => acc.add(key));
+            return acc;
+        }, new Set()));
+    
+        // Create a function to format each cell
+        const formatCell = (cell, column) => {
+            const width = columnConfig[column] || 15;
+            return String(cell).padEnd(width, ' ');
+        };
+    
+        // Print header
+        console.log(columns.map(column => formatCell(column, column)).join(' | '));
+    
+        // Print separator
+        console.log(columns.map(column => '-'.repeat(columnConfig[column] || 15)).join('-+-'));
+    
+        // Print each row
+        records.forEach(record => {
+            console.log(columns.map(column => formatCell(record[column] || '', column)).join(' | '));
+        });
     },
     totalCPUUsed:function(){
         return this.cpuTrackers['total'].stop - this.cpuTrackers['total'].start;
@@ -94,15 +136,15 @@ global.logs = {
         for(let t in this.cpuTrackers){
             if(this.cpuTrackers[t].stop !==false){
                 let u = this.cpuTrackers[t].stop - this.cpuTrackers[t].start;
-                report.push({tag:t,usage:u})
+                report.push({tag:t,usage:u.toFixed(4)})
             }
         }
-        let crepes = Object.keys(Game.creeps).length;
-        let deets = crepes+"*.2 = "+(crepes*0.2);
+        //let crepes = Object.keys(Game.creeps).length;
+        //let deets = crepes+"*.2 = "+(crepes*0.2);
         
 
        
-        report.push({tag:'~intents',usage:deets})
+        //report.push({tag:'~intents',usage:deets})
         return report;
     },
     /**

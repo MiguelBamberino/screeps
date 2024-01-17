@@ -29,10 +29,13 @@ class RoomNode{
             funnelRoomName:false    >> if set, then haulers will funnel energy to this room
             terminalEnergyCap:15000 >> The amount to be kept in reserve in the terminal
             towersBuildWalls:false  >> If true, then the towers will build up the walls in peace time
-            wallHeight:25000000     >> How hight the walls should be
+            wallHeight:5,000,000     >> How hight the walls should be
+            rampHeight:25,000,000     >> How hight the ramparts should be
             armNuke:false           >> Whether this rooms Nuke should be kept armed
             labComplex:undefined    >> if set, then it will be used to run reactions
             makeResource:undefined  >> if set, then this resource will be made in the labComplex
+            splitResource:undefined  >> if set, then this resource will be split in the labComplex
+            boostResources:undefined  >> if set, then these boost resources will be loaded in the labComplex
             exports:[]              >> a list of export instructions. Each instruction looks like:  {resource_type:RESOURCE_GHODIUM,exportOver:0,batchSize:50000},
             imports:[]              >> a list of imports instructions. Each instruction looks like:  {resource_type:RESOURCE_ENERGY,storageCap:100000},
             
@@ -69,12 +72,14 @@ class RoomNode{
         this.terminalEnergyCap = options.terminalEnergyCap===undefined?15000:options.terminalEnergyCap;
         
         this.towersBuildWalls = options.towersBuildWalls===undefined?false:options.towersBuildWalls;
-        this.wallHeight = options.wallHeight===undefined?25000000:options.wallHeight;
+        this.wallHeight = options.wallHeight===undefined?5000000:options.wallHeight;
+        this.rampHeight = options.rampHeight===undefined?25000000:options.rampHeight;
 		this.armNuke = options.armNuke===undefined?false:options.armNuke;
 
         this.labComplex = options.labComplex===undefined?undefined:options.labComplex;
         this.makeResource = options.makeResource===undefined?undefined:options.makeResource;
         this.splitResource = options.splitResource===undefined?undefined:options.splitResource;
+        this.boostResources = options.boostResources===undefined?[]:options.boostResources;
         this.exports = options.exports===undefined?[]:options.exports;
         this.imports = options.imports===undefined?[]:options.imports;
         
@@ -83,6 +88,23 @@ class RoomNode{
         if(this.trader){
             this.orders = this.trader.getOrderIDsByRoomName(this.coreRoomName);
         }
+        
+        if(this.labComplex){
+            
+            if(this.boostResources.length>0){
+                this.labComplex.turnOn();
+                this.labComplex.loadBoosts(this.boostResources);
+            }else if(this.makeResource){
+                this.labComplex.turnOn();
+                this.labComplex.make(this.makeResource);
+            }else if(this.splitResource){
+				this.labComplex.turnOn();
+                this.labComplex.split(this.splitResource);
+            }  
+        }
+            
+        
+        
         
         this.readInStore();
         
@@ -145,43 +167,44 @@ class RoomNode{
     runTick(){
         logs.startCPUTracker(this.name+':runTick');
         
-          //  logs.startCPUTracker(this.name+':safeToRun');
+            logs.startCPUTracker(this.name+':safeToRun');
         if(!this.safeToRun())return false;
-          //  logs.stopCPUTracker(this.name+':safeToRun');
+            logs.stopCPUTracker(this.name+':safeToRun');
          
-          //  logs.startCPUTracker(this.name+':checkCache');
+            logs.startCPUTracker(this.name+':checkCache');
         this.checkCache();
-           // logs.stopCPUTracker(this.name+':checkCache');
+            logs.stopCPUTracker(this.name+':checkCache');
         
-         //   logs.startCPUTracker(this.name+':decideWorkforceQuotas');
+            logs.startCPUTracker(this.name+':decideWorkforceQuotas');
         this.decideWorkforceQuotas();
-           // logs.stopCPUTracker(this.name+':decideWorkforceQuotas');
+            logs.stopCPUTracker(this.name+':decideWorkforceQuotas');
 
             logs.startCPUTracker(this.name+':runCreeps');
         this.runCreeps();
             logs.stopCPUTracker(this.name+':runCreeps');
         
-           // logs.startCPUTracker(this.name+':checkAndSpawnWorkforce');
+            logs.startCPUTracker(this.name+':checkAndSpawnWorkforce');
         this.checkAndSpawnWorkforce();
-            //logs.stopCPUTracker(this.name+':checkAndSpawnWorkforce');
+            logs.stopCPUTracker(this.name+':checkAndSpawnWorkforce');
             
         this.runLinkSend();
             
-          //  logs.startCPUTracker(this.name+':runTowers');
+            logs.startCPUTracker(this.name+':runTowers');
         this.runTowers();
-          //  logs.stopCPUTracker(this.name+':runTowers');
+            logs.stopCPUTracker(this.name+':runTowers');
         
         //// Manage Mineral activities /////////////////////////////////////////////////////////////
-        if(this.haveStorage){  
-            if(this.makeResource && this.labComplex && Game.cpu.bucket>2000){
-                 this.labComplex.turnOn();
-                this.labComplex.make(this.makeResource);
-            }else if(this.splitResource && this.labComplex && Game.cpu.bucket>2000){
-				 this.labComplex.turnOn();
-                this.labComplex.split(this.splitResource);
-            }else if(this.labComplex){
-                this.labComplex.turnOff();
-             }
+        logs.startCPUTracker(this.name+':Mineral');
+        if(this.haveStorage){
+            if(this.labComplex){
+                 if(Game.cpu.bucket>2000){
+                    this.labComplex.turnOn();
+                    this.labComplex.runTick();
+                }else{
+                    this.labComplex.turnOff();
+                 }
+            }
+           
 
             
            if(this.extractorComplex){ 
@@ -189,9 +212,9 @@ class RoomNode{
                 let mineral = mb.getMineralForRoom(this.coreRoomName);
                 
                 if(this.extractorComplex.isOn()){
-
+                  
                     // this is checked before run, in order to stop it getting turned back on when windDown==0
-                    if( mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
+                    if(  Game.cpu.bucket<3000 || mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
                         clog("winding down. We have enough resources. Current timer:"+this.extractorComplex.windDownTimer,this.name)
                         this.extractorComplex.windDown();
                     }
@@ -200,13 +223,16 @@ class RoomNode{
                 }
 				// drain the last out, so we get a big refill OR only mine what we need
 
-                else if( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ){
+                else if( Game.cpu.bucket>3000 && ( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ) ){
+                    
                     this.extractorComplex.turnOn();
                 }
             }
             
         
         }
+        
+        logs.stopCPUTracker(this.name+':Mineral');
     
         //// Recovery Mode //////////////////////////////////////////////////////
         // removed this from recovery check because i was miss-using it to scale up quick in low levels 
@@ -351,8 +377,8 @@ class RoomNode{
         
         if(target || healTarget || repairTarget){
     	    for(var tower of  towers){
-
-	            
+                
+	            if(target.name==='bob')continue;
     	        
                 if(target.hits < 600){
                     
@@ -413,9 +439,9 @@ class RoomNode{
                     // this broke on botarena for some reason
                     //creep.setRole("builder")
                 }
-                    logs.startCPUTracker(creep.name);
+                   // logs.startCPUTracker(creep.name);
                 creepRoles[ creep.getRole() ].run(creep,this.getConfig());
-                    logs.stopCPUTracker(creep.name);
+                   // logs.stopCPUTracker(creep.name);
                 
             }
                     
@@ -424,7 +450,60 @@ class RoomNode{
         
         this.creepNames = stillAlive;
     }
-    
+    runLinkSend2(){
+        if(this.controller().level<5)return;
+        
+        
+        if(this.controller().level ===6){
+            // every 500t/load, IF we dont have link at controller
+            // look for links at controller
+            
+            // IF upgrader.count>0
+            // recipeients.push(link)
+        }
+        if(this.controller().level ===8){
+            // every 500t/load, IF we dont have link at spawn 3
+            // look for links at spawn 3
+            
+            // IF fast-filler spots active
+            // recipeients.push(link)
+        }
+        if(this.controller().level ===5){
+            // every 500t/load, IF we dont have src links / core link. 
+            // look for links at sources
+            // look for link near storage
+            // place them? or have harvester do this?
+            
+            // FOR each src
+                // if src.link ready
+                    // sender.push(link)
+            
+            // IF storage.link.isRelay
+                // sender.push(link)
+        }
+        
+        
+        // IF senders empty return
+        
+        // r = 0;
+        //FOR each SRC
+            // if link ready to send
+                
+                // if no more queued recipients, send to first, which will be storage
+                //if(!recipients[r]) sendTo recipients[0]
+                
+                // send to the next recipient link, so if 1+ want to send in same tick, then both get a link
+                // send to recipents[r]
+                // r++
+            
+            // IF srcs wont be sending for a while AND controller/spwn-3 wants E.
+                // switch storage to fill, so it can send
+            
+            // IF storage.link.isFULL && storage.link.isRelay()
+                // storage.link.send( recipient[0] )
+                
+                
+    }
     runLinkSend() {
         const linksReadyToSend = mb.getStructures({
             types: [STRUCTURE_LINK],
@@ -513,12 +592,21 @@ class RoomNode{
         let refreshTime = playerFighters.length>0?10:200;
         if(Game.time%refreshTime===0)this.defenceIntel=undefined;
         if(this.defenceIntel===undefined){
+            logs.startCPUTracker(this.name+' surveyDefences');
             this.surveyDefences()
+            logs.stopCPUTracker(this.name+' surveyDefences',false);
         }
         ////////////////////////////////////////////////////////////////////////
     }
-    
+    calcTowerMultiplier(x1, y1, x2, y2) {
+        //return 0;
+        const distance = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
+        const clampedDistance = Math.min(Math.max(distance,TOWER_OPTIMAL_RANGE), TOWER_FALLOFF_RANGE)
+        const normalizedDistance = (clampedDistance - TOWER_OPTIMAL_RANGE) / (TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE);
+        return 1.0 - normalizedDistance * TOWER_FALLOFF;
+    }
     surveyDefences(){
+       // logs.startCPUTracker(this.name+' surveyDefences-query');
         let structures = mb.getStructures({
             roomNames:[this.coreRoomName],
             types:[STRUCTURE_WALL,STRUCTURE_RAMPART],
@@ -526,16 +614,96 @@ class RoomNode{
             orderBy:{attr:'hits'}
             
         })
-        this.defenceIntel = {wallHeight:this.wallHeight,weakest_structure:{id:'',hits:0},priority_repair_targets:[]}
+        //logs.stopCPUTracker(this.name+' surveyDefences-query',true);
+        
+        //logs.startCPUTracker(this.name+' surveyDefences-process');
+        this.defenceIntel = {
+            wallHeight:this.wallHeight,
+            rampHeight:this.rampHeight,
+            weakest_structure:{id:'',hits:0},
+            priority_repair_targets:[],
+            attacker_ids:[],
+            priority_attacker_id:'',
+            tower_dmg_on_priority:0,
+            closest_ramp_id:'',
+            ramp_ids_to_defend:[]
+        }
+        
+        let playerFighterIDs = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
+        let priorityAttacker = false;
+        for(let id of playerFighterIDs){
+            priorityAttacker = gob(id);
+            if(priorityAttacker){
+                this.defenceIntel.priority_attacker_id = priorityAttacker.id;
+                this.defenceIntel.attacker_ids.push(priorityAttacker.id)
+            }
+        }
+        if(priorityAttacker){
+            let towers = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_TOWER]})
+            let dmg = 0;
+            for(let tower of towers){
+                dmg += (this.calcTowerMultiplier(tower.pos.x, tower.pos.y, priorityAttacker.pos.x, priorityAttacker.pos.y) * TOWER_POWER_ATTACK )
+               
+            }
+            this.defenceIntel.tower_dmg_on_priority = dmg.toFixed(0)*1;
+        }
+        let srcs = mb.getSources({roomNames:[this.coreRoomName]})
+        
         if(structures.length>0){
+            
+            
             this.defenceIntel.weakest_structure.id = structures[0].id;
             this.defenceIntel.weakest_structure.hits = structures[0].hits;
+            let closestRamp = false;
+            let closestDist = 999;
             for(let index in structures){
+                    
+                
+                if(priorityAttacker && structures[index].structureType===STRUCTURE_RAMPART){
+                    
+                    let dist = priorityAttacker.pos.getRangeTo(structures[index])
+                    
+                    if(dist < closestDist){
+                       
+                       //console.log("closer:",structures[index].pos,dist)
+                       
+                       let sateliteRampart = false; 
+                        for(let src of srcs){
+                          //  console.log(src.pos,structures[index].pos,src.pos.getRangeTo(structures[index].pos))
+                            // ignore ramparts that are on satelite sources, that shouldn't be in the base
+                            if( src.pos.isNearTo(structures[index].pos) ){
+                              sateliteRampart = true;
+                            }
+                        }
+                        
+                        if(!sateliteRampart){
+                            
+                            closestDist = dist;
+                            closestRamp = structures[index];
+                            this.defenceIntel.closest_ramp_id = structures[index].id;
+                        }
+                          
+                        
+                    }
+                }
+                
+                
+                if(structures[index].structureType===STRUCTURE_RAMPART && structures[index].hits > this.rampHeight)continue;
+                if(structures[index].structureType===STRUCTURE_WALL && structures[index].hits > this.wallHeight)continue;
                 if(index<5){
                     this.defenceIntel.priority_repair_targets.push(structures[index].id)
                 }
             }
+            if(closestRamp){
+                let nearbyRamps = closestRamp.pos.lookForNearStructures(STRUCTURE_RAMPART,true);
+                for(let ramp of nearbyRamps){
+                    this.defenceIntel.ramp_ids_to_defend.push(ramp.id);
+                }
+            }
         }
+        
+        //logs.stopCPUTracker(this.name+' surveyDefences-process',true);
+        
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Dynamic Attribute Code
@@ -545,7 +713,7 @@ class RoomNode{
         let activeRemotes  = [];
         if(Memory.invaderSeen===undefined)Memory.invaderSeen={}
         for(let roomName of this.remoteRoomNames){
-            if( Memory.invaderSeen[roomName]==undefined || emory.invaderSeen[roomName]< Game.time){
+            if( Memory.invaderSeen[roomName]==undefined || Memory.invaderSeen[roomName]< Game.time){
                 activeRemotes.push(roomName)
             }
         }
@@ -610,13 +778,16 @@ class RoomNode{
         if(spawnName=='Zeta-3'||spawnName=='Theta-3')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,TOP,TOP_RIGHT];
         if(spawnName=='Iota-2'||spawnName=='Lambda-2')Game.spawns[spawnName].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
         if(spawnName=='Theta-2')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,LEFT,BOTTOM_LEFT];
-        if(['Zeta-2','Beta-2','Alpha-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
+        if(['Zeta-2','Beta-2','Alpha-2','Gamma-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
             Game.spawns[spawnName].forceDirectionHack = [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
         
 		 if(spawnName=='Beta-3')Game.spawns[spawnName].forceDirectionHack = [BOTTOM];
 		
+		logs.startCPUTracker(this.name+creepName+':spawn'); 
         if(!Game.creeps[creepName]){
+            
             let bodyPlan = creepRoles['filler'].getParts(0,this.getConfig());
+            
             let dirs = (moveToSpot)?this.getMainSpawnSpots():this.getMainSpawnFillerSpots();
             if(moveToSpot){
                 bodyPlan.push(MOVE);
@@ -626,7 +797,7 @@ class RoomNode{
             
              if(spawnName=='Zeta-3')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[BOTTOM_LEFT,BOTTOM_RIGHT]);
-            else if(['Zeta-2','Beta-2','Alpha-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
+            else if(['Zeta-2','Beta-2','Alpha-2','Gamma-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,TOP_RIGHT]);
             else if(spawnName=='Iota-2'||spawnName=='Lambda-2')
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,BOTTOM_LEFT]);
@@ -636,21 +807,28 @@ class RoomNode{
                 Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[LEFT,RIGHT]);
 
             else{ 
+                // this is the base spawn, so should have one adj to terminal. we need to increase transfer throughput
+                if(this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST){
+                    bodyPlan.push(CARRY);
+                } 
                 
                 let res = Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs);
                 
             }
         }
+        logs.stopCPUTracker(this.name+creepName+':spawn'); 
         
+        logs.startCPUTracker(this.name+creepName+':run'); 
         if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){
             let creep = Game.creeps[creepName];
             
             if(moveToSpot && !creep.pos.isEqualTo(moveToSpot)){
                    creep.moveTo(moveToSpot);
             }else{
-                 return creepRoles['filler'].run(creep,this.getConfig());
+                 creepRoles['filler'].run(creep,this.getConfig());
             }
         }
+        logs.stopCPUTracker(this.name+creepName+':run'); 
     }
     getMainSpawnSpots(){
         
@@ -793,9 +971,16 @@ class RoomNode{
         
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
         if(Game.rooms[this.coreRoomName].energyCapacityAvailable<800){
-            this.workforce_quota.harvester.required+=2;
+            // turned o. randomly broke in swc. harvesters were ping ponging
+            //this.workforce_quota.harvester.required+=2;
         }
-
+        // sync workes growth with harvester growth
+        if(controller.level===1 && this.workforce_quota.harvester.count>=2){
+            this.workforce_quota.worker.required = this.workforce_quota.harvester.count;
+        }
+        if(controller.level===2 && !this.allSourcesBuilt){
+            this.buildFast = true;
+        }
    
         if(this.buildFast && !this.inRecoveryMode && Game.cpu.bucket>3000){
             if(this.haveStorage){
@@ -833,12 +1018,13 @@ class RoomNode{
             this.workforce_quota.worker.required = 1; // xmark
             
     
-            if(this.defenceIntel.weakest_structure.hits > this.defenceIntel.wallHeight && !mb.haveConstructions([this.coreRoomName])){
+            if(this.defenceIntel.weakest_structure.hits > this.defenceIntel.rampHeight && !mb.haveConstructions([this.coreRoomName])){
                 this.workforce_quota.builder.required = 0;
             }
             
             if(this.allSourcesBuilt){
-                let tankersPerX = Game.rooms[this.coreRoomName].energyCapacityAvailable<1300?1000:1600;
+                // at rcl 2k seems too small. causes boom bust cycles
+                let tankersPerX = Game.rooms[this.coreRoomName].energyCapacityAvailable<1300?1000:2500;
                 this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
             }
             //this.workforce_quota.tanker.required = this.totalEnergyAtSources===0?1:Math.ceil(this.totalEnergyAtSources/2000)

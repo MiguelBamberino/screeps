@@ -5,13 +5,14 @@ const RUN_COOLDOWN_HAULER=10;
 class LabComplex extends AbstractComplex{
     
     
-    constructor(anchor,facing,fillerSize=600){
-        super(anchor,facing);
+    constructor(anchor,facing,fillerSize=600, draft=false){
+        super(anchor,facing,draft);
         this.makingResource = false;
         this.checkForHaulJobsAfter=Game.time;// this is used for CPU saving too. it limits the amount of checks we do on lab stores.
         this.fillerSize = fillerSize;// unlikely to change, but the size of the assigned hauler
         this.haulJob=false;
         this.mode='make';
+        this.boostResources = [];
     }
     make(resource_type){
         if(REACTION_TIME[resource_type]===undefined){
@@ -20,7 +21,7 @@ class LabComplex extends AbstractComplex{
             this.makingResource = resource_type;
             this.mode='make';
         }
-        return this.runTick()
+        //return this.runTick()
     }
     split(resource_type){
 
@@ -30,14 +31,25 @@ class LabComplex extends AbstractComplex{
             this.makingResource = resource_type;
             this.mode='split';
         }
-        return this.runTick()
+        //return this.runTick()
+    }
+    loadBoosts(boosts){
+        for(let b of boosts){
+            if(!REACTION_TIME[b]){
+                return ERR_INVALID_ARGS;
+            }
+        }
+        this.boostResources = boosts;
+        this.mode ='boost';
     }
     /**
      * The template function that implements the pattern for the comples run() function
      */ 
     runComplex(){
        // return
-     
+        
+        if(this.mode==='boost')return this.checkLabsForBoostHaulerJobs();
+        
         let reverse = (this.mode=='split');
         let ingredients = this.getIngredients(this.makingResource);
         
@@ -182,6 +194,27 @@ class LabComplex extends AbstractComplex{
         }
         this.checkForHaulJobsAfter=Game.time+REACTION_TIME[this.makingResource];
         return ERR_FULL;
+    }
+    checkLabsForBoostHaulerJobs(){
+        let allLabIDs = this.getStructureIDsByType(STRUCTURE_LAB);
+        for(let f in allLabIDs){
+            
+            let lab = Game.getObjectById(allLabIDs[f]);
+            //console.log("load ",f,this.boostResources[f]," into ", lab.pos,this.checkLabForHaulerJob(lab,this.boostResources[f],'fill'))
+            if(lab && this.boostResources[f]){
+                
+                if(this.checkLabForHaulerJob(lab,this.boostResources[f],'fill')===OK){
+                    console.log("load ",f,this.boostResources[f]," into ", lab.pos)
+                    return OK;
+                }
+            }
+        }
+
+        this.checkForHaulJobsAfter = Game.time + 10;
+        return ERR_FULL;
+    }
+    isBoosting(){
+        return (this.mode==='boost')
     }
     /**
      * 
@@ -333,6 +366,8 @@ class LabComplex extends AbstractComplex{
         // Tier 2
         if(product===RESOURCE_GHODIUM_ALKALIDE) return [RESOURCE_GHODIUM_OXIDE,RESOURCE_HYDROXIDE]
         if(product===RESOURCE_LEMERGIUM_ALKALIDE) return [RESOURCE_LEMERGIUM_OXIDE,RESOURCE_HYDROXIDE]
+        if(product===RESOURCE_ZYNTHIUM_ALKALIDE) return [RESOURCE_ZYNTHIUM_OXIDE,RESOURCE_HYDROXIDE]
+
        
         if(product===RESOURCE_GHODIUM_ACID) return [RESOURCE_GHODIUM_HYDRIDE,RESOURCE_HYDROXIDE]
         if(product===RESOURCE_UTRIUM_ACID) return [RESOURCE_UTRIUM_HYDRIDE,RESOURCE_HYDROXIDE]

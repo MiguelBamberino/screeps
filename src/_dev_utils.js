@@ -93,10 +93,15 @@ global.runMarket=function(){
     let resA = findGoodOrder("Alpha","buy",RESOURCE_OXYGEN,35,25)
     if(resA!==OK)resA = findGoodOrder("Alpha","buy",RESOURCE_BATTERY,145,30)
     
-    findGoodOrder("Lambda","buy",RESOURCE_LEMERGIUM,48,25)
+    let resL = findGoodOrder("Lambda","buy",RESOURCE_LEMERGIUM,48,25)
+    if(resL!==OK)resL = findGoodOrder("Lambda","buy",RESOURCE_BATTERY,145,30);
     
-    findGoodOrder("Kappa","buy",RESOURCE_BATTERY,145,30)
-    findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
+    let resK = findGoodOrder("Kappa","buy",RESOURCE_BATTERY,145,30)
+   
+   let resD = findGoodOrder("Delta","buy",RESOURCE_BATTERY,145,30)
+    
+    let resM = findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
+    if(resM!==OK)resM = findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
     //findGoodOrder("Epsilon","buy",RESOURCE_ENERGY,11,25)
     
     console.log("===========================================")
@@ -268,7 +273,7 @@ global.util = {
             console.log("Upgrade Failed. Must be on 19.2")
         }
     },
-    setLinksInRoom:function(roomName) {
+    setLinksInRoom:function(roomName, cloggy=true) {
         const room = Game.rooms[roomName];
         const links = mb.getStructures({
             types: [STRUCTURE_LINK],
@@ -301,7 +306,7 @@ global.util = {
                         senders.push(link);
                     }
 
-                    clog(link.pos+'','set as Sender  - Source')
+                    if(cloggy)clog(link.pos+'','set as Sender  - Source')
                     found=true;
                     foundOneSrc=true;
                 }
@@ -314,27 +319,27 @@ global.util = {
                     link.setPriority(4);
                     structure.setLink(link);
                     receivers.push(link);
-                    clog(link.pos+'','set as Receiver - Priority-4 - Storage')
+                    if(cloggy)clog(link.pos+'','set as Receiver - Priority-4 - Storage')
                     found=true;
                     break;
                 } else if (structure.structureType === STRUCTURE_SPAWN && link.pos.inRangeTo(structure, 2)) {
                     link.setAsReceiver();
                     link.setPriority(1);
                     receivers.push(link);
-                    clog(link.pos+'','set as Receiver - Priority-1 - Filler')
+                    if(cloggy)clog(link.pos+'','set as Receiver - Priority-1 - Filler')
                     found=true;
                     break;
                 }else if (structure.structureType === STRUCTURE_TOWER && link.pos.inRangeTo(structure, 1)) {
                     link.setAsReceiver();
                     link.setPriority(3);
                     receivers.push(link);
-                    clog(link.pos+'','set as Receiver - Priority-3 - Tower')
+                    if(clog)clog(link.pos+'','set as Receiver - Priority-3 - Tower')
                     found=true;
                     break;
                 }else if (structure.structureType === STRUCTURE_WALL && link.pos.inRangeTo(structure, 2)) {
                     link.setAsSender();
                     senders.push(link);
-                    clog(link.pos+'','set as Sender - Dismantler')
+                    if(cloggy)clog(link.pos+'','set as Sender - Dismantler')
                     found=true;
                     break;
                 }
@@ -346,14 +351,14 @@ global.util = {
                 controller.setLink(link);
                 receivers.push(link);
                 found=true;
-                clog(link.pos+'','set as Receiver- Priority-2 - Controller')
+                if(cloggy)clog(link.pos+'','set as Receiver- Priority-2 - Controller')
             }
             
             if (!found){
                 link.setAsReceiver();
                 link.setPriority(1);
                 receivers.push(link);
-                clog(link.pos+'','set as Receiver - Priority-1 - Assumed Filler')
+                if(cloggy)clog(link.pos+'','set as Receiver - Priority-1 - Assumed Filler')
                 found=true;
                    
             }

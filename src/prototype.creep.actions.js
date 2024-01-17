@@ -277,6 +277,86 @@ module.exports = function(){
                 opts.ignoreRoads = true;
 
             }
+            if(creep.isASwampRat() ){
+                opts.swampCost = 1;
+            }
+            
+      /*
+            opts.costCallback = function(roomName,costMatrix){
+                        
+                        let mpCM = mb.getCostMatrix(roomName);
+                        if(mpCM)return mpCM;
+                
+                
+                        if (roomName==='E6N3' ) {
+                        
+                            costMatrix.set(22, 15, 255);
+                    
+                        }
+                         if (roomName==='E3N5' ) {
+                        
+                            costMatrix.set(32, 22, 255);
+                    
+                        }
+                         if (roomName==='E7N4' ) {
+                        
+                            for(let y=0; y<=11;y++){
+                                 for(let x=0; x<2;x++){
+                                 
+                                    costMatrix.set(x, y, 255);
+                                   if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                                }
+                            }
+                    
+                        }
+                        if (roomName==='E6N4' ) {
+                        
+                            for(let y=47; y<=49;y++){
+                                 for(let x=0; x<=4;x++){
+                                 
+                                    costMatrix.set(x, y, 255);
+                                   if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                                }
+                            }
+                    
+                        }
+                        if(roomName ==='E9N5'){
+                            const terrain = Game.map.getRoomTerrain(roomName);
+                            
+                             for(let x=0; x<49;x++){
+                                 
+                                
+                                
+                                if(terrain.get(x,0)!==TERRAIN_MASK_WALL){
+                                    costMatrix.set(x, 0, 25);
+                                    if(Game.rooms[roomName])rp(x,0,roomName).colourIn('cyan')
+                                }
+                                if(terrain.get(x,49)!==TERRAIN_MASK_WALL){
+                                    costMatrix.set(x, 49, 25);
+                                    if(Game.rooms[roomName])rp(x,49,roomName).colourIn('cyan')
+                                }
+                            }
+                            for(let y=0; y<49;y++){
+                                  
+                                    
+                                  if(terrain.get(0,y)!==TERRAIN_MASK_WALL){
+                                      
+                                    costMatrix.set(0, y, 25);
+                                    if(Game.rooms[roomName])rp(0,y,roomName).colourIn('cyan')
+                                    
+                                  }
+                                  if(terrain.get(49,y)!==TERRAIN_MASK_WALL){
+                                      
+                                    costMatrix.set(49, y, 25);
+                                    if(Game.rooms[roomName])rp(49,y,roomName).colourIn('cyan')
+                                    
+                                  }
+                                }
+                            }
+                        
+                        return costMatrix;
+                    }
+            */
             
             let rn = target.roomName ?target.roomName :target.pos.roomName; 
             //if(this.name==='harrass-1')console.log('rn',rn,target.name,target.id)
@@ -284,8 +364,8 @@ module.exports = function(){
                 // this shrinks pathfinding and forces creep to stay in this room. It also avoid ERR_NO_PATH from weird terrain that
                 // would make the creep leave the room to move around
                 opts.maxRooms = 1;
-                if(this.memory.avoidEdges){
-                    console.log(creep.name,"-moveToPos avoidingEdges with costCallback")
+                if(false && this.memory.avoidEdges){
+                    //console.log(creep.name,"-moveToPos avoidingEdges with costCallback")
                     opts.costCallback = function(roomName,costMatrix){
                         // if we don't have vision, then use default for now
                         if (! Game.rooms[roomName]) return costMatrix;
@@ -302,6 +382,7 @@ module.exports = function(){
                             costMatrix.set(0, y, 255);
                             costMatrix.set(49, y, 255);
                         }
+                        return costMatrix;
                     }
                 }
             }
@@ -320,13 +401,16 @@ module.exports = function(){
             }
             
             
-            // this code is turned off and needs rewriting to match new stuff
-            if(false && hostiles.length>0 && Game.cpu.bucket>8000){
+            // real hacky for now. Only runs if we're not a fighty boi
+            if(Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
                 
                 opts.reusePath=2;
                 
-                
-                for(let hostile of hostiles){
+                let hostiles = [];
+                for(let id of hostileIDs){
+                    let hostile = gob(id)
+                    if(!hostile)continue;
+                    hostiles.push(hostile)
                     let theirTotalFightParts = hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
                     let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
                     creep.memory.fleeZoneOfControl = false;
@@ -341,43 +425,62 @@ module.exports = function(){
                         target = new RoomPosition(25,25,r);
                         creep.memory.fleeZoneOfControl = true;
                         creep.say('flee')
-                       // clog(hostile.name+" stronger than "+creep.name ,'fleeing')
+                        //clog(hostile.name+" stronger than "+creep.name ,'fleeing')
                     }
                     
                 }
                 
                 
-                //this.renderAvoidance(hostiles);
+                this.renderAvoidance(hostiles);
                 
                 opts.costCallback = function(roomName,costMatrix){
                     let room = Game.rooms[roomName];
-                    if (!room) return costMatrix;
-                    for(let hostile of hostiles){
+                     let mpCM = mb.getCostMatrix(roomName);
+                    
+                    if (!room && !mpCM) return costMatrix;
+                    
+                   if (roomName==='E6N4' ) {
+                        
+                            for(let y=47; y<=49;y++){
+                                 for(let x=0; x<=3;x++){
+                                 
+                                    costMatrix.set(x, y, 255);
+                                   if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                                }
+                            }
+                    
+                        }
+                   
+                   
+                    for(let id of hostileIDs){
+                        let hostile = gob(id)
+                        if(!hostile)continue;
                         let range = 2;
                         let theirTotalFightParts= hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
                         let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
                         
                       
                         if(
+                            Game.shard.name !=='shard3' &&
                             // only avoid creep that are stronger
                             myTotalFightyParts < theirTotalFightParts
                             // dont avoid if we opt in for risks or need to flee from an avoid area
                              && !creep.memory.riskyBiscuits && !creep.memory.fleeZoneOfControl
                              // ally list
                             && !BOT_ALLIES.includes(hostile.owner.username)
-                            //&& hostile.owner.username!='Trepidimous' 
                             // if we are avoiding SKs, then add them to the avoid list
                             || (creep.memory.avoidSkeepers && hostile.owner.username=='Source Keeper') 
                             ){
-                            if(hostile.partCount(RANGED_ATTACK)>0)range=4;
+                            // changed to dist 5 because if crep & enemy diagonally move closer on same tick, they can move in range 3
+                            if(hostile.partCount(RANGED_ATTACK)>0)range=5;
                             
                             if(creep.memory.touchingCloth)range = range-1;
                             
                             let avoids = hostile.pos.getPositionsInRange(range);
-                           // if(creep.name=='Gt19')clog(hostile.name+" stronger than "+creep.name ,'avoiding')
+                           //clog(hostile.name+" stronger than "+creep.name ,'avoiding')
                             for(let a of avoids){
                                 costMatrix.set(a.x, a.y, 255);
-                               // a.colourIn();
+                                //a.colourIn("orange");
                             }
                         }
                     }

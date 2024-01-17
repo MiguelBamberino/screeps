@@ -9,31 +9,35 @@ global.reservationBook = {
         
         logs.startCPUTracker('rb.runTick');
         for(let id in Memory.reservationBook){
+            
+            let structure = Game.getObjectById(id);
+            if(!structure){
+                    
+                clog("Structure disappeared. Deleting reservation book id:"+id,Game.time);
+                delete Memory.reservationBook[id];
+                continue;
+            }
+            
+            if(Memory.reservationBook[id].withdraw.totalReserved===0 && Memory.reservationBook[id].transfer.totalReserved===0){
+                //clog("reservationBook not in use. Deleting reservation book id:"+id,Game.time);
+                //delete Memory.reservationBook[id];
+                //continue;
+            }
+            
             for(let type in Memory.reservationBook[id]){
                 
-                let structure = Game.getObjectById(id);
-                if(!structure){
-                    
-                    clog("Structure disappeared. Deleting reservation book id:"+id,Game.time);
-                    delete Memory.reservationBook[id];
-                    
-                }else{
-                    
-                    Memory.reservationBook[id][type].totalPending=0;
-                    // patch in new feature
-                    if(Memory.reservationBook[id][type].overBookAllowance==undefined)Memory.reservationBook[id][type].overBookAllowance=0;
-                    
-                    for(let cname in Memory.reservationBook[id][type].reserves){
-                        if(cname==='lock')continue;
-                        if(!Game.creeps[cname]){
-                            logs.log("Death","Releasing reserves of "+cname+" because they died.")
-                            Memory.reservationBook[id][type].totalReserved-=Memory.reservationBook[id][type].reserves[cname];
-                            delete Memory.reservationBook[id][type].reserves[cname];
-                        }
+                Memory.reservationBook[id][type].totalPending=0;
+                // patch in new feature
+                if(Memory.reservationBook[id][type].overBookAllowance==undefined)Memory.reservationBook[id][type].overBookAllowance=0;
+                
+                for(let cname in Memory.reservationBook[id][type].reserves){
+                    if(cname==='lock')continue;
+                    if(!Game.creeps[cname]){
+                        logs.log("Death","Releasing reserves of "+cname+" because they died.")
+                        Memory.reservationBook[id][type].totalReserved-=Memory.reservationBook[id][type].reserves[cname];
+                        delete Memory.reservationBook[id][type].reserves[cname];
                     }
-                    
                 }
-
             }
         }
         

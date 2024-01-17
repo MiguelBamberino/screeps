@@ -433,7 +433,7 @@ RoomPosition.prototype.drawPolyAround = function(distance,colour='red') {
     const points = [topLeft, topRight, bottomRight, bottomLeft, topLeft]; // Close the polygon by returning to the first point
 
     // Draw the polygon using RoomVisual
-    new RoomVisual(roomName).poly(points, { stroke: colour, fill: colour, opacity:0.2, strokeWidth: 0.15 });
+    new RoomVisual(roomName).poly(points, { stroke: colour, fill: colour, opacity:0.1, strokeWidth: 0.15 });
 
     // Return the points for further use
     return points;

@@ -39,6 +39,7 @@ var roleHarvester = {
            
        }
        if(!src){
+           
            let srcs = mb.getSources({roomNames:[config.coreRoomName]});
                 let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
                 if(srcs.length==1)i=0;
@@ -125,6 +126,7 @@ var roleHarvester = {
    },
    getSource: function(creep,config){
        let src =  Game.getObjectById(creep.memory.mine_id);
+       creep.memory.extraSupport=false;
        if(!src){
            src = this.getAvailableMine(config);
            creep.memory.mine_id = src.id;

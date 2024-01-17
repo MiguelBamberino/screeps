@@ -39,11 +39,19 @@ var roleTanker = {
         let creepSpace =  creep.store.getCapacity();
         let energyInStorage = storage.storedAmount(RESOURCE_ENERGY)
         let stored_type=false;
-        let parkSpot = config.labComplex? config.labComplex.standingSpot: config.retreatSpot
+        let parkSpot = config.labComplex && !config.labComplex.isBoosting()? config.labComplex.standingSpot: config.retreatSpot
         for(let resource_type in creep.store){
             stored_type=resource_type;
         }
         
+        if(!creep.memory.job && creep.ticksToLive<20){
+            creep.suicide();
+        }
+       /* let drop = creep.getDroppedResource(RESOURCE_ZYNTHIUM_ACID);
+        if(drop){
+            creep.moveTo(drop);
+            creep.pickup(drop)
+        }*/
         if(creep.memory.job){
             this.checkJobComplete(creep);
         }
@@ -132,6 +140,7 @@ var roleTanker = {
         
         if(config.labComplex && !creep.memory.job){
             let haulJob = config.labComplex.takeJob()
+            //if(creep.name==='G-rk-0')clog(haulJob);
             if( haulJob ){
                 // we check for atleast 5, to make sure we don't leave small crappy bits in the storage
                 if(haulJob.action =='fill' && storage.storingAtLeast(5,haulJob.resource_type)){
@@ -182,7 +191,10 @@ var roleTanker = {
                 
         if(factory && !creep.memory.job){
             
-            if(factory.storingAtLeast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)){
+            if(factory.storingAtLeast(creepSpace,RESOURCE_BATTERY) 
+            && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)
+            && storage.storedAmount(RESOURCE_BATTERY)<300000
+            ){
                 creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_BATTERY,action:'empty'}
             }
         }
@@ -223,7 +235,14 @@ var roleTanker = {
             creep.memory.job= false;
             return;
         }
-        
+        if(jobTarget && !job.resource_type){
+            // not sure why the job is missing resource
+            if(Game.time%3==0)clog(creep.memory.job,creep.name+" !job.resource_type error :")
+            creep.memory.reserve_id = false;
+            creep.say('job err')
+            creep.memory.job= false;
+            return;
+        }
         
         if(job.doneLastTick && creep.memory.job.storedBefore!==creep.storedAmount(job.resource_type) ){
            // clog(job,creep.name)

@@ -1,9 +1,10 @@
 global.BOT_VERSION='19.3';
-global.BOT_ALLIES = ['NeonCamouflage'];
+
+global.BOT_ALLIES = ['asdpof','harabi','Mirroar','Modus','Nightdragon','Robalian','SBense','Trepidimous','Yoner'];
  
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
 if(!Memory.creeps) { Memory.creeps = {}; }
-   
+
    
 require('global.logger');
 logs.globalResetStarted();
@@ -38,7 +39,7 @@ require('prototype.creep.body');
 require('prototype.creep.actions')();
 
 
-
+const LabComplex = require('class.complex.lab')
 
  
 let tempCode= require('tempCode');
@@ -65,10 +66,14 @@ for(let n in nodes){
     }
 }
 
+mb.createMapRoute(['W41N53','W40N53','W40N52','W39N52'])
 
 module.exports.loop = function () {
     _memHak.pretick();
     if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
+
+    //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
+    //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E7N5']._debugSetEnemies(['bob']);
     
     if(util.allowTick()){
         
@@ -76,33 +81,32 @@ module.exports.loop = function () {
         
         reservationBook.runTick();
         
+        logs.startCPUTracker('nodes');
         for(let n in nodes){
-            
+            //logs.startCPUTracker(nodes[n].name);
             if( ["a","d"].includes(n) && Game.cpu.bucket<2000)continue;
             
             nodes[n].runTick();
+            //logs.stopCPUTracker(nodes[n].name,true);
         }
-       
+       logs.stopCPUTracker('nodes',false);
         
         mb.runTick();
         
-        if(Game.cpu.bucket>1000){
+        if(Game.cpu.bucket>1000 || Game.time < 50){
             logs.startCPUTracker('tempCode');
             tempCode.run();
             logs.stopCPUTracker('tempCode',false);
-            logs.startCPUTracker('scheduledAttack');
-            tempCode.scheduledAttack();
-            logs.stopCPUTracker('scheduledAttack',false);
             
         }
         
         if(Game.cpu.bucket>8000 && Game.time%100===0){
-            runMarket();
+            //runMarket();
         }
         if(Game.cpu.bucket>5000 && Game.time%20===0){
             logs.startCPUTracker('processOrders');
             trader.processOrders();
-            logs.stopCPUTracker('processOrders',true);
+            logs.stopCPUTracker('processOrders',false);
         }
         
         logs.mainLoopEnded();
@@ -110,21 +114,26 @@ module.exports.loop = function () {
         //////// GUI CODE  //////////////////////////////////
         
         gui.render();
-        gui.renderComplexStats(nodes.i.extractorComplex)
-        gui.renderComplexStats(nodes.z.extractorComplex)
-        gui.renderComplexStats(nodes.k.extractorComplex)
         
-        gui.renderComplexStats(nodes.m.extractorComplex)
-        gui.renderComplexStats(nodes.i.labComplex)
-
-        gui.renderComplexStats(nodes.z.extractorComplex)
-        gui.renderComplexStats(nodes.k.extractorComplex)
-
-        gui.renderComplexStats(nodes.m.extractorComplex)
-        gui.renderComplexStats(nodes.i.labComplex)
-        
+        gui.renderComplexStats(nodes.t.extractorComplex)
+        if(false && Game.cpu.bucket>1000 &&util.getServerName()==='shard3'){
+            gui.renderComplexStats(nodes.i.extractorComplex)
+            gui.renderComplexStats(nodes.z.extractorComplex)
+            gui.renderComplexStats(nodes.k.extractorComplex)
+            
+            gui.renderComplexStats(nodes.m.extractorComplex)
+            gui.renderComplexStats(nodes.i.labComplex)
+    
+            gui.renderComplexStats(nodes.z.extractorComplex)
+            gui.renderComplexStats(nodes.k.extractorComplex)
+    
+            gui.renderComplexStats(nodes.m.extractorComplex)
+            gui.renderComplexStats(nodes.i.labComplex)
+            //mb.renderKiteGroups('W41N54')
+        }
+       
         ///////////////////////
-
+        
     }
     
 }

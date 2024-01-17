@@ -113,7 +113,7 @@ var role = {
                         drop = srcs[i].pos.lookForNearbyResource(RESOURCE_ENERGY);
                     
                 }
-                if(drop){
+                if(drop && drop.amount>=50){
                     creep.memory.drop_id = drop.id;
                     return creep.actOrMoveTo("pickup",drop);
                 }
