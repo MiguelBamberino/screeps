@@ -27,7 +27,7 @@ module.exports = {
                                             terminalEnergyCap:50000,
                                             homeMineralSurplus:200000,
                                             wallHeight:1000000,
-                                            rampHeight:5000000,
+                                            rampHeight:1100000,
                                             funnelRoomName:'E8N4',
                                             labComplex:new LabComplex(rp(spwn.pos.x+2,spwn.pos.y-3,spwn.pos.roomName),BOTTOM_RIGHT),
                                             makeResource: RESOURCE_HYDROXIDE,
@@ -136,8 +136,8 @@ module.exports = {
                                             retreatSpot:rp(spwn.pos.x-1,spwn.pos.y-3,spwn.pos.roomName),
                                             extraFastFillSpots:[],
                                             upgradeRate:RATE_SLOW,
-                                             wallHeight:1000000,
-                                            rampHeight:5000000,
+                                             wallHeight:10000000,
+                                            rampHeight:11000000,
                                             buildFast:false,
                                             labComplex:new LabComplex(rp(spwn.pos.x-3,spwn.pos.y+6,spwn.pos.roomName),TOP_RIGHT),
                                             makeResource: RESOURCE_LEMERGIUM_ALKALIDE,
@@ -259,6 +259,7 @@ module.exports = {
                                         buildFast:false,
                                         armNuke:true,
                                         wallHeight:10010001,
+                                        rampHeight:10010001,
                                         terminalEnergyCap:100000,
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000}
@@ -327,6 +328,8 @@ module.exports = {
                                         buildFast:false,
                                         upgradeRate:RATE_VERY_SLOW,
                                         wallHeight:10000001,
+                                        
+                                        rampHeight:10010001,
                                         extraFastFillSpots:[],
                                         remoteRoomNames:[],
                                         funnelRoomName:'',
@@ -356,7 +359,7 @@ module.exports = {
                                         extraFastFillSpots:[],
                                         terminalEnergyCap:120000,
                                         labComplex:new LabComplex(rp(37,26,'W41N54'),TOP_LEFT),
-                                        makeResource:RESOURCE_GHODIUM,
+                                        makeResource:RESOURCE_GHODIUM_ALKALIDE,
                                         imports:[
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000},
                                             {resource_type:RESOURCE_GHODIUM_OXIDE,storageCap:12000},

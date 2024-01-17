@@ -429,85 +429,21 @@ module.exports = {
        // if(util.debug)this.killCreepsBreakTarget('Epsilon-3','bill','3t2a2r7m','W41N54',[],[], 75,{x:25,y:25},true)
         
       
-        gob('63fd1ff656dfcecb6ce9893a').observeRoom('W39N55');
-        this.rotateCreep('Guard1-', function(activeCreepName){
-          
-          let controllerW39N55 = gob('5bbcaad69099fc012e632419');
-          
-            if( controllerW39N55 && controllerW39N55.level>=2 && controllerW39N55.safeMode===undefined  && controllerW39N55.progress > 35000 )
-                //thing.killCreepsBreakTarget('Epsilon-3',activeCreepName,'20*1a1m+4r4m+1h1m','W39N55',[],[], 20,{x:38,y:6})
-                
-                thing.harrassRemote('Epsilon-3',activeCreepName,'W39N55',[],rp(40,25,'W39N55'),'20*1a1m+4r4m+1h1m')
+        this.scheduledAttack('Beta','W39N52','B1',rp(31,47,'W39N52'),1,{
+            duoCount:1,
+            leaderBody:'20w5r25m',
+            //leaderBoostPlans:[{resource_type:RESOURCE_GHODIUM_ALKALIDE,lab_id:'659adbb3e6a924003533f857'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'659aefc97b77b600382c2006'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'659ad17d715ca500374eb2f5'}],
+            healerBody:'5r20h25mm',
+            //healerBoostPlans:[{resource_type:RESOURCE_GHODIUM_ALKALIDE,lab_id:'659adbb3e6a924003533f857'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'659aefc97b77b600382c2006'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659ac78b72240e002fb4cc67'}],
+            //renewSpawn:'Gamma-2',spawnFacing:BOTTOM
             
-        },350)
+        })
         
     logs.startCPUTracker('manageInterRoomTrading2');
     if(Game.time%10==0)this.manageInterRoomTrading2()
     logs.stopCPUTracker('manageInterRoomTrading2',false);
             
- 
-    /**
-     * manage the config of what resources different rooms want. This assumes they've already been hauled to the terminal.
-     * see manageMineralHauling()w
-     * importerConfigs - array of objs with this template: {importer:'Alpha',resource_type:RESOURCE_OXYGEN,storageCap:50000}
-     * exporters - an array of rooms who are exporting, such as ['Alpha','Beta'...]
-     */
-     
-     /*
-        this.manageInterRoomTrading([ 
-                
-                {importer:'Alpha',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                
-                {importer:'Beta',resource_type:RESOURCE_HYDROGEN,storageCap:24000}, 
-                {importer:'Beta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000}, 
-                {importer:'Beta',resource_type:RESOURCE_ZYNTHIUM,storageCap:24000},  
-                {importer:'Beta',resource_type:RESOURCE_LEMERGIUM,storageCap:24000},
-                
-                {importer:'Beta',resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:12000},
-                {importer:'Beta',resource_type:RESOURCE_KEANIUM,storageCap:24000},
-                {importer:'Beta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                
-                {importer:'Epsilon',resource_type:RESOURCE_OXYGEN,storageCap:12000},
-                {importer:'Epsilon',resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:24000},
-                {importer:'Epsilon',resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:24000},
-                
-                
-                {importer:'Iota',resource_type:RESOURCE_HYDROGEN,storageCap:24000},
-                {importer:'Iota',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                
-                
-                
-                {importer:'Theta',resource_type:RESOURCE_HYDROGEN,storageCap:12000},
-                {importer:'Theta',resource_type:RESOURCE_OXYGEN,storageCap:12000},
-                {importer:'Theta',resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
-                {importer:'Theta',resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
-                {importer:'Theta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                
-                
-                {importer:'Zeta',resource_type:RESOURCE_OXYGEN,storageCap:24000},
-                {importer:'Zeta',resource_type:RESOURCE_LEMERGIUM,storageCap:100000},
-                {importer:'Zeta',resource_type:RESOURCE_HYDROXIDE,storageCap:36000},
-                
-                // Military imports 
-                {importer:'Zeta',resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
-                {importer:'Zeta',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
-                {importer:'Zeta',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
-                
-                {importer:'Zeta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                {importer:'Iota',resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:6000},
-                {importer:'Iota',resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
-                {importer:'Iota',resource_type:RESOURCE_UTRIUM_ACID,storageCap:6000},
-                {importer:'Iota',resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:6000},
-                
-                
-                {importer:'Lambda',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                {importer:'Kappa',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                {importer:'Delta',resource_type:RESOURCE_GHODIUM,storageCap:6000},
-                {importer:'Kappa',resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
-            ],
-            // atm, Alpha is getting all the flah and exporting for E, even if its not got much in terrminal. code needs to check terminals cap.
-            ['Alpha','Beta','Delta','Epsilon','Zeta','Theta','Iota','Kappa','Lambda']);
-        */
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
         this.runFactory('Alpha',RESOURCE_BATTERY) 
         this.runFactory('Beta',RESOURCE_BATTERY) 
@@ -1431,7 +1367,7 @@ module.exports = {
          * 
         **/
        scheduledAttack: function(nodeName,attackRoom,attackName,entryPoint,scheduledTick="off",config={}){
-           //return;
+           
        
             let logCPUUsag= false;
             
@@ -1544,7 +1480,7 @@ module.exports = {
                     
                     let highPriorityTargets=[STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_LINK];
                     let mediumPriorityTargets = [STRUCTURE_SPAWN,STRUCTURE_LAB,STRUCTURE_CONTAINER,STRUCTURE_EXTRACTOR];
-                    if(destroyResourceBanks){
+                    if(config.destroyBanks){
                         mediumPriorityTargets.push(STRUCTURE_STORAGE);
                         mediumPriorityTargets.push(STRUCTURE_TERMINAL);
                     }
@@ -4511,7 +4447,7 @@ module.exports = {
                 let allowedDistance = creep.pos.roomName === roomName?1:3;
                 let portals = mb.getStructures({roomNames:[creep.pos.roomName],types:[STRUCTURE_PORTAL]})
                 let rangeToHealer = healer.pos.getRangeTo(creep);
-              
+                //console.log(cname,allowedDistance)
                 if(rangeToHealer>allowedDistance)okToMove=false;
                 // if we're using portals, then wait within 5 on the other side
                 if(portals.length > 0 && rangeToHealer==='Infinity' && portals[0].pos.getRangeTo(creep)<5)okToMove=true;
@@ -4581,7 +4517,10 @@ module.exports = {
                         // assume we're facing a full rampart line so mass attack
                         else if(shootTarget.structureType==STRUCTURE_RAMPART)creep.rangedMassAttack()
                         // default to solid shot our target
-                        else creep.actOrMoveTo('rangedAttack',shootTarget);
+                        else{ 
+                            creep.rangedAttack(shootTarget);
+                            //if(okToMove)creep.moveTo(shootTarget);
+                        }
                         
                     }
                     
@@ -4610,7 +4549,8 @@ module.exports = {
                         creep.say("wait")
                     }
                     logs.stopCPUTracker('scheduledAttack-'+cname+'-attacking',false); 
-                    return target;
+                    
+                    return shootTarget?shootTarget:target;
                     
                 }else{
                     
@@ -4697,6 +4637,7 @@ module.exports = {
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
+        
             creep.memory.riskyBiscuits=true;
             creep.memory.dontFlee=true;
             creep.memory.avoidSkeepers=true
@@ -4746,7 +4687,7 @@ module.exports = {
 
             if(creep.memory.phase==='following'){
                 
-        
+                //let rangeToLEader = creep.pos.getRangeTo()
                 
                 if( (creep.hitsMax-creep.hits) > 200 ){
                     
@@ -4754,8 +4695,9 @@ module.exports = {
                     
                 }else if(leader && leader.hitsMax > leader.hits){
                     
-                    creep.heal(leader)
-                    creep.rangedHeal(leader)
+                   if(creep.heal(leader)===ERR_NOT_IN_RANGE){
+                        creep.rangedHeal(leader)
+                    }
                     
                 }else if( this.healMostHurtSquadMember(creep,allies) !==OK ){
                     
@@ -4763,8 +4705,9 @@ module.exports = {
                     if(!leader || creep.hitsMax > creep.hits)
                         creep.heal(creep)
                     else if(leader){
-                        creep.heal(leader)
-                        creep.rangedHeal(leader)
+                        if(creep.heal(leader)===ERR_NOT_IN_RANGE){
+                            creep.rangedHeal(leader)
+                        }
                     }
                     
                 }
@@ -4783,7 +4726,7 @@ module.exports = {
                         else creep.moveTo(leader);
                     }
                 }
-                
+
                 if(leadersTarget && creep.partCount(RANGED_ATTACK)>0){
                     creep.rangedAttack(leadersTarget)
                 }

@@ -12,7 +12,7 @@ global.gui = {
     nodeStats:false,
     tradeStats:false,
     remoteStats:false,
-    tradeHistoryLength:1000,
+    tradeHistoryLength:24000,
     nodes:[],
     renderRooms:[],
     on: function(){
@@ -169,7 +169,7 @@ global.gui = {
     
     //logs.stopCPUTracker('gui.renderReserveBookFor',true);
         for(let n in this.nodes){
-            if(this.nodes[n].defenceIntel.priority_attacker_id){
+            if(this.nodes[n].defenceIntel && this.nodes[n].defenceIntel.priority_attacker_id){
             
                 this.renderDefenseDetails(this.nodes[n])
             }

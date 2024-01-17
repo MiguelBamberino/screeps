@@ -167,33 +167,34 @@ class RoomNode{
     runTick(){
         logs.startCPUTracker(this.name+':runTick');
         
-          //  logs.startCPUTracker(this.name+':safeToRun');
+            logs.startCPUTracker(this.name+':safeToRun');
         if(!this.safeToRun())return false;
-          //  logs.stopCPUTracker(this.name+':safeToRun');
+            logs.stopCPUTracker(this.name+':safeToRun');
          
-          //  logs.startCPUTracker(this.name+':checkCache');
+            logs.startCPUTracker(this.name+':checkCache');
         this.checkCache();
-           // logs.stopCPUTracker(this.name+':checkCache');
+            logs.stopCPUTracker(this.name+':checkCache');
         
-         //   logs.startCPUTracker(this.name+':decideWorkforceQuotas');
+            logs.startCPUTracker(this.name+':decideWorkforceQuotas');
         this.decideWorkforceQuotas();
-           // logs.stopCPUTracker(this.name+':decideWorkforceQuotas');
+            logs.stopCPUTracker(this.name+':decideWorkforceQuotas');
 
             logs.startCPUTracker(this.name+':runCreeps');
         this.runCreeps();
             logs.stopCPUTracker(this.name+':runCreeps');
         
-           // logs.startCPUTracker(this.name+':checkAndSpawnWorkforce');
+            logs.startCPUTracker(this.name+':checkAndSpawnWorkforce');
         this.checkAndSpawnWorkforce();
-            //logs.stopCPUTracker(this.name+':checkAndSpawnWorkforce');
+            logs.stopCPUTracker(this.name+':checkAndSpawnWorkforce');
             
         this.runLinkSend();
             
-          //  logs.startCPUTracker(this.name+':runTowers');
+            logs.startCPUTracker(this.name+':runTowers');
         this.runTowers();
-          //  logs.stopCPUTracker(this.name+':runTowers');
+            logs.stopCPUTracker(this.name+':runTowers');
         
         //// Manage Mineral activities /////////////////////////////////////////////////////////////
+        logs.startCPUTracker(this.name+':Mineral');
         if(this.haveStorage){
             if(this.labComplex){
                  if(Game.cpu.bucket>2000){
@@ -213,7 +214,7 @@ class RoomNode{
                 if(this.extractorComplex.isOn()){
                   
                     // this is checked before run, in order to stop it getting turned back on when windDown==0
-                    if( mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
+                    if(  Game.cpu.bucket<3000 || mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
                         clog("winding down. We have enough resources. Current timer:"+this.extractorComplex.windDownTimer,this.name)
                         this.extractorComplex.windDown();
                     }
@@ -222,7 +223,7 @@ class RoomNode{
                 }
 				// drain the last out, so we get a big refill OR only mine what we need
 
-                else if( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ){
+                else if( Game.cpu.bucket>3000 && ( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ) ){
                     
                     this.extractorComplex.turnOn();
                 }
@@ -230,6 +231,8 @@ class RoomNode{
             
         
         }
+        
+        logs.stopCPUTracker(this.name+':Mineral');
     
         //// Recovery Mode //////////////////////////////////////////////////////
         // removed this from recovery check because i was miss-using it to scale up quick in low levels 
@@ -436,9 +439,9 @@ class RoomNode{
                     // this broke on botarena for some reason
                     //creep.setRole("builder")
                 }
-                    logs.startCPUTracker(creep.name);
+                   // logs.startCPUTracker(creep.name);
                 creepRoles[ creep.getRole() ].run(creep,this.getConfig());
-                    logs.stopCPUTracker(creep.name);
+                   // logs.stopCPUTracker(creep.name);
                 
             }
                     
@@ -447,7 +450,60 @@ class RoomNode{
         
         this.creepNames = stillAlive;
     }
-    
+    runLinkSend2(){
+        if(this.controller().level<5)return;
+        
+        
+        if(this.controller().level ===6){
+            // every 500t/load, IF we dont have link at controller
+            // look for links at controller
+            
+            // IF upgrader.count>0
+            // recipeients.push(link)
+        }
+        if(this.controller().level ===8){
+            // every 500t/load, IF we dont have link at spawn 3
+            // look for links at spawn 3
+            
+            // IF fast-filler spots active
+            // recipeients.push(link)
+        }
+        if(this.controller().level ===5){
+            // every 500t/load, IF we dont have src links / core link. 
+            // look for links at sources
+            // look for link near storage
+            // place them? or have harvester do this?
+            
+            // FOR each src
+                // if src.link ready
+                    // sender.push(link)
+            
+            // IF storage.link.isRelay
+                // sender.push(link)
+        }
+        
+        
+        // IF senders empty return
+        
+        // r = 0;
+        //FOR each SRC
+            // if link ready to send
+                
+                // if no more queued recipients, send to first, which will be storage
+                //if(!recipients[r]) sendTo recipients[0]
+                
+                // send to the next recipient link, so if 1+ want to send in same tick, then both get a link
+                // send to recipents[r]
+                // r++
+            
+            // IF srcs wont be sending for a while AND controller/spwn-3 wants E.
+                // switch storage to fill, so it can send
+            
+            // IF storage.link.isFULL && storage.link.isRelay()
+                // storage.link.send( recipient[0] )
+                
+                
+    }
     runLinkSend() {
         const linksReadyToSend = mb.getStructures({
             types: [STRUCTURE_LINK],
@@ -538,7 +594,7 @@ class RoomNode{
         if(this.defenceIntel===undefined){
             logs.startCPUTracker(this.name+' surveyDefences');
             this.surveyDefences()
-            logs.stopCPUTracker(this.name+' surveyDefences',true);
+            logs.stopCPUTracker(this.name+' surveyDefences',false);
         }
         ////////////////////////////////////////////////////////////////////////
     }
@@ -550,6 +606,7 @@ class RoomNode{
         return 1.0 - normalizedDistance * TOWER_FALLOFF;
     }
     surveyDefences(){
+       // logs.startCPUTracker(this.name+' surveyDefences-query');
         let structures = mb.getStructures({
             roomNames:[this.coreRoomName],
             types:[STRUCTURE_WALL,STRUCTURE_RAMPART],
@@ -557,6 +614,9 @@ class RoomNode{
             orderBy:{attr:'hits'}
             
         })
+        //logs.stopCPUTracker(this.name+' surveyDefences-query',true);
+        
+        //logs.startCPUTracker(this.name+' surveyDefences-process');
         this.defenceIntel = {
             wallHeight:this.wallHeight,
             rampHeight:this.rampHeight,
@@ -642,7 +702,7 @@ class RoomNode{
             }
         }
         
-        
+        //logs.stopCPUTracker(this.name+' surveyDefences-process',true);
         
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -723,6 +783,7 @@ class RoomNode{
         
 		 if(spawnName=='Beta-3')Game.spawns[spawnName].forceDirectionHack = [BOTTOM];
 		
+		logs.startCPUTracker(this.name+creepName+':spawn'); 
         if(!Game.creeps[creepName]){
             
             let bodyPlan = creepRoles['filler'].getParts(0,this.getConfig());
@@ -755,16 +816,19 @@ class RoomNode{
                 
             }
         }
+        logs.stopCPUTracker(this.name+creepName+':spawn'); 
         
+        logs.startCPUTracker(this.name+creepName+':run'); 
         if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){
             let creep = Game.creeps[creepName];
             
             if(moveToSpot && !creep.pos.isEqualTo(moveToSpot)){
                    creep.moveTo(moveToSpot);
             }else{
-                 return creepRoles['filler'].run(creep,this.getConfig());
+                 creepRoles['filler'].run(creep,this.getConfig());
             }
         }
+        logs.stopCPUTracker(this.name+creepName+':run'); 
     }
     getMainSpawnSpots(){
         

@@ -66,6 +66,8 @@ for(let n in nodes){
     }
 }
 
+mb.createMapRoute(['W41N53','W40N53','W40N52','W39N52'])
+
 module.exports.loop = function () {
     _memHak.pretick();
     if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
@@ -79,13 +81,15 @@ module.exports.loop = function () {
         
         reservationBook.runTick();
         
+        logs.startCPUTracker('nodes');
         for(let n in nodes){
-            
+            //logs.startCPUTracker(nodes[n].name);
             if( ["a","d"].includes(n) && Game.cpu.bucket<2000)continue;
             
             nodes[n].runTick();
+            //logs.stopCPUTracker(nodes[n].name,true);
         }
-       
+       logs.stopCPUTracker('nodes',false);
         
         mb.runTick();
         
@@ -93,9 +97,6 @@ module.exports.loop = function () {
             logs.startCPUTracker('tempCode');
             tempCode.run();
             logs.stopCPUTracker('tempCode',false);
-            logs.startCPUTracker('scheduledAttack');
-            //tempCode.scheduledAttack();
-            logs.stopCPUTracker('scheduledAttack',false);
             
         }
         
@@ -113,13 +114,9 @@ module.exports.loop = function () {
         //////// GUI CODE  //////////////////////////////////
         
         gui.render();
-        let anchor = Game.spawns['Delta'].pos;
-        //let lab = new LabComplex( rp( anchor.x-3,anchor.y+6,anchor.roomName ),TOP_RIGHT,600,true)
-       // gui.renderComplexPlan(lab)
-        gui.renderComplexStats(nodes.a.extractorComplex)
-         gui.renderComplexStats(nodes.b.extractorComplex)
         
-        if( Game.cpu.bucket>1000 &&util.getServerName()==='shard3'){
+        gui.renderComplexStats(nodes.t.extractorComplex)
+        if(false && Game.cpu.bucket>1000 &&util.getServerName()==='shard3'){
             gui.renderComplexStats(nodes.i.extractorComplex)
             gui.renderComplexStats(nodes.z.extractorComplex)
             gui.renderComplexStats(nodes.k.extractorComplex)
@@ -132,8 +129,9 @@ module.exports.loop = function () {
     
             gui.renderComplexStats(nodes.m.extractorComplex)
             gui.renderComplexStats(nodes.i.labComplex)
-            mb.renderKiteGroups('W41N54')
+            //mb.renderKiteGroups('W41N54')
         }
+       
         ///////////////////////
         
     }

@@ -1013,7 +1013,7 @@ global.mb = {
         
         this.mapRoutes[ route[0] ][ route[ (route.length-1) ] ] = route;
     },
-    // mb.createMapRoute(['E6N3','E6N2','E6N1','E5N1','E5N0'])
+    // 
     getMapRoute: function(from,to){
         if(this.mapRoutes[from])
             return (this.mapRoutes[from][to] )

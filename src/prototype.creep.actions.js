@@ -281,7 +281,7 @@ module.exports = function(){
                 opts.swampCost = 1;
             }
             
-      
+      /*
             opts.costCallback = function(roomName,costMatrix){
                         
                         let mpCM = mb.getCostMatrix(roomName);
@@ -356,7 +356,7 @@ module.exports = function(){
                         
                         return costMatrix;
                     }
-            
+            */
             
             let rn = target.roomName ?target.roomName :target.pos.roomName; 
             //if(this.name==='harrass-1')console.log('rn',rn,target.name,target.id)
@@ -364,7 +364,7 @@ module.exports = function(){
                 // this shrinks pathfinding and forces creep to stay in this room. It also avoid ERR_NO_PATH from weird terrain that
                 // would make the creep leave the room to move around
                 opts.maxRooms = 1;
-                if(this.memory.avoidEdges){
+                if(false && this.memory.avoidEdges){
                     //console.log(creep.name,"-moveToPos avoidingEdges with costCallback")
                     opts.costCallback = function(roomName,costMatrix){
                         // if we don't have vision, then use default for now
