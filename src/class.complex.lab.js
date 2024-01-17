@@ -209,6 +209,12 @@ class LabComplex extends AbstractComplex{
                 }
             }
         }
+
+        this.checkForHaulJobsAfter = Game.time + 10;
+        return ERR_FULL;
+    }
+    isBoosting(){
+        return (this.mode==='boost')
     }
     /**
      * 

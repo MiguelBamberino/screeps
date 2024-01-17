@@ -39,7 +39,7 @@ var roleTanker = {
         let creepSpace =  creep.store.getCapacity();
         let energyInStorage = storage.storedAmount(RESOURCE_ENERGY)
         let stored_type=false;
-        let parkSpot = config.labComplex? config.labComplex.standingSpot: config.retreatSpot
+        let parkSpot = config.labComplex && !config.labComplex.isBoosting()? config.labComplex.standingSpot: config.retreatSpot
         for(let resource_type in creep.store){
             stored_type=resource_type;
         }
@@ -191,7 +191,10 @@ var roleTanker = {
                 
         if(factory && !creep.memory.job){
             
-            if(factory.storingAtLeast(creepSpace,RESOURCE_BATTERY) && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)){
+            if(factory.storingAtLeast(creepSpace,RESOURCE_BATTERY) 
+            && storage.haveSpaceFor(creepSpace+storageBufferSpace,RESOURCE_BATTERY)
+            && storage.storedAmount(RESOURCE_BATTERY)<300000
+            ){
                 creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_BATTERY,action:'empty'}
             }
         }
