@@ -39,7 +39,7 @@ var roleTanker = {
         let creepSpace =  creep.store.getCapacity();
         let energyInStorage = storage.storedAmount(RESOURCE_ENERGY)
         let stored_type=false;
-        let parkSpot = config.labComplex? config.labComplex.standingSpot: config.retreatSpot
+        let parkSpot = config.labComplex && !config.labComplex.isBoosting()? config.labComplex.standingSpot: config.retreatSpot
         for(let resource_type in creep.store){
             stored_type=resource_type;
         }
