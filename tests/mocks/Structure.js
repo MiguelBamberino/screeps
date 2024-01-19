@@ -1,7 +1,7 @@
 require('./Store');
 require('./RoomObject')
 const {STRUCTURE_CONTROLLER, STRUCTURE_STORAGE, STRUCTURE_TERMINAL,OK, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION,
-    RESOURCE_ENERGY
+    RESOURCE_ENERGY, STRUCTURE_EXTRACTOR, STRUCTURE_LINK, STRUCTURE_FACTORY
 } = require("@screeps/common/lib/constants");
 
 class Structure extends RoomObject{
@@ -73,11 +73,31 @@ class StructureExtension extends OwnedStructure{
     }
 }
 
+class StructureExtractor extends OwnedStructure{
+    constructor(id,room,ownerName) {
+        super(id,STRUCTURE_EXTRACTOR,room,ownerName);
+        this._setHits(500,500);
+        this.cooldown =0;
+    }
+}
+class StructureFactory extends OwnedStructure{
+    constructor(id,room,ownerName,level=0) {
+        super(id,STRUCTURE_FACTORY,room,ownerName);
+        this._setHits(1000,1000);
+        this._setStore()._setTotalCapacity(50000);
+        this.cooldown =0;
+        this.level =level;
+
+    }
+    produce(){return this._func_fake("produce",undefined,OK)}
+}
+
 global.Structure = Structure;
 global.OwnedStructure = OwnedStructure;
 global.StructureContainer = StructureContainer;
 global.StructureController = StructureController;
 global.StructureExtension = StructureExtension;
+global.StructureExtractor = StructureExtractor;
 
 module.exports = {
     _createController(roomName,level=0){

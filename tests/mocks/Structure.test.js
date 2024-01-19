@@ -68,7 +68,7 @@ describe('mock.structure.1 > basic', () => {
 
 
 describe('mock.structure.2 > Typed Structures basic construction', () => {
-    it("mock.structure.2.1 > controller",()=>{
+    it("mock.structure.2.1 > StructureController",()=>{
         let c = new StructureController("123",{name:"W1N1"});
         expect(c.hits).toBe(0);
         expect(c.hitsMax).toBe(0);
@@ -87,7 +87,7 @@ describe('mock.structure.2 > Typed Structures basic construction', () => {
         expect(c.my).toBe(true);
         expect(c.owner).toBeDefined();
     })
-    it("mock.structure.2.2 > container",()=>{
+    it("mock.structure.2.2 > StructureContainer",()=>{
         let c = new StructureContainer("123",{name:"W1N1"});
         expect(c.hits).toBe(250000);
         expect(c.hitsMax).toBe(250000);
@@ -95,7 +95,7 @@ describe('mock.structure.2 > Typed Structures basic construction', () => {
         expect(c.ticksToDecay).toBeDefined();
         expect(c.store.getCapacity()).toBe(2000);
     })
-    it("mock.structure.2.2 > container",()=>{
+    it("mock.structure.2.3 > StructureExtension",()=>{
         let s = new StructureExtension("123",{name:"W1N1"},"MadDokMike");
         expect(s.hits).toBe(1000);
         expect(s.hitsMax).toBe(1000);
@@ -117,6 +117,14 @@ describe('mock.structure.2 > Typed Structures basic construction', () => {
         expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(100);
         s = new StructureExtension("123",{name:"W1N1"},"MadDokMike",8);
         expect(s.store.getCapacity(RESOURCE_ENERGY)).toBe(200);
+
+    })
+
+    it("mock.structure.2.4 > StructureExtractor",()=>{
+        let s = new StructureExtension("123",{name:"W1N1"},"MadDokMike");
+        expect(s.hits).toBe(500);
+        expect(s.hitsMax).toBe(500);
+        expect(s.cooldown).toBe(0);
 
     })
 })
