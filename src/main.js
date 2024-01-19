@@ -1,6 +1,6 @@
 global.BOT_VERSION='19.3';
 
-global.BOT_ALLIES = ['asdpof','harabi','Mirroar','Modus','Nightdragon','Robalian','SBense','Trepidimous','Yoner'];
+global.BOT_ALLIES = [];
  
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
 if(!Memory.creeps) { Memory.creeps = {}; }

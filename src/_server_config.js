@@ -423,7 +423,7 @@ module.exports = {
                                         spawnFacing:RIGHT,
                                         retreatSpot:rp(6,15,'W45N51'),
                                         buildFast:false,
-                                        upgradeRate:RATE_SLOW,
+                                        upgradeRate:RATE_VERY_SLOW,
                                         terminalEnergyCap:150000,
                                         towersBuildWalls:false,
                                         armNuke:true,

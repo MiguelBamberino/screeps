@@ -162,14 +162,33 @@ var role = {
 	    }else{
 	        structure = weakest;// no enemies, just heal lowest
 	    }
+	    return structure;
 	    
-	    
+	    // the below code was locking builders in the role forever and cheqing cpu on shard3. 
+	    // they'd never repair the walls past max hits, so they'd keep decaying below
+	    //if(creep.name==='L-bu-0')console.log(structure.hits,config.defenceIntel.rampHeight)
 
 	    if(structure ){
 	        
-	        if(structure.structureType===STRUCTURE_RAMPART && structure.hits > config.defenceIntel.rampHeight)return false;
-            if(structure.structureType===STRUCTURE_WALL && structure.hits > config.defenceIntel.wallHeight)return false;
-	        
+	        if(structure.structureType===STRUCTURE_RAMPART && structure.hits > config.defenceIntel.rampHeight)structure= false;
+            else if(structure.structureType===STRUCTURE_WALL && structure.hits > config.defenceIntel.wallHeight)structure= false;
+	        //else return structure;
+	    }   
+        if(!structure){
+            for(let id of config.defenceIntel.priority_repair_targets){
+                structure = gob(id);
+                if(structure){
+                    if(structure.structureType===STRUCTURE_RAMPART && structure.hits > config.defenceIntel.rampHeight)structure= false;
+                    else if(structure.structureType===STRUCTURE_WALL && structure.hits > config.defenceIntel.wallHeight)structure= false;
+                   // else return structure;
+                   else break;
+        
+                }
+            }
+        }
+	    
+	    if(structure){
+	        creep.memory.repair_id = structure.id;
 	        return structure;
 	    }
 	    return false;
