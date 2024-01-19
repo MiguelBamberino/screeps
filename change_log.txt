@@ -1,4 +1,9 @@
 ===================================
+= Version 19.4.4
+===================================
+- Fix - CPU drain bug where builders weren't descaling 
+
+===================================
 = Version 19.4.3
 ===================================
 - Tweak - merged in SWC bug fixes
