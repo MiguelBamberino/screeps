@@ -14,6 +14,8 @@ module.exports = {
            this.shardPrivateTempCode();
         }else if( util.getServerName()==='swc'){
             this.shardSWCTempCode();
+        }else{
+            this.shardPrivateTempCode();
         }
         //
 
