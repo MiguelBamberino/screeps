@@ -431,7 +431,7 @@ module.exports = function(){
                 }
                 
                 
-                this.renderAvoidance(hostiles);
+               // this.renderAvoidance(hostiles);
                 
                 opts.costCallback = function(roomName,costMatrix){
                     let room = Game.rooms[roomName];

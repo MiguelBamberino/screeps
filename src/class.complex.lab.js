@@ -373,6 +373,9 @@ class LabComplex extends AbstractComplex{
         if(product===RESOURCE_UTRIUM_ACID) return [RESOURCE_UTRIUM_HYDRIDE,RESOURCE_HYDROXIDE]
         if(product===RESOURCE_ZYNTHIUM_ACID) return [RESOURCE_ZYNTHIUM_HYDRIDE,RESOURCE_HYDROXIDE]
         
+        // Tier 3 
+        
+        if(product===RESOURCE_CATALYZED_GHODIUM_ALKALIDE) return [RESOURCE_GHODIUM_ALKALIDE,RESOURCE_CATALYST]
         
         return [];
     }

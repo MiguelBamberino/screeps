@@ -99,6 +99,9 @@ global.runMarket=function(){
     let resK = findGoodOrder("Kappa","buy",RESOURCE_BATTERY,145,30)
    
    let resD = findGoodOrder("Delta","buy",RESOURCE_BATTERY,145,30)
+   
+   
+   let resT = findGoodOrder("Theta","buy",RESOURCE_GHODIUM,200,50)
     
     let resM = findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)
     if(resM!==OK)resM = findGoodOrder("Mu","buy",RESOURCE_CATALYST,60,30)

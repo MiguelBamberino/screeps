@@ -50,7 +50,7 @@ class AbstractComplex{
             this.rcl=Game.rooms[this.anchor.roomName].controller.level;
             logs.startCPUTracker('detectExistingStructures');
             this.detectExistingStructures(); 
-            logs.stopCPUTracker('detectExistingStructures',true);
+            logs.stopCPUTracker('detectExistingStructures',false);
         }
         
         if(!this.allRequiredStructuresBuilt){
