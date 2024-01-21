@@ -208,16 +208,17 @@ RoomPosition.prototype.findNearbyBuildableSpot = function () {
     }
     return null;
 }
-RoomPosition.prototype.isWalkable = function(checkForCreeps = false) {
+RoomPosition.prototype.isWalkable = function(checkForCreeps = false,checkForStructures=true) {
     const terrain = Game.map.getRoomTerrain(this.roomName);
     if (terrain.get(this.x, this.y) & TERRAIN_MASK_WALL) {
         return false;
     }
-
-    const structures = this.lookFor(LOOK_STRUCTURES);
-    for (const structure of structures) {
-        if (OBSTACLE_OBJECT_TYPES.includes(structure.structureType)) {
-            return false;
+    if(checkForStructures){
+        const structures = this.lookFor(LOOK_STRUCTURES);
+        for (const structure of structures) {
+            if (OBSTACLE_OBJECT_TYPES.includes(structure.structureType)) {
+                return false;
+            }
         }
     }
 
@@ -280,6 +281,101 @@ RoomPosition.prototype.lookForNearbyWalkable = function(includeCreeps=false,incl
     }
     return walkable;
 }
+/**
+ * Find the best worker spots that contains a shared containerSpot
+ * optimising for most adjacent spots, to the container, in the shortest path
+ * from pathingPos
+ * @param RoomPosition pathingPos - where would workers come from
+ * @param int range - how far from the pos, can the positions be
+ * @param int spotCap - the max worker positions to find
+ */ 
+RoomPosition.prototype.findBestStandingSpots=function(pathingPos,range=1,spotCap=8){
+    
+        logs.startCPUTracker('findBestStandingSpots');
+        let closestDist = 99;
+        let best = {containerSpot:false,standingSpots:[],path:false};
+        
+        // find all positions within the given range of the position. 
+        // these will be our potential positions.
+        let potentialSpots = this.getPositionsInRange(range);
+        
+        // for each spot, lets see how good it is. Assuming this ws the container spot
+        for(let pos of potentialSpots){
+            
+            if(!pos.isWalkable(false,false))continue;
+            
+            let standingSpots=[];   
+            // how many workable spots are adjacent to this spot.
+			for(let pos2 of potentialSpots){
+				if(pos.isNearTo(pos2) && pos2.isWalkable(false,false) && standingSpots.length < spotCap )standingSpots.push(pos2);
+			}
+    		
+    		// prefer spots where the container would have more adj spots
+    		if(standingSpots.length > best.standingSpots.length){
+    			best.path = pathingPos.findPathTo(pos);
+    			closestDist=best.path.length;
+    			best.containerSpot=pos;
+    			best.standingSpots=standingSpots;
+    			continue;
+    		}
+            
+    		// otherwise just prefer closer points thats not worse
+    		if(standingSpots.length == best.standingSpots.length){
+    		    // nest this check to cut down of wasting CPU on pathing useless options
+    		    let path = pathingPos.findPathTo(pos);
+    		    if(path.length<closestDist){
+                    closestDist=path.length;
+                    best.path = path;
+        			best.containerSpot=pos;
+        			best.standingSpots=standingSpots;
+    		    }
+            }
+        }
+        
+        logs.stopCPUTracker('findBestStandingSpots',false);
+        return best;
+        
+    }
+    StructureController.prototype.setStandingSpots=function(pathingFrom){
+        
+        let best = this.pos.findBestStandingSpots(pathingFrom,3,9);
+        
+        let sorted = [];
+        let lpp = best.path[(best.path.length-2)];
+        let entryPos = rp(lpp.x,lpp.y,best.containerSpot.roomName);
+        for(let pos of best.standingSpots){
+            if(pos.isEqualTo(best.containerSpot))
+                sorted[0]=pos;
+            else
+                sorted[ best.containerSpot.getDirectionTo(pos) ] = pos;    
+        }
+        let chainLookup = {};
+        chainLookup[TOP]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
+        chainLookup[TOP_RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
+        chainLookup[RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
+        
+        chainLookup[BOTTOM_RIGHT]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
+        chainLookup[BOTTOM]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
+        
+        chainLookup[BOTTOM_LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0,BOTTOM, BOTTOM_RIGHT,RIGHT,TOP_RIGHT];
+        chainLookup[LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0,BOTTOM, BOTTOM_RIGHT,RIGHT,TOP_RIGHT];
+        
+        chainLookup[TOP_LEFT]=[TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0,TOP,TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
+        
+        let chain = [];
+        let start = best.containerSpot.getDirectionTo(entryPos);
+        for(let i in chainLookup[start]){
+            let dir = chainLookup[start][i];
+            if( sorted[dir] )chain.push(sorted[dir])
+            
+        }
+        
+        best.containerSpot.colourIn('red')
+        for(let p in chain)chain[p].colourIn('yellow',0.5,p)
+        for(let p of best.path)Game.rooms[best.containerSpot.roomName].visual.text('X',p.x,p.y);
+        
+    }
+    
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Game Object Search functions
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,8 +510,9 @@ RoomPosition.prototype.lookForResource = function (resource_type) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Render functions
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-RoomPosition.prototype.colourIn = function(colour,opa=0.5){
+RoomPosition.prototype.colourIn = function(colour,opa=0.5,text=false){
      Game.rooms[this.roomName].visual.circle(this,{fill: colour, radius: 0.55, stroke: colour,opacity:opa});
+     if(text!==false)Game.rooms[this.roomName].visual.text(text,this)
 }
 RoomPosition.prototype.text = function(text,colour='#fff'){
      Game.rooms[this.roomName].visual.text(text,this,{strokeWidth:'0.01',font:' 0.4 Times New Roman', color: colour,align:'center'/*,backgroundColor:'#f00',opacity:0.5*/});

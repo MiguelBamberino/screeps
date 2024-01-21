@@ -361,10 +361,12 @@ module.exports = {
                                         extraFastFillSpots:[],
                                         terminalEnergyCap:120000,
                                         labComplex:new LabComplex(rp(37,26,'W41N54'),TOP_LEFT),
-                                        makeResource:RESOURCE_GHODIUM_ALKALIDE,
+                                        makeResource:RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
                                         imports:[
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000},
                                             {resource_type:RESOURCE_GHODIUM_OXIDE,storageCap:12000},
+                                            
+                                            {resource_type:RESOURCE_CATALYST,storageCap:12000},
                                             
                                             {resource_type:RESOURCE_UTRIUM_LEMERGITE,storageCap:12000},
                                             {resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:12000},
@@ -424,15 +426,17 @@ module.exports = {
                                         retreatSpot:rp(6,15,'W45N51'),
                                         buildFast:false,
                                         upgradeRate:RATE_VERY_SLOW,
-                                        terminalEnergyCap:150000,
+                                        terminalEnergyCap:50000,
                                         towersBuildWalls:false,
                                         armNuke:true,
                                         labComplex:new LabComplex(rp(4,13,'W45N51'),TOP_RIGHT),
-                                        makeResource:RESOURCE_UTRIUM_LEMERGITE,
+                                        makeResource:RESOURCE_GHODIUM,
                                         imports:[
-                                            {resource_type:RESOURCE_GHODIUM,storageCap:6000},
+                                            //{resource_type:RESOURCE_GHODIUM,storageCap:6000},
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:12000},
+                                            
+                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,storageCap:12000},
                                             {resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
                                             // military
                                             {resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
@@ -444,6 +448,7 @@ module.exports = {
                                             {resource_type:RESOURCE_UTRIUM,exportOver:24000,batchSize:12000},
                                             {resource_type:RESOURCE_UTRIUM_ACID,exportOver:6000,batchSize:12000},
                                             {resource_type:RESOURCE_UTRIUM_ALKALIDE,exportOver:0,batchSize:12000},
+                                            {resource_type:RESOURCE_GHODIUM,exportOver:24000,batchSize:12000},
                                             {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:12000},
                                             {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
@@ -487,9 +492,10 @@ module.exports = {
                                         terminalEnergyCap:20000,
                                         armNuke:true,
                                         labComplex:new LabComplex(rp(32,33,'W48N54'),TOP_LEFT),
-                                         makeResource:RESOURCE_ZYNTHIUM_ACID,
+                                         makeResource:RESOURCE_ZYNTHIUM_KEANITE,
                                         imports:[
                                             {resource_type:RESOURCE_GHODIUM,storageCap:6000},
+                                            {resource_type:RESOURCE_KEANIUM,storageCap:6000},
                                             {resource_type:RESOURCE_HYDROGEN,storageCap:12000},
                                             {resource_type:RESOURCE_HYDROXIDE,storageCap:12000},
                                             {resource_type:RESOURCE_OXYGEN,storageCap:12000}
@@ -497,6 +503,8 @@ module.exports = {
                                         exports:[
                                             {resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,exportOver:12000,batchSize:24000},
                                             {resource_type:RESOURCE_ZYNTHIUM,exportOver:24000,batchSize:12000},
+                                            
+                                            {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:0,batchSize:12000},
                                             {resource_type:RESOURCE_BATTERY,exportOver:250000,batchSize:24000}
                                         ]
 

@@ -182,7 +182,7 @@ var roleTanker = {
             }
         }
         /////// Factory Jobs //////////////////////////////////
-        if(factory && !creep.memory.job && energyInStorage>=100000){
+        if(factory && !creep.memory.job && energyInStorage>=100000 && storage.storedAmount(RESOURCE_BATTERY)<300000){
             
             if(factory.haveSpaceFor(10000)){
                 creep.memory.job = {target_id:factory.id,resource_type:RESOURCE_ENERGY,action:'fill'}

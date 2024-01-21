@@ -75,6 +75,8 @@ module.exports.loop = function () {
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
     //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E7N5']._debugSetEnemies(['bob']);
     
+    if(util.debug)rp(35,23,'W45N51').findBestStandingSpots(Game.spawns['Theta'].pos,3,9)
+    
     if(util.allowTick()){
         
         logs.mainLoopStarted();
@@ -101,7 +103,7 @@ module.exports.loop = function () {
         }
         
         if(Game.cpu.bucket>8000 && Game.time%100===0){
-            //runMarket();
+            runMarket();
         }
         if(Game.cpu.bucket>5000 && Game.time%20===0){
             logs.startCPUTracker('processOrders');

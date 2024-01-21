@@ -423,9 +423,9 @@ module.exports = {
        // }
         //this.harrassRemote('Beta-3','harrass-2','W38N51',W41N53_to_W38N51,rp(46,15,'W40N51'),fighterBody)
         Game.rooms['W41N54']._debugSetEnemies('enemyPlayerFighters',['bill'])
-       if(util.debug) this.harrassRemote('Epsilon-2','bob','W41N54',[],rp(15,18,'W42N54'),'4m4r',{x:15,y:19},false)
+       //if(util.debug) this.harrassRemote('Epsilon-2','bob','W41N54',[],rp(15,18,'W42N54'),'4m4r',{x:15,y:19},false)
         Game.rooms['W41N54']._debugSetEnemies('enemyPlayerFighters',['bob'])
-       if(util.debug) this.harrassRemote('Epsilon-3','bill','W41N54',[],rp(15,18,'W41N53'),'3t2a2r7m',{x:15,y:23},false)
+       //if(util.debug) this.harrassRemote('Epsilon-3','bill','W41N54',[],rp(15,18,'W41N53'),'3t2a2r7m',{x:15,y:23},false)
        // if(util.debug)this.killCreepsBreakTarget('Epsilon-3','bill','3t2a2r7m','W41N54',[],[], 75,{x:25,y:25},true)
         
       
