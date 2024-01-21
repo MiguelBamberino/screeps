@@ -16,8 +16,7 @@ var creepRoles ={
     
 class RoomNode{
     /**
-     * name >> name of the town and what will be used for spawn names 
-     * coreRoomName >> the central room name, with spawns
+     * name >> name of the town and what will be used for spawn names
      * options:{
             spawnFacing:TOP         >> which way the main spawn should spawn its creeps
             extraFastFillSpots:[]   >> any extra positions to sfend fast filler creeps
@@ -41,17 +40,21 @@ class RoomNode{
             
      * }
      **/
-    constructor(name,coreRoomName, options={}){
+    constructor(name, options={}){
 
-        if(!mb.hasRoom(coreRoomName))mb.scanRoom(coreRoomName);
-        
+        if(!Game.spawns[name] ){ if(Game.time%20)console.log(name+' has no core spawn. Cannot load on global reset'); return;}
+        let spwn = Game.spawns[name];
+
         this.name = name;
-        this.coreRoomName = coreRoomName;
+        this.coreRoomName = spwn.pos.roomName;
+        this.online = true;
+
+        if(!mb.hasRoom(this.coreRoomName))mb.scanRoom(this.coreRoomName);
         
-        let mineral = mb.getMineralForRoom(coreRoomName);
+        let mineral = mb.getMineralForRoom(this.coreRoomName);
         this.homeMineralType = mineral.mineralType;
-        if(Game.spawns[this.name] )
-            this.extractorComplex = new ExtractorComplex(mineral.pos,Game.spawns[this.name].pos,name)
+
+        this.extractorComplex = new ExtractorComplex(mineral.pos,spwn.pos,name)
   
         this.totalEnergyAtSources=0;
         this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
@@ -62,7 +65,7 @@ class RoomNode{
         
         this.logger = options.logger;
         
-        this.retreatSpot = options.retreatSpot;
+        this.retreatSpot = options.retreatSpot===undefined?rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName):options.retreatSpot;
         this.upgradeRate = options.upgradeRate===undefined?RATE_SLOW:options.upgradeRate;
         this.buildFast = options.buildFast===undefined?false:options.buildFast;
         
@@ -971,8 +974,12 @@ class RoomNode{
         
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
         if(Game.rooms[this.coreRoomName].energyCapacityAvailable<800){
-            // turned o. randomly broke in swc. harvesters were ping ponging
-            //this.workforce_quota.harvester.required+=2;
+            let srcs = mb.getSources({roomNames:[this.coreRoomName]})
+            this.workforce_quota.harvester.required = 0;
+            for(let src of srcs){
+                this.workforce_quota.harvester.required+= src.getStandingSpots().length;
+            }
+
         }
         // sync workes growth with harvester growth
         if(controller.level===1 && this.workforce_quota.harvester.count>=2){

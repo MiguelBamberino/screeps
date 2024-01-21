@@ -71,7 +71,7 @@ global.logs = {
             this.spawnTimeTrackers[spawnName].usage = (this.spawnTimeTrackers[spawnName].spawning/elapsed)*100;
             
         }
-        if(cpuUsed>18){
+        if(cpuUsed>9999){
             console.log('-------------------------------------')
             console.log( JSON.stringify( this.getCPULog() ) )
             console.log('-------------------------------------')

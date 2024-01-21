@@ -8,12 +8,12 @@ global.gui = {
     creeptrack:false,
     mb:false,
     rb:false,
-    rbFor:false,
     nodeStats:false,
+    nodeSrcStats:false,
+    nodeControllerStats:false,
     remoteStats:false,
     tradeStats:false,
     tradeHistoryLength:24000,
-    nodes:[],
     renderRooms:[],
     on: function(){
         this.display=true;
@@ -31,28 +31,27 @@ global.gui = {
         console.log('gui.summary.on/off()');
         console.log('gui.rb.on/off()');
         console.log('gui.creeptrack.on/off()');
-        console.log('gui.rbFor=true/false');
         console.log('gui.nodeStats=true/false');
+        console.log('gui.nodeSrcStats=true/false');
+        console.log('gui.nodeControllerStats=true/false');
+        console.log('gui.remoteStats=true/false');
         console.log('gui.tradeStats=true/false');
         console.log('gui.tradeHistoryLength=10');
     },
     debugSay:function(val=true){
         this.displayCreepDebugSay = val;
     },
-    init:function(roomNodes){
+    init:function(){
         this.on();
         
-        this.nodes = roomNodes;
+
         
         //let roomsToRender = ['W42N53','W45N51','W41N53'];
-        for(let id in this.nodes)
-            this.renderRooms.push(this.nodes[id].coreRoomName);
+        for(let n in nodes)
+            if(nodes[n].online)
+                this.renderRooms.push(nodes[n].coreRoomName);
         
-        if(Game.rooms['sim'] || util.getServerName()==='private'  || util.getServerName()==='botarena'|| util.getServerName()==='swc'){
-            this.nodeStats=true;
-            this.rbFor= true;
-        }
-        
+
         this.summary = Object.create( require('global.GUI.partial'));
         this.summary.headingConfig("Overview - V"+Memory.VERSION,true,{tick:3,reset:3,elapsed:2,cpu:2,memCPU:3,serverSpeed:3,bucket:2,rstCPU:2,heapUsed:2});
         this.summary.setRooms(this.renderRooms);
@@ -153,38 +152,41 @@ global.gui = {
         
         //this.renderStructureRefs('W41N54')
         
-    //logs.startCPUTracker('gui.renderReserveBookFor');
-    if(util.getServerName()=='private' || util.getServerName()==='swc'){
-        for(let n in this.nodes){
-        if( this.nodes[n].controller().haveContainer() )
-            this.renderReserveBookFor(this.nodes[n].controller().getContainer().id);
+
+        for(let n in nodes) {
+            if (!nodes[n].online) continue;
+
+            if(this.nodeSrcStats)this.renderSourceDetails(nodes[n])
+
+            if(nodes[n].defenceIntel && nodes[n].defenceIntel.priority_attacker_id){
+                this.renderDefenseDetails(nodes[n])
+            }
         }
-        
-        for(let src of mb.getAllSources()){
-           // if(src.haveVision && src.haveContainer())this.renderReserveBookFor(src.getContainer().id);
-        }
-    }
+
     
     if(this.remoteStats)this.renderRemoteStats()
     
-    //logs.stopCPUTracker('gui.renderReserveBookFor',true);
-        for(let n in this.nodes){
-            if(this.nodes[n].defenceIntel && this.nodes[n].defenceIntel.priority_attacker_id){
-            
-                this.renderDefenseDetails(this.nodes[n])
-            }
-        }
+
         
         let u = Game.cpu.getUsed() - st;
         logs.guiCPU= u;
         //console.log("GUI-CPU-used: "+u);  
     },
-    
+    renderSourceDetails:function(node){
+        let srcs = mb.getAllSourcesForRoom(node.coreRoomName);
+        for(let src of srcs){
+            if(src.haveContainer()){
+                this.renderReserveBookFor(src.getContainer().id)
+            }
+        }
+    },
     renderRemoteStats:function(){
         
         let doneRooms={};
-        for(let n in this.nodes){
-            let node = this.nodes[n]
+        for(let n in nodes){
+            if(!nodes[n].online)continue;
+
+            let node = nodes[n]
             let remoteFlip = {};
             for( let i in node.remoteRoomNames){
                 remoteFlip[ node.remoteRoomNames[i] ] = i;
@@ -233,21 +235,23 @@ global.gui = {
                 counter++;
             }
 
-            for(let n in this.nodes){
-                let node = this.nodes[n]
+            for(let n in nodes){
+                if(!nodes[n].online)continue
+                let node = nodes[n]
                 tradeStats = [];
-                for(let exp of this.nodes[n].exports){
+                for(let exp of nodes[n].exports){
                     tradeStats.push({resource_type:exp.resource_type,demand_satisfied:false,importing:false,exporting:true})
                 }
-                for(let imp of this.nodes[n].imports){
+                for(let imp of nodes[n].imports){
                     tradeStats.push({resource_type:imp.resource_type,demand_satisfied:false,importing:true,exporting:false})
                 }
-                guiWM.drawRoomTraderStatsOnMap(this.nodes[n].coreRoomName,tradeStats)
+                guiWM.drawRoomTraderStatsOnMap(nodes[n].coreRoomName,tradeStats)
             }
             
         }
         
     },
+
     renderComplexPlan: function(complex){
         for(let plan of complex.getLayoutPositions()){
             plan.pos.colourIn('#fff');
@@ -345,8 +349,11 @@ global.gui = {
     renderRoomNodeStats:function(){
         let y=4;
         if(!this.nodeStats)return;
-        for(let n in this.nodes){
-            let node = this.nodes[n];
+        for(let n in nodes){
+
+            if(!nodes[n].online)continue;
+
+            let node = nodes[n];
             let lines=[];
             let sp = Game.spawns[node.name];
            // if(!sp)continue;
@@ -486,7 +493,6 @@ global.gui = {
      * Render anchor will be the structure.pos
      */ 
     renderReserveBookFor:function(id,pos=false){
-        if(!this.rbFor)return;
         let obj = Game.getObjectById(id);
         
         if(obj){

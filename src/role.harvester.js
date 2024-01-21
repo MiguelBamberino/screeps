@@ -24,12 +24,25 @@ var roleHarvester = {
     
     },
     run: function(creep,config){
-        
-        
+
+        if(creep.memory.spot){
+            let src = gob(creep.memory.mine_id);
+            if(creep.isFull() && src.haveContainer()){
+                creep.transfer(src.getContainer(),RESOURCE_ENERGY)
+            }
+            let spot = rp(creep.memory.spot.x,creep.memory.spot.y,creep.memory.spot.roomName);
+            if(creep.pos.isEqualTo(spot)){
+                return creep.harvest( src );
+            }else{
+                return creep.moveToPos(spot)
+            }
+
+            //return creep.actOrMoveTo('harvest',src)
+        }
         
        let src =  this.getSource(creep,config);
-       
-         
+
+
        if( !config.spawnFastFillerReady){
            
            if(src){
@@ -41,33 +54,18 @@ var roleHarvester = {
        if(!src){
            
            let srcs = mb.getSources({roomNames:[config.coreRoomName]});
-                let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
-                if(srcs.length==1)i=0;
-                let spots = srcs[i].pos.lookForNearbyWalkable(true);
-               if(spots.length>0){
-                   //clog(spot,creep.name)
-                   creep.memory.mine_id = srcs[i].id;
-                   creep.memory.extraSupport=true;
-               }else if(srcs.length>1){
-                   i2 = i===1?0:1;
-                   if(srcs[i2]){
-                       let spots = srcs[i2].pos.lookForNearbyWalkable(true);
-                       if(spots.length>0){
-                           //clog(spot,creep.name)
-                           creep.memory.mine_id = srcs[i2].id;
-                           creep.memory.extraSupport=true;
-                       }
-                   }
-               }
+           for(let src of srcs){
+              let freeSpot = src.reserveStandingSpot(creep,true);
+              if(freeSpot){
+                creep.memory.spot = freeSpot;
+                creep.memory.mine_id = src.id;
+                return creep.moveToPos(freeSpot);
+              }
+           }
        }
        if(!src){creep.say("!src");return;}
        
-       if(creep.memory.extraSupport){
-           if(creep.isFull() && src.haveContainer()){
-               creep.transfer(src.getContainer(),RESOURCE_ENERGY)
-           }
-           return creep.actOrMoveTo('harvest',src)
-       }
+
        
         
       // if(creep.name=='K-ha-1')return creep.moveTo(new RoomPosition(18,38,'W48N54'))
@@ -126,7 +124,7 @@ var roleHarvester = {
    },
    getSource: function(creep,config){
        let src =  Game.getObjectById(creep.memory.mine_id);
-       creep.memory.extraSupport=false;
+       //creep.memory.extraSupport=false;
        if(!src){
            src = this.getAvailableMine(config);
            creep.memory.mine_id = src.id;

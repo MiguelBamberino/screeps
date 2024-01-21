@@ -1,4 +1,4 @@
-let _config= require('_server_config');
+//let _config= require('_server_config');
 // debug any JS type
 global.clog = function(data,label){
     label = Game.time+':'+label;
@@ -115,6 +115,18 @@ StructureTerminal.prototype.sendX=function(resource,amount,toClusterName){
 }
 global.util = {
     
+    loadServer: function(){
+        
+        try{
+            global._SERVER_CONFIG = require('_server_config');
+        }catch (error) {
+            console.log("------------------------------------------")
+            console.log('ERROR! _server_config has not been created. Please copy ./_server_config.example.js to ./src/_server_config.js ');
+             console.log("------------------------------------------")
+            
+        }
+    },
+    
     setupNodes:function(){
         global.nodes = _config.createRoomNodes(this.getServerName());
     },
@@ -130,27 +142,7 @@ global.util = {
         util.resumeTicks();
         
     },
-    resetBotData:function(){
-        
-        delete Memory.creeps;
-        delete Memory.spawns;
-        delete Memory.mapBook;
-         delete Memory.logs;
-        delete Memory.reservationBook;
-        delete Memory.objectMeta;
-        delete Memory.roomNodes;
-        delete Memory.remotes 
-        
-        Memory.creeps = {};
-        logs.initiate();
-        mb.initiate();
-        reservationBook.initiate();
-        objectMeta.empty();
-        for(let n in nodes){
-            nodes[n].readInStore();
-        }
-        clog(Memory.reservationBook)
-    },
+
      
     getServerName:function(){
         if(Game.rooms['sim'])return'sim';

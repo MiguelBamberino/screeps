@@ -132,7 +132,53 @@ RoomObject.prototype.getStandingSpot=function(){
 RoomObject.prototype.setStandingSpot=function(pos){
     return this.setMetaAttr('standing_pos',pos);
 }
+RoomObject.prototype.reserveStandingSpot=function(creep,ignoreMainSpot=false){
+    let meta = this.getMeta();
+    if(meta.standing_spots){
+        for(let i in meta.standing_spots){
 
+            let spot = meta.standing_spots[i];
+
+           // console.log('harvester checking ');clog(spot)
+
+
+            if(i<=0 && ignoreMainSpot){
+               // console.log(creep.name,' ignoring main spot',i,spot)
+                continue;
+            }
+
+
+            if(!gob(spot.creep_id)){
+             //   console.log(creep.name,' picking spot',i);clog(spot)
+                meta.standing_spots[i].creep_id = creep.id;
+                this.setMetaAttr('standing_spots',meta.standing_spots);
+                return new RoomPosition(spot.pos.x,spot.pos.y,spot.pos.roomName)
+            }
+        }
+    }
+    return false;
+}
+
+RoomObject.prototype.getStandingSpots=function(){
+
+    let meta = this.getMeta();
+    if(meta.standing_spots){
+        let spots = [];
+        for(let spot of meta.standing_spots){
+            spots.push( new RoomPosition(spot.pos.x,spot.pos.y,spot.pos.roomName) )
+        }
+        return spots;
+
+    }
+    return [];
+}
+RoomObject.prototype.setStandingSpots=function(posList){
+    let spots = [];
+    let meta = this.getMeta();
+    meta.standing_spots = [];
+    for(let pos of posList)spots.push({creep_id:'',pos:pos})
+    return this.setMetaAttr('standing_spots',spots);
+}
 RoomObject.prototype.getCreep = function() {
     let meta = this.getMeta();
     if (meta.creep_id) return Game.getObjectById(meta.creep_id);

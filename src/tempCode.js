@@ -10,14 +10,20 @@ module.exports = {
         //return;
         if( util.getServerName()==='shard3'){
             this.shard3TempCode();
-        }else if( util.getServerName()==='botarena' || util.getServerName()==='private'){
-           this.shardBATempCode();
+        }else if( util.getServerName()==='private'){
+           this.shardPrivateTempCode();
         }else if( util.getServerName()==='swc'){
             this.shardSWCTempCode();
         }
         //
-        
+
         return;
+    },
+    shardPrivateTempCode:function(){
+        for(let n in nodes){
+            if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
+        }
+
     },
     shardSWCTempCode:function(){
         let thing = this;
@@ -372,8 +378,8 @@ module.exports = {
     shardBATempCode:function(){
         
         //this.botArenaForRoomNode(nodes.a);
-        this.fullAutomateRoomNode(nodes.b);
-        this.fullAutomateRoomNode(nodes.g);
+        //this.fullAutomateRoomNode(nodes.b);
+        //this.fullAutomateRoomNode(nodes.g);
         //this.startupRoomNoVision('Alpha','W7N4', {workerCount:4,workerBody:'10w10c10m'})
         
     }, 
@@ -478,6 +484,7 @@ module.exports = {
         }
     },
     fullAutomateRoomNode:function(node){
+
         if(!node)return
         let spawn = Game.spawns[node.name];
         if(!spawn)return spawn
@@ -487,6 +494,7 @@ module.exports = {
         
         if(!room.controller.getStandingSpot()){
             this.setControllerUp(node);
+            this.setSourcesUp(node);
         }
         if(!mb.haveConstructions([node.coreRoomName])){
             node.upgradeRate = node.upgradeRate===RATE_OFF?RATE_OFF: RATE_FAST;
@@ -1292,8 +1300,12 @@ module.exports = {
             let sources = mb.getSources({roomNames:[room.name]})
             for(let src of sources){
                 let path = spawn.pos.findPathTo(src.getStandingSpot(),{ignoreCreeps:true});
-                clog("pathing src...",path.length)
+                clog("pathing src...",path.length);
+                let placed = 0;
                 for(let point of path){
+                    if(placed===path.length)break;
+
+                    placed++;
                     room.createConstructionSite(point.x,point.y,STRUCTURE_ROAD)
                 }
                 src.setMetaAttr('pathed',true)
@@ -1318,8 +1330,51 @@ module.exports = {
         clog("controller spot set",closest)
         node.controller().setStandingSpot(closest);
     },
+    setSourcesUp:function(node){
+
+        for(let src of mb.getSources({roomNames:[node.coreRoomName]}) ){
+            let spots = src.pos.lookForNearbyWalkable(false,false);
+            let containerSpot = false;
+            let closestDist = 999;
+
+            let bestStandingSpots = [];
+
+            for(let pos of spots){
+                let dist = Game.spawns[node.name].pos.getRangeTo(pos)
+                let standingSpots=[];
+
+                for(let pos2 of spots){
+                    if(pos.isNearTo(pos2)){
+                        standingSpots.push(pos2);
+                    }
+                }
+
+                // prefer spots where the container would have more adj spot
+                if(standingSpots.length > bestStandingSpots.length && standingSpots.length<=3){
+                    closestDist=dist;
+                    containerSpot=pos;
+                    bestStandingSpots=standingSpots;
+
+                }
+                // otherwise just prefer closer points thats not worse
+                else if(dist<closestDist && standingSpots.length === bestStandingSpots.length){
+                    closestDist=dist;
+                    containerSpot=pos;
+                    bestStandingSpots=standingSpots;
+                }
+
+            }
+            for(let sp of bestStandingSpots){
+                sp.colourIn('red')
+            }
+            containerSpot.colourIn('blue')
+            src.setStandingSpot(containerSpot)
+            src.setStandingSpots(bestStandingSpots)
+        }
+
+    },
      
-        spawnHarvest:function(feedSpawn, renewSpawn, cname,src_id){
+    spawnHarvest:function(feedSpawn, renewSpawn, cname,src_id){
            
            if(!Game.creeps[cname]){
                

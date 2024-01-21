@@ -1,6 +1,6 @@
-global.BOT_VERSION='19.3';
+global.BOT_VERSION='19.5';
 
-global.BOT_ALLIES = ['asdpof','harabi','Mirroar','Modus','Nightdragon','Robalian','SBense','Trepidimous','Yoner'];
+
  
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
 if(!Memory.creeps) { Memory.creeps = {}; }
@@ -11,22 +11,22 @@ logs.globalResetStarted();
  
 let _memHak = require('_memHak');
 
-let _config= require('_server_config');
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Global Constants
+/////////////////////////////////////////////////////////////////////////////////////////////////
+global.BOT_ALLIES = [];
+global. _SERVER_CONFIG = false;
+global.RATE_VERY_FAST='very-fast';
+global.RATE_FAST='fast';
+global.RATE_SLOW='slow';
+global.RATE_VERY_SLOW='very-slow';
+global.RATE_SCALE_WITH_SURPLUS='scale-with-surplus';
+global.RATE_OFF='off';
+global.RUN_FOREVER=9999999;
 
-require('_dev_utils');
-
-
-
-require('global.objectMeta');
-require('global.reservationBook');
-require('global.mapBook');
-require('global.logger');
-require('global.GUI');
-
-const traderClass = require('class.trader');
-global.trader = new traderClass();
-global.tests = require('globals.tests');
-
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Game Prototype Overrides
+/////////////////////////////////////////////////////////////////////////////////////////////////
 require('prototype.room');
 require('prototype.room-position');
 
@@ -39,38 +39,49 @@ require('prototype.creep.body');
 require('prototype.creep.actions')();
 
 
-const LabComplex = require('class.complex.lab')
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Global Classes
+/////////////////////////////////////////////////////////////////////////////////////////////////
+const traderClass = require('class.trader');
+global.trader = new traderClass();
+global.RoomNode = require('class.roomNode');
+global.LabComplex = require('class.complex.lab')
 
- 
-let tempCode= require('tempCode');
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Global Objects
+/////////////////////////////////////////////////////////////////////////////////////////////////
+require('_dev_utils');
+require('global.objectMeta');
+require('global.reservationBook');
+require('global.mapBook');
+require('global.logger');
+require('global.GUI');
+global.tests = require('globals.tests');
+global.nodes = {};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Load in Server
+/////////////////////////////////////////////////////////////////////////////////////////////////
+util.loadServer();
+global.tempCode = require('tempCode')
 _memHak.register();
-
-global.RATE_VERY_FAST='very-fast';
-global.RATE_FAST='fast';
-global.RATE_SLOW='slow';
-global.RATE_VERY_SLOW='very-slow';
-global.RATE_SCALE_WITH_SURPLUS='scale-with-surplus';
-global.RATE_OFF='off';
-global.RUN_FOREVER=9999999;
-
-util.setupNodes()
-
-gui.init(nodes);
+gui.init();
 
 logs.globalResetComplete();
 
 for(let n in nodes){
+    if(nodes[n].online)
     for(let exp of nodes[n].exports){
         trader.offerExport( exp.resource_type, nodes[n].coreRoomName );
     }
 }
 
-mb.createMapRoute(['W41N53','W40N53','W40N52','W39N52'])
-
 module.exports.loop = function () {
+    if(!_SERVER_CONFIG)return;
+    _SERVER_CONFIG.detectRespawn()
     _memHak.pretick();
-    if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
+    //if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
 
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
     //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E7N5']._debugSetEnemies(['bob']);
@@ -78,15 +89,15 @@ module.exports.loop = function () {
     if(util.allowTick()){
         
         logs.mainLoopStarted();
-        
+
         reservationBook.runTick();
         
         logs.startCPUTracker('nodes');
         for(let n in nodes){
             //logs.startCPUTracker(nodes[n].name);
-            if( ["a","d"].includes(n) && Game.cpu.bucket<2000)continue;
-            
-            nodes[n].runTick();
+            if(util.getServerName()==='shard3' && ["a","d"].includes(n) && Game.cpu.bucket<2000)nodes[n].online=false;
+
+            if(nodes[n].online)nodes[n].runTick();
             //logs.stopCPUTracker(nodes[n].name,true);
         }
        logs.stopCPUTracker('nodes',false);
@@ -115,8 +126,9 @@ module.exports.loop = function () {
         
         gui.render();
         
-        gui.renderComplexStats(nodes.t.extractorComplex)
-        if(false && Game.cpu.bucket>1000 &&util.getServerName()==='shard3'){
+       
+        if( Game.cpu.bucket>1000 &&util.getServerName()==='shard3'){
+             gui.renderComplexStats(nodes.t.extractorComplex)
             gui.renderComplexStats(nodes.i.extractorComplex)
             gui.renderComplexStats(nodes.z.extractorComplex)
             gui.renderComplexStats(nodes.k.extractorComplex)
