@@ -170,37 +170,37 @@ class RoomNode{
     runTick(){
         logs.startCPUTracker(this.name+':runTick');
         
-            logs.startCPUTracker(this.name+':safeToRun');
+           // logs.startCPUTracker(this.name+':safeToRun');
         if(!this.safeToRun())return false;
-            logs.stopCPUTracker(this.name+':safeToRun');
+            //logs.stopCPUTracker(this.name+':safeToRun');
          
-            logs.startCPUTracker(this.name+':checkCache');
+            //logs.startCPUTracker(this.name+':checkCache');
         this.checkCache();
-            logs.stopCPUTracker(this.name+':checkCache');
+            //logs.stopCPUTracker(this.name+':checkCache');
         
-            logs.startCPUTracker(this.name+':decideWorkforceQuotas');
+           // logs.startCPUTracker(this.name+':decideWorkforceQuotas');
         this.decideWorkforceQuotas();
-            logs.stopCPUTracker(this.name+':decideWorkforceQuotas');
+            //logs.stopCPUTracker(this.name+':decideWorkforceQuotas');
 
             logs.startCPUTracker(this.name+':runCreeps');
         this.runCreeps();
             logs.stopCPUTracker(this.name+':runCreeps');
         
-            logs.startCPUTracker(this.name+':checkAndSpawnWorkforce');
+            //logs.startCPUTracker(this.name+':checkAndSpawnWorkforce');
         this.checkAndSpawnWorkforce();
-            logs.stopCPUTracker(this.name+':checkAndSpawnWorkforce');
+            //logs.stopCPUTracker(this.name+':checkAndSpawnWorkforce');
             
         this.runLinkSend();
             
-            logs.startCPUTracker(this.name+':runTowers');
+            //logs.startCPUTracker(this.name+':runTowers');
         this.runTowers();
-            logs.stopCPUTracker(this.name+':runTowers');
+           // logs.stopCPUTracker(this.name+':runTowers');
         
         //// Manage Mineral activities /////////////////////////////////////////////////////////////
         logs.startCPUTracker(this.name+':Mineral');
         if(this.haveStorage){
             if(this.labComplex){
-                 if(Game.cpu.bucket>2000){
+                 if(Game.cpu.bucket>5000){
                     this.labComplex.turnOn();
                     this.labComplex.runTick();
                 }else{
@@ -217,7 +217,7 @@ class RoomNode{
                 if(this.extractorComplex.isOn()){
                   
                     // this is checked before run, in order to stop it getting turned back on when windDown==0
-                    if(  Game.cpu.bucket<3000 || mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
+                    if(  Game.cpu.bucket<6000 || mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
                         clog("winding down. We have enough resources. Current timer:"+this.extractorComplex.windDownTimer,this.name)
                         this.extractorComplex.windDown();
                     }
@@ -226,7 +226,7 @@ class RoomNode{
                 }
 				// drain the last out, so we get a big refill OR only mine what we need
 
-                else if( Game.cpu.bucket>3000 && ( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ) ){
+                else if( Game.cpu.bucket>6000 && ( (mineral.mineralAmount > 0 && mineral.mineralAmount<10000) || this.storage().storedAmount(this.homeMineralType)<(this.homeMineralSurplus-20000) ) ){
                     
                     this.extractorComplex.turnOn();
                 }
@@ -442,9 +442,9 @@ class RoomNode{
                     // this broke on botarena for some reason
                     //creep.setRole("builder")
                 }
-                   // logs.startCPUTracker(creep.name);
+                if(['rkeeper','worker','builder','upgrader'].includes( creep.getRole() ) )logs.startCPUTracker(creep.name);
                 creepRoles[ creep.getRole() ].run(creep,this.getConfig());
-                   // logs.stopCPUTracker(creep.name);
+                if(['rkeeper','worker','builder','upgrader'].includes( creep.getRole() ) )logs.stopCPUTracker(creep.name,false);
                 
             }
                     
@@ -595,9 +595,9 @@ class RoomNode{
         let refreshTime = playerFighters.length>0?10:200;
         if(Game.time%refreshTime===0)this.defenceIntel=undefined;
         if(this.defenceIntel===undefined){
-            logs.startCPUTracker(this.name+' surveyDefences');
+            //logs.startCPUTracker(this.name+' surveyDefences');
             this.surveyDefences()
-            logs.stopCPUTracker(this.name+' surveyDefences',false);
+            //logs.stopCPUTracker(this.name+' surveyDefences',false);
         }
         ////////////////////////////////////////////////////////////////////////
     }
@@ -786,7 +786,7 @@ class RoomNode{
         
 		 if(spawnName=='Beta-3')Game.spawns[spawnName].forceDirectionHack = [BOTTOM];
 		
-		logs.startCPUTracker(this.name+creepName+':spawn'); 
+	//	logs.startCPUTracker(this.name+creepName+':spawn'); 
         if(!Game.creeps[creepName]){
             
             let bodyPlan = creepRoles['filler'].getParts(0,this.getConfig());
@@ -819,9 +819,9 @@ class RoomNode{
                 
             }
         }
-        logs.stopCPUTracker(this.name+creepName+':spawn'); 
+       // logs.stopCPUTracker(this.name+creepName+':spawn'); 
         
-        logs.startCPUTracker(this.name+creepName+':run'); 
+       // logs.startCPUTracker(this.name+creepName+':run'); 
         if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){
             let creep = Game.creeps[creepName];
             
@@ -831,7 +831,7 @@ class RoomNode{
                  creepRoles['filler'].run(creep,this.getConfig());
             }
         }
-        logs.stopCPUTracker(this.name+creepName+':run'); 
+       // logs.stopCPUTracker(this.name+creepName+':run'); 
     }
     getMainSpawnSpots(){
         
