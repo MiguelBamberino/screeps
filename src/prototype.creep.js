@@ -434,22 +434,78 @@
         return false;
         
 	}
-	/**
-	 * Return a droped energy resource if it is nearby AND big enough to be worth collecting
-	 * where close-enough=30cells and worth-it=20e
-	 */
-	Creep.prototype.getDroppedEnergy=function(){
+	Creep.prototype.getDropFromRemoteSources=function(roomNames=[],minDraw=50){
+	     let drop = Game.getObjectById(this.memory.drop_id);
+	    if(drop)return drop;
 	    
-	    return this.getDroppedResource(RESOURCE_ENERGY);
+	    let shuffledRoomNames = roomNames.sort(() => Math.random() - 0.5)
+	    for(let roomName of shuffledRoomNames){
+	        
+	        drop = this.getDropFromLocalSources(50,roomName);
+	        if(drop) return drop;
+	        
+	    }
+	    return false
+	}
+	Creep.prototype.getDropFromLocalSources=function(minDraw=50,roomName=false){
+	    
+	    let drop = Game.getObjectById(this.memory.drop_id);
+	    if(drop)return drop;
+	    roomName = roomName?roomName:this.pos.roomName
+	    let srcs = mb.getAllSourcesForRoom(roomName);
+	    let drops = [];
+	    
+	    if(srcs.length===0)return false;
+	    
+	    if(srcs.length===1){
+	        drops = srcs[0].pos.lookForNearbyResources(RESOURCE_ENERGY,false,minDraw);
+	    }else{
+	        
+	        for(let src of srcs){
+	            // if a source is really close, just stick to this one first
+	            if(this.pos.getRangeTo(src.pos)<= 3){
+	                drops = src.pos.lookForNearbyResources(RESOURCE_ENERGY,false,minDraw);
+	                //console.log(this.name,'picked local',drops.length,drops)
+	                break;
+	            }
+	        }
+	        // if we didnt find a really close one, then randomise one to load balance
+	        if(drops.length===0){
+	            let randomZeroOrOne = Math.round(Math.random());
+	            let first = randomZeroOrOne===0?0:1;
+	            let second = randomZeroOrOne===0?1:0;
+	           
+	            drops = srcs[first].pos.lookForNearbyResources(RESOURCE_ENERGY,false,minDraw);
+	            if(drops.length===0){
+	                drops = srcs[second].pos.lookForNearbyResources(RESOURCE_ENERGY,false,minDraw);
+	            }
+	        }
+	    }
+	    
+	    // now we have some drops, lets pick one
+	    if(drops.length>0){
+            this.memory.drop_id = drops[0].id;
+            return drops[0];
+            
+        }
+        return false;
 	}
 	/**
 	 * Return a droped energy resource if it is nearby AND big enough to be worth collecting
 	 * where close-enough=30cells and worth-it=20e
 	 */
-	Creep.prototype.getDroppedResource=function(type){
+	Creep.prototype.getDroppedEnergy=function(minSize=50){
+	    
+	    return this.getDroppedResource(RESOURCE_ENERGY,minSize);
+	}
+	/**
+	 * Return a droped energy resource if it is nearby AND big enough to be worth collecting
+	 * where close-enough=30cells and worth-it=20e
+	 */
+	Creep.prototype.getDroppedResource=function(type,minSize=50){
 	    
 	    let drop = Game.getObjectById(this.memory.drop_id);
-	    if(drop && drop.amount > 50){
+	    if(drop && drop.amount > minSize){
 	        return drop;
 	    }
 	    let drops = this.room.find(FIND_DROPPED_RESOURCES);
@@ -458,7 +514,7 @@
         if(drops.length>0){
             for(let d in drops){
                 let dist = this.pos.getRangeTo(drops[d]);
-                if(drops[d].resourceType === type && drops[d].amount > (50+dist) && dist < closestDist){
+                if(drops[d].resourceType === type && drops[d].amount > (minSize+dist) && dist < closestDist){
                     
                     closest =  drops[d];
                     closestDist = dist;
@@ -479,11 +535,10 @@
 	    }
 	    source = mb.getNearestSource(this.pos,roomNames);
 	   
-	    if(source){
+	    if(source && source.haveFreeStandingSpot()){
 	        this.memory.source_id = source.id;
 	        return source;
 	    }else{
-	        this.say("src:-600");
 	        return false;
 	    }
 	    
@@ -610,7 +665,7 @@
         return false;
 	    
     }
-    Creep.prototype.getFullestMineStore=function(searchRooms){
+    Creep.prototype.getFullestMineStore=function(searchRooms,force=false){
         
 
         let storage = Game.getObjectById(this.memory.reserve_id);
@@ -629,7 +684,7 @@
                     ])
 	    
         if(storage){
-            if(this.reserveWithdraw(storage,free)===OK){
+            if(this.reserveWithdraw(storage,free,force)===OK){
                 return storage;
             }
         }

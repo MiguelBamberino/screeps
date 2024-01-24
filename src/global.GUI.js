@@ -9,10 +9,12 @@ global.gui = {
     mb:false,
     rb:false,
     nodeStats:false,
+    speedRunStats:false,
     nodeSrcStats:false,
     nodeControllerStats:false,
     remoteStats:false,
     tradeStats:false,
+    showDropStats:false,
     tradeHistoryLength:24000,
     renderRooms:[],
     on: function(){
@@ -157,6 +159,7 @@ global.gui = {
             if (!nodes[n].online) continue;
 
             if(this.nodeSrcStats)this.renderSourceDetails(nodes[n])
+            if(this.nodeControllerStats)this.renderControllerDetails(nodes[n])
 
             if(nodes[n].defenceIntel && nodes[n].defenceIntel.priority_attacker_id){
                 this.renderDefenseDetails(nodes[n])
@@ -166,17 +169,82 @@ global.gui = {
     
     if(this.remoteStats)this.renderRemoteStats()
     
-
-        
+    if(this.speedRunStats)this.renderSpeedRunStats();
+    
+    if(this.showDropStats)this.renderDropStats();
+    
         let u = Game.cpu.getUsed() - st;
         logs.guiCPU= u;
         //console.log("GUI-CPU-used: "+u);  
+    },
+    
+    renderSpeedRunStats:function(){
+        
+        for(let roomName in Memory.logs.rclSpeedStats){
+            
+            if(!Game.rooms[roomName])continue;
+            
+            let data = [];
+            for(let label in Memory.logs.rclSpeedStats[roomName]){
+               let stat =  Memory.logs.rclSpeedStats[roomName][label]
+                    
+                data.push({label:label,tick:stat.time,duration:stat.duration,arrivedIn:stat.arrivedIn,sinceStart:stat.sinceStart});
+            }
+            Game.rooms[roomName].renderGUITable(rp(1,1,roomName),data,false,true,{label:2,tick:2,duration:2,arrivedIn:2,sinceStart:2});
+            
+        }
+    },
+    renderDropStats:function(){
+        
+        for(let roomName in Game.rooms){
+            let drops =  Game.rooms[roomName].find(FIND_DROPPED_RESOURCES);
+    	   
+            if(drops.length>0){
+                for(let d in drops){
+                    
+                    Game.rooms[roomName].visual.text("🟡" + drops[d].amount, drops[d].pos)  
+                }
+                
+            }
+        }
+    },
+    renderControllerDetails:function(node){
+        let mainSpot = node.controller().getStandingSpot();
+        if(mainSpot){
+            let standingSpots = node.controller().getStandingSpots();
+            for(let p in standingSpots){
+                
+                standingSpots[p].colourIn('white',0.1,p)
+            }
+             mainSpot.colourIn('blue',0.1)
+            if(node.controller().haveContainer()){
+                
+                this.renderReserveBookFor(node.controller().getContainer().id)   
+            }
+        }
     },
     renderSourceDetails:function(node){
         let srcs = mb.getAllSourcesForRoom(node.coreRoomName);
         for(let src of srcs){
             if(src.haveContainer()){
                 this.renderReserveBookFor(src.getContainer().id)
+            }else{
+                
+                let standingSpots = src.getStandingSpots();
+                let e = 0;
+                for(let pos of standingSpots){
+                    let drop = pos.lookForResource(RESOURCE_ENERGY);
+                    e += drop?drop.amount:0;
+                }
+                src.pos.colourIn('yellow',0.2,e)
+            }
+            if(src.room.controller.level<4){
+                let standingSpots = src.getStandingSpots();
+                let mainSpot = src.getStandingSpot();
+                for(let pos of standingSpots){
+                    pos.colourIn('white',0.1)
+                }
+                mainSpot.colourIn('blue',0.1)
             }
         }
     },

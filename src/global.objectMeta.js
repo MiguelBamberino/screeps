@@ -134,31 +134,41 @@ RoomObject.prototype.setStandingSpot=function(pos){
 }
 RoomObject.prototype.reserveStandingSpot=function(creep,ignoreMainSpot=false){
     let meta = this.getMeta();
+    let mainPos = this.getStandingSpot();
     if(meta.standing_spots){
         for(let i in meta.standing_spots){
 
             let spot = meta.standing_spots[i];
 
-           // console.log('harvester checking ');clog(spot)
-
-
-            if(i<=0 && ignoreMainSpot){
-               // console.log(creep.name,' ignoring main spot',i,spot)
-                continue;
-            }
-
-
-            if(!gob(spot.creep_id)){
-             //   console.log(creep.name,' picking spot',i);clog(spot)
+            if(creep.id === spot.creep_id || !gob(spot.creep_id)){
+             
+                let pos =  new RoomPosition(spot.pos.x,spot.pos.y,spot.pos.roomName);
+                if(ignoreMainSpot && pos.isEqualTo(mainPos)){
+                    continue;
+                }
+                
                 meta.standing_spots[i].creep_id = creep.id;
                 this.setMetaAttr('standing_spots',meta.standing_spots);
-                return new RoomPosition(spot.pos.x,spot.pos.y,spot.pos.roomName)
+                return pos;
             }
         }
     }
     return false;
 }
+RoomObject.prototype.haveFreeStandingSpot=function(){
+    let meta = this.getMeta();
+    if(meta.standing_spots){
+        for(let i in meta.standing_spots){
 
+            let spot = meta.standing_spots[i];
+            if(!gob(spot.creep_id)){
+                //let pos =  new RoomPosition(spot.pos.x,spot.pos.y,spot.pos.roomName);
+                return true;
+            }
+        }
+    }
+    return false;
+}
 RoomObject.prototype.getStandingSpots=function(){
 
     let meta = this.getMeta();

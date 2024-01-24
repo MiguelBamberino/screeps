@@ -11,11 +11,12 @@ global.logs = {
     cpuOnMem:0,
     bucketAtLastLoopEnd:0,
     guiCPU:0,
+    runRCLSpeedStats:false,
     initiate: function(){
         if(!Memory.logs){
             Memory.logs={trace:false,stats:{}};
         }
-        if(!Memory.logs.rclTimeline)Memory.logs.rclTimeline={}
+        if(!Memory.logs.rclSpeedStats)Memory.logs.rclSpeedStats={}
         if(!Memory.logs.errors)Memory.logs.errors=[]
     },
     log: function(category,msg){
@@ -23,13 +24,44 @@ global.logs = {
     },
     logRCLGT:function(){
         for(let roomName in Game.rooms){
-            if(Game.rooms[roomName].controller){
-                if(!Memory.logs.rclTimeline[roomName]) {
-                    Memory.logs.rclTimeline[roomName]={};
-                    Memory.logs.rclTimeline[roomName][0]=Game.time;
+            if(Game.rooms[roomName].controller && Game.rooms[roomName].controller.owner && Game.rooms[roomName].controller.owner.username==='MadDokMike'){
+                if(!Memory.logs.rclSpeedStats[roomName]) {
+                    Memory.logs.rclSpeedStats[roomName]={};
+                    Memory.logs.rclSpeedStats[roomName]['RCL0']={time:Game.time,duration:0,arrivedIn:0,sinceStart:0};
                     
                 }
-                Memory.logs.rclTimeline[roomName][Game.rooms[roomName].controller.level] = Game.time;
+                let rcl = Game.rooms[roomName].controller.level;
+                
+                if( rcl > 0 && !Memory.logs.rclSpeedStats[roomName][ 'RCL'+rcl ] ){
+                    let previous = Memory.logs.rclSpeedStats[roomName][ 'RCL'+(rcl-1) ];
+                    let first = Memory.logs.rclSpeedStats[roomName][ 'RCL0' ];
+                    if(!previous)continue;
+                    if(!first)continue;
+                    Memory.logs.rclSpeedStats[roomName]['RCL'+rcl] ={time:Game.time,duration:0, arrivedIn: (Game.time-previous.time), sinceStart: (Game.time-first.time) }
+                }
+                if( Memory.logs.rclSpeedStats[roomName]['RCL'+rcl]){
+                     Memory.logs.rclSpeedStats[roomName]['RCL'+rcl].duration++;
+                }
+                
+                let spawns = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_SPAWN]});
+                //console.log(roomName,spawns)
+                let n = spawns[0].name.charAt(0).toLowerCase();
+                if( nodes[n].allSourcesBuilt && !Memory.logs.rclSpeedStats[roomName][ 'SrcsBuilt' ] ){
+                    let previous = Memory.logs.rclSpeedStats[roomName][ 'RCL1' ];
+                    
+                    Memory.logs.rclSpeedStats[roomName]['SrcsBuilt'] ={time:Game.time,duration:0,arrivedIn: (Game.time-previous.time),sinceStart: (Game.time-previous.time) }
+                }
+                if( nodes[n].spawnFastFillerReady && !Memory.logs.rclSpeedStats[roomName][ 'spwnFFRdy' ] ){
+                    let previous = Memory.logs.rclSpeedStats[roomName][ 'RCL1' ];
+                    
+                    Memory.logs.rclSpeedStats[roomName]['spwnFFRdy'] ={time:Game.time,duration:0,arrivedIn: (Game.time-previous.time),sinceStart: (Game.time-previous.time) }
+                }
+                
+                if(Game.rooms[roomName].controller.haveContainer() && !Memory.logs.rclSpeedStats[roomName][ 'rdy2Upg' ] ){
+                    let previous = Memory.logs.rclSpeedStats[roomName][ 'RCL1' ];
+                    
+                    Memory.logs.rclSpeedStats[roomName]['rdy2Upg'] ={time:Game.time,duration:0,arrivedIn: (Game.time-previous.time),sinceStart: (Game.time-previous.time) }
+                }
             }
         }
     },
@@ -42,7 +74,7 @@ global.logs = {
     },
     mainLoopStarted: function(){
         
-        this.logRCLGT();
+        if(this.runRCLSpeedStats)this.logRCLGT();
         
         this.msSinceLastTick = Date.now() - this.lastTickAt;
         this.lastTickAt = Date.now();

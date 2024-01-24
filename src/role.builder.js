@@ -14,8 +14,12 @@ var role = {
         else if(budget >= 550){ // RCL 2 - 200 + 200 + 150 =  550/550 5 ext
             return [WORK,WORK, CARRY,CARRY,CARRY,CARRY, MOVE,MOVE,MOVE]; 
         }
-        else{ // RCL 1 - 250/300 , assume no roads early on
-            return [WORK, CARRY, MOVE,MOVE]; 
+        else if(budget >= 400){ 
+            return '2w2c2m'; 
+        }
+        else{ 
+            // RCL 1 - 250/300 , assume no roads early on, and builders need to move a lot
+            return '1w1c2m'; 
         }
 
     },
@@ -25,9 +29,10 @@ var role = {
         let playerAttackers = Game.rooms[config.coreRoomName].getEnemyPlayerFighters(); 
         
         let cpuCreep = 'B-bu-3';
-
+        
+        let useWhatWeHave = (config.controller.level===1 && !creep.isEmpty())
     
-	    if(creep.isWorking()) {
+	    if( /*useWhatWeHave ||*/ creep.isWorking()) {
 	        
 	        // if we just built a rampart, lets repair before it fades. set it as our repair target
     	   if(creep.memory.last_site_type==STRUCTURE_RAMPART && creep.memory.last_site_pos){
@@ -69,8 +74,13 @@ var role = {
                 //if(creep.name==cpuCreep)logs.startCPUTracker(creep.name+':camp');
                 // dont camp roads and cause traffic
                 // Cost too much CPU on shard3
-                if(creep.pos.lookForStructure(STRUCTURE_ROAD)){
+                /*if(creep.pos.lookForStructure(STRUCTURE_ROAD)){
                     creep.moveToPos(site)
+                }*/
+                // try not camp/crowd out the site access
+                if(Game.spawns[config.name] && creep.pos.isNearTo(site)){
+                    creep.moveTo(Game.spawns[config.name]);
+                    return creep.build(site);
                 }
                // if(creep.name==cpuCreep)logs.stopCPUTracker(creep.name+':camp',true);
                 
@@ -100,23 +110,25 @@ var role = {
 
 	        if(config.controller.level <=3 ){
                 
-                let drop = gob(creep.memory.drop_id);
+                let drop = creep.getDropFromLocalSources(25);
                 
-                let srcs = mb.getSources({roomNames:[config.coreRoomName]});
-                
-                let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
                 if(!drop){
-                    
-                   // if( !srcs[i].haveContainer() ){
-                        drop = srcs[i].pos.lookForNearbyResource(RESOURCE_ENERGY,false,50);
-                    
+                    drop = creep.getDroppedEnergy(25);
                 }
-                if(drop /*&& drop.amount >= creep.store.getFreeCapacity(RESOURCE_ENERGY)*/ ){
-                    creep.memory.drop_id = drop.id;
+                
+                if(drop ){
+                    // if creep finds drop, they might have reserved E in a container, so release it
+                    if(creep.memory.reserve_id){
+                        let targetToClear = gob(creep.memory.reserve_id)
+                         creep.memory.reserve_id = false;
+                        if(targetToClear)targetToClear.fulfillWithdraw(creep.name);
+                    }
+                    // keep resetting the con site, so builder does stick to a site really far away
+                    creep.memory.construction_site_id = false;
                     return creep.actOrMoveTo("pickup",drop);
                 }
-               // creep.say((creep.name.charAt(5)*1)&2)
-                if( !srcs[i].haveContainer() )return creep.actOrMoveTo("harvest",srcs[i]);
+                
+                //if( !srcs[i].haveContainer() )return creep.actOrMoveTo("harvest",srcs[i]);
             }
             
 

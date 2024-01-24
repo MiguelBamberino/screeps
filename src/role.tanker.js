@@ -2,8 +2,8 @@
 var roleTanker = {
 
 
-    getParts: function(budget){
- 
+    getParts: function(budget,config){
+        
  
         if(budget >= 1500 ){ // RCL 5 - 1000 + 500 = 1500/1800 30 ext
             return '10*2c1m';
@@ -20,10 +20,13 @@ var roleTanker = {
             return '3*2c1m';
 
         }
-        else if(budget >= 300 ){ // RCL 1 - 200 + 100 = 300/300
-            return '2*2c1m';
-        }else{ // RCL fucked
-            return '2c1m';
+        else if(config.allSourcesBuilt && budget >= 200 ){ // RCL 1 - 200 + 100 = 300/300
+            return '2c2m';
+        }
+        else{ 
+            // at low RCL, we want to make sure we're small enough to fight other workers for consumption.
+            // too big and we'll never get a reservation
+            return '1c1m';
         }
         
     },
@@ -34,14 +37,54 @@ var roleTanker = {
         creep.checkAndUpdateState();
         
 	    if(creep.isWorking()) {
+	        
+	         if(!config.spawnFastFillerReady && Game.spawns[config.name].haveSpaceFor(20)){
+	             
+                return creep.actOrMoveTo("transfer",Game.spawns[config.name],RESOURCE_ENERGY);
+	         }
+	         
+	         
 	    
-	        if(creep.memory.droppingAtController==true){
-	            if(creep.pos.isNearTo(config.controller.getStandingSpot())){
-	                creep.drop(RESOURCE_ENERGY);
-	                creep.memory.droppingAtController=false;
+	        if( creep.memory.giveTo){
+	            let builder = Game.creeps[ creep.memory.giveTo  ];
+	            if(!builder){
+	                creep.memory.giveTo = false;
+	            }else{
+	                
+	                 if(creep.pos.isNearTo(builder)){
+    	                creep.transfer(builder,RESOURCE_ENERGY);
+    	                creep.memory.giveTo = false;
+    	                creep.memory.dropAt=false;
+    	                return;
+    	            }else{
+    	                return creep.moveToPos(builder)
+    	            }
+    	                
+	            }
+	           
+	        }
+	    
+	        if( creep.memory.dropAt){
+	            
+	            let dropSpot = rp(creep.memory.dropAt.x,creep.memory.dropAt.y,creep.memory.dropAt.roomName);
+	            if(!dropSpot)console.log(dropSpot)
+	            if(creep.pos.getRangeTo(dropSpot)<5){
+    	            for(let name of config.creepNames){
+                        
+                        if(Game.creeps[name] && Game.creeps[name].memory.role==='builder' && Game.creeps[name].pos.getRangeTo(dropSpot)<4){
+                            creep.memory.giveTo = name;
+                            return creep.moveToPos(Game.creeps[name]);
+                        }
+                        
+                    }
+	            }
+	            
+	            if(creep.pos.isNearTo(dropSpot)){
+	                //creep.drop(RESOURCE_ENERGY);
+	                //creep.memory.dropAt=false;
 	                return;
 	            }else{
-	                return creep.moveToPos(config.controller.getStandingSpot())
+	                return creep.moveToPos(dropSpot)
 	            }
 	        }
 	    
@@ -73,10 +116,26 @@ var roleTanker = {
 	        }
 	        
             if(!target){
-                if(config.controller.level < 5 && !config.controller.haveContainer()){
-                    creep.memory.droppingAtController = true;
-                    creep.moveToPos(config.controller.getStandingSpot())
-                    return;
+                
+                if( !config.controller.haveContainer() ){
+                    
+                  /*  let srcs = mb.getAllSourcesForRoom(config.coreRoomName);
+                    let atleastOneContainer= false;
+                    for(let src of srcs){
+                        if(src.haveContainer()){
+                            atleastOneContainer=true;break;
+                        }
+                    }*/
+                   // let anchor = atleastOneContainer? creep.pos: Game.spawns[config.name].pos
+                  //  if(anchor){
+                        let site = mb.getNearestConstruction( Game.spawns[config.name].pos,[config.coreRoomName]);
+                         
+                        if(site && site.structureType!==STRUCTURE_ROAD){
+                            creep.memory.dropAt = site.pos;
+                            return creep.moveToPos(site)
+                        }
+                   // }
+                    
                 }else{
                     let roomNames = [config.coreRoomName];
                     if(config.funnelRoomName && Game.rooms[config.coreRoomName].storage && Game.rooms[config.coreRoomName].storage.storingAtLeast(50000)){
@@ -108,7 +167,7 @@ var roleTanker = {
 
 	            target = creep.reserveTransferToStorage(config.coreRoomName);
 	        }
-	        //if(creep.name==='B-ta-5')clog(target.pos)
+	        
             if(target){
                 creep.memory.lastTransferTo=target.structureType;
                 let res = creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
@@ -147,12 +206,29 @@ var roleTanker = {
 	    }
 	    else if(creep.isCollecting()){
 	        
+	        if(config.controller.level < 3){
+	            let drop = creep.getDropFromLocalSources();
+	            if(!drop){
+	                drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
+	            }
+	            if(drop){
+	                creep.memory.reserve_id = false;
+	                creep.say("🫴")
+                    return creep.actOrMoveTo("pickup",drop);
+	            }
+	           // return;
+	        }
+	        
 	        let target = Game.getObjectById(creep.memory.reserve_id);
 
             
 	        // collect from local MINES in this room first
 	        if(!target){
-	            target = creep.getFullestMineStore([config.coreRoomName]);
+	            
+	            let station = creep.getFillerStationToFill([config.coreRoomName]);
+	            let force = (station && station.isEmpty(RESOURCE_ENERGY));
+	            
+	            target = creep.getFullestMineStore([config.coreRoomName],force);
 	            if(target){
                    // creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
                 }

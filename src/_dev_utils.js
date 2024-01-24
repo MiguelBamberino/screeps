@@ -126,27 +126,10 @@ global.util = {
             console.log("------------------------------------------")
             console.log('ERROR! _server_config has not been created. Please copy ./_server_config.example.js to ./src/_server_config.js ');
              console.log("------------------------------------------")
-            
+            console.log(error)
         }
     },
     
-    setupNodes:function(){
-        global.nodes = _config.createRoomNodes(this.getServerName());
-    },
-    respawn:function(){
-        
-        this.destroyAllConSites();
-        this.resetBotData();
-        this.destroyAllStructures([STRUCTURE_SPAWN]);
-        
-        global.nodes = _config.createRoomNodes(this.getServerName());
-        gui.init(nodes);
-        
-        util.resumeTicks();
-        
-    },
-
-     
     getServerName:function(){
         if(Game.rooms['sim'])return'sim';
         if(Game.shard.name==='DESKTOP-F9T2DG5')return 'private';
@@ -157,10 +140,10 @@ global.util = {
       
       for (let c in Game.constructionSites)Game.constructionSites[c].remove()
     },
-    destroyAllStructures:function(exclude=[]){
-      
-      for (let s of mb.getStructures())
-        if(!exclude.includes(s.structureType))s.destroy()
+    destroyAllStructures:function(includesX=[]){
+      console.log("UTIL: destroying all strucutes:",includesX)
+      for (let s of mb.getStructures({types:includesX}))
+        s.destroy()
     },
     
     renderFootPrint:function(anchor){

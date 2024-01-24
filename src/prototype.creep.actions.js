@@ -280,111 +280,17 @@ module.exports = function(){
             if(creep.isASwampRat() ){
                 opts.swampCost = 1;
             }
-            
-      /*
-            opts.costCallback = function(roomName,costMatrix){
-                        
-                        let mpCM = mb.getCostMatrix(roomName);
-                        if(mpCM)return mpCM;
-                
-                
-                        if (roomName==='E6N3' ) {
-                        
-                            costMatrix.set(22, 15, 255);
-                    
-                        }
-                         if (roomName==='E3N5' ) {
-                        
-                            costMatrix.set(32, 22, 255);
-                    
-                        }
-                         if (roomName==='E7N4' ) {
-                        
-                            for(let y=0; y<=11;y++){
-                                 for(let x=0; x<2;x++){
-                                 
-                                    costMatrix.set(x, y, 255);
-                                   if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
-                                }
-                            }
-                    
-                        }
-                        if (roomName==='E6N4' ) {
-                        
-                            for(let y=47; y<=49;y++){
-                                 for(let x=0; x<=4;x++){
-                                 
-                                    costMatrix.set(x, y, 255);
-                                   if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
-                                }
-                            }
-                    
-                        }
-                        if(roomName ==='E9N5'){
-                            const terrain = Game.map.getRoomTerrain(roomName);
-                            
-                             for(let x=0; x<49;x++){
-                                 
-                                
-                                
-                                if(terrain.get(x,0)!==TERRAIN_MASK_WALL){
-                                    costMatrix.set(x, 0, 25);
-                                    if(Game.rooms[roomName])rp(x,0,roomName).colourIn('cyan')
-                                }
-                                if(terrain.get(x,49)!==TERRAIN_MASK_WALL){
-                                    costMatrix.set(x, 49, 25);
-                                    if(Game.rooms[roomName])rp(x,49,roomName).colourIn('cyan')
-                                }
-                            }
-                            for(let y=0; y<49;y++){
-                                  
-                                    
-                                  if(terrain.get(0,y)!==TERRAIN_MASK_WALL){
-                                      
-                                    costMatrix.set(0, y, 25);
-                                    if(Game.rooms[roomName])rp(0,y,roomName).colourIn('cyan')
-                                    
-                                  }
-                                  if(terrain.get(49,y)!==TERRAIN_MASK_WALL){
-                                      
-                                    costMatrix.set(49, y, 25);
-                                    if(Game.rooms[roomName])rp(49,y,roomName).colourIn('cyan')
-                                    
-                                  }
-                                }
-                            }
-                        
-                        return costMatrix;
-                    }
-            */
-            
+  
             let rn = target.roomName ?target.roomName :target.pos.roomName; 
             //if(this.name==='harrass-1')console.log('rn',rn,target.name,target.id)
             if(rn ==this.pos.roomName){
                 // this shrinks pathfinding and forces creep to stay in this room. It also avoid ERR_NO_PATH from weird terrain that
                 // would make the creep leave the room to move around
                 opts.maxRooms = 1;
-                if(false && this.memory.avoidEdges){
-                    //console.log(creep.name,"-moveToPos avoidingEdges with costCallback")
-                    opts.costCallback = function(roomName,costMatrix){
-                        // if we don't have vision, then use default for now
-                        if (! Game.rooms[roomName]) return costMatrix;
-                        
-                        for(let x=0; x<49;x++){
-                            rp(x,0,rn).colourIn('red')
-                            rp(x,49,rn).colourIn('red')
-                            costMatrix.set(x, 0, 255);
-                            costMatrix.set(x, 49, 255);
-                        }
-                        for(let y=0; y<49;y++){
-                            rp(0,y,rn).colourIn('red')
-                            rp(49,y,rn).colourIn('red')
-                            costMatrix.set(0, y, 255);
-                            costMatrix.set(49, y, 255);
-                        }
-                        return costMatrix;
-                    }
-                }
+                /*opts.costCallback = function(roomName,costMatrix){
+                    return mb.getCostMatrix('no-exit');
+                }*/
+                
             }
             //if(this.name==='harrass-1')clog(opts)
             

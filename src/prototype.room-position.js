@@ -336,45 +336,6 @@ RoomPosition.prototype.findBestStandingSpots=function(pathingPos,range=1,spotCap
         return best;
         
     }
-    StructureController.prototype.setStandingSpots=function(pathingFrom){
-        
-        let best = this.pos.findBestStandingSpots(pathingFrom,3,9);
-        
-        let sorted = [];
-        let lpp = best.path[(best.path.length-2)];
-        let entryPos = rp(lpp.x,lpp.y,best.containerSpot.roomName);
-        for(let pos of best.standingSpots){
-            if(pos.isEqualTo(best.containerSpot))
-                sorted[0]=pos;
-            else
-                sorted[ best.containerSpot.getDirectionTo(pos) ] = pos;    
-        }
-        let chainLookup = {};
-        chainLookup[TOP]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
-        chainLookup[TOP_RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
-        chainLookup[RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
-        
-        chainLookup[BOTTOM_RIGHT]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
-        chainLookup[BOTTOM]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
-        
-        chainLookup[BOTTOM_LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0,BOTTOM, BOTTOM_RIGHT,RIGHT,TOP_RIGHT];
-        chainLookup[LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0,BOTTOM, BOTTOM_RIGHT,RIGHT,TOP_RIGHT];
-        
-        chainLookup[TOP_LEFT]=[TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0,TOP,TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
-        
-        let chain = [];
-        let start = best.containerSpot.getDirectionTo(entryPos);
-        for(let i in chainLookup[start]){
-            let dir = chainLookup[start][i];
-            if( sorted[dir] )chain.push(sorted[dir])
-            
-        }
-        
-        best.containerSpot.colourIn('red')
-        for(let p in chain)chain[p].colourIn('yellow',0.5,p)
-        for(let p of best.path)Game.rooms[best.containerSpot.roomName].visual.text('X',p.x,p.y);
-        
-    }
     
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Game Object Search functions

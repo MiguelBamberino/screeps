@@ -83,6 +83,7 @@ global.mb = {
         for(let roomName in Memory.mapBook.rooms){
             this.heap_rooms[roomName] = Memory.mapBook.rooms[roomName];
         }
+        this.createNoExitCostMatrix()
         
     },
 
@@ -1024,6 +1025,10 @@ global.mb = {
     // CostMatrix Functions
     //////////////////////////////////////////////////////////////////////////////////////////
    markRoomDeadly: function(roomName){
+        this.deadlyRooms[roomName]=true;
+        this.createCostMatrix(roomName,this.getCostMatrix('no-exit'));
+   },
+    createNoExitCostMatrix: function(){
        let costMatrix = new PathFinder.CostMatrix;
        for(let x=0; x<49;x++){
             costMatrix.set(x, 0, 255);
@@ -1033,8 +1038,7 @@ global.mb = {
             costMatrix.set(0, y, 255);
             costMatrix.set(49, y, 255);
         }
-        this.deadlyRooms[roomName]=true;
-        this.createCostMatrix(roomName,costMatrix);
+        this.createCostMatrix('no-exit',costMatrix);
    },
    isDeadlyRoom:function(roomName){
        return this.deadlyRooms[roomName]?true:false;

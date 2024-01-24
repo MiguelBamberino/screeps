@@ -101,24 +101,12 @@ var role = {
             
             if(!config.allSourcesBuilt){
                 
-                let drop = gob(creep.memory.drop_id);
+                let drop = creep.getDropFromSources();
                 
-                let srcs = mb.getSources({roomNames:[config.coreRoomName]});
-                
-                let i = ((creep.name.charAt(5)*1)%2===0)?0:1;
-                if(srcs.length==1)i=0;
-                if(!drop){
-                    
-                   // if( !srcs[i].haveContainer() ){
-                        drop = srcs[i].pos.lookForNearbyResource(RESOURCE_ENERGY);
-                    
-                }
                 if(drop && drop.amount>=50){
-                    creep.memory.drop_id = drop.id;
                     return creep.actOrMoveTo("pickup",drop);
                 }
-               // creep.say((creep.name.charAt(5)*1)&2)
-               if( !srcs[i].haveContainer() ) return creep.actOrMoveTo("harvest",srcs[i]);
+               //if( !srcs[i].haveContainer() ) return creep.actOrMoveTo("harvest",srcs[i]);
             }
                 
            return creep.getEnergy([config.coreRoomName]);

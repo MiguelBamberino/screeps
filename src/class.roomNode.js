@@ -39,7 +39,7 @@ class RoomNode{
             imports:[]              >> a list of imports instructions. Each instruction looks like:  {resource_type:RESOURCE_ENERGY,storageCap:100000},
             
      * }
-     **/
+     **/ 
     constructor(name, options={}){
 
         if(!Game.spawns[name] ){ if(Game.time%20)console.log(name+' has no core spawn. Cannot load on global reset'); return;}
@@ -50,6 +50,8 @@ class RoomNode{
         this.online = true;
 
         if(!mb.hasRoom(this.coreRoomName))mb.scanRoom(this.coreRoomName);
+        
+        this.checkAndSetupAtRCL1()
         
         let mineral = mb.getMineralForRoom(this.coreRoomName);
         this.homeMineralType = mineral.mineralType;
@@ -65,7 +67,7 @@ class RoomNode{
         
         this.logger = options.logger;
         
-        this.retreatSpot = options.retreatSpot===undefined?rp(spwn.pos.x-2,spwn.pos.y+2,spwn.pos.roomName):options.retreatSpot;
+        this.retreatSpot = options.retreatSpot===undefined?rp(spwn.pos.x-3,spwn.pos.y-2,spwn.pos.roomName):options.retreatSpot;
         this.upgradeRate = options.upgradeRate===undefined?RATE_SLOW:options.upgradeRate;
         this.buildFast = options.buildFast===undefined?false:options.buildFast;
         
@@ -239,7 +241,7 @@ class RoomNode{
     
         //// Recovery Mode //////////////////////////////////////////////////////
         // removed this from recovery check because i was miss-using it to scale up quick in low levels 
-        if( (this.workforce_quota.tanker.count==0 &&this.workforce_quota.tanker.required>0) || this.workforce_quota.harvester.count<this.workforce_quota.harvester.required || this.workforce_quota.worker.count===0){
+        if( (this.workforce_quota.tanker.count==0 &&this.workforce_quota.tanker.required>0) || this.workforce_quota.harvester.count<this.workforce_quota.harvester.required ){
             this.inRecoveryMode=true;
         }else{
             this.inRecoveryMode=false;
@@ -623,7 +625,7 @@ class RoomNode{
         this.defenceIntel = {
             wallHeight:this.wallHeight,
             rampHeight:this.rampHeight,
-            weakest_structure:{id:'',hits:0},
+            weakest_structure:{id:'',hits:99999999999},
             priority_repair_targets:[],
             attacker_ids:[],
             priority_attacker_id:'',
@@ -732,6 +734,9 @@ class RoomNode{
     room(){
         return Game.rooms[this.coreRoomName];
     }
+    sources(){
+        return mb.getAllSourcesForRoom(this.coreRoomName);
+    }
     controller(){
         //if(!Game.rooms[this.coreRoomName])return false; >> not sure why this line was here. comment it next dufus, when its a bug
         return this.room().controller;
@@ -811,7 +816,7 @@ class RoomNode{
 
             else{ 
                 // this is the base spawn, so should have one adj to terminal. we need to increase transfer throughput
-                if(this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST){
+                if( this.terminal() && (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) ){
                     bodyPlan.push(CARRY);
                 } 
                 
@@ -870,6 +875,8 @@ class RoomNode{
     getConfig(){
         
         return {
+                    name:this.name,
+                    creepNames:this.creepNames,
                     controller: this.controller(),
                     coreRoomName:this.coreRoomName,
                     remoteRoomNames:this.remoteRoomNames,
@@ -970,46 +977,56 @@ class RoomNode{
 
         
         
-        this.workforce_quota.worker.required = controller.level>1 && !this.allSourcesBuilt?2:1;
+        this.workforce_quota.worker.required = controller.level>1 && this.allSourcesBuilt?1:0;
+
+         
+    
         
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
-        if(Game.rooms[this.coreRoomName].energyCapacityAvailable<800){
+        let rclECap = Game.rooms[this.coreRoomName].energyCapacityAvailable; 
+        if(rclECap<800){
             let srcs = mb.getSources({roomNames:[this.coreRoomName]})
             this.workforce_quota.harvester.required = 0;
             for(let src of srcs){
-                this.workforce_quota.harvester.required+= src.getStandingSpots().length;
+                let spotCount = src.getStandingSpots().length;
+                if(spotCount===3 && rclECap===550)spotCount=2;
+                
+                this.workforce_quota.harvester.required+= spotCount;
             }
 
         }
-        // sync workes growth with harvester growth
-        if(controller.level===1 && this.workforce_quota.harvester.count>=2){
-            this.workforce_quota.worker.required = this.workforce_quota.harvester.count;
+        let buildersNeeded=false;
+        this.workforce_quota.builder.required = 0;
+        if(controller.level=== 1 || this.defenceIntel.weakest_structure.hits < this.defenceIntel.rampHeight || mb.haveConstructions([this.coreRoomName])){
+            buildersNeeded = true;
         }
-        if(controller.level===2 && !this.allSourcesBuilt){
-            this.buildFast = true;
-        }
-   
-        if(this.buildFast && !this.inRecoveryMode && Game.cpu.bucket>3000){
-            if(this.haveStorage){
-                // at higher RCL, builder can consume too quick and dry out system
-                if(this.energySurplus > 50000)
-                    this.workforce_quota.builder.required = 4;
-                else if(this.energySurplus > 30000)
-                    this.workforce_quota.builder.required = 3;
-                else if(this.energySurplus > 15000)
-                    this.workforce_quota.builder.required = 2;
-                else if(this.energySurplus > 5000)
-                    this.workforce_quota.builder.required = 2;
-                else
-                    this.workforce_quota.builder.required = 0;
-            }else{
-                // at low RCL the builders can consume quicker than draw
-                this.workforce_quota.builder.required = 4;
-            }
+
+        if(buildersNeeded){
+            if(this.buildFast && !this.inRecoveryMode && Game.cpu.bucket>3000){
                 
-        }else{
-            this.workforce_quota.builder.required = (this.energySurplus > 5000)?1:0;
-        } 
+                // how many builders do we spawn, per X surplus, at each RCL, given builders can consume E quicker at higher RCL
+                let buildersPerXSurplus_PerRCL= [
+                    9999999999, // RCL0
+                    250, // RCL1
+                    500, // RCL2
+                    1000, // RCL3
+                    2500, // RCL4
+                    10000, // RCL5
+                    15000, // RCL6
+                    15000, // RCL7
+                    15000 // RCL8
+                    ];
+                let dividePerX = buildersPerXSurplus_PerRCL[controller.level];
+                 // for every extra 500e lets spawn more builders. Too many builders drains the sources and the builders waste time ping ponging
+                this.workforce_quota.builder.required = Math.floor( this.energySurplus/dividePerX );
+                //this.workforce_quota.builder.required += extras;
+                if(this.workforce_quota.builder.required>8)this.workforce_quota.builder.required=8;
+                
+
+            }else{
+                this.workforce_quota.builder.required = (this.energySurplus > 5000)?1:0;
+            } 
+        }
         
         if(this.haveStorage && this.spaceInStorage<50000 && this.energySurplus > 50000){
             this.workforce_quota.harvester.required=0;
@@ -1019,24 +1036,35 @@ class RoomNode{
             this.workforce_quota.rkeeper.required=1;
         }
         
+        
+        // how many builders do we spawn, per X surplus, at each RCL, given builders can consume E quicker at higher RCL
+        let tankerPerXSurplus_PerRCL= [
+                9999999999, // RCL0
+                300, // RCL1
+                500, // RCL2
+                1000, // RCL3
+                2500, // RCL4
+                10000, // RCL5
+                15000, // RCL6
+                15000, // RCL7
+                15000 // RCL8
+                ];
+        let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
+        this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
+        if(this.workforce_quota.rkeeper.required===0 && this.workforce_quota.tanker.required ===0){
+            // at low RCL we always need 1 to do filling
+            this.workforce_quota.tanker.required = 1;
+        }
+       
+        
+        
         // if we are early on, ensure we build the basics or we have a storage to recover with
         if( this.spawnFastFillerReady || this.haveStorage){
             
             this.workforce_quota.worker.required = 1; // xmark
             
     
-            if(this.defenceIntel.weakest_structure.hits > this.defenceIntel.rampHeight && !mb.haveConstructions([this.coreRoomName])){
-                this.workforce_quota.builder.required = 0;
-            }
-            
-            if(this.allSourcesBuilt){
-                // at rcl 2k seems too small. causes boom bust cycles
-                let tankersPerX = Game.rooms[this.coreRoomName].energyCapacityAvailable<1300?1000:2500;
-                this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
-            }
-            //this.workforce_quota.tanker.required = this.totalEnergyAtSources===0?1:Math.ceil(this.totalEnergyAtSources/2000)
-    
-           if( (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) && (Game.cpu.bucket>5000||Game.rooms['sim']) && this.allSourcesBuilt && controller.haveContainer()){
+           if( (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) && Game.cpu.bucket>5000 && this.allSourcesBuilt && controller.haveContainer()){
                
                let readyToSpend = controller.getContainer().storedAmount();
                
@@ -1084,6 +1112,15 @@ class RoomNode{
         
 
     }
+    
+    getSpawnBudget(){
+        let capacity = Game.rooms[this.coreRoomName].energyCapacityAvailable;
+        let stored = Game.rooms[this.coreRoomName].energyAvailable;
+        return (this.inRecoveryMode)?stored: capacity;
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Resource Code
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     decideResourceNeeds(){
         this.wants =[];
@@ -1170,11 +1207,70 @@ class RoomNode{
             store[resource_type] = {want:amount,have:0,import_order_id:false,export_order_id:false}
     }
     
-    getSpawnBudget(){
-        let capacity = Game.rooms[this.coreRoomName].energyCapacityAvailable;
-        let stored = Game.rooms[this.coreRoomName].energyAvailable;
-        return (this.inRecoveryMode)?stored: capacity;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Setup Room Code
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    checkAndSetupAtRCL1(){
+        if(this.controller().level===1){
+            this.setControllerStandingSpots();
+            this.setSourceStandingSpots();
+        }
     }
+    
+    setSourceStandingSpots(){
+        
+        for(let src of this.sources()){
+            if(src.getStandingSpot())continue;
+            let best = src.pos.findBestStandingSpots(Game.spawns[this.name].pos,1,3);
+            src.setStandingSpot(best.containerSpot)
+            src.setStandingSpots(best.standingSpots)   
+        }
+    }
+    setControllerStandingSpots(renew=false){
+        
+        if(!renew && this.controller().getStandingSpot())return;
+        
+        let best = this.controller().pos.findBestStandingSpots(Game.spawns[this.name].pos,3,9);
+        
+        let sorted = [];
+        let lpp = best.path[(best.path.length-2)];
+        let entryPos = rp(lpp.x,lpp.y,best.containerSpot.roomName);
+        for(let pos of best.standingSpots){
+            if(pos.isEqualTo(best.containerSpot))
+                sorted[0]=pos;
+            else
+                sorted[ best.containerSpot.getDirectionTo(pos) ] = pos;    
+        }
+        let chainLookup = {};
+        chainLookup[TOP]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
+        chainLookup[TOP_RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
+        chainLookup[RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
+        
+        chainLookup[BOTTOM_RIGHT]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
+        chainLookup[BOTTOM]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
+        
+        chainLookup[BOTTOM_LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0,BOTTOM, BOTTOM_RIGHT,RIGHT,TOP_RIGHT];
+        chainLookup[LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0,BOTTOM, BOTTOM_RIGHT,RIGHT,TOP_RIGHT];
+        
+        chainLookup[TOP_LEFT]=[TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0,TOP,TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
+        
+        let chain = [];
+        let start = best.containerSpot.getDirectionTo(entryPos);
+        for(let i in chainLookup[start]){
+            let dir = chainLookup[start][i];
+            if( sorted[dir] )chain.push(sorted[dir])
+            
+        }
+        this.controller().setStandingSpot(best.containerSpot);
+        this.controller().setStandingSpots(chain);
+        
+        best.containerSpot.colourIn('red')
+        for(let p in chain)chain[p].colourIn('yellow',0.5,p)
+        for(let p of best.path)Game.rooms[best.containerSpot.roomName].visual.text('X',p.x,p.y);
+        
+    }
+    
 
 }
 module.exports = RoomNode;

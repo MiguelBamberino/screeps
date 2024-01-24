@@ -77,8 +77,8 @@ for(let n in nodes){
 
 module.exports.loop = function () {
     if(!_SERVER_CONFIG)return;
-    _SERVER_CONFIG.detectRespawn()
     _memHak.pretick();
+    _SERVER_CONFIG.detectRespawn()
     //if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
 
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
@@ -111,7 +111,7 @@ module.exports.loop = function () {
             
         }
         
-        if(Game.cpu.bucket>8000 && Game.time%100===0){
+        if(Game.cpu.bucket>8000 && Game.time%100===0 && util.getServerName()==='shard3'){
             runMarket();
         }
         if(Game.cpu.bucket>5000 && Game.time%20===0){
@@ -127,7 +127,7 @@ module.exports.loop = function () {
         gui.render();
         
        
-        if( Game.cpu.bucket>1000 &&util.getServerName()==='shard3'){
+        if( Game.cpu.bucket>1000 && util.getServerName()==='shard3'){
              gui.renderComplexStats(nodes.t.extractorComplex)
             gui.renderComplexStats(nodes.i.extractorComplex)
             gui.renderComplexStats(nodes.z.extractorComplex)

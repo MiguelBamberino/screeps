@@ -493,28 +493,7 @@ module.exports = {
         let room = spawn.room;
         let storage = mb.getStorageForRoom(room.name)
         
-        
-        if(!room.controller.getStandingSpot()){
-            this.setControllerUp(node);
-            this.setSourcesUp(node);
-        }
-        if(!mb.haveConstructions([node.coreRoomName])){
-            node.upgradeRate = node.upgradeRate===RATE_OFF?RATE_OFF: RATE_FAST;
-            // butthe below line because builders stick around at RCL 4 after walls built
-            node.buildFast=false;
-            // don't know why the below line exists
-            //node.buildFast=storage?false:true;
-        }else{
-            node.buildFast=true;
-            if(node.totalEnergyAtSources<3000){
-                if(node.upgradeRate!==RATE_OFF && node.upgradeRate===RATE_VERY_SLOW) node.upgradeRate = RATE_SLOW;
-            }else{
-                if(node.upgradeRate!==RATE_OFF && node.upgradeRate===RATE_VERY_SLOW) node.upgradeRate = RATE_FAST;
-            }
-            if(room.controller.level>=5){
-                if(node.upgradeRate!==RATE_OFF && node.upgradeRate===RATE_VERY_SLOW) node.upgradeRate = RATE_FAST;
-            }
-        }
+  
         if(room.controller.level>=7){
              // switch focus to wall building
             if(node.upgradeRate!==RATE_OFF && node.upgradeRate===RATE_VERY_SLOW) node.upgradeRate = RATE_SLOW;
@@ -523,7 +502,7 @@ module.exports = {
         
         
         
-        if(room.energyCapacityAvailable>=550){
+        if(room.energyCapacityAvailable>=300){
             this.runRemotes(node);
         }
         
@@ -719,7 +698,7 @@ module.exports = {
 
             if(!mb.hasRoom(roomName)){
                 
-                this.scoutRoom(node.name,roomName+'-sc',roomName)
+                if(!node.inRecoveryMode)this.scoutRoom(node.name,roomName+'-sc',roomName)
                 if(Game.rooms[roomName])
                 {
                     mb.scanRoom(roomName);
@@ -1273,6 +1252,8 @@ module.exports = {
         room.createConstructionSite(spawn.pos.x,spawn.pos.y+1,STRUCTURE_EXTENSION);
         room.createConstructionSite(spawn.pos.x,spawn.pos.y+2,STRUCTURE_CONTAINER);
         
+        if(node.spawnFastFillerReady)
+            room.controller.getStandingSpot().createConstructionSite(STRUCTURE_CONTAINER)
         
         if(node.spawnFastFillerReady){
             room.createConstructionSite(spawn.pos.x-2,spawn.pos.y-1,STRUCTURE_ROAD);

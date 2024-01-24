@@ -20,7 +20,10 @@ var roleHarvester = {
             return '4w1c2m';
             
         }
-        return '2w1m'; // 300/300
+        if(config.allSourcesBuilt)
+            return '2w1c1m'; // 300/300
+        else
+            return '2w1m'; // 300/300
     
     },
     run: function(creep,config){
@@ -43,14 +46,14 @@ var roleHarvester = {
        let src =  this.getSource(creep,config);
 
 
-       if( !config.spawnFastFillerReady){
+       /*if( !config.spawnFastFillerReady){
            
            if(src){
                 if(src.haveNoCreep())src.setCreep(creep)
                 return creep.actOrMoveTo('harvest',src)
            }
            
-       }
+       }*/
        if(!src){
            
            let srcs = mb.getSources({roomNames:[config.coreRoomName]});
@@ -66,31 +69,10 @@ var roleHarvester = {
        if(!src){creep.say("!src");return;}
        
 
-       
+       if(this.runRampartCode(creep,src)===OK){
+           return OK;
+       }
         
-      // if(creep.name=='K-ha-1')return creep.moveTo(new RoomPosition(18,38,'W48N54'))
-        
-        if(creep.memory.rampart_ids===undefined){
-            if(src && creep.pos.isNearTo(src)){
-                let ramps = creep.pos.lookForNearStructures(STRUCTURE_RAMPART);
-                
-                creep.memory.rampart_ids = [];
-                for(let ramp of ramps){
-                    creep.memory.rampart_ids.push(ramp.id)
-                }
-            }
-        }
-        if(creep.memory.rampart_ids && creep.memory.rampart_ids.length>0 && creep.storingAtLeast(50)){
-            for(let id of creep.memory.rampart_ids){
-                let rampart = Game.getObjectById(id);
-                if(rampart && rampart.hits<config.wallHeight){
-                    let res= creep.repair(rampart)
-                    return res;
-                }
-            }
-        }
-
-      
 
        if( src.haveLink()){
            let res = creep.actOrMoveTo('linkHarvest',src);
@@ -122,16 +104,40 @@ var roleHarvester = {
        return;
 
    },
+   runRampartCode:function(creep,src){
+       
+        if(creep.memory.rampart_ids===undefined){
+            if(src && creep.pos.isNearTo(src)){
+                let ramps = creep.pos.lookForNearStructures(STRUCTURE_RAMPART);
+                
+                creep.memory.rampart_ids = [];
+                for(let ramp of ramps){
+                    creep.memory.rampart_ids.push(ramp.id)
+                }
+            }
+        }
+        if(creep.memory.rampart_ids && creep.memory.rampart_ids.length>0 && creep.storingAtLeast(50)){
+            for(let id of creep.memory.rampart_ids){
+                let rampart = Game.getObjectById(id);
+                if(rampart && rampart.hits<config.wallHeight){
+                    let res= creep.repair(rampart)
+                    return res;
+                }
+            }
+        }
+        return ERR_NOT_FOUND;
+
+   },
    getSource: function(creep,config){
        let src =  Game.getObjectById(creep.memory.mine_id);
        //creep.memory.extraSupport=false;
        if(!src){
-           src = this.getAvailableMine(config);
+           src = this.getAvailableMine(creep,config);
            creep.memory.mine_id = src.id;
        }
        return src;
    },
-    getAvailableMine: function(config) {
+    getAvailableMine: function(creep,config) {
 
         let filters = [
             {
@@ -145,11 +151,17 @@ var roleHarvester = {
             roomNames: [config.coreRoomName],
             filters: filters
         });
-        if(sources.length>0){
-            return sources[0];
+        let bestDist = 999;
+        let bestSrc = false;
+        for(let src of sources){
+            let dist = creep.pos.getRangeTo(src);
+            if(dist<bestDist){
+                bestDist = dist;
+                bestSrc = src;
+            }
         }
 
-        return false;
+        return bestSrc;
     },
    getExtToCharge:function(creep){
        
