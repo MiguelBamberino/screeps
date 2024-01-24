@@ -114,7 +114,8 @@ class AbstractComplex{
                     }
                 }else{
                     if(plan.required===true)this.allRequiredStructuresBuilt=false;
-                    if(!this.draft)plan.pos.createConstructionSite(plan.type)
+                    if(!this.draft)mb.addConstruction(plan.pos,plan.type)
+
                 }
             }
         }

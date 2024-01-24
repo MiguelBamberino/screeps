@@ -560,7 +560,7 @@ module.exports = {
         let controller = mb.getControllerForRoom(roomName);
         let lairs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_KEEPER_LAIR], requireVision:false,justIDs:true })
         let invadeCores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
-        let srcs = mb.getSources({roomNames:[roomName]});
+        let srcs = mb.getSources({roomNames:[roomName],requireVision:false});
         
        // console.log(node.name,roomName,'node.manual_addRooms',node.manual_addRooms.includes(roomName),"lairs ",lairs.length," vision ",(Game.rooms['E6N4']))
         
@@ -570,7 +570,7 @@ module.exports = {
              Memory.remotes[node.name][roomName].score+=99999;
              return;
         }
-        if(!srcs.length===0){
+        if(srcs.length===0){
             Memory.remotes[node.name][roomName].online = false;
              Memory.remotes[node.name][roomName].reason = "hallway";
              Memory.remotes[node.name][roomName].score+=99999;
@@ -688,8 +688,13 @@ module.exports = {
         let eCap =  Game.rooms[node.coreRoomName].energyCapacityAvailable;
         harvyECap = eCap;
         if(harvyECap> 800)harvyECap = 800; // keep them small, to save on spawn time
-         let harvesterBodyPlan = harvesterRole.getParts(harvyECap,node.getConfig());
-        
+        let conf = node.getConfig();
+
+         let harvesterBodyPlan = harvesterRole.getParts(harvyECap,{});
+        if(Game.rooms[node.coreRoomName].controller.level<4){
+            // super hacky, just testing out remotes not building containers too early
+            harvesterBodyPlan = harvesterBodyPlan.replace('1c','');
+        }
         
         for(let roomName of node.remoteRoomNames){
             
@@ -995,6 +1000,7 @@ module.exports = {
     
     manageConstructionSites:function(node){
         
+        if(node.controller().level==1)this.buildAtRCL1(node)
         if(node.controller().level==2)this.buildAtRCL2(node)
         if(node.controller().level==3)this.buildAtRCL3(node)
         if(node.controller().level==4)this.buildAtRCL4(node)
@@ -1250,12 +1256,13 @@ module.exports = {
         room.createConstructionSite(spawn.pos.x+2,spawn.pos.y,STRUCTURE_EXTENSION);
         
         room.createConstructionSite(spawn.pos.x,spawn.pos.y+1,STRUCTURE_EXTENSION);
-        room.createConstructionSite(spawn.pos.x,spawn.pos.y+2,STRUCTURE_CONTAINER);
-        
-        if(node.spawnFastFillerReady)
+        //room.createConstructionSite(spawn.pos.x,spawn.pos.y+2,STRUCTURE_CONTAINER);
+
+        let exts = mb.getStructures({ roomNames:[node.coreRoomName], types:[STRUCTURE_EXTENSION] });
+        if(node.spawnFastFillerReady && exts.length>=5)
             room.controller.getStandingSpot().createConstructionSite(STRUCTURE_CONTAINER)
         
-        if(node.spawnFastFillerReady){
+        if(room.controller.haveContainer()){
             room.createConstructionSite(spawn.pos.x-2,spawn.pos.y-1,STRUCTURE_ROAD);
             room.createConstructionSite(spawn.pos.x-1,spawn.pos.y-1,STRUCTURE_ROAD);
             room.createConstructionSite(spawn.pos.x,spawn.pos.y-1,STRUCTURE_ROAD);
@@ -1296,7 +1303,13 @@ module.exports = {
             
         }
     },
-    
+    buildAtRCL1:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+
+        room.createConstructionSite(spawn.pos.x,spawn.pos.y+2,STRUCTURE_CONTAINER);
+
+    },
     setControllerUp:function(node){
         let positions = node.controller().pos.getPositionsInRange(3);
         let spawn = Game.spawns[node.name];

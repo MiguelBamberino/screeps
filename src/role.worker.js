@@ -98,15 +98,18 @@ var role = {
            creep.say("Zzz");
             
         }else if(creep.isCollecting()){
-            
+
             if(!config.allSourcesBuilt){
                 
-                let drop = creep.getDropFromSources();
-                
-                if(drop && drop.amount>=50){
+                let drop = creep.getDropFromLocalSources(25);
+
+                if(!drop){
+                    drop = creep.getDroppedEnergy(100)
+                }
+
+                if(drop ){
                     return creep.actOrMoveTo("pickup",drop);
                 }
-               //if( !srcs[i].haveContainer() ) return creep.actOrMoveTo("harvest",srcs[i]);
             }
                 
            return creep.getEnergy([config.coreRoomName]);

@@ -20,7 +20,7 @@ var roleTanker = {
             return '3*2c1m';
 
         }
-        else if(config.allSourcesBuilt && budget >= 200 ){ // RCL 1 - 200 + 100 = 300/300
+        else if(!config.inRecoveryMode && budget >= 200 ){ // RCL 1 - 200 + 100 = 300/300
             return '2c2m';
         }
         else{ 
@@ -46,18 +46,34 @@ var roleTanker = {
 	         
 	    
 	        if( creep.memory.giveTo){
-	            let builder = Game.creeps[ creep.memory.giveTo  ];
-	            if(!builder){
+	            let recipient = Game.creeps[ creep.memory.giveTo  ];
+	            if(!recipient){
 	                creep.memory.giveTo = false;
 	            }else{
-	                
-	                 if(creep.pos.isNearTo(builder)){
-    	                creep.transfer(builder,RESOURCE_ENERGY);
-    	                creep.memory.giveTo = false;
-    	                creep.memory.dropAt=false;
-    	                return;
+	                let distanceToRecipient = creep.pos.getRangeTo(recipient);
+	                 if(distanceToRecipient===1){
+                         creep.memory.giveTo = false;
+                         creep.memory.dropAt=false;
+                         recipient.memory.waitFor = false;
+
+    	                if(creep.transfer(recipient,RESOURCE_ENERGY)===ERR_FULL){
+                            // drop it as the recipients feet. they'll pick it up
+                            return creep.drop(RESOURCE_ENERGY);
+                        }
+
+                         return;
     	            }else{
-    	                return creep.moveToPos(builder)
+    	                let res = creep.moveToPos(recipient);
+                         let dropSpot = rp(creep.memory.dropAt.x,creep.memory.dropAt.y,creep.memory.dropAt.roomName);
+                         // in this niche situation, we are path blocked to the upgrader but within 2 of container.
+                         // so we can drop, because other upgraders should pick up
+                         if(res === ERR_NO_PATH && distanceToRecipient===2 && creep.pos.getRangeTo(dropSpot)===2){
+                             creep.memory.giveTo = false;
+                             creep.memory.dropAt=false;
+                             recipient.memory.waitFor = false;
+                             return creep.drop(RESOURCE_ENERGY);
+                         }
+                         return res;
     	            }
     	                
 	            }
@@ -69,19 +85,37 @@ var roleTanker = {
 	            let dropSpot = rp(creep.memory.dropAt.x,creep.memory.dropAt.y,creep.memory.dropAt.roomName);
 	            if(!dropSpot)console.log(dropSpot)
 	            if(creep.pos.getRangeTo(dropSpot)<5){
+
+                    let mostSpace = 0;
+                    let bestRecipient = false;
+                    // if we're close to the drop location then search for a recipient to pass off too
     	            for(let name of config.creepNames){
-                        
-                        if(Game.creeps[name] && Game.creeps[name].memory.role==='builder' && Game.creeps[name].pos.getRangeTo(dropSpot)<4){
-                            creep.memory.giveTo = name;
-                            return creep.moveToPos(Game.creeps[name]);
+                        if(!Game.creeps[name])continue;
+                        let recipient = Game.creeps[name];
+
+                        let recipientSpace = recipient.store.getFreeCapacity(RESOURCE_ENERGY);
+                        if((recipient.memory.role==='builder' || recipient.memory.role==='upgrader') &&
+                            // make sure this creep isn't already waiting for a tanker
+                            !recipient.memory.waitFor &&
+                            // prioritise for most empty creeps first
+                            recipientSpace > mostSpace &&
+                            // make sure recipient is near the target drop zone
+                            recipient.pos.getRangeTo(dropSpot)<4) {
+                            bestRecipient = recipient;
+                            mostSpace = recipientSpace;
                         }
-                        
+                    }
+                    if(bestRecipient){
+                        creep.memory.giveTo = bestRecipient.name;
+                        bestRecipient.memory.waitFor = creep.name;
+                        return creep.moveToPos(bestRecipient);
                     }
 	            }
 	            
 	            if(creep.pos.isNearTo(dropSpot)){
-	                //creep.drop(RESOURCE_ENERGY);
-	                //creep.memory.dropAt=false;
+	                // nobody there to give E too. plop on floor
+                    creep.drop(RESOURCE_ENERGY);
+	                creep.memory.dropAt=false;
 	                return;
 	            }else{
 	                return creep.moveToPos(dropSpot)
@@ -118,24 +152,13 @@ var roleTanker = {
             if(!target){
                 
                 if( !config.controller.haveContainer() ){
-                    
-                  /*  let srcs = mb.getAllSourcesForRoom(config.coreRoomName);
-                    let atleastOneContainer= false;
-                    for(let src of srcs){
-                        if(src.haveContainer()){
-                            atleastOneContainer=true;break;
-                        }
-                    }*/
-                   // let anchor = atleastOneContainer? creep.pos: Game.spawns[config.name].pos
-                  //  if(anchor){
-                        let site = mb.getNearestConstruction( Game.spawns[config.name].pos,[config.coreRoomName]);
-                         
-                        if(site && site.structureType!==STRUCTURE_ROAD){
-                            creep.memory.dropAt = site.pos;
-                            return creep.moveToPos(site)
-                        }
-                   // }
-                    
+
+                    let site = mb.getNearestConstruction( Game.spawns[config.name].pos,[config.coreRoomName]);
+
+                    if(site && site.structureType!==STRUCTURE_ROAD){
+                        creep.memory.dropAt = site.pos;
+                        return creep.moveToPos(site)
+                    }
                 }else{
                     let roomNames = [config.coreRoomName];
                     if(config.funnelRoomName && Game.rooms[config.coreRoomName].storage && Game.rooms[config.coreRoomName].storage.storingAtLeast(50000)){
@@ -144,6 +167,11 @@ var roleTanker = {
                     }
                     //console.log(creep.name,roomNames)
                     target = creep.getUpgradeStoreToFill(roomNames);
+
+                    if(!target && (config.upgradeRate===RATE_FAST || config.upgradeRate===RATE_VERY_FAST ) ){
+                        creep.memory.dropAt = config.controller.getContainer().pos;
+                        return creep.moveToPos(config.controller)
+                    }
                 }
                 
             }
@@ -206,10 +234,18 @@ var roleTanker = {
 	    }
 	    else if(creep.isCollecting()){
 	        
-	        if(config.controller.level < 3){
-	            let drop = creep.getDropFromLocalSources();
+	        if(config.controller.level < 4){
+	            let drop = false;
+
+                if(config.inRecoveryMode){
+                    drop = creep.getDropFromLocalSources();
+                }
+
 	            if(!drop){
 	                drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
+                    if(!drop){
+                        drop = creep.getDropFromLocalSources();
+                    }
 	            }
 	            if(drop){
 	                creep.memory.reserve_id = false;

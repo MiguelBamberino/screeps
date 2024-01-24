@@ -558,13 +558,13 @@ class RoomNode{
         if(Game.time%10===0 && this.spawnFastFillerReady==false)this.spawnFastFillerReady=undefined;
         if(this.spawnFastFillerReady===undefined){
             let structures = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER,STRUCTURE_STORAGE]});    
-            let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
+            //let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
             this.spawnFastFillerReady=false;
             for(let container of structures){
-                if(Game.spawns[this.name] && Game.spawns[this.name].pos.getRangeTo(container)<3 && exts.length>=5 ){
+                if(Game.spawns[this.name] && Game.spawns[this.name].pos.getRangeTo(container)<3 /*&& exts.length>=5*/ ){
                     this.spawnFastFillerReady=true;break;
                 }
-                if(Game.spawns[this.name+"-2"] && Game.spawns[this.name+"-2"].pos.getRangeTo(container)<3 && exts.length>=5 ){
+                if(Game.spawns[this.name+"-2"] && Game.spawns[this.name+"-2"].pos.getRangeTo(container)<3 /*&& exts.length>=5*/ ){
                     this.spawnFastFillerReady=true;break;
                 }
             }
@@ -975,12 +975,8 @@ class RoomNode{
         let controller = this.controller();
         let playerAttackers = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
 
-        
-        
-        this.workforce_quota.worker.required = controller.level>1 && this.allSourcesBuilt?1:0;
 
-         
-    
+        this.workforce_quota.worker.required = this.allSourcesBuilt?1:0;
         
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
         let rclECap = Game.rooms[this.coreRoomName].energyCapacityAvailable; 
@@ -1020,7 +1016,7 @@ class RoomNode{
                  // for every extra 500e lets spawn more builders. Too many builders drains the sources and the builders waste time ping ponging
                 this.workforce_quota.builder.required = Math.floor( this.energySurplus/dividePerX );
                 //this.workforce_quota.builder.required += extras;
-                if(this.workforce_quota.builder.required>8)this.workforce_quota.builder.required=8;
+                if(this.workforce_quota.builder.required>9)this.workforce_quota.builder.required=8;
                 
 
             }else{
@@ -1060,38 +1056,36 @@ class RoomNode{
         
         // if we are early on, ensure we build the basics or we have a storage to recover with
         if( this.spawnFastFillerReady || this.haveStorage){
-            
-            this.workforce_quota.worker.required = 1; // xmark
-            
-    
-           if( (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) && Game.cpu.bucket>5000 && this.allSourcesBuilt && controller.haveContainer()){
-               
+
+           if( (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) && Game.cpu.bucket>5000 && this.allSourcesBuilt && controller.haveContainer()) {
+
                let readyToSpend = controller.getContainer().storedAmount();
-               
-                if(this.haveStorage && this.energySurplus<50000 && controller.level<=7 ){
-                    // we need to start saving, incase we get attacked or need to spend
-                    this.workforce_quota.upgrader.required = 1;
-                }else if(readyToSpend>=1800){
-                    this.workforce_quota.upgrader.required = (this.upgradeRate===RATE_VERY_FAST)?7:5;
-                    if(this.totalEnergyAtSources>8000 && this.workforce_quota.tanker.count>10){
-                        this.workforce_quota.upgrader.required++;
-                    }
-                }else if(readyToSpend>=1500){
-                    this.workforce_quota.upgrader.required = 4;
-                    if(this.totalEnergyAtSources>8000 && this.workforce_quota.tanker.count>10){
-                        this.workforce_quota.upgrader.required++;
-                    }
-                }else if(readyToSpend>1200){
-                    this.workforce_quota.upgrader.required = 3;
-                }else if(readyToSpend>600){
-                    this.workforce_quota.upgrader.required = 2;
-                }else{
-                    this.workforce_quota.upgrader.required = 1;
-                }
+
+               if (this.haveStorage && this.energySurplus < 50000 && controller.level <= 7) {
+                   // we need to start saving, incase we get attacked or need to spend
+                   this.workforce_quota.upgrader.required = 1;
+               } else if (readyToSpend >= 1800) {
+                   this.workforce_quota.upgrader.required = (this.upgradeRate === RATE_VERY_FAST) ? 7 : 5;
+                   if (this.totalEnergyAtSources > 8000 && this.workforce_quota.tanker.count > 10) {
+                       this.workforce_quota.upgrader.required++;
+                   }
+               } else if (readyToSpend >= 1500) {
+                   this.workforce_quota.upgrader.required = 4;
+                   if (this.totalEnergyAtSources > 8000 && this.workforce_quota.tanker.count > 10) {
+                       this.workforce_quota.upgrader.required++;
+                   }
+               } else if (readyToSpend > 1200) {
+                   this.workforce_quota.upgrader.required = 3;
+               } else if (readyToSpend > 600) {
+                   this.workforce_quota.upgrader.required = 2;
+               } else {
+                   this.workforce_quota.upgrader.required = 1;
+               }
+
            }else if(this.upgradeRate===RATE_VERY_SLOW && controller.ticksToDowngrade>100000){
                this.workforce_quota.upgrader.required = 0;
            }else{
-               this.workforce_quota.upgrader.required = this.allSourcesBuilt?1:0;
+               this.workforce_quota.upgrader.required = controller.haveContainer()?1:0;
 			   if(this.haveStorage && this.energySurplus<25000){
                    this.workforce_quota.upgrader.required = 0;
                }

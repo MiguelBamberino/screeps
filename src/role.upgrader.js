@@ -46,14 +46,16 @@ var role = {
 
     run: function(creep,config){
         
-        creep.checkAndUpdateState();
-        
-         
+
         
         let controller = config.controller;
 
         let container = controller.getContainer();
-        
+        if(!container){
+            return creep.say("!cont")
+        }
+
+        let quickDraw = ((config.upgradeRate===RATE_FAST||config.upgradeRate===RATE_VERY_FAST)&&creep.haveSpaceFor(25))
         
         if(container){
             //container.allowOverBooking(0)
@@ -66,89 +68,80 @@ var role = {
         }
         
         let link = controller.getLink();
-        if(!container){
-            
-            if(creep.isWorking()){
-                
-                let spot = controller.getStandingSpot();
-                if(spot){
-                    let site = spot.lookForConstruction();
-                    if(!site){
-                        let container = spot.lookForStructure(STRUCTURE_CONTAINER);
-                        if(container){
-                            controller.setContainer(container);
-                            container.setAsUpgraderStore();
-                        }else{
-                            spot.createConstructionSite(STRUCTURE_CONTAINER);
-                        }
-                    }else{
-                        creep.actOrMoveTo("build",site);
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            /// moveTo queue pos
+            ////////////////////////////////////////////////////////////////////////////////////
+            if(creep.memory.spot_index===undefined){
+                creep.memory.spot_index = 0;
+            }
+            let standingSpots = controller.getStandingSpots();
+            let currSpot = standingSpots[ creep.memory.spot_index ];
+            if(currSpot){
+
+                if(creep.pos.isEqualTo(currSpot)){
+                    let nextSpot = standingSpots[ creep.memory.spot_index+1 ];
+                    if(nextSpot && nextSpot.isWalkable(true)){
+                        creep.memory.spot_index += 1;
+                        creep.moveToPos(nextSpot);
                     }
                 }else{
-                    creep.say('No stand spot')
+                    creep.moveToPos(currSpot);
                 }
-                
-            }else if(creep.isCollecting()){
-                
-                let spot = controller.getStandingSpot();
-                if(spot){
-                    let drop = spot.lookForNearbyResource(RESOURCE_ENERGY);
-                    if(drop){
-                        creep.actOrMoveTo("pickup",drop);
-                    }else{
-                        // if we have no dropped E waiting for us, then go get some
-                        creep.getEnergy([config.coreRoomName]);   
-                    }
-                }else{
-                    creep.say("!spot")
-                }
-
-            }
-            return;
-            
-        }
-          
-        if(creep.isWorking()){
-           
-            if(creep.storingAtLeast(50)){
-                let ext = this.getExtToCharge(creep);
-                if(ext){
-                    creep.transfer(ext,RESOURCE_ENERGY);
-                } 
-            }          
-
-           
-           if(!creep.pos.isEqualTo(container)){
-               creep.moveTo(container);
-           }
-            if(!creep.pos.inRangeTo(container.pos,1) || !creep.pos.inRangeTo(controller,3)){
-                let walkable = container.pos.lookForNearbyWalkable(true);
-                for(let spot of walkable){
-                    if(spot.inRangeTo(controller,3))creep.moveToPos(spot);
-                }
-            }
-            
-             if( (container.hitsMax-container.hits) > 1000){
-                creep.repair(container);
-             }
-            
-            creep.upgradeController(controller);
-            
-        }else if(creep.isCollecting()){
-            
-            if(link && !link.isEmpty()){
-                creep.actOrMoveTo("withdraw",link,RESOURCE_ENERGY);
-                
-            }else if(container){
-                container.setAsUpgraderStore();
-                // lock it, so we own withdrawals of this container. stop thieves.
-                if(container.isWithdrawLocked()===false)container.lockReservations(['withdraw']);
-                creep.actOrMoveTo("withdraw",container,RESOURCE_ENERGY);
 
             }else{
-                creep.say(413);
+                creep.say("!spot")
+                creep.moveToPos(container)
+            }
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        /// SWOOOSH spend energy
+        ////////////////////////////////////////////////////////////////////////////////////
+         if( (container.hitsMax-container.hits) > 1000){
+            creep.repair(container);
+         }
+         // relay energy into the container to share with other upgraders
+        if(quickDraw && container.isEmpty() && creep.isFull()){
+            let amount = creep.storedAmount(RESOURCE_ENERGY) / 2;
+            creep.transfer(container,RESOURCE_ENERGY,amount);
+        }
+
+
+        creep.upgradeController(controller);
+
+        if(creep.storingAtLeast(50)){
+            let ext = this.getExtToCharge(creep);
+            if(ext){
+                creep.transfer(ext,RESOURCE_ENERGY);
             }
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        ///  Collect energy
+        ////////////////////////////////////////////////////////////////////////////////////
+            if(creep.isEmpty() || quickDraw) {
+
+                if(quickDraw){
+                    let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
+                    if(drop){
+                        creep.pickup(drop);
+                    }
+                }
+
+                if (link && !link.isEmpty()) {
+                    creep.actOrMoveTo("withdraw", link, RESOURCE_ENERGY);
+
+                } else if (container) {
+                    container.setAsUpgraderStore();
+                    // lock it, so we own withdrawals of this container. stop thieves.
+                    if (container.isWithdrawLocked() === false) container.lockReservations(['withdraw']);
+                    creep.actOrMoveTo("withdraw", container, RESOURCE_ENERGY);
+
+                } else {
+                    creep.say(413);
+                }
+            }
+
       
         
     },

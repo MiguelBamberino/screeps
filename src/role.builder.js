@@ -106,7 +106,14 @@ var role = {
 	    
 	    
 	    else if(creep.isCollecting()){
-	        //creep.memory.target_to_fix_id = false;
+
+
+            if(Game.creeps[creep.memory.waitFor]){
+                return creep.say("wait");
+            }else{
+                // must have died. rip
+                creep.memory.waitFor = false;
+            }
 
 	        if(config.controller.level <=3 ){
                 
@@ -124,7 +131,7 @@ var role = {
                         if(targetToClear)targetToClear.fulfillWithdraw(creep.name);
                     }
                     // keep resetting the con site, so builder does stick to a site really far away
-                    creep.memory.construction_site_id = false;
+                    //creep.memory.construction_site_id = false;
                     return creep.actOrMoveTo("pickup",drop);
                 }
                 
@@ -151,7 +158,9 @@ var role = {
 	        return site;
 	    }
         creep.memory.construction_site_id=false;
-	    let obj = mb.getNearestConstruction(creep.pos, [config.coreRoomName]);
+        let anchor = config.spawnFastFillerReady? creep.pos: Game.spawns[config.name].pos;
+        //console.log(creep.name,anchor,config.spawnFastFillerReady)
+	    let obj = mb.getNearestConstruction(anchor, [config.coreRoomName]);
 	    if(obj){
             creep.memory.construction_site_id=obj.id;
 	        return obj;
