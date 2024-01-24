@@ -539,7 +539,15 @@ class RoomNode{
      * Most expires after X game ticks
      */ 
     checkCache(){
-        
+
+        if(Game.time%20===0){
+            if(!this.controller().haveContainer()){
+                let container = this.controller().getStandingSpot().lookForStructure(STRUCTURE_CONTAINER)
+                this.controller().setContainer(container)
+            }
+        }
+
+
         //// Storage Cache /////////////////////////////////////////////////////
         if(Game.time%50==0){
             this.haveStorage = undefined;
@@ -569,6 +577,8 @@ class RoomNode{
                 }
             }
         }
+
+
         
         //// Stats about room Sources ////////////////////////////////////////////
         if(Game.time%10===0){
@@ -1036,9 +1046,9 @@ class RoomNode{
         // how many builders do we spawn, per X surplus, at each RCL, given builders can consume E quicker at higher RCL
         let tankerPerXSurplus_PerRCL= [
                 9999999999, // RCL0
-                300, // RCL1
-                500, // RCL2
-                1000, // RCL3
+                250, // RCL1
+                400, // RCL2
+                800, // RCL3
                 2500, // RCL4
                 10000, // RCL5
                 15000, // RCL6
