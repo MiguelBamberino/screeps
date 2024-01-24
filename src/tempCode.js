@@ -669,6 +669,18 @@ module.exports = {
             let adjRooms = Game.map.describeExits(node.coreRoomName);
            
             for(let dir in adjRooms){
+                dir = dir*1;
+                if(dir===TOP){
+                    let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
+                    if(adjRooms2[LEFT])node.remoteRoomNames.push(adjRooms2[LEFT])
+                    if(adjRooms2[RIGHT])node.remoteRoomNames.push(adjRooms2[RIGHT])
+                }
+                if(dir===BOTTOM){
+                    let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
+                    if(adjRooms2[LEFT])node.remoteRoomNames.push(adjRooms2[LEFT])
+                    if(adjRooms2[RIGHT])node.remoteRoomNames.push(adjRooms2[RIGHT])
+                }
+
                 node.remoteRoomNames.push(adjRooms[dir])
             }
             

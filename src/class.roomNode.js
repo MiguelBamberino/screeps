@@ -1016,7 +1016,7 @@ class RoomNode{
                  // for every extra 500e lets spawn more builders. Too many builders drains the sources and the builders waste time ping ponging
                 this.workforce_quota.builder.required = Math.floor( this.energySurplus/dividePerX );
                 //this.workforce_quota.builder.required += extras;
-                if(this.workforce_quota.builder.required>9)this.workforce_quota.builder.required=8;
+                if(this.workforce_quota.builder.required>10)this.workforce_quota.builder.required=10;
                 
 
             }else{
