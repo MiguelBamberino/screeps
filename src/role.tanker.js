@@ -167,8 +167,10 @@ var roleTanker = {
                     }
                     //console.log(creep.name,roomNames)
                     target = creep.getUpgradeStoreToFill(roomNames);
-
-                    if(!target && (config.upgradeRate===RATE_FAST || config.upgradeRate===RATE_VERY_FAST ) ){
+                    
+                    // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller. we hope there is ugraders there to use it
+                    if(!target && (config.upgradeRate===RATE_FAST || config.upgradeRate===RATE_VERY_FAST ) && !Game.rooms[config.coreRoomName].storage ){
+                        
                         creep.memory.dropAt = config.controller.getContainer().pos;
                         return creep.moveToPos(config.controller)
                     }
@@ -207,26 +209,8 @@ var roleTanker = {
                 }else if(Game.time%10==0){
                     creep.memory.lastWithdrewFrom=false;
                 }else{
-                                   //creep.say('bored')
-                    if(config.controller.level<4 && config.controller.haveContainer()){
-                        /*
-                        Dunno why this code is here. it broke SWC
-                        let idleSpot = false;
-                        let distance = 999;
-                        for(let pos of config.controller.getStandingSpot().getPositionsInRange(4)){
-                            if(pos.isWalkable() && !pos.lookForStructure(STRUCTURE_ROAD)){
-                                let dist = pos.getRangeTo(Game.spawns[].pos);
-                                if(dist<distance){
-                                    idleSpot=pos;
-                                    distance=dist;
-                                }
-                            }
-                        }
-                        */
-                        creep.moveToPos(config.retreatSpot)
-                    }else{
-                        creep.moveToPos(config.retreatSpot)
-                    }
+                    creep.say('Zzz')
+                    creep.moveToPos(config.retreatSpot)
                 }
                
             }
@@ -234,7 +218,7 @@ var roleTanker = {
 	    }
 	    else if(creep.isCollecting()){
 	        
-	        if(config.controller.level < 4){
+	        if(!Game.rooms[config.coreRoomName].storage){
 	            let drop = false;
 
                 if(config.inRecoveryMode){
@@ -306,7 +290,7 @@ var roleTanker = {
     
             }else{
                 creep.say('bored')
-                if(config.controller.level<4 && creep.isFull() && config.controller.haveContainer()){
+                if((config.upgradeRate===RATE_FAST||config.upgradeRate===RATE_VERY_FAST) && creep.isFull() && config.controller.haveContainer()){
                     creep.moveToPos(config.controller.getContainer())
                 }else{
                     creep.moveToPos(config.retreatSpot)

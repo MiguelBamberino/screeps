@@ -60,7 +60,7 @@ var role = {
         if(container){
             //container.allowOverBooking(0)
             // cant have overbooking once we have storage, because it breaks the rKeepr
-            if(config.upgradeRate===RATE_FAST && !creep.room.storage ){
+            if((config.upgradeRate===RATE_FAST||config.upgradeRate===RATE_VERY_FAST) /*&& !creep.room.storage*/ ){
                 container.allowOverBooking(1500)
             }else{ 
                 container.allowOverBooking(0)
@@ -124,18 +124,20 @@ var role = {
                 if(quickDraw){
                     let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
                     if(drop){
-                        creep.pickup(drop);
+                       // console.log("relay")
+                        creep.transfer(container,RESOURCE_ENERGY);
+                        return creep.pickup(drop);
                     }
                 }
 
                 if (link && !link.isEmpty()) {
-                    creep.actOrMoveTo("withdraw", link, RESOURCE_ENERGY);
+                    return creep.actOrMoveTo("withdraw", link, RESOURCE_ENERGY);
 
                 } else if (container) {
                     container.setAsUpgraderStore();
                     // lock it, so we own withdrawals of this container. stop thieves.
                     if (container.isWithdrawLocked() === false) container.lockReservations(['withdraw']);
-                    creep.actOrMoveTo("withdraw", container, RESOURCE_ENERGY);
+                    return creep.actOrMoveTo("withdraw", container, RESOURCE_ENERGY);
 
                 } else {
                     creep.say(413);

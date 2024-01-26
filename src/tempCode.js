@@ -653,48 +653,68 @@ module.exports = {
             		toSorted.push( {name:rn, score: rData.score} );
             	}
             }
-            node.remoteRoomNames = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
+            let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
+            for(let i=0; i<4;i++)node.remoteRoomNames.push(available[i]);
         }
+    },
+    detectRemotes:function(node){
+
+        if(node.remotesLoaded)return;
+
+        if(node.manual_ignoreRooms===undefined)node.manual_ignoreRooms = [];
+        if(node.manual_noRoads===undefined)node.manual_noRoads = [];
+        if(node.manual_addRooms===undefined)node.manual_addRooms = [];
+
+        let adjRooms = Game.map.describeExits(node.coreRoomName);
+        console.log(node.name," remote boot up. Scoring")
+        for(let dir in adjRooms){
+            dir = dir*1;
+            if(dir===TOP){
+                let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
+                if(adjRooms2[LEFT])this.scoreRemote(node,adjRooms2[LEFT]);
+                if(adjRooms2[RIGHT])this.scoreRemote(node,adjRooms2[RIGHT]);
+            }
+            if(dir===BOTTOM){
+                let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
+                if(adjRooms2[LEFT])this.scoreRemote(node,adjRooms2[LEFT]);
+                if(adjRooms2[RIGHT])this.scoreRemote(node,adjRooms2[RIGHT]);
+            }
+            this.scoreRemote(node,adjRooms[dir]);
+        }
+        if(node.manual_addRooms)for(let rn of node.manual_addRooms)this.scoreRemote(node,rn);
+
+        this.sortRemotes(node);
+        node.remotesLoaded = true;
+    },
+    scoutRemotes:function(node){
+
+        if(node.inRecoveryMode)return;
+        let roomToScout = false;
+
+        for(let roomName in Memory.remotes[node.name]){
+            let remote = Memory.remotes[node.name][roomName];
+            if(!mb.hasRoom(roomName)){
+
+                roomToScout = roomName;
+
+                if(Game.rooms[roomName]){
+                    mb.scanRoom(roomName);
+                    console.log(node.name," Just scanned. Scoring")
+                    this.scoreRemote(node,roomName);
+                    this.sortRemotes(node);
+                }
+
+            }
+        }
+        if(roomToScout)this.scoutRoom(node.name,node.name+'-sc',roomToScout)
+
     },
     runRemotes:function(node){
         
        // return
-        if( !node.remotesLoaded ){
-            node.remotesLoaded = true;
+        this.detectRemotes(node);
+        this.scoutRemotes(node);
 
-             if(node.manual_ignoreRooms===undefined)node.manual_ignoreRooms = [];
-             if(node.manual_noRoads===undefined)node.manual_noRoads = [];
-             if(node.manual_addRooms===undefined)node.manual_addRooms = [];
-             
-            let adjRooms = Game.map.describeExits(node.coreRoomName);
-           
-            for(let dir in adjRooms){
-                dir = dir*1;
-                if(dir===TOP){
-                    let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
-                    if(adjRooms2[LEFT])node.remoteRoomNames.push(adjRooms2[LEFT])
-                    if(adjRooms2[RIGHT])node.remoteRoomNames.push(adjRooms2[RIGHT])
-                }
-                if(dir===BOTTOM){
-                    let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
-                    if(adjRooms2[LEFT])node.remoteRoomNames.push(adjRooms2[LEFT])
-                    if(adjRooms2[RIGHT])node.remoteRoomNames.push(adjRooms2[RIGHT])
-                }
-
-                node.remoteRoomNames.push(adjRooms[dir])
-            }
-            
-            if(node.manual_addRooms)for(let rn of node.manual_addRooms)node.remoteRoomNames.push(rn);
-            
-            console.log(node.name," remote boot up. Scoring")
-            for(let rn of node.remoteRoomNames){
-                this.scoreRemote(node,rn);
-            }
-            
-            this.sortRemotes(node);
-
-        }
-        
         if(Game.time%200==0)this.sortRemotes(node);
         
         let eCap =  Game.rooms[node.coreRoomName].energyCapacityAvailable;
@@ -707,172 +727,172 @@ module.exports = {
             // super hacky, just testing out remotes not building containers too early
             harvesterBodyPlan = harvesterBodyPlan.replace('1c','');
         }
-        
+
+        let reSortRemotes = false;
         for(let roomName of node.remoteRoomNames){
-            
+            let remoteMemory = Memory.remotes[node.name][roomName];
             // short term fix because invaderCores can be added after the fact and then not in cache
             if(Game.time%100===0)mb.scanRoom(roomName);
 
-            if(!mb.hasRoom(roomName)){
-                
-                if(!node.inRecoveryMode)this.scoutRoom(node.name,roomName+'-sc',roomName)
-                if(Game.rooms[roomName])
-                {
-                    mb.scanRoom(roomName);
-                    console.log(node.name," Just scanned. Scoring")
-                    this.scoreRemote(node,roomName);
-                }
-                
-            }else{
-                
-                if(!Memory.remotes[node.name])this.scoreRemote(node,roomName);
-                if(Memory.remotes[node.name][roomName].online==false)continue;
-                
-                if(Game.creeps[roomName+'-sc'])Game.creeps[roomName+'-sc'].suicide()
-                
-                let controller = mb.getControllerForRoom(roomName,false);
-                let srcs =  mb.getSources({roomNames:[roomName],requireVision:false});
-                let invadeCores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
-                let currConSiteCount = Object.keys(Game.constructionSites).length;
-                let pathsToMaintain = false;
-                
-                /////////////// Re-Score detection  ///////////////////////////////////////////////////////
-                if(node.manual_ignoreRooms.includes(roomName)){
-                    
-                     console.log(node.name," Room is now ignored. Rescoring")
-                     this.scoreRemote(node,roomName);
-                }
-                if(Game.rooms[roomName]){
-                     // console.log(node.name,roomName,Game.rooms[roomName].getInvaders().length," invaders detected. Rescoring")
-                    if(Game.rooms[roomName].getInvaders().length >= 1){
-                       console.log(node.name,roomName," invaders detected. Rescoring")
-                        this.scoreRemote(node,roomName);
-                    }
-                }
-                if(controller && controller.owner){
-                     console.log(node.name,roomName," Room has owner. Rescoring")
-                     this.scoreRemote(node,roomName);
-                }
-                if(invadeCores.length>0 && invadeCores[0].level>0){
-                     console.log(node.name,roomName," invadeCore detected. Rescoring")
-                     this.scoreRemote(node,roomName);
-                }
-                
-               
-                // rescore every 500t
-                if(Game.time%500==0 && controller.haveVision){
-                    console.log(node.name,roomName," Game.time%500. Rescoring")
-                    this.scoreRemote(node,roomName);
-                }
-                
-                /////////////// Defense  ///////////////////////////////////////////////////////
-                
-                // >>>>>> Kill Invaders / players >>>>>>>>>>>>>>>>
-                this.defendRoom(node.name,roomName+'-guard',roomName);
-
-        
-                if(srcs.length===3){      
-                   /* this.rotateCreep(roomName+'-sk-guard-', function(activeCreepName){
-                        //thing.constantGuardSKRoom(node.name,activeCreepName,roomName, ['658f1c709ddf0f005f9abd67','658f1c709ddf0f005f9abd64','658f1c709ddf0f005f9abd63'],'20m20a5h5m')
-                    },250)*/
-                    
-                }
-               
-                // >>>>>> Kill invaderCores >>>>>>>>>>>>>>>>
-                let invaderKillBodyPlan = "2a2m";
-                if(node.room().energyCapacityAvailable>=550){
-                    invaderKillBodyPlan = "3a3m";
-                }else if(node.room().energyCapacityAvailable>=800){
-                    invaderKillBodyPlan = "6a6m";
-                }else if(node.room().energyCapacityAvailable>=1300){
-                    invaderKillBodyPlan = "10a10m";
-                }
-                if(controller && invadeCores.length>0 && invadeCores[0].level===0){
-                    this.keepRoomClearOfLv0InvaderCores(node.name,roomName+'-a',invaderKillBodyPlan,roomName)
-                    this.keepRoomClearOfLv0InvaderCores(node.name,roomName+'-a2',invaderKillBodyPlan,roomName)
-                }
-                
-                
-                /////////////// Harvesters  ///////////////////////////////////////////////////////
-                let invaderReserved = false;
-                if(controller.reservation && controller.reservation.username!=='MadDokMike'){
-                    invaderReserved = controller.reservation.ticksToEnd;
-                }
-                
-                // if we have 3 srcs, we have a sk room
-                if(srcs.length===3 && eCap >=1300)
-                    harvesterBodyPlan="10w1c5m";
-                    
-                if(!invaderReserved && invadeCores.length===0){
-                    for(let src of srcs){
-                        
-                        
-                        this.harvestPoint(node.name,roomName+'-'+src.pos.x+'-'+src.pos.y+'-h',harvesterBodyPlan,src);
-                        
-                        if(src.haveVision && src.getMeta().pathed){
-                            pathsToMaintain=true;
-                        }
-    
-                        if(src.haveVision && Game.time%1000===0 && currConSiteCount ===0)src.setMetaAttr('pathed',false);
-                        
-                        let conSpace = 100-currConSiteCount;
-                         
-                        if(src.haveVision && !node.manual_noRoads.includes(roomName) && !src.getMeta().pathed && src.haveContainer() && currConSiteCount<15 && node.controller().level>3){
-                            let to = src.getStandingSpot();
-                            if(to){
-                                let result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{
-                                    swampCost:3,plainCost:2,maxOps:10000,
-                                     roomCallback: function(roomName) {
-                                         let costMatrix = new PathFinder.CostMatrix;
-                                         
-                                         let structs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_ROAD]})
-                                         for(let struct of structs){
-                                             costMatrix.set(struct.pos.x, struct.pos.y, 1);
-                                         }
-                                         return costMatrix;
-                                     }
-                                    
-                                });
-                                
-                                if(src.haveVision && result.path.length<(100-currConSiteCount) ){
-                                    for(let pos of result.path){
-                                        let pos2 = rp(pos.x,pos.y,pos.roomName);
-                                        if(pos2 && pos2.isWalkable())
-                                            pos2.createConstructionSite(STRUCTURE_ROAD);
-                                    }
-                                    src.setMetaAttr('pathed',true);
-                                    currConSiteCount+=result.path.length
-                                }
-                                //clog(result.path.length,"Remote path: "+src.pos)
-                            }
-                        }
-                    }
-                }
-                
-                /////////////// Others  ///////////////////////////////////////////////////////
-                
-                if(!node.manual_noRoads.includes(roomName) && invadeCores.length===0 && pathsToMaintain && node.controller().level>=3)
-                    this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m');
-                    
-                if(srcs.length===3){
-                    this.pickupSKRoomDrops(node.name,roomName+'-scav',roomName,'5*1c1m')
-                }
-                
-               
-                
-                
-                /////////////// Reserever  ///////////////////////////////////////////////////////
-                if(controller && ( Memory.remotes[node.name][roomName].controllerDistance<50 || srcs.length==2 )  && eCap>=650){
-                    let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
-                  
-                    this.reserverRoom(node.name,roomName+'-cl',controller,bodyPlan)
-                    if(invaderReserved || invadeCores.length>0){
-                        this.reserverRoom(node.name,roomName+'-cl2',controller,bodyPlan)
-                    }
-                }
-                
+            if(remoteMemory.online==false){
+                // if this happens, then a remote got shutdown from some dyanamic action. need to find new best remotes
+                reSortRemotes=true;
+                continue;
             }
+
+            let controller = mb.getControllerForRoom(roomName,false);
+            let srcs =  mb.getSources({roomNames:[roomName],requireVision:false});
+            let invadeCores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
+            let currConSiteCount = Object.keys(Game.constructionSites).length;
+            let pathsToMaintain = false;
+
+            /////////////// Re-Score detection  ///////////////////////////////////////////////////////
+            if(node.manual_ignoreRooms.includes(roomName)){
+
+                 console.log(node.name," Room is now ignored. Rescoring")
+                 this.scoreRemote(node,roomName);
+                reSortRemotes=true;
+            }
+            if(Game.rooms[roomName]){
+                 // console.log(node.name,roomName,Game.rooms[roomName].getInvaders().length," invaders detected. Rescoring")
+                if(Game.rooms[roomName].getInvaders().length >= 1){
+                   console.log(node.name,roomName," invaders detected. Rescoring")
+                    this.scoreRemote(node,roomName);
+                    reSortRemotes=true;
+                }
+            }
+            if(controller && controller.owner){
+                 console.log(node.name,roomName," Room has owner. Rescoring")
+                 this.scoreRemote(node,roomName);
+                reSortRemotes=true;
+            }
+            if(invadeCores.length>0 && invadeCores[0].level>0){
+                 console.log(node.name,roomName," invadeCore detected. Rescoring")
+                 this.scoreRemote(node,roomName);
+                reSortRemotes=true;
+            }
+
+
+            // rescore every 500t
+            if(Game.time%500==0 && controller.haveVision){
+                console.log(node.name,roomName," Game.time%500. Rescoring")
+                this.scoreRemote(node,roomName);
+                reSortRemotes=true;
+            }
+
+            /////////////// Defense  ///////////////////////////////////////////////////////
+
+            // >>>>>> Kill Invaders / players >>>>>>>>>>>>>>>>
+            this.defendRoom(node.name,roomName+'-guard',roomName);
+
+
+            if(srcs.length===3){
+               /* this.rotateCreep(roomName+'-sk-guard-', function(activeCreepName){
+                    //thing.constantGuardSKRoom(node.name,activeCreepName,roomName, ['658f1c709ddf0f005f9abd67','658f1c709ddf0f005f9abd64','658f1c709ddf0f005f9abd63'],'20m20a5h5m')
+                },250)*/
+
+            }
+
+            // >>>>>> Kill invaderCores >>>>>>>>>>>>>>>>
+            let invaderKillBodyPlan = "2a2m";
+            if(node.room().energyCapacityAvailable>=550){
+                invaderKillBodyPlan = "3a3m";
+            }else if(node.room().energyCapacityAvailable>=800){
+                invaderKillBodyPlan = "6a6m";
+            }else if(node.room().energyCapacityAvailable>=1300){
+                invaderKillBodyPlan = "10a10m";
+            }
+            if(controller && invadeCores.length>0 && invadeCores[0].level===0){
+                this.keepRoomClearOfLv0InvaderCores(node.name,roomName+'-a',invaderKillBodyPlan,roomName)
+                this.keepRoomClearOfLv0InvaderCores(node.name,roomName+'-a2',invaderKillBodyPlan,roomName)
+            }
+
+
+            /////////////// Harvesters  ///////////////////////////////////////////////////////
+            let invaderReserved = false;
+            if(controller.reservation && controller.reservation.username!=='MadDokMike'){
+                invaderReserved = controller.reservation.ticksToEnd;
+            }
+
+            // if we have 3 srcs, we have a sk room
+            if(srcs.length===3 && eCap >=1300)
+                harvesterBodyPlan="10w1c5m";
+
+            if(!invaderReserved && invadeCores.length===0){
+                for(let src of srcs){
+
+
+                    this.harvestPoint(node.name,roomName+'-'+src.pos.x+'-'+src.pos.y+'-h',harvesterBodyPlan,src);
+
+                    if(src.haveVision && src.getMeta().pathed){
+                        pathsToMaintain=true;
+                    }
+
+                    if(src.haveVision && Game.time%1000===0 && currConSiteCount ===0)src.setMetaAttr('pathed',false);
+
+                    let conSpace = 100-currConSiteCount;
+
+                    if(src.haveVision && !node.manual_noRoads.includes(roomName) && !src.getMeta().pathed && src.haveContainer() && currConSiteCount<15 && node.controller().level>3){
+                        let to = src.getStandingSpot();
+                        if(to){
+                            let result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{
+                                swampCost:3,plainCost:2,maxOps:10000,
+                                 roomCallback: function(roomName) {
+                                     let costMatrix = new PathFinder.CostMatrix;
+
+                                     let structs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_ROAD]})
+                                     for(let struct of structs){
+                                         costMatrix.set(struct.pos.x, struct.pos.y, 1);
+                                     }
+                                     return costMatrix;
+                                 }
+
+                            });
+
+                            if(src.haveVision && result.path.length<(100-currConSiteCount) ){
+                                for(let pos of result.path){
+                                    let pos2 = rp(pos.x,pos.y,pos.roomName);
+                                    if(pos2 && pos2.isWalkable())
+                                        pos2.createConstructionSite(STRUCTURE_ROAD);
+                                }
+                                src.setMetaAttr('pathed',true);
+                                currConSiteCount+=result.path.length
+                            }
+                            //clog(result.path.length,"Remote path: "+src.pos)
+                        }
+                    }
+                }
+            }
+
+            /////////////// Others  ///////////////////////////////////////////////////////
+
+            if(!node.manual_noRoads.includes(roomName) && invadeCores.length===0 && pathsToMaintain && node.controller().level>=3)
+                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m');
+
+            if(srcs.length===3){
+                this.pickupSKRoomDrops(node.name,roomName+'-scav',roomName,'5*1c1m')
+            }
+
+
+
+
+            /////////////// Reserever  ///////////////////////////////////////////////////////
+            // only reserve the first 3 priority remotes.
+            if(controller && ( remoteMemory.controllerDistance<50 || srcs.length==2 )  && eCap>=650){
+                let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
+
+                let keepSpawning = (invaderReserved>0 || (controller.haveVision && (!controller.reservation || controller.reservation.ticksToEnd<2500 ) ) )
+
+                this.reserverRoom(node.name,roomName+'-cl',controller,bodyPlan,false,keepSpawning)
+                if(invaderReserved || invadeCores.length>0){
+                    this.reserverRoom(node.name,roomName+'-cl2',controller,bodyPlan)
+                }
+            }
+
+
         }
+
+        if(reSortRemotes)this.sortRemotes(node);
     },
     /**
      * remove walls that have later ended up with a structure on then
@@ -2950,11 +2970,11 @@ module.exports = {
             
         }
     },
-    reserverRoom:function(spawnName,cname,target,bodyPlan='2cl2m',attemptClaim=false){
+    reserverRoom:function(spawnName,cname,target,bodyPlan='2cl2m',attemptClaim=false,keepSpawning=true){
         
         let controller = Game.getObjectById(target.id);
         if(!Game.creeps[cname] && (!controller || (controller.level<1) ) ){
-            Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
+            this.queueSpawn(spawnName,cname,bodyPlan,{},keepSpawning);
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];

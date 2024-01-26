@@ -69,7 +69,7 @@ var roleHarvester = {
        if(!src){creep.say("!src");return;}
        
 
-       if(this.runRampartCode(creep,src)===OK){
+       if(this.runRampartCode(creep,src,config)===OK){
            return OK;
        }
         
@@ -104,7 +104,7 @@ var roleHarvester = {
        return;
 
    },
-   runRampartCode:function(creep,src){
+   runRampartCode:function(creep,src,config){
        
         if(creep.memory.rampart_ids===undefined){
             if(src && creep.pos.isNearTo(src)){
