@@ -4,7 +4,7 @@
   "description": "my screeps bot",
   "main": "main.js",
   "scripts": {
-    "start": "node index.js",
+    "config": "cp _server_config.example.js src/_server_config.js",
     "test": "jest"
   },
   "repository": {

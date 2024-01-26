@@ -44,8 +44,10 @@ global.logs = {
                 }
                 
                 let spawns = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_SPAWN]});
+                if(spawns.length===0)continue;
                 //console.log(roomName,spawns)
                 let n = spawns[0].name.charAt(0).toLowerCase();
+                if(!nodes[n])continue;
                 if( nodes[n].allSourcesBuilt && !Memory.logs.rclSpeedStats[roomName][ 'SrcsBuilt' ] ){
                     let previous = Memory.logs.rclSpeedStats[roomName][ 'RCL1' ];
                     

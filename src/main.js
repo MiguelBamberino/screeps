@@ -76,9 +76,10 @@ for(let n in nodes){
 }
 
 module.exports.loop = function () {
-    if(!_SERVER_CONFIG)return;
+    if(!_SERVER_CONFIG){console.log("No _SERVER_CONFIG");return}
+    _SERVER_CONFIG.detectRespawn();
     _memHak.pretick();
-    _SERVER_CONFIG.detectRespawn()
+
     //if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
 
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])

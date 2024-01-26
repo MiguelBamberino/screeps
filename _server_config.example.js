@@ -1,5 +1,5 @@
 console.log("LOADING... _server_config")
-
+// hello world
 gui.nodeStats = true;
 gui.remoteStats = true;
 gui.speedRunStats = true;
@@ -11,20 +11,26 @@ logs.runRCLSpeedStats = true;
 // mb.createMapRoute(['W41N53','W40N53','W40N52','W39N52'])
 
 let loader = {
-    alpha_id:'',
+    allowRespawnDetection:true,
+    spawn_id:'',
     loadNodes(){
         nodes.a  = new RoomNode('Alpha',{buildFast:true,upgradeRate:RATE_VERY_FAST});
     },
     detectRespawn(){
-
-        if(Game.spawns['Alpha']){
-            if(this.alpha_id && this.alpha_id!==Game.spawns['Alpha'].id){
-                console.log("RESPAWN Detected...")
-                this.alpha_id = Game.spawns['Alpha'].id;
-                this.resetData();
-            }
-            this.alpha_id = Game.spawns['Alpha'].id;
+        let mainSpawnID = false;
+        for(let name in Game.spawns){
+            mainSpawnID = Game.spawns[name].id;
+            break;
         }
+        if(!this.spawn_id){
+            this.spawn_id = mainSpawnID;
+        }
+        if(this.allowRespawnDetection && this.spawn_id !== mainSpawnID ){
+            console.log("RESPAWN Detected...",mainSpawnID,"!=",this.spawn_id)
+            this.spawn_id = mainSpawnID;
+            this.resetData();
+        }
+
 
     },
     resetData(){

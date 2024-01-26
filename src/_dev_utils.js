@@ -117,7 +117,7 @@ StructureTerminal.prototype.sendX=function(resource,amount,toClusterName){
     return this.send(resource,amount,Game.spawns[toClusterName].pos.roomName)
 }
 global.util = {
-    
+
     loadServer: function(){
         
         try{
@@ -129,7 +129,9 @@ global.util = {
             console.log(error)
         }
     },
-    
+    resetData:function (){
+        _SERVER_CONFIG.resetData();
+    },
     getServerName:function(){
         if(Game.rooms['sim'])return'sim';
         if(Game.shard.name==='DESKTOP-F9T2DG5')return 'private';
