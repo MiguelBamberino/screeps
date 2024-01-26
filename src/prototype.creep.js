@@ -437,8 +437,10 @@
 	Creep.prototype.getDropFromRemoteSources=function(roomNames=[],minDraw=50){
 	     let drop = Game.getObjectById(this.memory.drop_id);
 	    if(drop)return drop;
-	    
-	    let shuffledRoomNames = roomNames.sort(() => Math.random() - 0.5)
+	    let copyNames = [];
+        for(let n of roomNames)copyNames.push(n)
+	    let shuffledRoomNames = copyNames.sort(() => Math.random() - 0.5)
+
 	    for(let roomName of shuffledRoomNames){
 	        
 	        drop = this.getDropFromLocalSources(50,roomName);

@@ -259,7 +259,7 @@ global.gui = {
             for( let i in node.remoteRoomNames){
                 remoteFlip[ node.remoteRoomNames[i] ] = i;
             }
-            
+
             for(let remoteRN in Memory.remotes[node.name] ){
                 let details = Memory.remotes[node.name][remoteRN];
                 

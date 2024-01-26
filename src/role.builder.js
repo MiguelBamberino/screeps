@@ -108,12 +108,12 @@ var role = {
 	    else if(creep.isCollecting()){
 
 
-            if(Game.creeps[creep.memory.waitFor]){
+            /*if(Game.creeps[creep.memory.waitFor] && Game.creeps[creep.memory.waitFor].memory.giveTo === creep.name ){
                 return creep.say("wait");
             }else{
                 // must have died. rip
                 creep.memory.waitFor = false;
-            }
+            }*/
 
 	        if(config.controller.level <=3 ){
                 

@@ -39,7 +39,11 @@ var roleTanker = {
 	    if(creep.isWorking()) {
 	        
 	         if(!config.spawnFastFillerReady && Game.spawns[config.name].haveSpaceFor(20)){
-	             
+
+                 if(Game.creeps[creep.memory.giveTo])
+                     Game.creeps[creep.memory.giveTo].memory.waitFor = false;
+
+                 creep.memory.giveTo = false;
                 return creep.actOrMoveTo("transfer",Game.spawns[config.name],RESOURCE_ENERGY);
 	         }
 	         

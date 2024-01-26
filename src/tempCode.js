@@ -643,8 +643,9 @@ module.exports = {
         Memory.remotes[node.name][roomName].reason = "scored";
     },
     sortRemotes:function(node){
-        
+        console.log(node.name," remote sorting...")
         let toSorted = [];
+        node.remoteRoomNames = [];
         if(Memory.remotes && Memory.remotes[node.name]){
             // Sort the object entries by the score and map to get only the keys (room names)
             for(let rn in Memory.remotes[node.name]){
@@ -715,7 +716,7 @@ module.exports = {
         this.detectRemotes(node);
         this.scoutRemotes(node);
 
-        if(Game.time%200==0)this.sortRemotes(node);
+        //if(Game.time%200==0)this.sortRemotes(node);
         
         let eCap =  Game.rooms[node.coreRoomName].energyCapacityAvailable;
         harvyECap = eCap;
@@ -736,6 +737,7 @@ module.exports = {
 
             if(remoteMemory.online==false){
                 // if this happens, then a remote got shutdown from some dyanamic action. need to find new best remotes
+                console.log(node.name,roomName," remote went offline. resort")
                 reSortRemotes=true;
                 continue;
             }
@@ -892,7 +894,11 @@ module.exports = {
 
         }
 
-        if(reSortRemotes)this.sortRemotes(node);
+        if(reSortRemotes){
+            console.log(node.name,"Resort requested")
+            this.sortRemotes(node);
+        }
+
     },
     /**
      * remove walls that have later ended up with a structure on then

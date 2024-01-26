@@ -725,14 +725,14 @@ class RoomNode{
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     allRoomNames(){
  
-        let activeRemotes  = [];
+       /* let activeRemotes  = [];
         if(Memory.invaderSeen===undefined)Memory.invaderSeen={}
         for(let roomName of this.remoteRoomNames){
             if( Memory.invaderSeen[roomName]==undefined || Memory.invaderSeen[roomName]< Game.time){
                 activeRemotes.push(roomName)
             }
-        }
-        return [this.coreRoomName,...activeRemotes];
+        }*/
+        return [this.coreRoomName,...this.remoteRoomNames];
     }
         
     storage(){
