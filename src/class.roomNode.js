@@ -987,7 +987,10 @@ class RoomNode{
 
 
         this.workforce_quota.worker.required = this.allSourcesBuilt?1:0;
-        
+        // we dont need need the workers, but trying it out if the extra worker helps clean up dropped E efficiency
+        if(controller.level>1 && controller.level<5 && (this.buildFast || (this.upgradeRate===RATE_FAST|| this.upgradeRate===RATE_VERY_FAST) ))
+            this.workforce_quota.worker.required++;
+
         this.workforce_quota.harvester.required = this.coreRoomSourcesCount;
         let rclECap = Game.rooms[this.coreRoomName].energyCapacityAvailable; 
         if(rclECap<800){
@@ -1046,8 +1049,8 @@ class RoomNode{
         // how many builders do we spawn, per X surplus, at each RCL, given builders can consume E quicker at higher RCL
         let tankerPerXSurplus_PerRCL= [
                 9999999999, // RCL0
-                250, // RCL1
-                400, // RCL2
+                200, // RCL1
+                350, // RCL2
                 600, // RCL3
                 1000, // RCL4
                 1500, // RCL5

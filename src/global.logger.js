@@ -64,6 +64,11 @@ global.logs = {
                     
                     Memory.logs.rclSpeedStats[roomName]['rdy2Upg'] ={time:Game.time,duration:0,arrivedIn: (Game.time-previous.time),sinceStart: (Game.time-previous.time) }
                 }
+                if(Game.rooms[roomName].storage && !Memory.logs.rclSpeedStats[roomName][ 'storage' ] ){
+                    let previous = Memory.logs.rclSpeedStats[roomName][ 'RCL1' ];
+                    
+                    Memory.logs.rclSpeedStats[roomName]['storage'] ={time:Game.time,duration:0,arrivedIn: (Game.time-previous.time),sinceStart: (Game.time-previous.time) }
+                }
             }
         }
     },

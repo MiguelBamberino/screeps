@@ -9,11 +9,11 @@ module.exports = {
     includeHeadings:false,
     colConfig:{},
     on:function(){
-        console.log("GUI ["+this.title+"] loading. Please wait...");
+       // console.log("GUI ["+this.title+"] loading. Please wait...");
         this.display = true;
     },
     off:function(){
-        console.log("GUI ["+this.title+"] closing. Please wait...");
+        //console.log("GUI ["+this.title+"] closing. Please wait...");
         this.display = false;
     },
     atCoords:function(a,b){

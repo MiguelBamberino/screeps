@@ -655,7 +655,7 @@ module.exports = {
             	}
             }
             let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
-            for(let i=0; i<4;i++)node.remoteRoomNames.push(available[i]);
+            for(let i=0; i<3;i++)node.remoteRoomNames.push(available[i]);
         }
     },
     detectRemotes:function(node){
@@ -724,7 +724,8 @@ module.exports = {
         let conf = node.getConfig();
 
          let harvesterBodyPlan = harvesterRole.getParts(harvyECap,{});
-        if(Game.rooms[node.coreRoomName].controller.level<4){
+        if(!Game.rooms[node.coreRoomName].storage){
+            //if(Game.rooms[node.coreRoomName].controller.level<4){
             // super hacky, just testing out remotes not building containers too early
             harvesterBodyPlan = harvesterBodyPlan.replace('1c','');
         }

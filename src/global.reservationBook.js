@@ -13,7 +13,7 @@ global.reservationBook = {
             let structure = Game.getObjectById(id);
             if(!structure){
                     
-                clog("Structure disappeared. Deleting reservation book id:"+id,Game.time);
+                //clog("Structure disappeared. Deleting reservation book id:"+id,Game.time);
                 delete Memory.reservationBook[id];
                 continue;
             }
@@ -33,7 +33,7 @@ global.reservationBook = {
                 for(let cname in Memory.reservationBook[id][type].reserves){
                     if(cname==='lock')continue;
                     if(!Game.creeps[cname]){
-                        logs.log("Death","Releasing reserves of "+cname+" because they died.")
+                        //logs.log("Death","Releasing reserves of "+cname+" because they died.")
                         Memory.reservationBook[id][type].totalReserved-=Memory.reservationBook[id][type].reserves[cname];
                         delete Memory.reservationBook[id][type].reserves[cname];
                     }

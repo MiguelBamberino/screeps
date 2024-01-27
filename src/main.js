@@ -1,4 +1,7 @@
 global.BOT_VERSION='19.5';
+console.log("-----------------------------------------------")
+console.log("Global Reset:",Game.time)
+console.log("-----------------------------------------------")
 
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
 if(!Memory.creeps) { Memory.creeps = {}; }
@@ -77,8 +80,8 @@ for(let n in nodes){
 
 module.exports.loop = function () {
     if(!_SERVER_CONFIG){console.log("No _SERVER_CONFIG");return}
-    _SERVER_CONFIG.detectRespawn();
     _memHak.pretick();
+    _SERVER_CONFIG.detectRespawn();
 
     //if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
 
