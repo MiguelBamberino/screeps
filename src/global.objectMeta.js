@@ -12,7 +12,7 @@ global.checkDeletedObjects=function(){
             missingCount++;
         }
     }
-    clog("CPU:"+(Game.cpu.getUsed()-start),'ObjectMeta Cleanup. Records deleted '+missingCount)
+   // clog("CPU:"+(Game.cpu.getUsed()-start),'ObjectMeta Cleanup. Records deleted '+missingCount)
 }
 checkDeletedObjects()
 //#######################################################

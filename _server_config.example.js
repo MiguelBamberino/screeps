@@ -11,7 +11,7 @@ logs.runRCLSpeedStats = true;
 // mb.createMapRoute(['W41N53','W40N53','W40N52','W39N52'])
 
 let loader = {
-    allowRespawnDetection:true,
+    allowRespawnDetection:false,
     spawn_id:'',
     loadNodes(){
         nodes.a  = new RoomNode('Alpha',{buildFast:true,upgradeRate:RATE_VERY_FAST});

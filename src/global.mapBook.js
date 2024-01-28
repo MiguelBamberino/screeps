@@ -73,6 +73,9 @@ global.mb = {
                 rooms:{}
             };
         }
+        if(!Memory.mapBook.rooms){
+            Memory.mapBook.rooms={}
+        }
         
         for(let roomName in Game.rooms){
             if(this.havePermanentVision(roomName)){

@@ -19,12 +19,12 @@ global.gui = {
     renderRooms:[],
     on: function(){
         this.display=true;
-        console.log("GUI loading. Please wait...");
-        console.log("run gui.help() for options.");
+       // console.log("GUI loading. Please wait...");
+        //console.log("run gui.help() for options.");
     },
     off: function(){
         this.display=false;
-         console.log("GUI closing. Please wait...");
+         //console.log("GUI closing. Please wait...");
     },
     help:function(){
         console.log('===== GUI Options =====');
@@ -55,7 +55,7 @@ global.gui = {
         
 
         this.summary = Object.create( require('global.GUI.partial'));
-        this.summary.headingConfig("Overview - V"+Memory.VERSION,true,{tick:3,reset:3,elapsed:2,cpu:2,memCPU:3,serverSpeed:3,bucket:2,rstCPU:2,heapUsed:2});
+        this.summary.headingConfig("Overview",true,{tick:3,reset:3,elapsed:2,cpu:2,memCPU:3,serverSpeed:3,bucket:2,rstCPU:2,heapUsed:2});
         this.summary.setRooms(this.renderRooms);
         
         this.summary.atCoords(18,1);
@@ -190,7 +190,7 @@ global.gui = {
                     
                 data.push({label:label,tick:stat.time,duration:stat.duration,arrivedIn:stat.arrivedIn,sinceStart:stat.sinceStart});
             }
-            Game.rooms[roomName].renderGUITable(rp(1,1,roomName),data,false,true,{label:2,tick:2,duration:2,arrivedIn:2,sinceStart:2});
+            Game.rooms[roomName].renderGUITable(rp(30,30,roomName),data,false,true,{label:2,tick:2,duration:2,arrivedIn:2,sinceStart:2});
             
         }
     },

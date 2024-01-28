@@ -36,8 +36,7 @@ var role = {
        // if(creep.name=='I-wo-0')clog(creep.memory.reserve_id,'rexer_id at start')
         
         if(creep.isWorking()){
-            
-            
+
             if(controller.ticksToDowngrade<1000){
                 return creep.actOrMoveTo("upgradeController",controller);
             }
@@ -65,8 +64,7 @@ var role = {
                 if(target){
                     return creep.actOrMoveTo("transferX",target,RESOURCE_ENERGY);
                 }
- 
-            
+
             }
             if(controller.level==1){
                 return creep.actOrMoveTo("upgradeController",controller);
@@ -99,14 +97,10 @@ var role = {
             
         }else if(creep.isCollecting()){
 
-            if(!config.allSourcesBuilt){
+            // at low levels, run clean up services
+            if(config.controller.level<5){
                 
-                let drop = creep.getDropFromLocalSources(25);
-
-                if(!drop){
-                    drop = creep.getDroppedEnergy(100)
-                }
-
+                let drop = creep.getDroppedEnergy(50);
                 if(drop ){
                     return creep.actOrMoveTo("pickup",drop);
                 }
