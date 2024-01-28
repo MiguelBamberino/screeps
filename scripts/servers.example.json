@@ -1,0 +1,10 @@
+{
+    "mmo":{
+        "protocol":"https/http",
+        "hostname":"screeps.com",
+        "port":"443",
+        "token": " token / email+password",
+        "email":"bob",
+        "password":"password 123"
+    }
+}

@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "config": "cp _server_config.example.js src/_server_config.js",
-    "test": "jest"
+    "test": "jest",
+    "deploy": "node ./scripts/push_code.js",
+    "client": "screepers-steamless-client --package ./scripts/package.nw"
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,10 @@
   },
   "homepage": "https://github.com/yourusername/your-project-name#readme",
   "devDependencies": {
+    "screepers-steamless-client": "^1.2.5",
     "@screeps/common": "github:screeps/common",
     "jest": "^26.0.0"
+  },
+  "dependencies": {
   }
 }
