@@ -8,7 +8,7 @@ $serverName = 'https://screeps.com/';
 $client = new \GuzzleHttp\Client(['base_uri' => $serverName/*, 'http_errors' => false*/]);
 $options = [
     'headers' => ['Accept' => 'application/json','Content-Type'=>'application/json'],
-    'query' => ['_token'=>'c8bb2547-cb51-4f0a-b475-213cd12c3705'],
+    'query' => ['_token'=>'token-here'],
 ];
 
 
