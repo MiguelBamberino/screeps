@@ -46,7 +46,11 @@ var roleTanker = {
                  creep.memory.giveTo = false;
                 return creep.actOrMoveTo("transfer",Game.spawns[config.name],RESOURCE_ENERGY);
 	         }
-	         
+
+             // don't find a work target until we are in the room, to stop reserving on structures when really far away
+             if(creep.pos.roomName!==config.coreRoomName){
+                 return creep.moveToPos(Game.spawns[config.name]);
+             }
 	         
 	    
 	        if( creep.memory.giveTo){
@@ -230,14 +234,14 @@ var roleTanker = {
                 }
 
 	            if(!drop){
-	                drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
+                    if(creep.ticksToLive>100)drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
                     if(!drop){
                         drop = creep.getDropFromLocalSources();
                     }
 	            }
 	            if(drop){
 	                creep.memory.reserve_id = false;
-	                creep.say("🫴")
+	                //creep.say("🫴")
                     return creep.actOrMoveTo("pickup",drop);
 	            }
 	           // return;

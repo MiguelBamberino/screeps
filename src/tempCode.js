@@ -725,7 +725,7 @@ module.exports = {
 
          let harvesterBodyPlan = harvesterRole.getParts(harvyECap,{});
         if(!Game.rooms[node.coreRoomName].storage){
-            //if(Game.rooms[node.coreRoomName].controller.level<4){
+           // if(Game.rooms[node.coreRoomName].controller.level<3){
             // super hacky, just testing out remotes not building containers too early
             harvesterBodyPlan = harvesterBodyPlan.replace('1c','');
         }
