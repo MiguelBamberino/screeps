@@ -1,4 +1,5 @@
 const ExtractorComplex = require('./class.complex.extractor');
+const BaseCoreComplex = require('./class.complex.base-core');
 
 var creepRoles ={
     worker:require('./role.worker'),
@@ -62,6 +63,7 @@ class RoomNode{
         this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
         
         // options
+        this.allowCPUShutdown = options.allowCPUShutdown===undefined?false:options.allowCPUShutdown;
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
         this.extraFastFillSpots = options.extraFastFillSpots===undefined?[]:options.extraFastFillSpots;
         
@@ -93,7 +95,10 @@ class RoomNode{
         if(this.trader){
             this.orders = this.trader.getOrderIDsByRoomName(this.coreRoomName);
         }
-        
+
+        this.coreComplex = new BaseCoreComplex(Game.spawns[this.name].pos,this.spawnFacing)
+        this.coreComplex.turnOn();
+
         if(this.labComplex){
             
             if(this.boostResources.length>0){
@@ -179,7 +184,9 @@ class RoomNode{
             //logs.startCPUTracker(this.name+':checkCache');
         this.checkCache();
             //logs.stopCPUTracker(this.name+':checkCache');
-        
+        this.coreComplex.runTick()
+
+
            // logs.startCPUTracker(this.name+':decideWorkforceQuotas');
         this.decideWorkforceQuotas();
             //logs.stopCPUTracker(this.name+':decideWorkforceQuotas');
@@ -559,14 +566,15 @@ class RoomNode{
             this.energySurplus = this.haveStorage?storage.store.getUsedCapacity(RESOURCE_ENERGY) :this.totalEnergyAtSources;
         }
         ////////////////////////////////////////////////////////////////////////
-       
+
         //// Spawn Fast Filler Ready ////////////////////////////////////////////
         // Check if main spawn is ready to use fast filler
         // this should stay cached once true, because it shouldn't change unless the room is invaded and destroyed
         if(Game.time%10===0 && this.spawnFastFillerReady==false)this.spawnFastFillerReady=undefined;
         if(this.spawnFastFillerReady===undefined){
-            let structures = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER,STRUCTURE_STORAGE]});    
-            //let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
+            let structures = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER,STRUCTURE_STORAGE]});
+            console.log(structures)
+            let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
             this.spawnFastFillerReady=false;
             for(let container of structures){
                 if(Game.spawns[this.name] && Game.spawns[this.name].pos.getRangeTo(container)<3 /*&& exts.length>=5*/ ){
@@ -576,8 +584,10 @@ class RoomNode{
                     this.spawnFastFillerReady=true;break;
                 }
             }
-        }
 
+        }
+        if(this.spawnFastFillerReady && exts.length>=5)
+            mb.addConstruction(this.controller().getStandingSpot(),STRUCTURE_CONTAINER);
 
         
         //// Stats about room Sources ////////////////////////////////////////////

@@ -689,7 +689,7 @@ module.exports = {
     },
     scoutRemotes:function(node){
 
-        if(node.inRecoveryMode)return;
+        if(node.inRecoveryMode!==false)return;
         let roomToScout = false;
 
         for(let roomName in Memory.remotes[node.name]){
@@ -1039,10 +1039,10 @@ module.exports = {
     
     manageConstructionSites:function(node){
         
-        if(node.controller().level==1)this.buildAtRCL1(node)
-        if(node.controller().level==2)this.buildAtRCL2(node)
-        if(node.controller().level==3)this.buildAtRCL3(node)
-        if(node.controller().level==4)this.buildAtRCL4(node)
+        //if(node.controller().level==1)this.buildAtRCL1(node)
+        //if(node.controller().level==2)this.buildAtRCL2(node)
+       // if(node.controller().level==3)this.buildAtRCL3(node)
+       // if(node.controller().level==4)this.buildAtRCL4(node)
         if(node.controller().level==5)this.buildAtRCL5(node)
         if(node.controller().level==6)this.buildAtRCL6(node)
         if(node.controller().level==7)this.buildAtRCL7(node)

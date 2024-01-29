@@ -44,8 +44,15 @@ function pushCodeToServer(){
                 branch: branch,
                 modules: buildModuleObject()
             };
+        let serverConfFilePath = './serverConfigs/'+serverRef+'.js';
         //console.log(data)
-        console.log("-------------------------------------------");
+    try{
+        data.modules['_server_config'] = fs.readFileSync(serverConfFilePath,'utf8');
+    }catch (e){
+        console.error("ERROR: no _server_config file for ",serverRef," at ",serverConfFilePath)
+        return;
+    }
+    console.log("-------------------------------------------");
         let options = {
             hostname: config.hostname,
             port: config.port,
