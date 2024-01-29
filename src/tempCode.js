@@ -677,8 +677,8 @@ module.exports = {
             }
             if(dir===LEFT){
                 let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
-                if(adjRooms2[TOP])this.scoreRemote(node,adjRooms2[LEFT]);
-                if(adjRooms2[BOTTOM])this.scoreRemote(node,adjRooms2[RIGHT]);
+                if(adjRooms2[TOP])this.scoreRemote(node,adjRooms2[TOP]);
+                if(adjRooms2[BOTTOM])this.scoreRemote(node,adjRooms2[BOTTOM]);
             }
             if(dir===BOTTOM){
                 let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
@@ -687,8 +687,8 @@ module.exports = {
             }
             if(dir===RIGHT){
                 let adjRooms2 = Game.map.describeExits(adjRooms[dir]);
-                if(adjRooms2[TOP])this.scoreRemote(node,adjRooms2[LEFT]);
-                if(adjRooms2[BOTTOM])this.scoreRemote(node,adjRooms2[RIGHT]);
+                if(adjRooms2[TOP])this.scoreRemote(node,adjRooms2[TOP]);
+                if(adjRooms2[BOTTOM])this.scoreRemote(node,adjRooms2[BOTTOM]);
             }
             this.scoreRemote(node,adjRooms[dir]);
         }
