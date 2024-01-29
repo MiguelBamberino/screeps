@@ -143,7 +143,9 @@ class AbstractComplex{
     room(){
         return Game.rooms[this.anchor.roomName];
     }
-    
+    controller(){
+        return this.room().controller;
+    }
     ////////////////////////////////////////////////////////////////////
     // Template Design Pattern: 
     ////////////////////////////////////////////////////////////////////

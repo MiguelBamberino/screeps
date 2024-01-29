@@ -229,7 +229,7 @@ var roleTanker = {
 	    }
 	    else if(creep.isCollecting()){
 	        
-	        if(!Game.rooms[config.coreRoomName].storage){
+	        if(!Game.rooms[config.coreRoomName].storage && !creep.memory.reserve_id){
 	            let drop = false;
 
                 if(config.inRecoveryMode){
@@ -247,7 +247,7 @@ var roleTanker = {
                     }
 	            }
 	            if(drop){
-	                creep.memory.reserve_id = false;
+	                //creep.memory.reserve_id = false;
 	                //creep.say("🫴")
                     return creep.actOrMoveTo("pickup",drop);
 	            }

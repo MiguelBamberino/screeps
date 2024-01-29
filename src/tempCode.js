@@ -895,7 +895,7 @@ module.exports = {
 
         }
 
-        if(reSortRemotes && (!this.lastSort || (Game.time-this.lastSort)>50 )){
+        if(reSortRemotes && (!this.lastSort || (Game.time-this.lastSort)>100 )){
             console.log(node.name,"Resort requested")
             this.sortRemotes(node);
             this.lastSort= Game.time;

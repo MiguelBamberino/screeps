@@ -1,14 +1,133 @@
 const AbstractComplex = require('class.complex.abstract')
-
+const fillerRole = require('./role.filler');
 module.exports = class BaseCoreComplex extends AbstractComplex{
 
-    constructor(anchor,facing, draft=false){
+    constructor(anchor,spawnName, facing, draft=false){
         super(anchor,facing,draft);
-
         this.haulJob=false;
+        this.config = {}
+        this.name = spawnName;
+        this.extraFastFillSpots = this.getExtraFillerSpots(facing);
+    }
+    run(config){
+        this.config = config;
+
+        this.runTick();
     }
     runComplex(){
+        if(!this.config)return;
+        if(this.config.spawnFastFillerReady){
 
+            this.runAllFillers();
+        }
+    }
+    runAllFillers(){
+
+
+        this.runFiller(this.name,this.name.charAt(0)+ 'FF0');
+        this.runFiller(this.name,this.name.charAt(0)+'FF1');
+        let i=2;
+
+        if(Game.spawns[this.name+'-2']){
+            this.runFiller(this.name+'-2', (this.name.charAt(0))+'FF2');
+            this.runFiller(this.name+'-2', (this.name.charAt(0))+ 'FF3');
+            i+=2;
+        }
+        for(let pos of this.extraFastFillSpots){
+
+            this.runFiller(this.name,this.name.charAt(0)+'FF'+i,pos);
+            i++;
+        }
+
+    }
+    runFiller(spawnName,creepName,moveToSpot=false){
+
+        if(!Game.spawns[spawnName])return;
+
+        let facing = spawnName.includes('-2')?this.getReverseDirectionTo(this.facing):this.facing;
+        let mainSpawnDirs = this.getMainSpawnDirs(facing);
+        let fillerSpawnDirs = this.getFillerSpawnDirs(facing);
+
+        // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot.
+        Game.spawns[spawnName].forceDirectionHack = mainSpawnDirs;
+
+        if(!Game.creeps[creepName]){
+            let bodyPlan = fillerRole.getParts(0,this.config);
+            let dirs = (moveToSpot)?mainSpawnDirs:fillerSpawnDirs;
+            if(moveToSpot){
+                bodyPlan.push(MOVE);
+            }
+
+             Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,fillerSpawnDirs);
+
+        }
+        if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){
+            let creep = Game.creeps[creepName];
+
+            if(moveToSpot && !creep.pos.isEqualTo(moveToSpot)){
+                creep.moveTo(moveToSpot);
+            }else{
+                fillerRole.run(creep,this.config);
+            }
+        }
+    }
+    getExtraFillerSpots(facing){
+        // only run for RCL 4,5,6
+        if([1,2,3,7,8].includes(this.controller().level))return [];
+
+        if(facing===TOP){
+            return [rp(this.anchor.x-1,this.anchor.y+3,this.anchor.roomName),rp(this.anchor.x+1,this.anchor.y+3,this.anchor.roomName)]
+        }
+        if(facing===LEFT){
+            return [rp(this.anchor.x+3,this.anchor.y-1,this.anchor.roomName),rp(this.anchor.x+3,this.anchor.y+1,this.anchor.roomName)]
+        }
+        if(facing===RIGHT){
+            return [rp(this.anchor.x-3,this.anchor.y-1,this.anchor.roomName),rp(this.anchor.x-3,this.anchor.y+1,this.anchor.roomName)]
+        }
+        if(facing===BOTTOM){
+            return [rp(this.anchor.x-1,this.anchor.y-3,this.anchor.roomName),rp(this.anchor.x+1,this.anchor.y-3,this.anchor.roomName)]
+        }
+    }
+    getReverseDirectionTo(dir){
+        if(dir===TOP)return BOTTOM;
+        if(dir===TOP_RIGHT)return BOTTOM_LEFT;
+        if(dir===RIGHT)return LEFT;
+        if(dir===BOTTOM_RIGHT)return TOP_LEFT;
+        if(dir===BOTTOM)return TOP;
+        if(dir===BOTTOM_LEFT)return TOP_RIGHT;
+        if(dir===LEFT)return RIGHT;
+        if(dir===TOP_LEFT)return BOTTOM_RIGHT;
+    }
+    getMainSpawnDirs(facing){
+
+        if(facing===TOP){
+            return [TOP_LEFT,TOP,TOP_RIGHT];
+        }
+        if(facing===LEFT){
+            return [TOP_LEFT,LEFT,BOTTOM_LEFT];
+        }
+        if(facing===RIGHT){
+            return [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
+        }
+        if(facing===BOTTOM){
+            return [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
+        }
+    }
+    getFillerSpawnDirs(facing){
+        let dirs =[];
+        if(facing===TOP){
+            dirs = [BOTTOM_LEFT,BOTTOM_RIGHT];
+        }
+        if(facing===LEFT){
+            dirs = [TOP_RIGHT,BOTTOM_RIGHT];
+        }
+        if(facing===RIGHT){
+            dirs = [TOP_LEFT,BOTTOM_LEFT];
+        }
+        if(facing===BOTTOM){
+            dirs = [TOP_LEFT,TOP_RIGHT];
+        }
+        return dirs;
     }
     getLayoutPlan(facing){
 

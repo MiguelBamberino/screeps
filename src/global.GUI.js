@@ -267,13 +267,14 @@ global.gui = {
                 let priority = remoteFlip[remoteRN]===undefined?'backup':remoteFlip[remoteRN];
                 doneRooms[remoteRN] = details.online;
                 //if(remoteRN==='E6N4')clog(details,node.name+"-"+remoteRN)
-                let colour = '#ff0000';
-                if(details.online){
-                    colour = '#00ff00';
-                }
+                let colour = '#00ff00';
                 if(priority==='backup'){
                     colour = '#ff8400';
                 }
+                if(!details.online){
+                    colour = '#ff0000';
+                }
+
                 
                 Game.map.visual.rect(rp(1,1,remoteRN),30,20 ,{opacity:0.9} )
                 let textCSS = {fontSize:3,align:'left',color:'#444444'};

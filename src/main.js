@@ -125,7 +125,7 @@ module.exports.loop = function () {
         //////// GUI CODE  //////////////////////////////////
         
         gui.render();
-        
+        //gui.renderComplexPlan(nodes.a.coreComplex)
        
         if( Game.cpu.bucket>1000 && util.getServerName()==='shard3'){
              gui.renderComplexStats(nodes.t.extractorComplex)

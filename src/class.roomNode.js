@@ -96,7 +96,7 @@ class RoomNode{
             this.orders = this.trader.getOrderIDsByRoomName(this.coreRoomName);
         }
 
-        this.coreComplex = new BaseCoreComplex(Game.spawns[this.name].pos,this.spawnFacing)
+        this.coreComplex = new BaseCoreComplex(Game.spawns[this.name].pos,this.name,this.spawnFacing)
         this.coreComplex.turnOn();
 
         if(this.labComplex){
@@ -184,7 +184,7 @@ class RoomNode{
             //logs.startCPUTracker(this.name+':checkCache');
         this.checkCache();
             //logs.stopCPUTracker(this.name+':checkCache');
-        this.coreComplex.runTick()
+        this.coreComplex.run(this.getConfig())
 
 
            // logs.startCPUTracker(this.name+':decideWorkforceQuotas');
@@ -419,7 +419,7 @@ class RoomNode{
     runCreeps(){
         
        let playerAttackers = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
-       logs.startCPUTracker(this.name+':runAllFillers'); 
+       logs.startCPUTracker(this.name+':runAllFillers');
        this.runAllFillers();
         logs.stopCPUTracker(this.name+':runAllFillers');
         
@@ -792,7 +792,7 @@ class RoomNode{
     // Filler Code
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     runAllFillers(){
-        
+        return;
          if(this.spawnFastFillerReady){
             this.runFiller(this.name,this.name.charAt(0)+ 'FF0');
             this.runFiller(this.name,this.name.charAt(0)+'FF1');
@@ -1087,9 +1087,9 @@ class RoomNode{
         // how many builders do we spawn, per X surplus, at each RCL, given builders can consume E quicker at higher RCL
         let tankerPerXSurplus_PerRCL= [
                 9999999999, // RCL0
-                200, // RCL1
-                350, // RCL2
-                600, // RCL3
+                250, // RCL1
+                500, // RCL2
+                800, // RCL3
                 1000, // RCL4
                 1500, // RCL5
                 2000, // RCL6
@@ -1109,12 +1109,12 @@ class RoomNode{
 
                 let thresholds= {
                     999999:9,
-                    2500:8,
-                    2000:7,
-                    1800:6,
-                    1600:5,
-                    1200:4,
-                    800:3,
+                    3000:8,
+                    2500:7,
+                    2000:6,
+                    1800:5,
+                    1500:4,
+                    1000:3,
                     500:2,
                     0:1
                 };
@@ -1129,9 +1129,9 @@ class RoomNode{
 
             else if(this.upgradeRate===RATE_FAST && Game.cpu.bucket>5000){
                 let thresholds= {
-                    999999:6,
-                    1800:5,
-                    1500:4,
+                    999999:5,
+                    2000:5,
+                    1800:4,
                     1000:3,
                     500:2,
                     0:1,
@@ -1302,7 +1302,7 @@ class RoomNode{
         chainLookup[TOP_RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
         chainLookup[RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT];
         
-        chainLookup[BOTTOM_RIGHT]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
+        chainLookup[BOTTOM_RIGHT]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0];
         chainLookup[BOTTOM]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT];
         
         chainLookup[BOTTOM_LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0,BOTTOM, BOTTOM_RIGHT,RIGHT,TOP_RIGHT];

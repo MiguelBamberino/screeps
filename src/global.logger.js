@@ -23,6 +23,7 @@ global.logs = {
         //console.log("GT:"+Game.time+": "+category+" : "+msg);
     },
     logRCLGT:function(){
+        if(!nodes)return;
         for(let roomName in Game.rooms){
             if(Game.rooms[roomName].controller && Game.rooms[roomName].controller.owner && Game.rooms[roomName].controller.owner.username==='MadDokMike'){
                 if(!Memory.logs.rclSpeedStats[roomName]) {

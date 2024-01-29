@@ -19,7 +19,6 @@ function copyServerConfig(){
         if (fs.existsSync('./src/_server_config.js')) {
             console.log("File exists. Deleting old file...")
             fs.unlinkSync('./src/_server_config.js');
-            return;
         }
         console.log("Reading template file...")
         let configFileCode = fs.readFileSync(serverConfFilePath,'utf8');
