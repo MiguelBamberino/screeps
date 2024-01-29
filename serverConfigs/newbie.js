@@ -1,4 +1,4 @@
-// hello world
+// hello bob
 gui.nodeStats = true;
 gui.remoteStats = true;
 gui.speedRunStats = true;

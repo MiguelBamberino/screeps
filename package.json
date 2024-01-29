@@ -4,9 +4,10 @@
   "description": "my screeps bot",
   "main": "main.js",
   "scripts": {
-    "config": "cp _server_config.example.js src/_server_config.js",
+    "config": "cp _server_config.example.js scripts/old_server_config.js",
     "test": "jest",
     "deploy": "node ./scripts/push_code.js",
+    "setup": "node ./scripts/set_server_config.js",
     "client": "screepers-steamless-client --package ./scripts/package.nw"
   },
   "repository": {

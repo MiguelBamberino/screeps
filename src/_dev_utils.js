@@ -127,7 +127,7 @@ global.util = {
             nodes = _SERVER_CONFIG.loadNodes();
         }catch (error) {
             console.log("------------------------------------------")
-            console.log('ERROR! _server_config has not been created. Please copy ./_server_config.example.js to ./src/_server_config.js ');
+            console.log('ERROR! _server_config has not been created. Please copy ./_server_config.example.js to ./src/old_server_config.js ');
              console.log("------------------------------------------")
             console.log(error)
         }
