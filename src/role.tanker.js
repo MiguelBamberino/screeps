@@ -168,6 +168,15 @@ var roleTanker = {
                         return creep.moveToPos(site)
                     }
                 }else{
+
+                    // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller. we hope there is ugraders there to use it
+                    if(config.upgradeRate===RATE_VERY_FAST  && !Game.rooms[config.coreRoomName].storage ){
+
+                        creep.memory.dropAt = config.controller.getContainer().pos;
+                        return creep.moveToPos(config.controller)
+                    }
+
+                    // IF we're not upgrading like BRRRRRRR....., then use normal reservation system
                     let roomNames = [config.coreRoomName];
                     if(config.funnelRoomName && Game.rooms[config.coreRoomName].storage && Game.rooms[config.coreRoomName].storage.storingAtLeast(50000)){
 	            
@@ -175,13 +184,7 @@ var roleTanker = {
                     }
                     //console.log(creep.name,roomNames)
                     target = creep.getUpgradeStoreToFill(roomNames);
-                    
-                    // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller. we hope there is ugraders there to use it
-                    if(!target && (config.upgradeRate===RATE_FAST || config.upgradeRate===RATE_VERY_FAST ) && !Game.rooms[config.coreRoomName].storage ){
-                        
-                        creep.memory.dropAt = config.controller.getContainer().pos;
-                        return creep.moveToPos(config.controller)
-                    }
+
                 }
                 
             }
@@ -233,8 +236,12 @@ var roleTanker = {
                     drop = creep.getDropFromLocalSources();
                 }
 
-	            if(!drop){
-                    if(creep.ticksToLive>100)drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
+	            if(!drop ){
+                    // collect from remote if we have enough TTL and not overflowing locally
+                    if(creep.ticksToLive>100 && config.totalEnergyAtLocalSources <4000){
+                        drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
+                    }
+
                     if(!drop){
                         drop = creep.getDropFromLocalSources();
                     }

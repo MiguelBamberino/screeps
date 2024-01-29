@@ -264,12 +264,15 @@ global.gui = {
                 let details = Memory.remotes[node.name][remoteRN];
                 
                 if(doneRooms[remoteRN]!==undefined && doneRooms[remoteRN]===false)continue;
-                
+                let priority = remoteFlip[remoteRN]===undefined?'backup':remoteFlip[remoteRN];
                 doneRooms[remoteRN] = details.online;
                 //if(remoteRN==='E6N4')clog(details,node.name+"-"+remoteRN)
                 let colour = '#ff0000';
                 if(details.online){
                     colour = '#00ff00';
+                }
+                if(priority==='backup'){
+                    colour = '#ff8400';
                 }
                 
                 Game.map.visual.rect(rp(1,1,remoteRN),30,20 ,{opacity:0.9} )
@@ -278,8 +281,8 @@ global.gui = {
                 let srcs = mb.getSources({roomNames:[remoteRN]});
                 for(let src of srcs)
                     totalE += src.energyAwaitingCollection();
-                
-                Game.map.visual.text("Priority: "+remoteFlip[remoteRN],rp(2,3,remoteRN),textCSS)
+
+                Game.map.visual.text("Priority: "+priority,rp(2,3,remoteRN),textCSS)
                  Game.map.visual.text("Score: "+details.score,rp(2,6,remoteRN),textCSS)
                  Game.map.visual.text("Reason: "+details.reason,rp(2,9,remoteRN),textCSS)
                  Game.map.visual.text("Energy: "+totalE,rp(2,12,remoteRN),textCSS)
@@ -427,6 +430,7 @@ global.gui = {
            // if(!sp)continue;
             
             lines.push({ key:'E2Collect', value:node.totalEnergyAtSources });
+            lines.push({ key:'E@Controller', value:node.energyAtController });
             lines.push({ key:'upgr rate', value:node.upgradeRate });
             lines.push({ key:'build rate', value:node.buildFast?'fast':'slow' });
             lines.push({ key:'recver mode', value:node.inRecoveryMode});

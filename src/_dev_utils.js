@@ -119,18 +119,56 @@ StructureTerminal.prototype.sendX=function(resource,amount,toClusterName){
 global.util = {
 
     loadServer: function(){
-        
+        if(Memory.spawns===undefined)Memory.spawns={};
+        if(Memory.creeps===undefined)Memory.creeps={};
+        global.nodes = {};
         try{
             global._SERVER_CONFIG = require('_server_config');
+            nodes = _SERVER_CONFIG.loadNodes();
         }catch (error) {
             console.log("------------------------------------------")
-            console.log('ERROR! _server_config has not been created. Please copy ./_server_config.example.js to ./src/_server_config.js ');
+            console.log('ERROR! _server_config has not been created. Please copy ./_server_config.example.js to ./src/old_server_config.js ');
              console.log("------------------------------------------")
             console.log(error)
         }
     },
-    resetData:function (){
-        _SERVER_CONFIG.resetData();
+    resetData(){
+        console.log("RESETTING... _server_config")
+        delete Memory.creeps;
+        delete Memory.spawns;
+        delete Memory.mapBook;
+        delete Memory.logs;
+        delete Memory.reservationBook;
+        delete Memory.objectMeta;
+        delete Memory.roomNodes;
+        delete Memory.remotes
+
+        Memory.spawns = {};
+        Memory.creeps = {};
+        logs.initiate();
+        mb.initiate();
+        reservationBook.initiate();
+        objectMeta.empty();
+        this.loadServer();
+        util.destroyAllConSites();
+        util.destroyAllStructures([STRUCTURE_ROAD,STRUCTURE_CONTAINER]);
+
+        gui.init();
+    },
+    detectRespawn(){
+        let mainSpawnID = false;
+        for(let name in Game.spawns){
+            mainSpawnID = Game.spawns[name].id;
+            break;
+        }
+        if(!Memory.spawn_id){
+            Memory.spawn_id = mainSpawnID;
+        }
+        if(_SERVER_CONFIG.allowRespawnDetection && Memory.spawn_id !== mainSpawnID ){
+            console.log("RESPAWN Detected...",mainSpawnID,"!=",Memory.spawn_id)
+            Memory.spawn_id = mainSpawnID;
+            this.resetData();
+        }
     },
     getServerName:function(){
         if(Game.rooms['sim'])return'sim';
@@ -224,6 +262,7 @@ global.util = {
         Memory.debugTick = false;
     },
     allowTick: function(){
+        if(!_SERVER_CONFIG){console.log("ERROR: no _SERVER_CONFIG setup") ;return false;}
         if(!Memory.debugTick)return true;
         if(Memory.debugTick===true){
             Memory.debugTick=Game.time;

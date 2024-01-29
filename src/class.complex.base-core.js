@@ -1,6 +1,6 @@
 const AbstractComplex = require('class.complex.abstract')
 
-class BaseCoreComplex extends AbstractComplex{
+module.exports = class BaseCoreComplex extends AbstractComplex{
 
     constructor(anchor,facing, draft=false){
         super(anchor,facing,draft);
@@ -11,6 +11,7 @@ class BaseCoreComplex extends AbstractComplex{
 
     }
     getLayoutPlan(facing){
+
         if(facing===TOP){
             return [
                 // ---------- RCL 1 --------------------------------------------------
@@ -28,6 +29,8 @@ class BaseCoreComplex extends AbstractComplex{
                 {type:STRUCTURE_EXTENSION,offset:{x:-2,y:0},rcl:2,replace:false},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:0},rcl:2,replace:false},
                 {type:STRUCTURE_EXTENSION,offset:{x:1,y:0},rcl:2,replace:false},
+                {type:STRUCTURE_ROAD,offset:{x:-3,y:0},rcl:2,replace:false},
+                {type:STRUCTURE_ROAD,offset:{x:3,y:0},rcl:2,replace:false},
                 // row 1
                 {type:STRUCTURE_EXTENSION,offset:{x:0,y:1},rcl:2,replace:false},
                 {type:STRUCTURE_ROAD,offset:{x:-3,y:1},rcl:2,replace:false},
@@ -99,6 +102,8 @@ class BaseCoreComplex extends AbstractComplex{
                 {type:STRUCTURE_EXTENSION,offset:{x:0,y:-1},rcl:2,replace:false},
                 {type:STRUCTURE_EXTENSION,offset:{x:0,y:1},rcl:2,replace:false},
                 {type:STRUCTURE_EXTENSION,offset:{x:0,y:2},rcl:2,replace:false},
+                {type:STRUCTURE_ROAD,offset:{x:0,y:-3},rcl:2,replace:false},
+                {type:STRUCTURE_ROAD,offset:{x:0,y:3},rcl:2,replace:false},
                 // column 1
                 {type:STRUCTURE_EXTENSION,offset:{x:1,y:0},rcl:2,replace:false},
                 {type:STRUCTURE_ROAD,offset:{x:1,y:-3},rcl:2,replace:false},

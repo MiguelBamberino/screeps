@@ -4,8 +4,6 @@ console.log("Global Reset:",Game.time)
 console.log("-----------------------------------------------")
 
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
-if(!Memory.creeps) { Memory.creeps = {}; }
-
    
 require('global.logger');
 logs.globalResetStarted();
@@ -59,7 +57,6 @@ require('global.mapBook');
 require('global.logger');
 require('global.GUI');
 global.tests = require('globals.tests');
-global.nodes = {};
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Load in Server
@@ -79,18 +76,13 @@ for(let n in nodes){
 }
 
 module.exports.loop = function () {
-    if(!_SERVER_CONFIG){console.log("No _SERVER_CONFIG");return}
+    if(!util.allowTick()){return}
     _memHak.pretick();
-    _SERVER_CONFIG.detectRespawn();
-
-    //if(Memory.VERSION!==BOT_VERSION){console.log("UPGRADE NEEDED. NOT SAFE TO RUN CODE");util.recycle_all_creeps();return;}
+    util.detectRespawn();
 
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
     //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E7N5']._debugSetEnemies(['bob']);
-    
-    if(util.debug)rp(35,23,'W45N51').findBestStandingSpots(Game.spawns['Theta'].pos,3,9)
-    
-    if(util.allowTick()){
+
         
         logs.mainLoopStarted();
 
@@ -99,9 +91,13 @@ module.exports.loop = function () {
         logs.startCPUTracker('nodes');
         for(let n in nodes){
             //logs.startCPUTracker(nodes[n].name);
-            if(util.getServerName()==='shard3' && ["a","d"].includes(n) && Game.cpu.bucket<2000)nodes[n].online=false;
+            try{
 
-            if(nodes[n].online)nodes[n].runTick();
+                if(nodes[n].allowCPUShutdown && Game.cpu.bucket<2000)nodes[n].online=false;
+                if(nodes[n].online)nodes[n].runTick();
+            }catch (e){
+                console.log("ERROR:",nodes[n].name,e)
+            }
             //logs.stopCPUTracker(nodes[n].name,true);
         }
        logs.stopCPUTracker('nodes',false);
@@ -149,8 +145,6 @@ module.exports.loop = function () {
         }
        
         ///////////////////////
-        
-    }
     
 }
 

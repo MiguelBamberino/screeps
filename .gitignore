@@ -4,3 +4,4 @@ vendor
 default
 node_modules
 src/_server_config.js
+scripts/servers.json
