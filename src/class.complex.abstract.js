@@ -114,7 +114,18 @@ class AbstractComplex{
                     }
                 }else{
                     if(plan.required===true)this.allRequiredStructuresBuilt=false;
-                    if(!this.draft)mb.addConstruction(plan.pos,plan.type)
+                    let placeSite = (!this.draft)
+                    if(plan.requireRamp){
+                        let ramp = plan.pos.lookForStructure(STRUCTURE_RAMPART)
+                        if(!ramp){
+                            placeSite = false;
+                            mb.addConstruction(plan.pos,STRUCTURE_RAMPART)
+                        }
+                        if(ramp && ramp.hits < 50000){
+                            placeSite = false;
+                        }
+                    }
+                    if(placeSite)mb.addConstruction(plan.pos,plan.type)
 
                 }
             }
