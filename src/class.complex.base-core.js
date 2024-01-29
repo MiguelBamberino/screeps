@@ -50,15 +50,15 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
 
         // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot.
         Game.spawns[spawnName].forceDirectionHack = mainSpawnDirs;
-
+        let dirs = fillerSpawnDirs
         if(!Game.creeps[creepName]){
             let bodyPlan = fillerRole.getParts(0,this.config);
-            let dirs = (moveToSpot)?mainSpawnDirs:fillerSpawnDirs;
+            dirs = (moveToSpot)?mainSpawnDirs:fillerSpawnDirs;
             if(moveToSpot){
                 bodyPlan.push(MOVE);
             }
 
-             Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,fillerSpawnDirs);
+             Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs);
 
         }
         if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){
