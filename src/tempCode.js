@@ -736,7 +736,7 @@ module.exports = {
             // short term fix because invaderCores can be added after the fact and then not in cache
             if(Game.time%100===0)mb.scanRoom(roomName);
 
-            if(remoteMemory.online==false){
+            if(remoteMemory && remoteMemory.online==false){
                 // if this happens, then a remote got shutdown from some dyanamic action. need to find new best remotes
                 console.log(node.name,roomName," remote went offline. resort")
                 reSortRemotes=true;
@@ -895,9 +895,10 @@ module.exports = {
 
         }
 
-        if(reSortRemotes){
+        if(reSortRemotes && (!this.lastSort || (Game.time-this.lastSort)>50 )){
             console.log(node.name,"Resort requested")
             this.sortRemotes(node);
+            this.lastSort= Game.time;
         }
 
     },
