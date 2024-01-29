@@ -233,8 +233,12 @@ var roleTanker = {
                     drop = creep.getDropFromLocalSources();
                 }
 
-	            if(!drop){
-                    if(creep.ticksToLive>100)drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
+	            if(!drop ){
+                    // collect from remote if we have enough TTL and not overflowing locally
+                    if(creep.ticksToLive>100 && config.totalEnergyAtLocalSources <4000){
+                        drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
+                    }
+
                     if(!drop){
                         drop = creep.getDropFromLocalSources();
                     }

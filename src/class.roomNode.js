@@ -574,7 +574,7 @@ class RoomNode{
         if(this.spawnFastFillerReady===undefined){
             let structures = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER,STRUCTURE_STORAGE]});
             console.log(structures)
-            let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
+
             this.spawnFastFillerReady=false;
             for(let container of structures){
                 if(Game.spawns[this.name] && Game.spawns[this.name].pos.getRangeTo(container)<3 /*&& exts.length>=5*/ ){
@@ -586,9 +586,10 @@ class RoomNode{
             }
 
         }
-        if(this.spawnFastFillerReady && exts.length>=5)
-            mb.addConstruction(this.controller().getStandingSpot(),STRUCTURE_CONTAINER);
-
+        if(this.spawnFastFillerReady && Game.time%10===0 && !this.controller().haveContainer()) {
+            let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
+            if(exts.length>=5)mb.addConstruction(this.controller().getStandingSpot(), STRUCTURE_CONTAINER);
+        }
         
         //// Stats about room Sources ////////////////////////////////////////////
         if(Game.time%10===0){
@@ -598,15 +599,20 @@ class RoomNode{
         if(this.coreRoomSourcesCount===undefined){
             
             this.totalEnergyAtSources=0;
+            this.totalEnergyAtLocalSources=0;
             this.coreRoomSourcesCount=0;
             this.allSourcesBuilt = true;
             let sources = mb.getSources({ roomNames: this.allRoomNames()}); 
             for(let source of sources){
-                 
-                if(source.pos.roomName==this.coreRoomName)this.coreRoomSourcesCount++;
+                let e = source.energyAwaitingCollection();
+
+                if(source.pos.roomName==this.coreRoomName){
+                    this.coreRoomSourcesCount++;
+                    this.totalEnergyAtLocalSources+=e;
+                }
                 if( source.pos.roomName==this.coreRoomName &&  !source.haveContainer() && !source.haveLink() ){ this.allSourcesBuilt = false;}
                 
-                this.totalEnergyAtSources+= source.energyAwaitingCollection();
+                this.totalEnergyAtSources+= e;
             }
         }
         ////////////////////////////////////////////////////////////////////////
@@ -903,6 +909,7 @@ class RoomNode{
                     allRoomNames:this.allRoomNames(),
                     inRecoveryMode:this.inRecoveryMode,
                     allSourcesBuilt:this.allSourcesBuilt,
+                    totalEnergyAtLocalSources:this.totalEnergyAtLocalSources,
                     spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
 					armNuke:this.armNuke,
