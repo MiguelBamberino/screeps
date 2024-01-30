@@ -17,21 +17,21 @@ var role = {
         }
 
         // !! WARNING!! Don't have >15 WORK parts, because thats max upgrade amount at RCL 8
-       if(depotE>200000 && budget >=2450){
-           // RCL ? - 1400 + 700 + 350 = 2450/1800 30 ext
-           return '15w10c4m';
+        if(depotE>200000 && budget >=2450){
+            // RCL ? - 1400 + 700 + 350 = 2450/1800 30 ext
+            return '15w10c4m';
 
-       }
-   
-      /*  if(budget >= 2000 ){ // RCL 6 - 1200 + 500 + 300 = 2000/1800 30 ext
-            return '12w10c6m';
         }
-        else*/ 
+
+        /*  if(budget >= 2000 ){ // RCL 6 - 1200 + 500 + 300 = 2000/1800 30 ext
+              return '12w10c6m';
+          }
+          else*/
         if(budget >= 1800 ){ // RCL 5 - 1000 + 500 + 250 = 1750/1800 30 ext
             return '10w10c5m';
         }
         else if(budget >= 1250 ){ // RCL 4 - 800 + 300 + 200 = 1300/1300 20 ext
-            return '10w2c3m'; 
+            return '10w2c3m';
         }
         else if(budget >= 800 ){ // RCL 3 - 400 + 300 + 100 =  800/800 10 ext
             return '4w6c2m';
@@ -40,14 +40,14 @@ var role = {
             return '4w1c2m';
         }
         else{ // RCL 1 - 300/300 , assume no roads early on
-            return [WORK, WORK, CARRY,MOVE]; 
+            return [WORK, WORK, CARRY,MOVE];
         }
     },
 
     run: function(creep,config){
-        
 
-        
+
+
         let controller = config.controller;
 
         let container = controller.getContainer();
@@ -55,55 +55,69 @@ var role = {
             return creep.say("!cont")
         }
 
-        let quickDraw = ((config.upgradeRate===RATE_FAST||config.upgradeRate===RATE_VERY_FAST)&&creep.haveSpaceFor(25))
-        
         if(container){
             //container.allowOverBooking(0)
             // cant have overbooking once we have storage, because it breaks the rKeepr
             if((config.upgradeRate===RATE_FAST||config.upgradeRate===RATE_VERY_FAST) /*&& !creep.room.storage*/ ){
                 container.allowOverBooking(1500)
-            }else{ 
+            }else{
                 container.allowOverBooking(0)
             }
         }
-        
+
         let link = controller.getLink();
 
-            ////////////////////////////////////////////////////////////////////////////////////
-            /// moveTo queue pos
-            ////////////////////////////////////////////////////////////////////////////////////
-            if(creep.memory.spot_index===undefined){
-                creep.memory.spot_index = 0;
-            }
-            let standingSpots = controller.getStandingSpots();
-            let currSpot = standingSpots[ creep.memory.spot_index ];
-            if(currSpot){
+        ////////////////////////////////////////////////////////////////////////////////////
+        /// moveTo queue pos
+        ////////////////////////////////////////////////////////////////////////////////////
+        if(creep.memory.spot_index===undefined){
+            creep.memory.spot_index = 0;
+        }
+        let standingSpots = controller.getStandingSpots();
+        let currSpot = standingSpots[ creep.memory.spot_index ];
+        if(currSpot){
 
-                if(creep.pos.isEqualTo(currSpot)){
-                    let nextSpot = standingSpots[ creep.memory.spot_index+1 ];
-                    if(nextSpot && nextSpot.isWalkable(true)){
-                        creep.memory.spot_index += 1;
-                        creep.moveToPos(nextSpot);
-                    }
-                }else{
-                    creep.moveToPos(currSpot);
+            if(creep.pos.isEqualTo(currSpot)){
+                let nextSpot = standingSpots[ creep.memory.spot_index+1 ];
+                if(nextSpot && nextSpot.isWalkable(true)){
+                    creep.memory.spot_index += 1;
+                    creep.moveToPos(nextSpot);
                 }
-
             }else{
-                creep.say("!spot")
-                creep.moveToPos(container)
+                creep.moveToPos(currSpot);
             }
+
+        }else{
+            creep.say("!spot")
+            creep.moveToPos(container)
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////
         /// SWOOOSH spend energy
         ////////////////////////////////////////////////////////////////////////////////////
-         if( (container.hitsMax-container.hits) > 1000){
+        if( (container.hitsMax-container.hits) > 1000){
             creep.repair(container);
-         }
-         // relay energy into the container to share with other upgraders
-        if(quickDraw && container.isEmpty() && creep.isFull()){
-            let amount = creep.storedAmount(RESOURCE_ENERGY) / 2;
-            creep.transfer(container,RESOURCE_ENERGY,amount);
+        }
+
+        // relay energy into the container to share with other upgraders
+        if(config.upgradeRate===RATE_VERY_FAST && !container.isFull()){
+            // if we have drops then get them into the container quick, to avoid decay
+            let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
+
+            if(drop){
+                // only transfer the excess so we can still upgrade this tick
+                let amount = creep.storedAmount(RESOURCE_ENERGY) - creep.partCount(WORK);
+                let res = creep.transfer(container,RESOURCE_ENERGY,amount);
+
+                creep.pickup(drop);
+                creep.say("rlay"+amount)
+            }
+            else if(!creep.isEmpty() && container.isEmpty()){
+                let amount = creep.storedAmount(RESOURCE_ENERGY) / 2;
+                creep.transfer(container,RESOURCE_ENERGY,amount);
+                creep.say("sh"+amount)
+            }
+
         }
 
 
@@ -119,65 +133,63 @@ var role = {
         ////////////////////////////////////////////////////////////////////////////////////
         ///  Collect energy
         ////////////////////////////////////////////////////////////////////////////////////
-            if(creep.isEmpty() || quickDraw) {
+        if(creep.isEmpty()) {
 
-                if(quickDraw){
-                    let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
-                    if(drop){
-                       // console.log("relay")
-                        creep.transfer(container,RESOURCE_ENERGY);
-                        return creep.pickup(drop);
-                    }
-                }
-
-                if (link && !link.isEmpty()) {
-                    return creep.actOrMoveTo("withdraw", link, RESOURCE_ENERGY);
-
-                } else if (container) {
-                    container.setAsUpgraderStore();
-                    // lock it, so we own withdrawals of this container. stop thieves.
-                    if (container.isWithdrawLocked() === false) container.lockReservations(['withdraw']);
-                    return creep.actOrMoveTo("withdraw", container, RESOURCE_ENERGY);
-
-                } else {
-                    creep.say(413);
+            if(config.upgradeRate===RATE_VERY_FAST){
+                let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
+                if(drop){
+                    return creep.pickup(drop);
                 }
             }
 
-      
-        
+            if (link && !link.isEmpty()) {
+                return creep.actOrMoveTo("withdraw", link, RESOURCE_ENERGY);
+
+            } else if (container) {
+                container.setAsUpgraderStore();
+                // lock it, so we own withdrawals of this container. stop thieves.
+                if (container.isWithdrawLocked() === false) container.lockReservations(['withdraw']);
+                return creep.actOrMoveTo("withdraw", container, RESOURCE_ENERGY);
+
+            } else {
+                creep.say(413);
+            }
+        }
+
+
+
     },
     siteToBuild: function(creep,config){
-	    
-	    var site = Game.getObjectById(creep.memory.construction_site_id);
-	    if(site){
-	        return site;
-	    }
 
-	    let obj = mb.getNearestConstruction(creep.pos, [config.coreRoomName]);
+        var site = Game.getObjectById(creep.memory.construction_site_id);
+        if(site){
+            return site;
+        }
+
+        let obj = mb.getNearestConstruction(creep.pos, [config.coreRoomName]);
         creep.memory.construction_site_id=obj.id;
-	    return obj;
-	},
-	
-	getExtToCharge:function(creep){
-       
-       if(creep.memory.extension_ids===undefined){
-           let exts = creep.pos.lookForNearStructures(STRUCTURE_EXTENSION);
-           creep.memory.extension_ids = [];
-           for(let e in exts){
-               creep.memory.extension_ids.push(exts[e].id);
-               //exts[e].lockReservations();
-           }
-       }
-       
-       for(let id of creep.memory.extension_ids){
-           let obj = Game.getObjectById(id);
-           if(obj && obj.store.getUsedCapacity(RESOURCE_ENERGY)< obj.store.getCapacity(RESOURCE_ENERGY)){
-               return obj;
-           }
-       }
-       
-   }
+        return obj;
+    },
+
+    getExtToCharge:function(creep){
+
+        if(creep.memory.extension_ids===undefined){
+            let exts = creep.pos.lookForNearStructures(STRUCTURE_EXTENSION);
+            creep.memory.extension_ids = [];
+            for(let e in exts){
+                creep.memory.extension_ids.push(exts[e].id);
+                //exts[e].lockReservations();
+            }
+        }
+
+        for(let id of creep.memory.extension_ids){
+            let obj = Game.getObjectById(id);
+            if(obj && obj.store.getUsedCapacity(RESOURCE_ENERGY)< obj.store.getCapacity(RESOURCE_ENERGY)){
+                return obj;
+            }
+        }
+
+    }
 };
 
 module.exports = role;
