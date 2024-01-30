@@ -135,7 +135,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
             return [
                 // ---------- RCL 1 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name},
-                {type:STRUCTURE_CONTAINER,offset:{x:0,y:2},rcl:1},
+                {type:STRUCTURE_CONTAINER,offset:{x:0,y:2},rcl:1,replacedAtRCL:4},
                 // ---------- RCL 2 --------------------------------------------------
                 // row -1 (top road)
                 {type:STRUCTURE_ROAD,offset:{x:-2,y:-1},rcl:2},
@@ -161,12 +161,12 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 // ---------- RCL 3 --------------------------------------------------
                 // row 1
                 {type:STRUCTURE_EXTENSION,offset:{x:-2,y:1},rcl:3},
-                {type:STRUCTURE_EXTENSION,offset:{x:2,y:1},rcl:3},
+                {type:STRUCTURE_EXTENSION,offset:{x:2,y:1},rcl:3,replacedAtRCL:6},
                 // row 2
                 {type:STRUCTURE_CONTAINER,offset:{x:-2,y:2},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:-1,y:2},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:1,y:2},rcl:3},
-                {type:STRUCTURE_EXTENSION,offset:{x:2,y:2},rcl:3},
+                {type:STRUCTURE_EXTENSION,offset:{x:2,y:2},rcl:3,replacedAtRCL:4},
                 // row 3
                 {type:STRUCTURE_TOWER,offset:{x:2,y:3},rcl:3},
 
@@ -175,12 +175,12 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 {type:STRUCTURE_RAMPART,offset:{x:0,y:0},rcl:4},
                 // row 2 - ramp storage spot
                 {type:STRUCTURE_STORAGE,offset:{x:2,y:2},rcl:4,replace:STRUCTURE_EXTENSION,requireRamp:true},
-                {type:STRUCTURE_EXTENSION,offset:{x:0,y:2},rcl:4,replace:STRUCTURE_CONTAINER,requireStorage:true},
+                {type:STRUCTURE_EXTENSION,offset:{x:0,y:2},rcl:4,replace:STRUCTURE_CONTAINER,requireStorage:true,replacedAtRCL:5},
                 // row 3
                 {type:STRUCTURE_ROAD,offset:{x:-3,y:3},rcl:4},
                 {type:STRUCTURE_ROAD,offset:{x:3,y:3},rcl:4},
                 {type:STRUCTURE_EXTENSION,offset:{x:-2,y:3},rcl:4},
-                {type:STRUCTURE_EXTENSION,offset:{x:0,y:3},rcl:4},
+                {type:STRUCTURE_EXTENSION,offset:{x:0,y:3},rcl:4,requireStorage:true},
                 // ramp tower
                 {type:STRUCTURE_RAMPART,offset:{x:2,y:3},rcl:4},
                 // row 4
@@ -209,7 +209,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
             return [
                 // ---------- RCL 1 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name},
-                {type:STRUCTURE_CONTAINER,offset:{x:2,y:0},rcl:1},
+                {type:STRUCTURE_CONTAINER,offset:{x:2,y:0},rcl:1,replacedAtRCL:4},
                 // ---------- RCL 2 --------------------------------------------------
                 // column -1 (top road)
                 {type:STRUCTURE_ROAD,offset:{x:-1,y:-2},rcl:2},
@@ -234,13 +234,13 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
 
                 // ---------- RCL 3 --------------------------------------------------
                 // column 1
-                {type:STRUCTURE_EXTENSION,offset:{x:1,y:-2},rcl:3},
+                {type:STRUCTURE_EXTENSION,offset:{x:1,y:-2},rcl:3,replacedAtRCL:6},
                 {type:STRUCTURE_EXTENSION,offset:{x:1,y:2},rcl:3},
                 // column 2
                 {type:STRUCTURE_CONTAINER,offset:{x:2,y:2},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:1},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:-1},rcl:3},
-                {type:STRUCTURE_EXTENSION,offset:{x:2,y:-2},rcl:3},
+                {type:STRUCTURE_EXTENSION,offset:{x:2,y:-2},rcl:3,replacedAtRCL:4},
                 // column 3
                 {type:STRUCTURE_TOWER,offset:{x:3,y:-2},rcl:3},
 
@@ -249,11 +249,11 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 {type:STRUCTURE_RAMPART,offset:{x:0,y:0},rcl:4},
                 // column 2 - ramp storage spot
                 {type:STRUCTURE_STORAGE,offset:{x:2,y:-2},rcl:4,replace:STRUCTURE_EXTENSION,requireRamp:true},
-                {type:STRUCTURE_EXTENSION,offset:{x:2,y:0},rcl:4,replace:STRUCTURE_CONTAINER,requireStorage:true},
+                {type:STRUCTURE_EXTENSION,offset:{x:2,y:0},rcl:4,replace:STRUCTURE_CONTAINER,requireStorage:true,replacedAtRCL:5},
                 // column 3
                 {type:STRUCTURE_ROAD,offset:{x:3,y:-3},rcl:4},
                 {type:STRUCTURE_ROAD,offset:{x:3,y:3},rcl:4},
-                {type:STRUCTURE_EXTENSION,offset:{x:3,y:0},rcl:4},
+                {type:STRUCTURE_EXTENSION,offset:{x:3,y:0},rcl:4,requireStorage:true},
                 {type:STRUCTURE_EXTENSION,offset:{x:3,y:2},rcl:4},
                 // ramp tower
                 {type:STRUCTURE_RAMPART,offset:{x:3,y:-2},rcl:4},

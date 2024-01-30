@@ -31,6 +31,9 @@ var roleTanker = {
         //clog(creep.name)
         
         let storage = mb.getStorageForRoom(config.coreRoomName)
+        if(!storage){
+            return creep.say("!storage")
+        }
         // keep some space in the storage, so it doesn't fill up.
         let storageBufferSpace = 10000;
         let terminal = mb.getTerminalForRoom(config.coreRoomName)

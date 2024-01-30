@@ -96,7 +96,8 @@ module.exports.loop = function () {
                 if(nodes[n].allowCPUShutdown && Game.cpu.bucket<2000)nodes[n].online=false;
                 if(nodes[n].online)nodes[n].runTick();
             }catch (e){
-                console.log("ERROR:",nodes[n].name,e)
+                console.log("ERROR:",nodes[n].name);
+                console.log(e)
             }
             //logs.stopCPUTracker(nodes[n].name,true);
         }

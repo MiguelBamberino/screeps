@@ -529,7 +529,7 @@ module.exports = {
             node.extraFastFillSpots=[];
         }
 
-        if(Game.time%500===0)this.removeRedundantRoads(node)
+        //if(Game.time%500===0)this.removeRedundantRoads(node)
         if(Game.time%20===0)this.manageConstructionSites(node);
         this.defendHomeRoom(node)
     },

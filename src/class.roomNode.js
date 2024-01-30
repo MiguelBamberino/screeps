@@ -219,7 +219,7 @@ class RoomNode{
            
 
             
-           if(this.extractorComplex){ 
+           if(this.extractorComplex && this.storage()){
                 // keep it ticking, if we only have a small amount left
                 let mineral = mb.getMineralForRoom(this.coreRoomName);
                 

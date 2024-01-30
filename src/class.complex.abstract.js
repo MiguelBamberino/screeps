@@ -1,7 +1,6 @@
 const DETECT_STRUCTURES_INTERVAL=250;
 const ERR_OFF=-16;
 
-
 class AbstractComplex{
     
     constructor(anchor,facing, draft=false){
@@ -125,7 +124,9 @@ class AbstractComplex{
                     if(plan.requireStorage && !this.room().storage){
                         continue;
                     }
-
+                    if(plan.replacedAtRCL && plan.replacedAtRCL <= this.rcl){
+                        continue;
+                    }
                     if(plan.requireRamp){
                         let ramp = plan.pos.lookForStructure(STRUCTURE_RAMPART)
                         if(!ramp){
@@ -147,12 +148,14 @@ class AbstractComplex{
                     if(plan.replace){
                         let structure = plan.pos.lookForStructure(plan.replace);
                         if(structure){
+                            console.log("replacing",plan.replace,plan.type,plan.pos,structure)
                             // if we succeed,  we'll need another rerun next tick
                             if(structure.destroy()===OK)this.replaceHapped=true;
                         }
                     }
                     if(plan.destroy){
                         let structure = plan.pos.lookForStructure(plan.type);
+                        console.log("destroying",plan.type,plan.pos)
                         if(structure)structure.destroy();
                     }else{
                         let res = mb.addConstruction(plan.pos,plan.type,plan.name)
