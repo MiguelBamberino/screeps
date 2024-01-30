@@ -20,6 +20,7 @@ class AbstractComplex{
         this.rcl = Game.rooms[anchor.roomName].controller.level;
         this.allRequiredStructuresBuilt=true;
         this.minRCL = 99;
+        this.replaceHapped = false;
         this.structureLookup={};
         this.groupLookup={};
         this.detectExistingStructures();
@@ -45,7 +46,7 @@ class AbstractComplex{
         
 
         
-        if(Game.time % DETECT_STRUCTURES_INTERVAL===0 || Game.rooms[this.anchor.roomName].controller.level!=this.rcl){
+        if(Game.time % DETECT_STRUCTURES_INTERVAL===0 || Game.rooms[this.anchor.roomName].controller.level!=this.rcl || this.replaceHapped){
             
             this.rcl=Game.rooms[this.anchor.roomName].controller.level;
             logs.startCPUTracker('detectExistingStructures');
@@ -92,6 +93,7 @@ class AbstractComplex{
         this.allRequiredStructuresBuilt=true;
         this.structureLookup=[];
         this.groupLookup=[];
+        const terrain = Game.map.getRoomTerrain(this.anchor.roomName);
         for(let plan of this.getLayoutPlan(this.facing)){
             
             if(plan.rcl<this.minRCL)
@@ -114,18 +116,49 @@ class AbstractComplex{
                     }
                 }else{
                     if(plan.required===true)this.allRequiredStructuresBuilt=false;
-                    let placeSite = (!this.draft)
+
+                    ///////////////////////////////////////////////////////////////////////
+                    // Actual constructions
+                    ///////////////////////////////////////////////////////////////////////
+                    if(this.draft)continue;
+
+                    if(plan.requireStorage && !this.room().storage){
+                        continue;
+                    }
+
                     if(plan.requireRamp){
                         let ramp = plan.pos.lookForStructure(STRUCTURE_RAMPART)
                         if(!ramp){
-                            placeSite = false;
-                            mb.addConstruction(plan.pos,STRUCTURE_RAMPART)
+                            mb.addConstruction(plan.pos,STRUCTURE_RAMPART);
+                            continue;
                         }
                         if(ramp && ramp.hits < 50000){
-                            placeSite = false;
+                            continue;
                         }
                     }
-                    if(placeSite)mb.addConstruction(plan.pos,plan.type)
+                    if(plan.type===STRUCTURE_ROAD){
+
+                        // Check if the terrain is wall, as no structure can be built on walls
+                        if(terrain.get(plan.pos.x, plan.pos.y) === TERRAIN_MASK_WALL) {
+                            continue;//maybe oe day we'll be crazy enough to allow roads on walls
+                        }
+                    }
+
+                    if(plan.replace){
+                        let structure = plan.pos.lookForStructure(plan.replace);
+                        if(structure){
+                            // if we succeed,  we'll need another rerun next tick
+                            if(structure.destroy()===OK)this.replaceHapped=true;
+                        }
+                    }
+                    if(plan.destroy){
+                        let structure = plan.pos.lookForStructure(plan.type);
+                        if(structure)structure.destroy();
+                    }else{
+                        let res = mb.addConstruction(plan.pos,plan.type,plan.name)
+                    }
+
+
 
                 }
             }
