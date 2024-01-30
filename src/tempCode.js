@@ -544,12 +544,14 @@ module.exports = {
         ///////////////////////////////////////////////////
         // High Scores ARE BAD , LOW scores ARE GOOD
         // score is src distances to spawn + controller distance to spawn
-        Memory.remotes[node.name][roomName]={score:0,username:false,online:true,reason:'scouting'};
+        if(!Memory.remotes[node.name][roomName])
+            Memory.remotes[node.name][roomName]={score:0,lastSeen:0,username:false,online:true,reason:'scouting',staff:{count:0,required:0}};
 
         //  We have to go explore
         if(!mb.hasRoom(roomName))return;
+        if(Game.rooms[roomName])Memory.remotes[node.name][roomName].lastSeen = Game.time;
 
-        let controller = mb.getControllerForRoom(roomName);
+        let controller = mb.getControllerForRoom(roomName,false);
         let lairs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_KEEPER_LAIR], requireVision:false,justIDs:true })
         let invadeCores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
         let srcs = mb.getSources({roomNames:[roomName],requireVision:false});
@@ -610,8 +612,10 @@ module.exports = {
         // Now lets score this potential remote
         ///////////////////////////////////////////////////
         Memory.remotes[node.name][roomName].reason = "";
+        Memory.remotes[node.name][roomName].score = 0;
+        Memory.remotes[node.name][roomName].staff={count:0,required:0};
 
-
+        
         if(controller && controller.reservation){
             Memory.remotes[node.name][roomName].username = controller.reservation.username;
 
@@ -631,30 +635,36 @@ module.exports = {
         let cores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
         if(cores.length>0){
             // try not to prefer invader core rooms, because they are costly
-            Memory.remotes[node.name][roomName].score+=50;
+            Memory.remotes[node.name][roomName].score+=75;
             Memory.remotes[node.name][roomName].reason += "+IC,";
         }
         let result=false;
 
-
+        Memory.remotes[node.name][roomName].reason += "S["
         for(let src of srcs){
             let to = src.pos;
             result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{swampCost:2,maxOps:10000});
             Memory.remotes[node.name][roomName].score+= result.path.length;
-            Memory.remotes[node.name][roomName].reason += "+S["+result.path.length+"],";
+            Memory.remotes[node.name][roomName].reason += result.path.length+",";
         }
+        Memory.remotes[node.name][roomName].reason += "],"
+        // harvesters
+        Memory.remotes[node.name][roomName].staff.required+=srcs.length;
         if(srcs.length==1){
-            // lower score of single src rooms, by doubling their distance.
-            Memory.remotes[node.name][roomName].score += 75;
+            // lower score of single src rooms, by doubling their distance. Added src.length for tie breaker
+            Memory.remotes[node.name][roomName].score += 75+srcs.length;
             Memory.remotes[node.name][roomName].reason += "+1S,";
         }
         // if the remote has a controller and we're in reserving capacity, then factor in th controller distances.
-        if(controller && node.controller().level>=4){
+        if(controller && node.controller().level>=3){
+            // reserver
+            Memory.remotes[node.name][roomName].staff.required+=1;
+
             let cPos = controller.pos;
             result = PathFinder.search(Game.spawns[node.name].pos, rp(cPos.x,cPos.y,cPos.roomName) ,{swampCost:2,maxOps:10000});
             Memory.remotes[node.name][roomName].score+= result.path.length;
             Memory.remotes[node.name][roomName].controllerDistance = result.path.length;
-            Memory.remotes[node.name][roomName].reason += "+C["+result.path.length+"],";
+            Memory.remotes[node.name][roomName].reason += "C["+result.path.length+"],";
         }
 
     },
@@ -671,7 +681,7 @@ module.exports = {
                 }
             }
             let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
-            for(let i=0; i<3;i++)node.remoteRoomNames.push(available[i]);
+            for(let i=0; i<=3;i++)node.remoteRoomNames.push(available[i]);
         }
     },
     detectRemotes:function(node){
@@ -720,7 +730,8 @@ module.exports = {
 
         for(let roomName in Memory.remotes[node.name]){
             let remote = Memory.remotes[node.name][roomName];
-            if(!mb.hasRoom(roomName)){
+            let timeSinceSeen = Game.time - remote.lastSeen;
+            if(!mb.hasRoom(roomName) || timeSinceSeen>5000){
 
                 roomToScout = roomName;
 
@@ -742,8 +753,6 @@ module.exports = {
         this.detectRemotes(node);
         this.scoutRemotes(node);
 
-        //if(Game.time%200==0)this.sortRemotes(node);
-
         let eCap =  Game.rooms[node.coreRoomName].energyCapacityAvailable;
         harvyECap = eCap;
         if(harvyECap> 800)harvyECap = 800; // keep them small, to save on spawn time
@@ -757,8 +766,10 @@ module.exports = {
         }
 
         let reSortRemotes = false;
+        let previousRemoteFullyStaffed = false;
         for(let roomName of node.remoteRoomNames){
             let remoteMemory = Memory.remotes[node.name][roomName];
+            remoteMemory.staff.count= 0;
             // short term fix because invaderCores can be added after the fact and then not in cache
             if(Game.time%100===0)mb.scanRoom(roomName);
 
@@ -803,9 +814,8 @@ module.exports = {
                 reSortRemotes=true;
             }
 
-
             // rescore every 500t
-            if(Game.time%500==0 && controller.haveVision){
+            if(Game.time%500===0 && controller.haveVision){
                 console.log(node.name,roomName," Game.time%500. Rescoring")
                 this.scoreRemote(node,roomName);
                 reSortRemotes=true;
@@ -853,7 +863,10 @@ module.exports = {
             if(!invaderReserved && invadeCores.length===0){
                 for(let src of srcs){
                     let harveyName = roomName+'-'+src.pos.x+'-'+src.pos.y+'-h';
-                    if(Game.creeps[harveyName])harvestersAlive++;
+                    if(Game.creeps[harveyName]) {
+                        harvestersAlive++;
+                        remoteMemory.staff.count++;
+                    }
                     this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src);
 
                     if(src.haveVision && src.getMeta().pathed){
@@ -908,7 +921,7 @@ module.exports = {
 
 
 
-            /////////////// Reserever  ///////////////////////////////////////////////////////
+            /////////////// Reservers  ///////////////////////////////////////////////////////
             // only reserve the first 3 priority remotes.
             if(controller && ( remoteMemory.controllerDistance<50 || srcs.length==2 )  && eCap>=650){
                 let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
@@ -917,12 +930,18 @@ module.exports = {
                 // spawn harvesters first before trying to boost controller
                 if(harvestersAlive===0)keepSpawning=false;
 
-                this.reserverRoom(node.name,roomName+'-cl',controller,bodyPlan,false,keepSpawning)
+                let reserverName = roomName+'-cl';
+                if(Game.creeps[reserverName]) {
+                    remoteMemory.staff.count++;
+                }
+
+                this.reserverRoom(node.name,reserverName,controller,bodyPlan,false,keepSpawning)
                 if(invaderReserved || invadeCores.length>0){
                     this.reserverRoom(node.name,roomName+'-cl2',controller,bodyPlan)
                 }
             }
 
+            previousRemoteFullyStaffed = (remoteMemory.staff.count===remoteMemory.staff.required)
 
         }
 
@@ -931,6 +950,7 @@ module.exports = {
             this.sortRemotes(node);
             this.lastSort= Game.time;
         }
+
 
     },
     /**

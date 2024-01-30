@@ -276,7 +276,7 @@ global.gui = {
                 }
 
                 
-                Game.map.visual.rect(rp(1,1,remoteRN),30,20 ,{opacity:0.9} )
+                Game.map.visual.rect(rp(1,1,remoteRN),45,20 ,{opacity:0.9} )
                 let textCSS = {fontSize:3,align:'left',color:'#444444'};
                 let totalE = 0;
                 let srcs = mb.getSources({roomNames:[remoteRN]});
@@ -287,6 +287,8 @@ global.gui = {
                  Game.map.visual.text("Score: "+details.score,rp(2,6,remoteRN),textCSS)
                  Game.map.visual.text("Reason: "+details.reason,rp(2,9,remoteRN),textCSS)
                  Game.map.visual.text("Energy: "+totalE,rp(2,12,remoteRN),textCSS)
+                 Game.map.visual.text("Staff: "+details.staff.count+"/"+details.staff.required,rp(2,15,remoteRN),textCSS)
+                Game.map.visual.text("lastSeen: "+details.lastSeen,rp(2,18,remoteRN),textCSS)
                 guiWM.drawArrowFromRoomToRoom(node.coreRoomName,remoteRN,colour)
                 
             }
