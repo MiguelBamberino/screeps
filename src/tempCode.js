@@ -645,7 +645,7 @@ module.exports = {
         }
         if(srcs.length==1){
             // lower score of single src rooms, by doubling their distance.
-            Memory.remotes[node.name][roomName].score += Memory.remotes[node.name][roomName].score;
+            Memory.remotes[node.name][roomName].score += 75;
             Memory.remotes[node.name][roomName].reason += "+1S,";
         }
         // if the remote has a controller and we're in reserving capacity, then factor in th controller distances.
@@ -841,6 +841,7 @@ module.exports = {
 
             /////////////// Harvesters  ///////////////////////////////////////////////////////
             let invaderReserved = false;
+            let harvestersAlive = 0;
             if(controller.reservation && controller.reservation.username!=='MadDokMike'){
                 invaderReserved = controller.reservation.ticksToEnd;
             }
@@ -851,9 +852,9 @@ module.exports = {
 
             if(!invaderReserved && invadeCores.length===0){
                 for(let src of srcs){
-
-
-                    this.harvestPoint(node.name,roomName+'-'+src.pos.x+'-'+src.pos.y+'-h',harvesterBodyPlan,src);
+                    let harveyName = roomName+'-'+src.pos.x+'-'+src.pos.y+'-h';
+                    if(Game.creeps[harveyName])harvestersAlive++;
+                    this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src);
 
                     if(src.haveVision && src.getMeta().pathed){
                         pathsToMaintain=true;
@@ -913,6 +914,8 @@ module.exports = {
                 let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
 
                 let keepSpawning = (invaderReserved>0 || (controller.haveVision && (!controller.reservation || controller.reservation.ticksToEnd<2500 ) ) )
+                // spawn harvesters first before trying to boost controller
+                if(harvestersAlive===0)keepSpawning=false;
 
                 this.reserverRoom(node.name,roomName+'-cl',controller,bodyPlan,false,keepSpawning)
                 if(invaderReserved || invadeCores.length>0){
