@@ -8,6 +8,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
         this.config = {}
         this.name = spawnName;
         this.extraFastFillSpots = this.getExtraFillerSpots(facing);
+
     }
     run(config){
         this.config = config;
@@ -69,6 +70,30 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
             }else{
                 fillerRole.run(creep,this.config);
             }
+        }
+    }
+    setCostMatrixChanges(facing){
+        let a = this.anchor;
+        //return;
+        if(facing===TOP){
+            mb.setCostOnMatrix(a.roomName,a.x-1,a.y+1,255);
+            mb.setCostOnMatrix(a.roomName,a.x+1,a.y+1,255);
+            mb.setCostOnMatrix(a.roomName,a.x,a.y+2,255);
+        }
+        else if(facing===LEFT){
+            mb.setCostOnMatrix(a.roomName,a.x+1,a.y-1,255);
+            mb.setCostOnMatrix(a.roomName,a.x+2,a.y,255);
+            mb.setCostOnMatrix(a.roomName,a.x+1,a.y+1,255);
+        }
+        else if(facing===RIGHT){
+            mb.setCostOnMatrix(a.roomName,a.x-1,a.y-1,255);
+            mb.setCostOnMatrix(a.roomName,a.x-2,a.y,255);
+            mb.setCostOnMatrix(a.roomName,a.x-1,a.y+1,255);
+        }
+        else if(facing===BOTTOM){
+            mb.setCostOnMatrix(a.roomName,a.x-1,a.y-1,255);
+            mb.setCostOnMatrix(a.roomName,a.x+1,a.y-1,255);
+            mb.setCostOnMatrix(a.roomName,a.x,a.y-2,255);
         }
     }
     getExtraFillerSpots(facing){

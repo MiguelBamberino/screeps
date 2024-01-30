@@ -305,7 +305,14 @@ module.exports = function(){
                 opts.ignoreCreeps=false;
                 opts.reusePath = 5;
             }
-            
+
+            opts.costCallback = function(roomName,costMatrix){
+
+                let mpCM = mb.getCostMatrix(roomName);
+
+                if (mpCM) return mpCM;
+                else return costMatrix;
+            }
             
             // real hacky for now. Only runs if we're not a fighty boi
             if(Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){

@@ -1046,10 +1046,16 @@ global.mb = {
    isDeadlyRoom:function(roomName){
        return this.deadlyRooms[roomName]?true:false;
    }, 
-   createCostMatrix: function(roomName,matrix){
-        
-        this.costMatrices[ roomName ]=matrix;
-        
+   createCostMatrix: function(roomName,matrix=undefined){
+        if(!matrix)matrix =  new PathFinder.CostMatrix;
+        this.costMatrices[ roomName ] = matrix;
+        return this.costMatrices[ roomName ];
+   },
+    setCostOnMatrix: function (roomName,x,y,score){
+        if(!this.costMatrices[roomName]){
+            this.createCostMatrix(roomName);
+        }
+        this.costMatrices[roomName].set(x,y,score);
     },
     getCostMatrix: function(roomName){
         if(this.costMatrices[roomName])

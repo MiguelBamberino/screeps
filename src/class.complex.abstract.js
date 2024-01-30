@@ -1,3 +1,4 @@
+
 const DETECT_STRUCTURES_INTERVAL=250;
 const ERR_OFF=-16;
 
@@ -23,6 +24,7 @@ class AbstractComplex{
         this.structureLookup={};
         this.groupLookup={};
         this.detectExistingStructures();
+        this.setCostMatrixChanges(facing);
     }
     runTick(){
         
@@ -113,6 +115,8 @@ class AbstractComplex{
                     if(plan.group){
                         this.groupLookup[plan.group].push(struct.id);
                     }
+                    if( ! [STRUCTURE_ROAD,STRUCTURE_RAMPART,STRUCTURE_CONTAINER].includes(plan.type) )
+                        mb.setCostOnMatrix(plan.pos.roomName,plan.pos.x,plan.pos.y,255);
                 }else{
                     if(plan.required===true)this.allRequiredStructuresBuilt=false;
 
@@ -159,6 +163,7 @@ class AbstractComplex{
                         if(structure)structure.destroy();
                     }else{
                         let res = mb.addConstruction(plan.pos,plan.type,plan.name)
+
                     }
 
 
@@ -196,6 +201,9 @@ class AbstractComplex{
     ////////////////////////////////////////////////////////////////////
     // Template Design Pattern: 
     ////////////////////////////////////////////////////////////////////
+    setCostMatrixChanges(facing){
+
+    }
     getLayoutPlan(facing){
         return [];
     }
