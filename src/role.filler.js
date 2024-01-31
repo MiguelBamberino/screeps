@@ -70,6 +70,16 @@ var role = {
         
         
         creep.checkAndUpdateState();
+
+        let drops = [];
+        if(config.upgradeRate===RATE_VERY_FAST && config.controller.level===4 && Game.rooms[config.coreRoomName].storage){
+            // we're likely to acrue lots of dropped E around the base, just after the storage completes, so save as much
+            // as possible
+            drops = creep.pos.lookForNearbyResources(RESOURCE_ENERGY);
+
+        }
+
+
         
         // if anything changes, lets reload 
         let container = Game.getObjectById(creep.memory.container_id);
@@ -123,6 +133,8 @@ var role = {
 
 	    if(creep.carryingAtleast(1)) {
 
+
+
             //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawn_id');
             if(creep.memory.fillingInProgress){
                 if(spawn){
@@ -130,6 +142,11 @@ var role = {
                     if(res===OK){
                        return ;
                     }
+                }
+            }else{
+                if(drops.length>0){
+                    creep.say('stash')
+                    return creep.transfer(container,RESOURCE_ENERGY);
                 }
             }
             //if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':spawn_id',clogCPU);
@@ -213,11 +230,15 @@ var role = {
             
 	    }
 	    else if(creep.isCollecting()){
-	        
-	      /*  if(blobs.length>0){
-	            creep.pickup(blobs[0]);
-	        }else */
-	        //creep.say('yo')
+
+
+            if(drops.length>0){
+                creep.say('pickup')
+                return console.log(creep.name,creep.pickup(drops[0]));
+            }
+
+
+
 	        if(container){
 	            
 	            let link = Game.getObjectById(creep.memory.link_id);
