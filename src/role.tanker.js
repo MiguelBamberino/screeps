@@ -246,7 +246,7 @@ var roleTanker = {
         }
         else if(creep.isCollecting()){
 
-            if(!Game.rooms[config.coreRoomName].storage && !creep.memory.reserve_id){
+            if(config.upgradeRate===RATE_VERY_FAST && !creep.memory.reserve_id){
                 let drop = false;
 
                 if(config.inRecoveryMode){

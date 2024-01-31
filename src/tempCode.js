@@ -741,7 +741,7 @@ module.exports = {
 
                 if(Game.rooms[roomName]){
                     mb.scanRoom(roomName);
-                    console.log(node.name," Just scanned. Scoring")
+                    console.log(node.name,roomName," Just scanned. Scoring")
                     this.scoreRemote(node,roomName);
                     this.sortRemotes(node);
                 }
