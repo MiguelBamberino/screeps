@@ -1123,6 +1123,12 @@ class RoomNode{
             this.workforce_quota.tanker.required = 1;
         }
 
+        let tankerGap = this.workforce_quota.tanker.required - this.workforce_quota.tanker.count;
+        if(this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.upgrader.count===0 && tankerGap>5){
+            // paused tanker spawn spam to spawn some consumption. stop e piling up at controller
+            this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
+        }
+
         this.workforce_quota.upgrader.required = 0;
         if(controller.haveContainer()){
             if(this.upgradeRate===RATE_VERY_FAST && Game.cpu.bucket>5000){
