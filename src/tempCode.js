@@ -545,7 +545,7 @@ module.exports = {
         // High Scores ARE BAD , LOW scores ARE GOOD
         // score is src distances to spawn + controller distance to spawn
         if(!Memory.remotes[node.name][roomName])
-            Memory.remotes[node.name][roomName]={score:0,lastSeen:0,username:false,online:true,reason:'scouting',staff:{count:0,required:0}};
+            Memory.remotes[node.name][roomName]={score:0,lastSeen:0,username:false,online:true,isDangerous:false,reason:'scouting',staff:{count:0,required:0}};
 
         //  We have to go explore
         if(!mb.hasRoom(roomName))return;
@@ -598,6 +598,10 @@ module.exports = {
             }
             if(Game.rooms[roomName].getDangerousCreeps().length >=1){
                 Memory.remotes[node.name][roomName].score+=100;
+                Memory.remotes[node.name][roomName].reason += "Dang"
+                Memory.remotes[node.name][roomName].isDangerous = true;
+            }else{
+                Memory.remotes[node.name][roomName].isDangerous = false;
             }
         }
         if(controller && controller.owner){
@@ -681,7 +685,7 @@ module.exports = {
                 }
             }
             let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
-            for(let i=0; i<=3;i++)node.remoteRoomNames.push(available[i]);
+            for(let i=0; i<=3;i++)if(available[i])node.remoteRoomNames.push(available[i]);
         }
     },
     detectRemotes:function(node){
@@ -768,7 +772,10 @@ module.exports = {
         let reSortRemotes = false;
         let previousRemoteFullyStaffed = false;
         for(let roomName of node.remoteRoomNames){
+
+
             let remoteMemory = Memory.remotes[node.name][roomName];
+            if(!remoteMemory){console.log(roomName,"No Memory for remote"); continue;}
             remoteMemory.staff.count= 0;
             // short term fix because invaderCores can be added after the fact and then not in cache
             if(Game.time%100===0)mb.scanRoom(roomName);
@@ -797,7 +804,7 @@ module.exports = {
             }
             if(Game.rooms[roomName]){
                 // console.log(node.name,roomName,Game.rooms[roomName].getInvaders().length," invaders detected. Rescoring")
-                if(Game.rooms[roomName].getInvaders().length >= 1){
+                if(!remoteMemory.isDangerous && Game.rooms[roomName].getInvaders().length >= 1){
                     console.log(node.name,roomName," invaders detected. Rescoring")
                     this.scoreRemote(node,roomName);
                     reSortRemotes=true;

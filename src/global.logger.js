@@ -70,6 +70,12 @@ global.logs = {
                     
                     Memory.logs.rclSpeedStats[roomName]['storage'] ={time:Game.time,duration:0,arrivedIn: (Game.time-previous.time),sinceStart: (Game.time-previous.time) }
                 }
+
+                if(Game.rooms[roomName].controller.level===6 && Game.rooms[roomName].controller.progress>414800 && !Memory.logs.rclSpeedStats[roomName][ 'GCL2' ] ){
+                    let previous = Memory.logs.rclSpeedStats[roomName][ 'RCL1' ];
+
+                    Memory.logs.rclSpeedStats[roomName]['GCL2'] ={time:Game.time,duration:0,arrivedIn: (Game.time-previous.time),sinceStart: (Game.time-previous.time) }
+                }
             }
         }
     },
