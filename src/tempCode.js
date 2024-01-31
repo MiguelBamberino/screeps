@@ -310,7 +310,7 @@ module.exports = {
             }
             if(Game.rooms[roomName].getDangerousCreeps().length >=1){
                 Memory.remotes[node.name][roomName].score+=100;
-                Memory.remotes[node.name][roomName].reason += "Dang"
+                Memory.remotes[node.name][roomName].reason += "Dngr"
                 Memory.remotes[node.name][roomName].isDangerous = true;
             }else{
                 Memory.remotes[node.name][roomName].isDangerous = false;
@@ -356,15 +356,30 @@ module.exports = {
         }
         let result=false;
 
+        let roads = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_ROAD], requireVision:false,justIDs:true })
         Memory.remotes[node.name][roomName].reason += "S["
+        let netSrcPathLength = 0;
         for(let src of srcs){
             let to = src.pos;
             result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{swampCost:2,maxOps:10000});
-            Memory.remotes[node.name][roomName].score+= result.path.length;
-            Memory.remotes[node.name][roomName].reason += result.path.length+",";
+            netSrcPathLength +=result.path.length;
+            let c = '';
+            if(src.haveVision && src.haveContainer()){
+                netSrcPathLength -= 50;// fix reward for containers, maybe it should be weighted as revenue...
+                c='c';
+            }
+            Memory.remotes[node.name][roomName].reason += result.path.length+c+",";
         }
-        Memory.remotes[node.name][roomName].reason += "],"
-        // harvesters
+        Memory.remotes[node.name][roomName].reason += "],";
+        Memory.remotes[node.name][roomName].score+= netSrcPathLength;
+
+        if(roads.length>0){
+            // max roads should == net path lengts. roads make remote 2x efficient, so reduce path cost
+            let rdMode = Math.floor(roads.length/2);
+            Memory.remotes[node.name][roomName].reason -= "-r["+rdMode+"],";
+            Memory.remotes[node.name][roomName].score+= rdMode;
+        }
+            // harvesters
         Memory.remotes[node.name][roomName].staff.required+=srcs.length;
         if(srcs.length==1){
             // lower score of single src rooms, by doubling their distance. Added src.length for tie breaker
