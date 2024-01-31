@@ -17,7 +17,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
         if(!this.config)return;
         if(this.config.spawnFastFillerReady){
 
-            this.runAllFillers();
+            //this.runAllFillers();
         }
     }
     getLayoutPlan(facing){

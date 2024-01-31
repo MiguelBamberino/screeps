@@ -1088,8 +1088,6 @@ module.exports = {
                     }
                     this.constantGuardWalls(node.name,"hoplite"+i,room.name,bodyPlan,ramp.pos,maxDist);
                 }
-
-
             }
 
         }
@@ -1099,7 +1097,6 @@ module.exports = {
     manageConstructionSites:function(node){
 
         if(node.controller().level>=2)this.buildRoadsToSrcArndController(node)
-
         if(node.controller().level==5)this.buildAtRCL5(node)
         if(node.controller().level==6)this.buildAtRCL6(node)
         if(node.controller().level==7)this.buildAtRCL7(node)
@@ -1109,38 +1106,6 @@ module.exports = {
         let spawn = Game.spawns[node.name];
         let room = spawn.room;
 
-        if(!Game.spawns[node.name+'-2']){
-            let siteToDelete = rp(spawn.pos.x-2,spawn.pos.y+6,room.name).lookForStructure(STRUCTURE_EXTENSION);
-            if(siteToDelete)siteToDelete.destroy();
-            rp(spawn.pos.x-2,spawn.pos.y+6,room.name).createConstructionSite(STRUCTURE_TOWER)
-
-            // Length fills
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+6,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+5,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+7,STRUCTURE_ROAD);
-
-            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+8,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+6,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+7,STRUCTURE_EXTENSION);
-
-            // fast-fill/closed fill
-            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+2,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x,spawn.pos.y+6,STRUCTURE_CONTAINER);
-            room.createConstructionSite(spawn.pos.x,spawn.pos.y+4,STRUCTURE_RAMPART);
-
-            let sources = mb.getSources({roomNames:[room.name]});
-            for(let src of sources){
-                let buildableSpot = src.getStandingSpot().findNearbyBuildableSpot();
-                if(buildableSpot)buildableSpot.createConstructionSite(STRUCTURE_EXTENSION);
-            }
-
-            if( node.defenceIntel.weakest_structure.hits>=10000){
-                room.createConstructionSite(spawn.pos.x,spawn.pos.y+4,STRUCTURE_SPAWN,node.name+'-2');
-            }
-
-        }else{
-
-        }
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
         if(linkCount==3 && this.linksSetup[room.name]!=linkCount){
             util.setLinksInRoom(room.name,false);
@@ -1150,21 +1115,8 @@ module.exports = {
     buildAtRCL6:function(node){
         let spawn = Game.spawns[node.name];
         let room = spawn.room;
-        // x exts +
-        // +1 link
-        // +1 extractor, + terminal
-        // let mineral = mb.getMineralForRoom(room.name);
-        //mineral.pos.createConstructionSite(STRUCTURE_EXTRACTOR)
         let sources = mb.getSources({roomNames:[room.name]});
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
-
-        if( node.defenceIntel.weakest_structure.hits>=node.wallHeight){
-            let siteToDelete = rp(spawn.pos.x+2,spawn.pos.y+1,room.name).lookForStructure(STRUCTURE_EXTENSION);
-            if(siteToDelete)siteToDelete.destroy();
-            rp(spawn.pos.x+2,spawn.pos.y+1,room.name).createConstructionSite(STRUCTURE_TERMINAL)
-            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+7,STRUCTURE_EXTENSION);
-        }
-
 
         if(linkCount<3){
             for(let src of sources){
@@ -1174,32 +1126,6 @@ module.exports = {
                     break;
                 }
             }
-            room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+1,STRUCTURE_RAMPART);
-            /// Fast filler
-            /*room.createConstructionSite(spawn.pos.x-6,spawn.pos.y,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y,STRUCTURE_EXTENSION);
-
-            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+1,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+1,STRUCTURE_ROAD);
-
-            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+2,STRUCTURE_ROAD);
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+2,STRUCTURE_EXTENSION);
-
-            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+3,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+3,STRUCTURE_ROAD);
-
-            room.createConstructionSite(spawn.pos.x-6,spawn.pos.y+4,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-5,spawn.pos.y+4,STRUCTURE_EXTENSION);
-
-            // Length fills
-            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+5,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+5,STRUCTURE_ROAD);
-
-            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+6,STRUCTURE_ROAD);
-            room.createConstructionSite(spawn.pos.x-3,spawn.pos.y+6,STRUCTURE_EXTENSION);
-            room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+7,STRUCTURE_EXTENSION);*/
-            //
-
 
         }
         if(linkCount==3 && this.linksSetup[room.name]!=linkCount){
@@ -1210,31 +1136,6 @@ module.exports = {
     buildAtRCL5:function(node){
         let spawn = Game.spawns[node.name];
         let room = spawn.room;
-
-        // 10 exts + 1 destroy
-        // 1 tower
-        // 2 links
-        let siteToDelete = rp(spawn.pos.x,spawn.pos.y+2,room.name).lookForStructure(STRUCTURE_EXTENSION);
-        if(siteToDelete)siteToDelete.destroy();
-        rp(spawn.pos.x,spawn.pos.y+2,room.name).createConstructionSite(STRUCTURE_LINK)
-
-        room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+7,STRUCTURE_EXTENSION);
-
-        room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+7,STRUCTURE_EXTENSION);
-        /*
-        room.createConstructionSite(spawn.pos.x-2,spawn.pos.y+8,STRUCTURE_EXTENSION);
-        room.createConstructionSite(spawn.pos.x-1,spawn.pos.y+8,STRUCTURE_EXTENSION);
-        room.createConstructionSite(spawn.pos.x,spawn.pos.y+8,STRUCTURE_EXTENSION);
-        room.createConstructionSite(spawn.pos.x+1,spawn.pos.y+8,STRUCTURE_TOWER);
-        room.createConstructionSite(spawn.pos.x+2,spawn.pos.y+8,STRUCTURE_EXTENSION);
-        */
-        // far left of Spawn
-        /*
-        room.createConstructionSite(spawn.pos.x-4,spawn.pos.y,STRUCTURE_EXTENSION);
-        room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+1,STRUCTURE_EXTENSION);
-        room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+3,STRUCTURE_EXTENSION);
-        room.createConstructionSite(spawn.pos.x-4,spawn.pos.y+4,STRUCTURE_EXTENSION);
-        */
 
         let sources = mb.getSources({roomNames:[room.name]});
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
