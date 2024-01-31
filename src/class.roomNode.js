@@ -1,5 +1,6 @@
 const ExtractorComplex = require('./class.complex.extractor');
 const BaseCoreComplex = require('./class.complex.base-core');
+const ArmCoreComplex = require('./class.complex.base-arm');
 
 var creepRoles ={
     worker:require('./role.worker'),
@@ -65,9 +66,10 @@ class RoomNode{
         // options
         this.allowCPUShutdown = options.allowCPUShutdown===undefined?false:options.allowCPUShutdown;
 
+        this.anchor = options.anchor===undefined?Game.spawns[this.name].pos:options.anchor;
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
         this.armFacing = options.armFacing===undefined?TOP:options.armFacing;
-        this.armAnchor = options.armAnchor===undefined?rp(spwn.pos.x,spwn.pos.y,spwn.pos.roomName):options.armAnchor;
+        this.armAnchor = options.armAnchor===undefined?rp(spwn.pos.x,spwn.pos.y+6,spwn.pos.roomName):options.armAnchor;
         this.extraFastFillSpots = options.extraFastFillSpots===undefined?[]:options.extraFastFillSpots;
 
         
@@ -100,8 +102,10 @@ class RoomNode{
             this.orders = this.trader.getOrderIDsByRoomName(this.coreRoomName);
         }
 
-        this.coreComplex = new BaseCoreComplex(Game.spawns[this.name].pos,this.name,this.spawnFacing)
+        this.coreComplex = new BaseCoreComplex(this.anchor,this.name,this.spawnFacing)
         this.coreComplex.turnOn();
+        this.armComplex = new ArmCoreComplex(this.armAnchor,this.name,this.armFacing)
+        this.armComplex.turnOn();
 
         if(this.labComplex){
             
@@ -189,6 +193,7 @@ class RoomNode{
         this.checkCache();
             //logs.stopCPUTracker(this.name+':checkCache');
         this.coreComplex.run(this.getConfig())
+        this.armComplex.run(this.getConfig())
 
 
            // logs.startCPUTracker(this.name+':decideWorkforceQuotas');
