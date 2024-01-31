@@ -615,7 +615,7 @@ module.exports = {
         Memory.remotes[node.name][roomName].score = 0;
         Memory.remotes[node.name][roomName].staff={count:0,required:0};
 
-        
+
         if(controller && controller.reservation){
             Memory.remotes[node.name][roomName].username = controller.reservation.username;
 

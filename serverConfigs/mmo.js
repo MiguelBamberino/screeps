@@ -3,6 +3,7 @@
 
 module.exports = {
     allowRespawnDetection:false,
+    cpuLimit:20,
     loadNodes(){
         return {
             a: new RoomNode('Alpha', {buildFast: true, upgradeRate: RATE_VERY_FAST})

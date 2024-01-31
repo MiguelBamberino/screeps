@@ -64,8 +64,12 @@ class RoomNode{
         
         // options
         this.allowCPUShutdown = options.allowCPUShutdown===undefined?false:options.allowCPUShutdown;
+
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
+        this.armFacing = options.armFacing===undefined?TOP:options.armFacing;
+        this.armAnchor = options.armAnchor===undefined?rp(spwn.pos.x,spwn.pos.y,spwn.pos.roomName):options.armAnchor;
         this.extraFastFillSpots = options.extraFastFillSpots===undefined?[]:options.extraFastFillSpots;
+
         
         this.logger = options.logger;
         

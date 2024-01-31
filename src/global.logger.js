@@ -96,7 +96,7 @@ global.logs = {
     },
     mainLoopEnded: function(){
         let cpuUsed = this.stopCPUTracker('total');
-        let cpuTickBudget = 20;
+        let cpuTickBudget = _SERVER_CONFIG.cpuLimit?_SERVER_CONFIG.cpuLimit:20;
         this.expectedCPUProfit = cpuTickBudget - cpuUsed;
         this.bucketAtLastLoopEnd = Game.cpu.bucket;
         
