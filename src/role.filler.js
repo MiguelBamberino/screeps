@@ -234,7 +234,7 @@ var role = {
 
             if(drops.length>0){
                 creep.say('pickup')
-                return console.log(creep.name,creep.pickup(drops[0]));
+                return creep.pickup(drops[0]);
             }
 
 

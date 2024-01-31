@@ -44,12 +44,19 @@ class RoomNode{
      **/ 
     constructor(name, options={}){
 
-        if(!Game.spawns[name] ){ if(Game.time%20)console.log(name+' has no core spawn. Cannot load on global reset'); return;}
-        let spwn = Game.spawns[name];
-
         this.name = name;
+        this.exports = [];
+        this.online = options.online===undefined?true:options.online;
+
+        if(!Game.spawns[name] ){
+            if(this.online && Game.time%10)console.log(name+' has no core spawn. Cannot load on global reset');
+            this.online = false;// turning off to save code
+            return;
+        }
+
+
+        let spwn = Game.spawns[name];
         this.coreRoomName = spwn.pos.roomName;
-        this.online = true;
 
         if(!mb.hasRoom(this.coreRoomName))mb.scanRoom(this.coreRoomName);
         
@@ -64,6 +71,7 @@ class RoomNode{
         this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
         
         // options
+
         this.allowCPUShutdown = options.allowCPUShutdown===undefined?false:options.allowCPUShutdown;
 
         this.anchor = options.anchor===undefined?Game.spawns[this.name].pos:options.anchor;
@@ -183,10 +191,12 @@ class RoomNode{
     // Run Per Tick Code
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
     runTick(){
-        logs.startCPUTracker(this.name+':runTick');
+
         
            // logs.startCPUTracker(this.name+':safeToRun');
         if(!this.safeToRun())return false;
+
+        logs.startCPUTracker(this.name+':runTick');
             //logs.stopCPUTracker(this.name+':safeToRun');
          
             //logs.startCPUTracker(this.name+':checkCache');
@@ -268,7 +278,9 @@ class RoomNode{
         logs.stopCPUTracker(this.name+':runTick');
     }
     safeToRun(){
-        
+
+        if(!this.online)return false;
+
         if(!this.controller()){clog("Room-node has no controller",this.name);return false;}
         
         
@@ -794,7 +806,6 @@ class RoomNode{
         return mb.getAllSourcesForRoom(this.coreRoomName);
     }
     controller(){
-        //if(!Game.rooms[this.coreRoomName])return false; >> not sure why this line was here. comment it next dufus, when its a bug
         return this.room().controller;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1118,8 +1129,8 @@ class RoomNode{
 
                 let thresholds= {
                     999999:9,
-                    3000:8,
-                    2500:7,
+                    4000:8,
+                    3000:7,
                     2000:6,
                     1800:5,
                     1500:4,
@@ -1133,7 +1144,10 @@ class RoomNode{
                         break;
                     }
                 }
-
+                if(this.controller().level>=4 &&this.workforce_quota.upgrader.required===9){
+                    // need to leave open space to container for rkeeper
+                    this.workforce_quota.upgrader.required=8;
+                }
             }
 
             else if(this.upgradeRate===RATE_FAST && Game.cpu.bucket>5000){

@@ -12,261 +12,61 @@ module.exports = {
             this.shard3TempCode();
         }else if( util.getServerName()==='private'){
             this.shardPrivateTempCode();
-        }else if( util.getServerName()==='swc'){
+        }else if( util.getServerName()==='swc') {
             this.shardSWCTempCode();
+        }else if( util.getServerName()==='shardSeason'){
+                this.shardSeasonTempCode();
         }else{
             this.shardPrivateTempCode();
         }
-        //
+
+        logs.startCPUTracker('manageInterRoomTrading2');
+        if(Game.time%10==0)this.manageInterRoomTrading2()
+        logs.stopCPUTracker('manageInterRoomTrading2',false);
 
         return;
+    },
+    shardSeasonTempCode:function(){
+        for(let n in nodes){
+            if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
+        }
+
     },
     shardPrivateTempCode:function(){
         for(let n in nodes){
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
         }
 
+        if(false && !nodes.b.online && Game.gcl>=2){
+            let targetRoomName = 'W2N1';
+            let targetName = 'Beta';
+            let anchor = rp(25,25,targetRoomName);
+            if(Game.rooms[targetRoomName]){
+                mb.addConstruction(anchor,STRUCTURE_SPAWN,targetName)
+            }
+            this.startupRoomNoVision('Alpha',targetRoomName, {workerCount:4,workerBody:'4w4c4m',defend:true,defenderSpot:{x:13,y:16}})
+        }
+
     },
     shardSWCTempCode:function(){
         let thing = this;
-        gui.tradeStats = true;
 
-
+        for(let n in nodes){
+            if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
+        }
         nodes.a.manual_ignoreRooms = [];
         nodes.a.manual_addRooms = [];
         nodes.a.manual_addRooms.push('E6N5')
         nodes.a.manual_ignoreRooms.push('E7N3')
-        nodes.a.manual_addRooms.push('E6N4')
-        nodes.a.manual_ignoreRooms.push('E8N3')
-
-        nodes.b.manual_addRooms = [];
-        nodes.b.manual_ignoreRooms = [];
-        nodes.b.manual_addRooms.push('E5N4')
-        nodes.b.manual_ignoreRooms.push('E8N3')
-        nodes.b.manual_ignoreRooms.push('E7N3')
-
-        nodes.g.manual_ignoreRooms = [];
-        nodes.g.manual_addRooms = [];
-        nodes.g.manual_noRoads = [];
-
-        nodes.g.manual_addRooms.push('E3N4')
-        nodes.g.manual_ignoreRooms.push('E4N5')
-        nodes.g.manual_noRoads.push('E5N5')
-        nodes.g.manual_ignoreRooms.push('E3N4')
-        nodes.g.manual_ignoreRooms.push('E3N6')
-
-        nodes.g.manual_ignoreRooms.push('E2N5')
-
-
-        if(Memory.remotes['Gamma']['E4N5'].online===false){
-            nodes.g.manual_ignoreRooms.push('E5N5')
-
-        }else{
-            nodes.g.manual_ignoreRooms.push('E5N5')
-
-        }
-        nodes.e.manual_ignoreRooms = ['E8N3','E8N5','E9N4'];
-
-
-        if(nodes.d){
-            nodes.d.manual_ignoreRooms = [];
-            nodes.d.manual_ignoreRooms.push('E7N6')
-            nodes.d.manual_ignoreRooms.push('E8N5')
-        }
-
-        if(Game.rooms['E5N5'] &&  (Game.rooms['E5N5'].getInvaders().length>0  && Game.rooms['E5N5'].getInvaders().length < 5 ) ){
-            //this.fightyBoi('Gamma','E5N5-bkup-guard','25m19r6h','E5N5',{reckless:true,retreatSpot:rp(11,12,'E3N5'),kiteSpots:[rp(11,12,'E5N5'),rp(31,1,'E5N5'),rp(32,20,'E5N5')]});
-        }
-
-        //this.fightyBoi('Beta','E6N4-bkup-guard','25m19r6h','E5N4',{retreatSpot:rp(11,12,'E7N4'),kiteSpots:[]});
-        // rp(11,12,'E6N4'),rp(31,1,'E6N4'),rp(32,20,'E6N4')
 
         if(nodes.g.manual_addRooms.includes('E4N5')){
             this.rotateCreep('E4N5-sk-guard-', function(activeCreepName){
                 thing.constantGuardSKRoom('Gamma',activeCreepName,'E4N5', ['658f1c709ddf0f005f9abdc9','658f1c709ddf0f005f9abdc1','658f1c709ddf0f005f9abdc2'],'20m20a5h5m')
             },250)
         }
-        if(nodes.a.manual_addRooms.includes('E6N5')){
-            this.rotateCreep('E6N5-sk-guard-', function(activeCreepName){
-                thing.constantGuardSKRoom('Alpha',activeCreepName,'E6N5', ['658f1c709ddf0f005f9abd28','658f1c709ddf0f005f9abd26','658f1c709ddf0f005f9abd2a'],'20m20a5h5m')
-            },275)
-        }
-
-        if(nodes.a.manual_addRooms.includes('E6N4')){
-
-            this.rotateCreep('E6N4-sk-guard-', function(activeCreepName){
-                thing.constantGuardSKRoom('Alpha',activeCreepName,'E6N4', ['658f1c709ddf0f005f9abd67','658f1c709ddf0f005f9abd64','658f1c709ddf0f005f9abd63'],'20m20a5h5m')
-            },275)
-        }
-        if(nodes.b.manual_addRooms.includes('E5N4')){
-
-            this.rotateCreep('E5N4-sk-guard-', function(activeCreepName){
-                thing.constantGuardSKRoom('Beta',activeCreepName,'E5N4', ['658f1c709ddf0f005f9abe25','658f1c709ddf0f005f9abe23','658f1c709ddf0f005f9abe1d'],'20m20a5h5m')
-            },250)
-        }
-
-
-        /*
-        this.harvestAndCollectMineraFromSKRoom('Gamma','E4N4',2,400000,true);
-        */
-
-
-        this.fullAutomateRoomNode(nodes.a);
-        this.fullAutomateRoomNode(nodes.b);
-        this.fullAutomateRoomNode(nodes.g);
-        this.fullAutomateRoomNode(nodes.d);
-
-        this.fullAutomateRoomNode(nodes.e);
-
-        //this.maintainRoadsInRoom('Gamma','E5N5-w',['E4N5','E5N5'],'2w8c5m',false);
-        //if(Game.creeps['E5N5-w2'])
-        //this.maintainRoadsInRoom('Gamma','E5N5-w2',['E4N5','E5N5'],'2w8c5m',false);
-
-        nodes.a.upgradeRate = RATE_OFF;
-
-        nodes.g.upgradeRate = RATE_OFF;
-        nodes.b.upgradeRate = RATE_OFF;
-        nodes.d.upgradeRate = RATE_OFF;
-
-        if(nodes.e.controller().level<7){
-            let container = nodes.e.storage();
-            let storage = nodes.a.storage();
-            if(container){
-                // this.withdrawThenRepair('Alpha-2','Aux1','20w10c5m',container.id,'65a0729c7755ba002e94e81c')
-
-                for(let i=0; i<6; i++){
-                    // this.haulResources('Epsilon','et'+i,'8c8m',storage,container,[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000&&storage.storingAtLeast(50000)),50,1,rp(13,27,'E8N4'))
-                }
-            }
-            nodes.e.upgradeRate = RATE_FAST;
-        }else{
-            nodes.e.upgradeRate = RATE_OFF;
-        }
-
-
 
         this.haulResources('Beta','Bt1','3c3m',{id:'65941912da3a1700880722ab',pos:{x:44,y:44,roomName:'E7N3'}},gob('6590f66c28e72200640769e0'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),200)
 
-
-        logs.startCPUTracker('manageInterRoomTrading2');
-        if(Game.time%10==0)this.manageInterRoomTrading2()
-        logs.stopCPUTracker('manageInterRoomTrading2',false);
-
-
-
-        if(!Memory.attacks)Memory.attacks={};
-        if(!Memory.attack_reports)Memory.attack_reports={};
-
-        /////////////////////////////////////////////////////////////////////////////////////////////
-        // PORTAL DEFENCE  : E10N5
-        /////////////////////////////////////////////////////////////////////////////////////////////
-        // 14t10m20r6h || 3t25m17r4a1h > 25m19r6h > 25m20r5h
-        this.harassRemote('Alpha','E10N5','3t25m17r4a1h',{
-            reckless:true,
-            spawnPriority:true,
-            keepSpawning:(nodes.a.storage().storingAtLeast(50000)),
-            waitSpot:{x:25,y:3},
-            retreatSpot:rp(25,25,'E9N5'),
-            kiteSpots:[rp(22,15,'E10N5'),rp(21,10,'E10N5'),rp(17,12,'E10N5')]
-        },350)
-
-        if(!Memory.attack_reports['E10N5'])Memory.attack_reports['E10N5']={lastSeen:Game.time};
-        if( Game.rooms['E10N5'] && Memory.attacks['E10N5']!=='stop'){
-
-            let ids =  Game.rooms['E10N5'].getEnemyPlayerFighters();
-            if(ids.length>0){
-                let hostile = gob(ids[0]);
-                if(hostile && hostile.body.length>39){
-                    Memory.attack_reports['E10N5'].lastSeen = Game.time;
-                    Memory.attacks['E10N5'] = -10;
-                }
-            }
-
-            if( (Memory.attack_reports['E10N5'].lastSeen + 3000) < Game.time ){
-                Memory.attacks['E10N5'] = 'paused';
-            }
-        }
-        if(Memory.attacks['E10N5']==='paused'){
-            this.scoutRoom('Alpha','E10N5-sc','E10N5')
-        }
-        /////////////////////////////////////////////////////////////////////////////////////////////
-        // PORTAL DEFENCE  : E0N5
-        /////////////////////////////////////////////////////////////////////////////////////////////
-        this.harassRemote('Gamma','E0N5','3t25m16r5a1h',{
-            reckless:true,
-            //useHealer:true,
-            waitSpot:{x:25,y:3},
-            retreatSpot:rp(25,25,'E1N5'),
-            kiteSpots:[rp(22,16,'E0N5'),rp(24,18,'E0N5'),rp(21,19,'E0N5')]
-        })
-
-        if(!Memory.attack_reports['E0N5'])Memory.attack_reports['E0N5']={lastSeen:Game.time};
-        if( Game.rooms['E0N5'] && Memory.attacks['E0N5']!=='stop'){
-
-            let ids =  Game.rooms['E0N5'].getEnemyPlayerFighters();
-            if(ids.length>0){
-                let hostile = gob(ids[0]);
-                if(hostile && hostile.body.length>39){
-                    Memory.attack_reports['E0N5'].lastSeen = Game.time;
-                    Memory.attacks['E0N5'] = -20;
-                }
-            }
-
-            if( (Memory.attack_reports['E0N5'].lastSeen + 3000) < Game.time ){
-                Memory.attacks['E0N5'] = 'paused';
-            }
-        }
-        if(Memory.attacks['E0N5']==='paused'){
-            this.scoutRoom('Gamma','E0N5-sc','E0N5')
-        }
-
-
-        /////////////////////////////////////////////////////////////////////////////////////////////
-        // PORTAL DEFENCE  : E5N0
-        /////////////////////////////////////////////////////////////////////////////////////////////
-
-        this.harassRemote('Beta','E5N0','3t25m17r4a1h',{
-            reckless:true,
-            spawnPriority:true,
-            //useHealer:true,
-            waitSpot:{x:25,y:2},
-            retreatSpot:rp(25,25,'E5N1'),
-            kiteSpots:[rp(27,11,'E5N0'),rp(32,18,'E5N0'),rp(23,20,'E5N0')]
-        })
-        if(!Memory.attack_reports['E5N0'])Memory.attack_reports['E5N0']={lastSeen:Game.time};
-        if( Game.rooms['E5N0'] && Memory.attacks['E5N0']!=='stop'){
-
-            let ids =  Game.rooms['E5N0'].getEnemyPlayerFighters();
-            if(ids.length>0){
-                let hostile = gob(ids[0]);
-                if(hostile && hostile.body.length>39){
-                    Memory.attack_reports['E5N0'].lastSeen = Game.time;
-                    Memory.attacks['E5N0'] = -10;
-                }
-            }
-
-            if( (Memory.attack_reports['E5N0'].lastSeen + 3000) < Game.time ){
-                Memory.attacks['E5N0'] = 'paused';
-            }
-        }
-        if(Memory.attacks['E5N0']==='paused'){
-            this.scoutRoom('Alpha','E5N0-sc','E5N0')
-        }
-
-
-        // 2m31w5r12m 7t8m20h1m
-        /*
-        this.duoBois('Gamma','drain-0', 'E25N29',{
-            retreatSpot:rp(13,2,'E25N29'),
-            keepSpawning:false,
-             musterSpot:rp(25,35,'E25N30'),
-             target_ids:['659c5e6adc5332003257a346'],
-            leaderBody:'10t10w5r25m',
-            healerBody:'7t8m20h1m',
-             healerBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'659aefc97b77b600382c2006'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659ac78b72240e002fb4cc67'}],
-             renewSpawn:'Gamma-2',spawnFacing:BOTTOM
-        })
-        */
         this.harassRemote('Gamma','E25N30','25m20r5h',{
             reckless:true,
             spawnPriority:true,
@@ -275,45 +75,7 @@ module.exports = {
             waitSpot:{x:30,y:24},
             retreatSpot:rp(25,25,'E25N30')
         },350)
-        /**/
-        this.scheduledAttack('Gamma','E25N29','G1',rp(30,14,'E25N29'),1,{
-            duoCount:3,
-            target_ids:[],
-            musterSpot:rp(25,35,'E25N30'),
-            leaderBody:'6t2m25w5r12m',
-            leaderBoostPlans:[{resource_type:RESOURCE_GHODIUM_ALKALIDE,lab_id:'659adbb3e6a924003533f857'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'659aefc97b77b600382c2006'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'659ad17d715ca500374eb2f5'}],
-            healerBody:'7t8m20h1m',
-            healerBoostPlans:[{resource_type:RESOURCE_GHODIUM_ALKALIDE,lab_id:'659adbb3e6a924003533f857'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'659aefc97b77b600382c2006'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659ac78b72240e002fb4cc67'}],
-            renewSpawn:'Gamma-2',spawnFacing:BOTTOM
 
-        })
-
-        this.scheduledAttack('Beta','E29N24','B1-',rp(37,13,'E29N24'),1,{
-            duoCount:3,
-            musterSpot:rp(10,10,'E30N24'),
-            leaderBody:'6t2m25w5r12m',
-            leaderBoostPlans:[{resource_type:RESOURCE_CATALYZED_GHODIUM_ALKALIDE,lab_id:'659cd9e79e5f680080578671'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65956aa616022e0029e52aa6'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'659567421e37fd0030a32846'}],
-
-            healerBody:'7t8m20h1m',
-            healerBoostPlans:[{resource_type:RESOURCE_CATALYZED_GHODIUM_ALKALIDE,lab_id:'659cd9e79e5f680080578671'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65956aa616022e0029e52aa6'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659562d44cbcce004de6f013'}],
-            renewSpawn:'Beta-2',spawnFacing:BOTTOM
-
-        })
-        /* 
-       this.scheduledAttack('Gamma','E25N28','G2',rp(28,13,'E25N28'),9999999,{
-            duoCount:2,
-            retreatSpot:rp(26,3,'E25N28'),
-            musterSpot:rp(25,35,'E25N30'),
-            leaderBody:'6t2m25w5r12m',
-            leaderBoostPlans:[{resource_type:RESOURCE_GHODIUM_ALKALIDE,lab_id:'659adbb3e6a924003533f857'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'659aefc97b77b600382c2006'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'659ad17d715ca500374eb2f5'}],
-            
-            healerBody:'7t8m20h1m',
-            healerBoostPlans:[{resource_type:RESOURCE_GHODIUM_ALKALIDE,lab_id:'659adbb3e6a924003533f857'},{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'659aefc97b77b600382c2006'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659ac78b72240e002fb4cc67'}],
-            renewSpawn:'Gamma-2',spawnFacing:BOTTOM
-            
-        })
-       
-        /**/
         this.scheduledAttack('Delta','E24N21','D1-',rp(27,35,'E24N21'),1,{
             duoCount:2,
             musterSpot:rp(25,10,'E24N20'),
@@ -324,65 +86,19 @@ module.exports = {
             renewSpawn:'Delta',spawnFacing:TOP
 
         })
-        /**/
 
-        // 24t1a25m  9t10m15h15m1h 21h7m 7t20h9m --  20h7m 2m12w12w12w12m=48  2m31w5r12m 9,27 = 7t20h 
-        /*
-        this.scheduledAttack('Beta','E29N24',rp(40,22,'E29N24'),9999999,{
-            duoCount:3,
-            target_ids:[],
-            musterSpot:rp(10,10,'E30N24'),
-            leaderBody:'2m31w5r12m',
-            leaderBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65956aa616022e0029e52aa6'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'659567421e37fd0030a32846'}],
-            healerBody:'7t8m20h1m',
-            healerBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65956aa616022e0029e52aa6'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659562d44cbcce004de6f013'}],
-            renewSpawn:'Beta-2',spawnFacing:BOTTOM
-            
-        })
-        */
-
-        let keepS = false;
-        let target_ids   = gob('65a03e6db38aa9002f68631a')?['65a03e6db38aa9002f68631a','65a107c602ce560033387f6b']:'all'  ;
-        let retreatTo = rp(11,4,'E24N21');
-        this.fightyBoi('Delta','E24N21-jav','25m20r5h','E24N21',mb.getMapRoute('E7N5','E24N21'),{ retreatSpot:retreatTo,keepSpawning:keepS });
-        this.fightyBoi('Delta','E24N21-centurion','24a25m1h','E24N21',mb.getMapRoute('E7N5','E24N21'),{ retreatSpot:retreatTo,keepSpawning:keepS,attackCivilians:false });
-
-        for(let i=0;i<5;i++){
-            this.breakStructures('Delta','E24N21-fabri-'+i,'24w25m1h','E24N21' ,mb.getMapRoute('E7N5','E24N21'),target_ids,retreatTo,keepS)
-        }
-
-        if( mb.getStructures( {roomNames:['E29N24'],types:[STRUCTURE_TOWER]} ).length ===0 ){
-            target_ids  = gob('65921e2462085b00767b3034')?['65921e2462085b00767b3034']:'all'
-            this.breakStructures('Beta','E29N24-fabri-0','24w25m1h','E29N24' ,mb.getMapRoute('E6N3','E29N24'),target_ids,rp(10,10,'E30N24'),keepS)
-
-            //this.fightyBoi('Beta','E29N24-bkup','24a25m1h','E5N5',{reckless:true,retreatSpot:rp(11,12,'E3N5'),kiteSpots:[rp(11,12,'E5N5'),rp(31,1,'E5N5'),rp(32,20,'E5N5')]});
-        }
-
-        keepS= false;
 
         this.drainRoomBounce('Beta','b-dr-0', rp(1,2,'E30N24'), '3*1t1m + 6*1h1m',mb.getMapRoute('E6N3','E30N24'),keepS)
-        this.drainRoomBounce('Beta','b-dr-1', rp(1,3,'E30N24'), '3*1t1m + 6*1h1m',mb.getMapRoute('E6N3','E30N24'),keepS)
-        //this.drainRoomBounce('Beta','b-dr-2', rp(1,4,'E30N24'), '3*1t1m + 6*1h1m',mb.getMapRoute('E6N3','E30N24'),keepS)
-        //this.drainRoomBounce('Beta','b-dr-3', rp(1,5,'E30N24'), '3*1t1m + 6*1h1m',mb.getMapRoute('E6N3','E30N24'),keepS)
-
-        keepS = false;
-        this.drainRoomBounce('Gamma','g-dr-0', rp(40,48,'E25N30'), '3*1t1m + 6*1h1m',mb.getMapRoute('E3N5','E25N30'),keepS)
-        this.drainRoomBounce('Gamma','g-dr-1', rp(41,48,'E25N30'), '3*1t1m + 6*1h1m',mb.getMapRoute('E3N5','E25N30'),keepS)
-        this.drainRoomBounce('Gamma','g-dr-2', rp(42,48,'E25N30'), '3*1t1m + 6*1h1m',mb.getMapRoute('E3N5','E25N30'),keepS)
-        this.drainRoomBounce('Gamma','g-dr-3', rp(43,48,'E25N30'), '3*1t1m + 6*1h1m',mb.getMapRoute('E3N5','E25N30'),keepS)
 
         //
 
     },
-    isPortalSafe:function(roomName){
-        return (Number.isInteger(Memory.attacks[roomName])&&Memory.attacks[roomName]>1)
-    },
+
     shardBATempCode:function(){
 
-        //this.botArenaForRoomNode(nodes.a);
-        //this.fullAutomateRoomNode(nodes.b);
-        //this.fullAutomateRoomNode(nodes.g);
-        //this.startupRoomNoVision('Alpha','W7N4', {workerCount:4,workerBody:'10w10c10m'})
+        for(let n in nodes){
+            if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
+        }
 
     },
     shard3TempCode:function(){
@@ -446,10 +162,6 @@ module.exports = {
             //renewSpawn:'Gamma-2',spawnFacing:BOTTOM
 
         })
-
-        logs.startCPUTracker('manageInterRoomTrading2');
-        if(Game.time%10==0)this.manageInterRoomTrading2()
-        logs.stopCPUTracker('manageInterRoomTrading2',false);
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////    
@@ -1851,7 +1563,7 @@ module.exports = {
 
         for(let n in nodes){
 
-            if(!nodes[n].terminal() || !nodes[n].storage()){
+            if(!nodes[n].online || !nodes[n].terminal() || !nodes[n].storage()){
                 continue;
             }
             for(let imp of nodes[n].imports){

@@ -69,7 +69,7 @@ gui.init();
 logs.globalResetComplete();
 
 for(let n in nodes){
-    if(nodes[n].online)
+    if(nodes[n].online && nodes[n].exports)
     for(let exp of nodes[n].exports){
         trader.offerExport( exp.resource_type, nodes[n].coreRoomName );
     }

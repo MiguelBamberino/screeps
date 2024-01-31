@@ -33,7 +33,9 @@ var roleTanker = {
 
     run: function(creep,config) {
 
-        //if(creep.name=='B-ta-0')clog(config)
+
+        let storage = Game.rooms[config.coreRoomName].storage
+
         creep.checkAndUpdateState();
 
         if(creep.isWorking()) {
@@ -186,7 +188,8 @@ var roleTanker = {
                 }else{
 
                     // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller. we hope there is ugraders there to use it
-                    if(config.upgradeRate===RATE_VERY_FAST  && !Game.rooms[config.coreRoomName].storage ){
+
+                    if(config.upgradeRate===RATE_VERY_FAST  && (!storage || (storage && storage.storingAtLeast(10000,RESOURCE_ENERGY)) ) ){
 
                         creep.memory.dropAt = config.controller.getContainer().pos;
                         creep.memory.giveToType = 'upgrader';
@@ -195,7 +198,7 @@ var roleTanker = {
 
                     // IF we're not upgrading like BRRRRRRR....., then use normal reservation system
                     let roomNames = [config.coreRoomName];
-                    if(config.funnelRoomName && Game.rooms[config.coreRoomName].storage && Game.rooms[config.coreRoomName].storage.storingAtLeast(50000)){
+                    if(config.funnelRoomName && storage && storage.storingAtLeast(50000)){
 
                         roomNames = [config.coreRoomName,config.funnelRoomName];
                     }
@@ -207,7 +210,7 @@ var roleTanker = {
             }
 
             if(!target && config.funnelRoomName){
-                if(Game.rooms[config.coreRoomName].storage && Game.rooms[config.coreRoomName].storage.storingAtLeast(50000)){
+                if(storage && storage.storingAtLeast(50000)){
                     //console.log(creep.name,"funneling")
                     target = creep.reserveTransferToStorage(config.funnelRoomName);
                 }
@@ -238,7 +241,10 @@ var roleTanker = {
                     creep.memory.lastWithdrewFrom=false;
                 }else{
                     creep.say('Zzz')
-                    creep.moveToPos(config.retreatSpot)
+                    if(config.upgradeRate===RATE_VERY_FAST)
+                        creep.moveToPos(config.controller)
+                    else
+                        creep.moveToPos(config.retreatSpot)
                 }
 
             }
@@ -291,7 +297,7 @@ var roleTanker = {
 
                 if(creep.ticksToLive<100)roomRange=[config.coreRoomName];
                 // don't suck from local mines, when builders need this to build the storage. go get remote E
-                else if(config.controller.level==4 && !Game.rooms[config.coreRoomName].storage)roomRange = config.remoteRoomNames;
+                else if(config.controller.level==4 && !storage)roomRange = config.remoteRoomNames;
 
                 target = creep.getFullestMineStore(roomRange);
                 if(target){
