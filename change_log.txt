@@ -1,4 +1,14 @@
 ===================================
+= Version 20.0.0
+===================================
+- overhauled server config, to be a config file
+- config save out of src/ in serverConfigs and added during upload
+- moved to npm scripts and deploy via http
+- massive speed run improves when upgradeRate===Very-Fast
+- added build plans for core spawn square & spawn-3 arm extension
+- better auto building, from rcl1-5 without my help
+
+===================================
 = Version 19.4.4
 ===================================
 - Fix - CPU drain bug where builders weren't descaling 
