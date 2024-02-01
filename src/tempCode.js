@@ -38,8 +38,8 @@ module.exports = {
         let feederName = 'Alpha';
         let targetName = 'Beta';
         let t = targetName.charAt(0).toLowerCase();
-
-        if(nodes.a.storage() && !nodes[t].online && Game.gcl.level>=2 && nodes[t].anchor){
+       // console.log(nodes.a);
+        if(nodes.a && nodes.a.storage() && !nodes[t].online && Game.gcl.level>=2 && nodes[t].anchor){
             let targetRoomName = nodes[t].anchor.roomName;
 
             //let anchor = rp(25,25,targetRoomName);
