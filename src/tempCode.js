@@ -33,18 +33,26 @@ module.exports = {
 
     },
     shardPrivateTempCode:function(){
+        
+
+        let feederName = 'Alpha';
+        let targetName = 'Beta';
+        let t = targetName.charAt(0).toLowerCase();
+
+        if(false && !nodes[t].online && Game.gcl.level>=2 && nodes[t].anchor){
+            let targetRoomName = nodes[t].anchor.roomName;
+
+            //let anchor = rp(25,25,targetRoomName);
+            if(Game.rooms[targetRoomName]){
+
+                //let res = mb.addConstruction(nodes[t].anchor,STRUCTURE_SPAWN,targetName)
+               // console.log("adding spawn site...",res)
+            }
+            this.startupRoomNoVision(feederName,targetRoomName, {report:true,workerCount:4,workerBody:'4w4c4m',defend:true,defenderSpot:{x:nodes[t].anchor.x-3,y:nodes[t].anchor.y-1}})
+        }
+        
         for(let n in nodes){
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
-        }
-
-        if(false && !nodes.b.online && Game.gcl>=2){
-            let targetRoomName = 'W2N1';
-            let targetName = 'Beta';
-            let anchor = rp(25,25,targetRoomName);
-            if(Game.rooms[targetRoomName]){
-                mb.addConstruction(anchor,STRUCTURE_SPAWN,targetName)
-            }
-            this.startupRoomNoVision('Alpha',targetRoomName, {workerCount:4,workerBody:'4w4c4m',defend:true,defenderSpot:{x:13,y:16}})
         }
 
     },
@@ -515,6 +523,7 @@ module.exports = {
             multiplier = 3000; // containers come online, so 2k+1k on floor
         let maxAllowedEnergyExcess = node.remoteRoomNames.length*multiplier;
         let tooMuchEnergyMined = (node.totalEnergyAtSources>maxAllowedEnergyExcess)
+        //if(tooMuchEnergyMined)console.log(node.name,'Too much EEE..stopping remote spawns',node.totalEnergyAtSources,'>',maxAllowedEnergyExcess)
         for(let roomName of node.remoteRoomNames){
 
             let remoteMemory = Memory.remotes[node.name][roomName];
@@ -663,7 +672,7 @@ module.exports = {
             /////////////// Others  ///////////////////////////////////////////////////////
                 //maintainRoadsInRoom(spawnName,cname,roomNames,parts,harvestSources=true,keepSpawning=true){
             if(!node.manual_noRoads.includes(roomName) && invadeCores.length===0 && pathsToMaintain && node.controller().level>=3)
-                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m',true,());
+                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m',true,(true));
 
             if(srcs.length===3){
                 this.pickupSKRoomDrops(node.name,roomName+'-scav',roomName,'5*1c1m')
@@ -2084,7 +2093,10 @@ module.exports = {
         this.scoutRoom(spawnName,this.activeRoomOverseer,roomName,{x:12,y:45});*/
         this.rotateScouts(spawnName,roomName,roomName,{x:25,y:25});
         // can not we see the room, then wait for scout
-        if(!Game.rooms[roomName])return;
+        if(!Game.rooms[roomName]){
+            console.log("Scouting:",roomName)
+            return;
+        }
 
         if(!mb.hasRoom(roomName))mb.scanRoom(roomName);
 
@@ -2125,6 +2137,7 @@ module.exports = {
     startupNewRoomWithVision: function(roomName,spawnName, conf={}){
 
         let config={
+            report:conf.report===undefined?false:conf.report,
             workerCount:conf.workerCount===undefined?4:conf.workerCount,
             workerBody:conf.workerBody===undefined?'4w4c4m':conf.workerBody,
             drawFromRuins:conf.drawFromRuins===undefined?false:conf.drawFromRuins,

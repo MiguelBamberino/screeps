@@ -745,10 +745,10 @@ global.mb = {
         }
 
     },
-    addConstruction: function(position,type){
+    addConstruction: function(position,type,name =undefined){
         let room = this.getRoom(position.roomName);
         if(room){
-            let res = position.createConstructionSite(type);
+            let res = position.createConstructionSite(type,name);
             if(res===OK){
                 let k = this.positionToString(position);
                 room.constructionSites[k]={x:position.x,y:position.y,roomName:position.roomName,id:false,type:type,looks:0};

@@ -76,6 +76,7 @@ for(let n in nodes){
 }
 
 module.exports.loop = function () {
+    //return;
     if(!util.allowTick()){return}
     _memHak.pretick();
     util.detectRespawn();
@@ -124,8 +125,11 @@ module.exports.loop = function () {
         logs.mainLoopEnded();
         
         //////// GUI CODE  //////////////////////////////////
-        
-        gui.render();
+        try {
+            gui.render();
+        }catch (e){
+            console.log("ERROR:GUI",e)
+        }
         //gui.renderComplexPlan(nodes.a.coreComplex)
        
         if( Game.cpu.bucket>1000 && util.getServerName()==='shard3'){

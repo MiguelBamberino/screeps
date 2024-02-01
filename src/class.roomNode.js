@@ -47,6 +47,8 @@ class RoomNode{
         this.name = name;
         this.exports = [];
         this.online = options.online===undefined?true:options.online;
+        // allow this to be set up front, in order to allow automatic setup of 2nd+ rooms
+        this.anchor = options.anchor===undefined?undefined:options.anchor;
 
         if(!Game.spawns[name] ){
             if(this.online && Game.time%10)console.log(name+' has no core spawn. Cannot load on global reset');
@@ -290,7 +292,7 @@ class RoomNode{
                 this.controllerSetup=true;
             }
         }
-        if(!this.controllerSetup){clog("no controller standing spot",this.name);return false;}
+        if(!this.controllerSetup){if(Game.time%10===0)clog("no controller standing spot",this.name);return false;}
         
     
         if(!Game.spawns[this.name] && !Game.spawns[this.name+'-2'] && !Game.spawns[this.name+'-3']  ){clog("Room-node has no spawn",this.name);return false;}
@@ -1295,8 +1297,8 @@ class RoomNode{
     // Setup Room Code
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    checkAndSetupAtRCL1(){
-        if(this.controller().level===1){
+    checkAndSetupAtRCL1(reset=false){
+        if(this.controller().level===1||reset){
             this.setControllerStandingSpots();
             this.setSourceStandingSpots();
         }

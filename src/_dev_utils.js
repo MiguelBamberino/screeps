@@ -158,7 +158,7 @@ global.util = {
     detectRespawn(){
         let mainSpawnID = false;
         for(let name in Game.spawns){
-            mainSpawnID = Game.spawns[name].id;
+            if(name==='Alpha')mainSpawnID = Game.spawns[name].id;
             break;
         }
         if(!Memory.spawn_id){
