@@ -479,7 +479,7 @@ module.exports = {
         if(!roomToScout){
             // no priority room to scout, lets maintain vision on any room, we lost vision
             // this helps ensure we can always see drops/containers, even if we lose all the harvesters
-            for(let name of nodes.remoteRoomNames){
+            for(let name of node.remoteRoomNames){
                 if(!Game.rooms[name]){
                     roomToScout = name;
                     break;
