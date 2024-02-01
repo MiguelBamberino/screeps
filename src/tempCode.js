@@ -374,7 +374,7 @@ module.exports = {
         Memory.remotes[node.name][roomName].score+= netSrcPathLength;
 
         if(roads.length>0){
-            // max roads should == net path lengts. roads make remote 2x efficient, so reduce path cost
+            // max roads should == net path lengths. roads make remote 2x efficient, so reduce path cost
             let rdMode = Math.floor(roads.length/2);
             Memory.remotes[node.name][roomName].reason -= "-r["+rdMode+"],";
             Memory.remotes[node.name][roomName].score+= rdMode;
@@ -400,7 +400,7 @@ module.exports = {
 
     },
     sortRemotes:function(node){
-        console.log(node.name," remote sorting...")
+        console.log(node.name," remote sorted from: ",node.remoteRoomNames)
         let toSorted = [];
         node.remoteRoomNames = [];
         if(Memory.remotes && Memory.remotes[node.name]){
@@ -414,6 +414,7 @@ module.exports = {
             let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
             for(let i=0; i<=3;i++)if(available[i])node.remoteRoomNames.push(available[i]);
         }
+        console.log('to: ',node.remoteRoomNames)
     },
     detectRemotes:function(node){
 
@@ -509,8 +510,12 @@ module.exports = {
 
         let reSortRemotes = false;
         let previousRemoteFullyStaffed = false;
+        let multiplier = 2000; // base for early RCL, to allow 1k on floor per src
+        if(node.controller().level>=4)
+            multiplier = 3000; // containers come online, so 2k+1k on floor
+        let maxAllowedEnergyExcess = node.remoteRoomNames.length*multiplier;
+        let tooMuchEnergyMined = (node.totalEnergyAtSources>maxAllowedEnergyExcess)
         for(let roomName of node.remoteRoomNames){
-
 
             let remoteMemory = Memory.remotes[node.name][roomName];
             if(!remoteMemory){console.log(roomName,"No Memory for remote"); continue;}
@@ -597,7 +602,7 @@ module.exports = {
             /////////////// Harvesters  ///////////////////////////////////////////////////////
             let invaderReserved = false;
             let harvestersAlive = 0;
-            if(controller.reservation && controller.reservation.username!=='MadDokMike'){
+            if(controller.haveVision && controller.reservation && controller.reservation.username!=='MadDokMike'){
                 invaderReserved = controller.reservation.ticksToEnd;
             }
 
@@ -612,7 +617,8 @@ module.exports = {
                         harvestersAlive++;
                         remoteMemory.staff.count++;
                     }
-                    this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src);
+                    let keepSpawningHarvy = (!remoteMemory.isDangerous && !tooMuchEnergyMined);
+                    this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src,keepSpawningHarvy);
 
                     if(src.haveVision && src.getMeta().pathed){
                         pathsToMaintain=true;
@@ -642,7 +648,7 @@ module.exports = {
                             if(src.haveVision && result.path.length<(100-currConSiteCount) ){
                                 for(let pos of result.path){
                                     let pos2 = rp(pos.x,pos.y,pos.roomName);
-                                    if(pos2 && pos2.isWalkable())
+                                    if(pos2 && pos2.isWalkable() && !pos2.isEqualTo(to))
                                         pos2.createConstructionSite(STRUCTURE_ROAD);
                                 }
                                 src.setMetaAttr('pathed',true);
@@ -655,15 +661,13 @@ module.exports = {
             }
 
             /////////////// Others  ///////////////////////////////////////////////////////
-
+                //maintainRoadsInRoom(spawnName,cname,roomNames,parts,harvestSources=true,keepSpawning=true){
             if(!node.manual_noRoads.includes(roomName) && invadeCores.length===0 && pathsToMaintain && node.controller().level>=3)
-                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m');
+                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m',true,());
 
             if(srcs.length===3){
                 this.pickupSKRoomDrops(node.name,roomName+'-scav',roomName,'5*1c1m')
             }
-
-
 
 
             /////////////// Reservers  ///////////////////////////////////////////////////////
@@ -671,16 +675,21 @@ module.exports = {
             if(controller && ( remoteMemory.controllerDistance<50 || srcs.length==2 )  && eCap>=650){
                 let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
 
-                let keepSpawning = (invaderReserved>0 || (controller.haveVision && (!controller.reservation || controller.reservation.ticksToEnd<2500 ) ) )
+                // dont spawn reserver if we've seen fighter in the room
+                // if we dont have vision, we dont have a harvester near src
                 // spawn harvesters first before trying to boost controller
-                if(harvestersAlive===0)keepSpawning=false;
+                let keepSpawningResy = !remoteMemory.isDangerous && controller.haveVision && harvestersAlive>0;
+                // if the reservation isn't a player/invader core
+                // and we've smashed it, then cool off
+                if(!invaderReserved && controller.reservation && controller.reservation.ticksToEnd>4000)
+                    keepSpawningResy = false;
 
                 let reserverName = roomName+'-cl';
                 if(Game.creeps[reserverName]) {
                     remoteMemory.staff.count++;
                 }
 
-                this.reserverRoom(node.name,reserverName,controller,bodyPlan,false,keepSpawning)
+                this.reserverRoom(node.name,reserverName,controller,bodyPlan,false,keepSpawningResy)
                 if(invaderReserved || invadeCores.length>0){
                     this.reserverRoom(node.name,roomName+'-cl2',controller,bodyPlan)
                 }
@@ -2758,11 +2767,10 @@ module.exports = {
             }
         }
     },
-    maintainRoadsInRoom:function(spawnName,cname,roomNames,parts,harvestSources=true){
+    maintainRoadsInRoom:function(spawnName,cname,roomNames,parts,harvestSources=true,keepSpawning=true){
 
         if(!Game.creeps[cname]){
-            if(Game.spawns[spawnName].spawning && Game.spawns[spawnName+'-2'])spawnName=spawnName+'-2';
-            Game.spawns[spawnName].spawnCreepX(parts,cname);
+            this.queueSpawn(spawnName,cname,parts,{},keepSpawning)
         }
 
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){

@@ -327,10 +327,13 @@ var roleTanker = {
                 return
 
             }else{
-                creep.say('bored')
-                if((config.upgradeRate===RATE_FAST||config.upgradeRate===RATE_VERY_FAST) && creep.isFull() && config.controller.haveContainer()){
-                    creep.moveToPos(config.controller.getContainer())
+
+                if(config.upgradeRate===RATE_VERY_FAST && config.remoteRoomNames.length>0){
+                    let priorityRN = config.remoteRoomNames[0];
+                    creep.moveToPos(rp(25,25,priorityRN))
+                    creep.say("predict")
                 }else{
+                    creep.say('bored')
                     creep.moveToPos(config.retreatSpot)
                 }
             }
