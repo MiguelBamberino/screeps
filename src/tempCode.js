@@ -39,7 +39,7 @@ module.exports = {
         let targetName = 'Beta';
         let t = targetName.charAt(0).toLowerCase();
 
-        if(false && !nodes[t].online && Game.gcl.level>=2 && nodes[t].anchor){
+        if(nodes.a.storage() && !nodes[t].online && Game.gcl.level>=2 && nodes[t].anchor){
             let targetRoomName = nodes[t].anchor.roomName;
 
             //let anchor = rp(25,25,targetRoomName);
