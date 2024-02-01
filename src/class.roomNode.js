@@ -1110,7 +1110,7 @@ class RoomNode{
         let tankerPerXSurplus_PerRCL= [
                 9999999999, // RCL0
                 250, // RCL1
-                500, // RCL2
+                400, // RCL2
                 600, // RCL3
                 1000, // RCL4
                 1500, // RCL5
