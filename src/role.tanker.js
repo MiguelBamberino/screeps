@@ -332,7 +332,7 @@ var roleTanker = {
 
             }else{
 
-                if(config.upgradeRate===RATE_VERY_FAST && config.remoteRoomNames.length>0){
+                if(!config.inRecoveryMode && config.upgradeRate===RATE_VERY_FAST && config.remoteRoomNames.length>0){
                     let priorityRN = config.remoteRoomNames[0];
                     creep.moveToPos(rp(25,25,priorityRN))
                     creep.say("predict")

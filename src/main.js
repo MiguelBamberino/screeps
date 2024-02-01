@@ -1,4 +1,4 @@
-global.BOT_VERSION='19.5';
+global.BOT_VERSION='20.0';
 console.log("-----------------------------------------------")
 console.log("Global Reset:",Game.time)
 console.log("-----------------------------------------------")
