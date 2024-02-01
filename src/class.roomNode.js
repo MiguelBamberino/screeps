@@ -47,45 +47,36 @@ class RoomNode{
         this.name = name;
         this.exports = [];
         this.online = options.online===undefined?true:options.online;
+        this.allowCPUShutdown = options.allowCPUShutdown===undefined?false:options.allowCPUShutdown;
+
         // allow this to be set up front, in order to allow automatic setup of 2nd+ rooms
         this.anchor = options.anchor===undefined?undefined:options.anchor;
 
-        if(!Game.spawns[name] ){
-            if(this.online && Game.time%10)console.log(name+' has no core spawn. Cannot load on global reset');
+        if(!this.anchor ){
+            console.log(name+' has no anchor. Cannot load on global reset');
             this.online = false;// turning off to save code
             return;
         }
 
-
-        let spwn = Game.spawns[name];
-        this.coreRoomName = spwn.pos.roomName;
-
+        this.coreRoomName = this.anchor.roomName;
         if(!mb.hasRoom(this.coreRoomName))mb.scanRoom(this.coreRoomName);
-        
-        this.checkAndSetupAtRCL1()
-        
+
         let mineral = mb.getMineralForRoom(this.coreRoomName);
         this.homeMineralType = mineral.mineralType;
-
-        this.extractorComplex = new ExtractorComplex(mineral.pos,spwn.pos,name)
-  
+        this.extractorComplex = new ExtractorComplex(mineral.pos,this.anchor,name)
         this.totalEnergyAtSources=0;
         this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
         
         // options
-
-        this.allowCPUShutdown = options.allowCPUShutdown===undefined?false:options.allowCPUShutdown;
-
-        this.anchor = options.anchor===undefined?Game.spawns[this.name].pos:options.anchor;
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
         this.armFacing = options.armFacing===undefined?TOP:options.armFacing;
-        this.armAnchor = options.armAnchor===undefined?rp(spwn.pos.x,spwn.pos.y+6,spwn.pos.roomName):options.armAnchor;
+        this.armAnchor = options.armAnchor===undefined?rp(this.anchor.x,this.anchor.y+6,this.anchor.roomName):options.armAnchor;
         this.extraFastFillSpots = options.extraFastFillSpots===undefined?[]:options.extraFastFillSpots;
 
         
         this.logger = options.logger;
         
-        this.retreatSpot = options.retreatSpot===undefined?rp(spwn.pos.x-3,spwn.pos.y-2,spwn.pos.roomName):options.retreatSpot;
+        this.retreatSpot = options.retreatSpot===undefined?rp(this.anchor.x-3,this.anchor.y-2,this.anchor.roomName):options.retreatSpot;
         this.upgradeRate = options.upgradeRate===undefined?RATE_SLOW:options.upgradeRate;
         this.buildFast = options.buildFast===undefined?false:options.buildFast;
         
@@ -194,12 +185,11 @@ class RoomNode{
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
     runTick(){
 
-        
-           // logs.startCPUTracker(this.name+':safeToRun');
         if(!this.safeToRun())return false;
 
         logs.startCPUTracker(this.name+':runTick');
-            //logs.stopCPUTracker(this.name+':safeToRun');
+
+        this.checkAndSetupStandingSpots()
          
             //logs.startCPUTracker(this.name+':checkCache');
         this.checkCache();
@@ -237,8 +227,6 @@ class RoomNode{
                     this.labComplex.turnOff();
                  }
             }
-           
-
             
            if(this.extractorComplex && this.storage()){
                 // keep it ticking, if we only have a small amount left
@@ -269,7 +257,7 @@ class RoomNode{
     
         //// Recovery Mode //////////////////////////////////////////////////////
         // removed this from recovery check because i was miss-using it to scale up quick in low levels 
-        if( (this.workforce_quota.tanker.count==0 &&this.workforce_quota.tanker.required>0) || this.workforce_quota.harvester.count<this.workforce_quota.harvester.required ){
+        if( (this.workforce_quota.tanker.count===0 &&this.workforce_quota.tanker.required>0) || this.workforce_quota.harvester.count<this.workforce_quota.harvester.required ){
             this.inRecoveryMode=true;
         }else{
             this.inRecoveryMode=false;
@@ -284,18 +272,8 @@ class RoomNode{
         if(!this.online)return false;
 
         if(!this.controller()){clog("Room-node has no controller",this.name);return false;}
-        
-        
-        if(this.controllerSetup===undefined || (!this.controllerSetup && Game.time%10===0 && this.upgradeRate!==RATE_OFF) ){
-            let controller = this.controller();
-            if(this.controller().getStandingSpot()){
-                this.controllerSetup=true;
-            }
-        }
-        if(!this.controllerSetup){if(Game.time%10===0)clog("no controller standing spot",this.name);return false;}
-        
-    
-        if(!Game.spawns[this.name] && !Game.spawns[this.name+'-2'] && !Game.spawns[this.name+'-3']  ){clog("Room-node has no spawn",this.name);return false;}
+
+        if(!Game.spawns[this.name] && !Game.spawns[this.name+'-2'] && !Game.spawns[this.name+'-3']  ){return false;}
         
         return true;
     }
@@ -332,7 +310,7 @@ class RoomNode{
             if(!enemy)continue;
             
             let rangeToTower = towers.length>0?towers[0].pos.getRangeTo(enemy):99;
-            let rangeToCoreSpawn = Game.spawns[this.name]?Game.spawns[this.name].pos.getRangeTo(enemy):99;
+            let rangeToCoreSpawn = this.anchor.getRangeTo(enemy);
             
             if(rangeToCoreSpawn<=2){
                 enemyNearCoreSpawn=true;
@@ -599,7 +577,7 @@ class RoomNode{
 
             this.spawnFastFillerReady=false;
             for(let container of structures){
-                if(Game.spawns[this.name] && Game.spawns[this.name].pos.getRangeTo(container)<3 /*&& exts.length>=5*/ ){
+                if(Game.spawns[this.name] && this.anchor.getRangeTo(container)<3 /*&& exts.length>=5*/ ){
                     this.spawnFastFillerReady=true;break;
                 }
                 if(Game.spawns[this.name+"-2"] && Game.spawns[this.name+"-2"].pos.getRangeTo(container)<3 /*&& exts.length>=5*/ ){
@@ -1296,9 +1274,9 @@ class RoomNode{
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Setup Room Code
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    checkAndSetupAtRCL1(reset=false){
-        if(this.controller().level===1||reset){
+
+    checkAndSetupStandingSpots(reset=false){
+        if(!this.controller().getStandingSpot()||reset){
             this.setControllerStandingSpots();
             this.setSourceStandingSpots();
         }
@@ -1308,7 +1286,7 @@ class RoomNode{
         
         for(let src of this.sources()){
             if(src.getStandingSpot())continue;
-            let best = src.pos.findBestStandingSpots(Game.spawns[this.name].pos,1,3);
+            let best = src.pos.findBestStandingSpots(this.anchor,1,3);
             src.setStandingSpot(best.containerSpot)
             src.setStandingSpots(best.standingSpots)   
         }
@@ -1317,7 +1295,7 @@ class RoomNode{
         
         if(!renew && this.controller().getStandingSpot())return;
         
-        let best = this.controller().pos.findBestStandingSpots(Game.spawns[this.name].pos,3,9);
+        let best = this.controller().pos.findBestStandingSpots(this.anchor,3,9);
         
         let sorted = [];
         let lpp = best.path[(best.path.length-2)];

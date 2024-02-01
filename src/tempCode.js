@@ -39,16 +39,19 @@ module.exports = {
         let targetName = 'Beta';
         let t = targetName.charAt(0).toLowerCase();
 
-        if(nodes.a.storage() && !nodes[t].online && Game.gcl.level>=2 && nodes[t].anchor){
+        if(nodes.a.storage()  && Game.gcl.level>=2 && nodes[t].anchor){
             let targetRoomName = nodes[t].anchor.roomName;
 
-            //let anchor = rp(25,25,targetRoomName);
             if(Game.rooms[targetRoomName]){
-
-                //let res = mb.addConstruction(nodes[t].anchor,STRUCTURE_SPAWN,targetName)
-               // console.log("adding spawn site...",res)
+                mb.addConstruction(nodes[t].anchor,STRUCTURE_SPAWN,targetName)
             }
-            this.startupRoomNoVision(feederName,targetRoomName, {report:true,workerCount:4,workerBody:'4w4c4m',defend:true,defenderSpot:{x:nodes[t].anchor.x-3,y:nodes[t].anchor.y-1}})
+            this.startupRoomNoVision(feederName,targetRoomName, {
+                report:true,
+                phaseOut:(Game.spawns[targetName]),
+                workerCount:4,workerBody:'4w4c4m',
+                defend:(Game.spawns[targetName]&&Game.spawns[targetName].room.controller.level>3),
+                defenderSpot:{x:nodes[t].anchor.x-3,y:nodes[t].anchor.y-1}
+            })
         }
         
         for(let n in nodes){
@@ -2219,7 +2222,7 @@ module.exports = {
             if(config.harvestSources){
                 let sources  = mb.getAllSourcesForRoom(roomName);
                 for(let s in sources){
-                    this.harvestPoint(spawnName,roomName+'-h'+s,'6w6m1c',sources[s]);
+                    this.harvestPoint(spawnName,roomName+'-h'+s,'6w6m1c',sources[s],(!config.phaseOut));
                 }
             }
             let containers = mb.getStructures({
