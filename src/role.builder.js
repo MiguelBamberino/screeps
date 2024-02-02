@@ -33,7 +33,13 @@ var role = {
         let useWhatWeHave = (config.controller.level===1 && !creep.isEmpty())
     
 	    if( /*useWhatWeHave ||*/ creep.isWorking()) {
-	        
+
+            if(config.energyAtController>7000) {
+                creep.say("bsssh")
+                // too much E at controller, go pile in the praise
+                return creep.actOrMoveTo("upgradeController",config.controller);
+            }
+
 	        // if we just built a rampart, lets repair before it fades. set it as our repair target
     	   if(creep.memory.last_site_type==STRUCTURE_RAMPART && creep.memory.last_site_pos){
              // if(creep.name==='E-bu-0')clog("looking for ramp",Game.time)
@@ -107,7 +113,10 @@ var role = {
 	    
 	    else if(creep.isCollecting()){
 
-
+            if(config.energyAtController>7000) {
+                let drop = creep.getDroppedEnergy(25);
+                if(drop)return creep.actOrMoveTo("pickup",drop);
+            }
             /*if(Game.creeps[creep.memory.waitFor] && Game.creeps[creep.memory.waitFor].memory.giveTo === creep.name ){
                 return creep.say("wait");
             }else{

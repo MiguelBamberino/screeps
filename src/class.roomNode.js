@@ -953,6 +953,7 @@ class RoomNode{
                     inRecoveryMode:this.inRecoveryMode,
                     allSourcesBuilt:this.allSourcesBuilt,
                     totalEnergyAtLocalSources:this.totalEnergyAtLocalSources,
+                    energyAtController:this.energyAtController,
                     spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
 					armNuke:this.armNuke,
