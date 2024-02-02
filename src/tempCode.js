@@ -29,6 +29,8 @@ module.exports = {
     shardSeasonTempCode:function(){
         for(let n in nodes){
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
+            nodes[n].wallHeight=10000;//10k
+            nodes[n].rampHeight=50000;//50k
         }
 
     },
@@ -265,7 +267,7 @@ module.exports = {
         // High Scores ARE BAD , LOW scores ARE GOOD
         // score is src distances to spawn + controller distance to spawn
         if(!Memory.remotes[node.name][roomName])
-            Memory.remotes[node.name][roomName]={score:0,lastSeen:0,username:false,online:true,isDangerous:false,reason:'scouting',staff:{count:0,required:0}};
+            Memory.remotes[node.name][roomName]={score:0,lastSeen:0,username:false,online:true,isDangerous:false,controllerSpots:0,reason:'scouting',staff:{count:0,required:0}};
 
         //  We have to go explore
         if(!mb.hasRoom(roomName))return;
@@ -396,6 +398,9 @@ module.exports = {
         }
         // if the remote has a controller and we're in reserving capacity, then factor in th controller distances.
         if(controller && node.controller().level>=3){
+
+            let standingSpots = controller.pos.findNearbyBuildableSpot();
+            Memory.remotes[node.name][roomName].controllerSpots = standingSpots.length;
             // reserver
             Memory.remotes[node.name][roomName].staff.required+=1;
 
@@ -698,10 +703,16 @@ module.exports = {
                     remoteMemory.staff.count++;
                 }
 
+
                 this.reserverRoom(node.name,reserverName,controller,bodyPlan,false,keepSpawningResy)
-                if(invaderReserved || invadeCores.length>0){
-                    this.reserverRoom(node.name,roomName+'-cl2',controller,bodyPlan)
+                if(remoteMemory.controllerSpots>1){
+                   // let doubleTeam = (invaderReserved || invadeCores.length>0);
+                    // we used to only spawn in support to fend off invaderCores, but there is adv to getting the reservation highg
+                    // and keeping it high, on high value remotes.
+                    this.reserverRoom(node.name,roomName+'-cl2',controller,bodyPlan,false,keepSpawningResy)
+
                 }
+
             }
 
             previousRemoteFullyStaffed = (remoteMemory.staff.count===remoteMemory.staff.required)
