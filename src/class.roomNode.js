@@ -941,6 +941,7 @@ class RoomNode{
                     inRecoveryMode:this.inRecoveryMode,
                     allSourcesBuilt:this.allSourcesBuilt,
                     totalEnergyAtLocalSources:this.totalEnergyAtLocalSources,
+                    energyAtController:this.energyAtController,
                     spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
 					armNuke:this.armNuke,
@@ -1101,10 +1102,10 @@ class RoomNode{
                 400, // RCL2
                 600, // RCL3
                 1000, // RCL4
-                1500, // RCL5
-                2000, // RCL6
-                2000, // RCL7
-                2000 // RCL8
+                1000, // RCL5
+                1000, // RCL6
+                1000, // RCL7
+                1000 // RCL8
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
         this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
@@ -1114,7 +1115,8 @@ class RoomNode{
         }
 
         let tankerGap = this.workforce_quota.tanker.required - this.workforce_quota.tanker.count;
-        if(this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.upgrader.count===0 && tankerGap>5){
+        let upgraderGap = this.workforce_quota.upgrader.required - this.workforce_quota.upgrader.count;
+        if(this.energyAtController>2000 && this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.tanker.count>1 && upgraderGap>3 && tankerGap<=5 ){
             // paused tanker spawn spam to spawn some consumption. stop e piling up at controller
             this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
         }

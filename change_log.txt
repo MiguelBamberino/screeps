@@ -1,4 +1,10 @@
 ===================================
+= Version 20.0.1
+===================================
+- various tweaks to builders & haulers to tune throughput
+- updated remotes to have more reservers
+
+===================================
 = Version 20.0.0
 ===================================
 - overhauled server config, to be a config file
