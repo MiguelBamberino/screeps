@@ -98,7 +98,8 @@ module.exports.loop = function () {
                 if(nodes[n].online)nodes[n].runTick();
             }catch (e){
                 console.log("ERROR:",nodes[n].name);
-                console.log(e)
+                console.log(e);
+                if(util.throwErrors)throw e;
             }
             //logs.stopCPUTracker(nodes[n].name,true);
         }
@@ -126,9 +127,11 @@ module.exports.loop = function () {
         
         //////// GUI CODE  //////////////////////////////////
         try {
+
             gui.render();
         }catch (e){
-            console.log("ERROR:GUI",e)
+            console.log("ERROR:GUI",e);
+            if(util.throwErrors)throw e;
         }
         //gui.renderComplexPlan(nodes.a.coreComplex)
        

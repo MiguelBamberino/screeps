@@ -89,7 +89,7 @@ global.gui = {
     render: function(){
       
         if(!this.display)return;
-      
+
         
         let st = Game.cpu.getUsed();
         
@@ -97,7 +97,7 @@ global.gui = {
         if(this.cpu.display)this.cpu.setData(logs.getCPULog());
         this.cpu.render();
     //logs.stopCPUTracker('gui.cpu',true);
-        
+
     logs.startCPUTracker('gui.summary');
        
        if( this.heapUsed===undefined || Game.time%100===0){
@@ -123,8 +123,8 @@ global.gui = {
        // logs.startCPUTracker('gui.summary.render');
         this.summary.render();
     //logs.stopCPUTracker('gui.summary.render',true);
-        
-        
+
+
     //logs.startCPUTracker('gui.creeptrack');
         //this.creeptrack.setData(logs.getCreepTrackData());
         this.creeptrack.render();
@@ -137,8 +137,8 @@ global.gui = {
     //logs.startCPUTracker('gui.renderRoomNodeStats');
         this.renderRoomNodeStats();
     //logs.stopCPUTracker('gui.renderRoomNodeStats',true);
-    
-    
+
+
     //logs.startCPUTracker('gui.renderTradeStats');
         this.renderTradeStats();
     //logs.stopCPUTracker('gui.renderTradeStats',false);    
@@ -156,7 +156,8 @@ global.gui = {
         
 
         for(let n in nodes) {
-            if (!nodes[n].online) continue;
+            if (!nodes[n].online || !nodes[n].room()) continue;
+            if(nodes[n].controller().level===0)continue;
 
             if(this.nodeSrcStats)this.renderSourceDetails(nodes[n])
             if(this.nodeControllerStats)this.renderControllerDetails(nodes[n])
@@ -249,7 +250,7 @@ global.gui = {
         }
     },
     renderRemoteStats:function(){
-        
+
         let doneRooms={};
         for(let n in nodes){
             if(!nodes[n].online)continue;
@@ -262,7 +263,7 @@ global.gui = {
 
             for(let remoteRN in Memory.remotes[node.name] ){
                 let details = Memory.remotes[node.name][remoteRN];
-                
+
                 if(doneRooms[remoteRN]!==undefined && doneRooms[remoteRN]===false)continue;
                 let priority = remoteFlip[remoteRN]===undefined?'backup':remoteFlip[remoteRN];
                 doneRooms[remoteRN] = details.online;
@@ -477,7 +478,8 @@ global.gui = {
             if(node.coreRoomName=='E3N5')renderPos=rp(1,25,node.coreRoomName)
             
             
-            Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name+" - "+node.coreRoomName,true,{key:3,value:3});
+            if(Game.rooms[node.coreRoomName])
+                Game.rooms[node.coreRoomName].renderGUITable(renderPos,lines,node.name+" - "+node.coreRoomName,true,{key:3,value:3});
             
             y+=15;
         }

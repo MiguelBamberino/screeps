@@ -117,7 +117,7 @@ StructureTerminal.prototype.sendX=function(resource,amount,toClusterName){
     return this.send(resource,amount,Game.spawns[toClusterName].pos.roomName)
 }
 global.util = {
-
+    throwErrors:false,
     loadServer: function(){
         if(Memory.spawns===undefined)Memory.spawns={};
         if(Memory.creeps===undefined)Memory.creeps={};
@@ -130,6 +130,7 @@ global.util = {
             console.log('ERROR! _server_config has not been created. Please copy ./_server_config.example.js to ./src/old_server_config.js ');
              console.log("------------------------------------------")
             console.log(error)
+            if(this.throwErrors)throw error;
         }
     },
     resetData(){

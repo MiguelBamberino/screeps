@@ -267,7 +267,7 @@ module.exports = function(){
             let hostileIDs = this.room.getDangerousCreeps();
  
             let opts = {
-                maxOps:7000,reusePath:10,ignoreCreeps:true,
+                maxOps:10000,reusePath:10,ignoreCreeps:true,
                 visualizePathStyle: {stroke: '#ffffff'}
                  
             }
@@ -344,7 +344,7 @@ module.exports = function(){
                 }
                 
                 
-               // this.renderAvoidance(hostiles);
+                this.renderAvoidance(hostiles);
                 
                 opts.costCallback = function(roomName,costMatrix){
                     let room = Game.rooms[roomName];

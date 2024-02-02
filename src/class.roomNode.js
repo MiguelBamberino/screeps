@@ -63,7 +63,8 @@ class RoomNode{
 
         let mineral = mb.getMineralForRoom(this.coreRoomName);
         this.homeMineralType = mineral.mineralType;
-        this.extractorComplex = new ExtractorComplex(mineral.pos,this.anchor,name)
+        // if this room has not yet been claimed, we wont have vision to get mineral position
+        this.extractorComplex = (mineral)?new ExtractorComplex(mineral.pos,this.anchor,name):false;
         this.totalEnergyAtSources=0;
         this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
         
@@ -271,7 +272,13 @@ class RoomNode{
 
         if(!this.online)return false;
 
-        if(!this.controller()){clog("Room-node has no controller",this.name);return false;}
+        if(!this.anchor ){
+            if(Game.time%10===0)console.log(name+' has no anchor.Not safe to run');
+            this.online = false;// turning off to save code
+            return;
+        }
+
+        if(!this.controller()){return false;}
 
         if(!Game.spawns[this.name] && !Game.spawns[this.name+'-2'] && !Game.spawns[this.name+'-3']  ){return false;}
         
@@ -774,10 +781,12 @@ class RoomNode{
     }
         
     storage(){
-        return this.room().storage;
+        let room = this.room();
+        return room? room.storage:false;
     }
     terminal(){
-        return this.room().terminal;
+        let room = this.room();
+        return room? room.terminal:false;
     }
     room(){
         return Game.rooms[this.coreRoomName];
@@ -786,7 +795,8 @@ class RoomNode{
         return mb.getAllSourcesForRoom(this.coreRoomName);
     }
     controller(){
-        return this.room().controller;
+        let room = this.room();
+        return room? room.controller:false;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Filler Code
@@ -1282,11 +1292,12 @@ class RoomNode{
         }
     }
     
-    setSourceStandingSpots(){
+    setSourceStandingSpots(reset=false){
         
         for(let src of this.sources()){
-            if(src.getStandingSpot())continue;
+            if(!reset && src.getStandingSpot())continue;
             let best = src.pos.findBestStandingSpots(this.anchor,1,3);
+            clog(best,src.pos.x)
             src.setStandingSpot(best.containerSpot)
             src.setStandingSpots(best.standingSpots)   
         }

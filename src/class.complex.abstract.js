@@ -17,7 +17,7 @@ class AbstractComplex{
         
         this.standingSpot = this._getStandingSpot(facing);
         this.facing = facing;
-        this.rcl = Game.rooms[anchor.roomName].controller.level;
+        this.rcl = Game.rooms[anchor.roomName] ?Game.rooms[anchor.roomName].controller.level:0;
         this.allRequiredStructuresBuilt=true;
         this.minRCL = 99;
         this.replaceHapped = false;
@@ -196,7 +196,8 @@ class AbstractComplex{
         return Game.rooms[this.anchor.roomName];
     }
     controller(){
-        return this.room().controller;
+        let room = this.room();
+        return room? room.controller:false;
     }
     ////////////////////////////////////////////////////////////////////
     // Template Design Pattern: 
