@@ -399,8 +399,8 @@ module.exports = {
         // if the remote has a controller and we're in reserving capacity, then factor in th controller distances.
         if(controller && node.controller().level>=3){
 
-            let standingSpots = controller.pos.findNearbyBuildableSpot();
-            Memory.remotes[node.name][roomName].controllerSpots = standingSpots.length;
+            let standingSpots = controller.haveVision? controller.pos.lookForNearbyWalkable(false,false):[];
+            Memory.remotes[node.name][roomName].controllerSpots = controller.haveVision? standingSpots.length:1;
             // reserver
             Memory.remotes[node.name][roomName].staff.required+=1;
 

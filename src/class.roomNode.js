@@ -1126,7 +1126,8 @@ class RoomNode{
         }
 
         let tankerGap = this.workforce_quota.tanker.required - this.workforce_quota.tanker.count;
-        if(this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.upgrader.count===0 && tankerGap>5){
+        let upgraderGap = this.workforce_quota.upgrader.required - this.workforce_quota.upgrader.count;
+        if(this.energyAtController>2000 && this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.tanker.count>1 && upgraderGap>3 && tankerGap<=5 ){
             // paused tanker spawn spam to spawn some consumption. stop e piling up at controller
             this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
         }
