@@ -14,7 +14,8 @@ module.exports = {
     cpuLimit:100,
     loadNodes(){
         return {
-            a: new RoomNode('Alpha', {buildFast: true,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_VERY_FAST})
+            a: new RoomNode('Alpha', {anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_VERY_FAST}),
+            b: new RoomNode('Beta', {anchor:rp(13,15,'W22S17'),buildFast: true,spawnFacing:LEFT, upgradeRate: RATE_VERY_FAST})
         }
     }
 };

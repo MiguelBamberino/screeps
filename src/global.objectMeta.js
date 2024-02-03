@@ -7,7 +7,13 @@ global.checkDeletedObjects=function(){
     let start= Game.cpu.getUsed();
     for(let id in objects){
         let gameObj = Game.getObjectById(id);
-        if(!gameObj){
+
+        if(!objects[id].roomName && gameObj){
+            console.log("objectMeta:Correcting roomName >> ",gameObj.id,gameObj.pos,)
+            gameObj.setMetaAttr('roomName',gameObj.pos.roomName)
+        }
+        // if the object no longer exists and we can see the room. then remove the memory
+        if(!gameObj && Game.rooms[ objects[id].roomName ]){
            objectMeta.delete(id)
             missingCount++;
         }
@@ -29,6 +35,7 @@ RoomObject.prototype.getMeta=function(){
 } 
 RoomObject.prototype.setMeta=function(data){
     let meta = objectMeta.get(this.id);
+    data.roomName = this.pos.roomName; // used in deletion detection
     if(meta){
         return objectMeta.edit(this.id,data);
     }else{

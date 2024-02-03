@@ -1048,6 +1048,8 @@ class RoomNode{
             for(let src of srcs){
                 let spotCount = src.getStandingSpots().length;
                 if(spotCount===3 && rclECap===550)spotCount=2;
+                // this is a safety catch, we shouldn't be needed, but in case getStandingSpots() failed to be setup
+                if(!spotCount)spotCount=1;
                 
                 this.workforce_quota.harvester.required+= spotCount;
             }
@@ -1101,11 +1103,11 @@ class RoomNode{
                 250, // RCL1
                 400, // RCL2
                 600, // RCL3
-                1000, // RCL4
-                1000, // RCL5
-                1000, // RCL6
-                1000, // RCL7
-                1000 // RCL8
+                800, // RCL4
+                800, // RCL5
+                800, // RCL6
+                800, // RCL7
+                800 // RCL8
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
         this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )

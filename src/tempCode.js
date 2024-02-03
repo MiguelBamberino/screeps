@@ -27,6 +27,13 @@ module.exports = {
         return;
     },
     shardSeasonTempCode:function(){
+
+        try{
+            this.setupNode('Alpha','Beta')
+        }catch (e) {
+            console.log("Set-up error",e)
+        }
+
         for(let n in nodes){
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
             nodes[n].wallHeight=10000;//10k
@@ -180,11 +187,14 @@ module.exports = {
     setupNode:function(feederName,targetName){
 
         let t = targetName.charAt(0).toLowerCase();
+        let f = feederName.charAt(0).toLowerCase();
 
-        if( nodes.a.online && nodes.a.storage()  && Game.gcl.level>=2 && nodes[t].anchor){
+        if( nodes[f].online && Game.gcl.level>=2 && nodes[t].anchor){
             let targetRoomName = nodes[t].anchor.roomName;
 
             if(Game.rooms[targetRoomName]){
+                // setup standing spots, before feeder gang turns up. Important this happens before harvesters arrive.
+                nodes[t].checkAndSetupStandingSpots();
                 mb.addConstruction(nodes[t].anchor,STRUCTURE_SPAWN,targetName)
             }
             this.startupRoomNoVision(feederName,targetRoomName, {
