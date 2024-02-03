@@ -11,8 +11,9 @@ global.checkDeletedObjects=function(){
         // if dont know the room name but can see the object, then patch in the value. this is more for patching existing servers
         // not needed on any server that starts fresh with v20.1
         if(!objects[id].roomName && gameObj){
-            console.log("objectMeta:Correcting roomName >> ",gameObj.id,gameObj.pos,)
-            gameObj.setMetaAttr('roomName',gameObj.pos.roomName)
+            console.log("objectMeta:Correcting roomName >> ",gameObj.id,gameObj.pos);
+            objects[id].roomName = gameObj.pos.roomName;
+            objectMeta.edit(id,objects[id]);
         }
         // if the object no longer exists and we can see the room. then remove the memory
         if(!gameObj && Game.rooms[ objects[id].roomName ]){
