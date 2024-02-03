@@ -648,7 +648,7 @@ module.exports = {
                         harvestersAlive++;
                         remoteMemory.staff.count++;
                     }
-                    let keepSpawningHarvy = (!remoteMemory.isDangerous && !tooMuchEnergyMined);
+                    let keepSpawningHarvy = (!remoteMemory.isDangerous && !tooMuchEnergyMined && !node.inRecoveryMode);
                     this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src,keepSpawningHarvy);
 
                     if(src.haveVision && src.getMeta().pathed){
@@ -692,9 +692,11 @@ module.exports = {
             }
 
             /////////////// Others  ///////////////////////////////////////////////////////
-                //maintainRoadsInRoom(spawnName,cname,roomNames,parts,harvestSources=true,keepSpawning=true){
-            if(!node.manual_noRoads.includes(roomName) && invadeCores.length===0 && pathsToMaintain && node.controller().level>=3)
-                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m',true,(true));
+            if(!node.manual_noRoads.includes(roomName) && invadeCores.length===0 && pathsToMaintain && node.controller().level>=3){
+                let keepSpawningRoady = harvestersAlive>0  && !node.inRecoveryMode;
+                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m',true,keepSpawningRoady);
+            }
+
 
             if(srcs.length===3){
                 this.pickupSKRoomDrops(node.name,roomName+'-scav',roomName,'5*1c1m')
@@ -709,7 +711,7 @@ module.exports = {
                 // dont spawn reserver if we've seen fighter in the room
                 // if we dont have vision, we dont have a harvester near src
                 // spawn harvesters first before trying to boost controller
-                let keepSpawningResy = !remoteMemory.isDangerous && controller.haveVision && harvestersAlive>0;
+                let keepSpawningResy = !remoteMemory.isDangerous && controller.haveVision && harvestersAlive>0  && !node.inRecoveryMode;
                 // if the reservation isn't a player/invader core
                 // and we've smashed it, then cool off
                 if(!invaderReserved && controller.reservation && controller.reservation.ticksToEnd>4000)

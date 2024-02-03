@@ -8,6 +8,8 @@ global.checkDeletedObjects=function(){
     for(let id in objects){
         let gameObj = Game.getObjectById(id);
 
+        // if dont know the room name but can see the object, then patch in the value. this is more for patching existing servers
+        // not needed on any server that starts fresh with v20.1
         if(!objects[id].roomName && gameObj){
             console.log("objectMeta:Correcting roomName >> ",gameObj.id,gameObj.pos,)
             gameObj.setMetaAttr('roomName',gameObj.pos.roomName)
