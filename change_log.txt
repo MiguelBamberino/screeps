@@ -1,4 +1,12 @@
 ===================================
+= Version 20.1.0
+===================================
+- Feature - changing roomNode so it can work with startUpRoom()
+- at RCL5 build link at furthest src, instead of [0]
+- patching cleanup delete but in objectMeta
+- tanker tweaks of upgrade Vfast
+
+===================================
 = Version 20.0.1
 ===================================
 - various tweaks to builders & haulers to tune throughput
