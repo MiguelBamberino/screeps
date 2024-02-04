@@ -926,13 +926,21 @@ module.exports = {
         let sources = mb.getSources({roomNames:[room.name]});
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
 
-        if(linkCount<2)
-            for(let src of sources){
+        if(linkCount<2) {
+            let furthestPos = false;
+            let maxDist = 1;
+            for (let src of sources) {
+                let dist = src.pos.getRangeTo(spawn);
                 let buildableSpot = src.getStandingSpot().findNearbyBuildableSpot();
-                if(buildableSpot)buildableSpot.createConstructionSite(STRUCTURE_LINK);
-                break;
+                if (buildableSpot && dist > maxDist) {
+                    furthestPos = buildableSpot;
+                    maxDist = dist;
+                }
             }
-
+            if (furthestPos) {
+                mb.addConstruction(furthestPos, STRUCTURE_LINK);
+            }
+        }
         if(linkCount>=2 && this.linksSetup[room.name]!=linkCount){
             util.setLinksInRoom(room.name,false);
             this.linksSetup[room.name]=linkCount;
@@ -2121,7 +2129,7 @@ module.exports = {
             this.activeRoomOverseer=this.activeRoomOverseer=='Xs0'?'Xs1':'Xs0';
         // move the scout in
         this.scoutRoom(spawnName,this.activeRoomOverseer,roomName,{x:12,y:45});*/
-        this.rotateScouts(spawnName,roomName,roomName,{x:25,y:25});
+        if(!config.phaseOut)this.rotateScouts(spawnName,roomName,roomName,{x:25,y:25});
         // can not we see the room, then wait for scout
         if(!Game.rooms[roomName]){
             console.log("Scouting:",roomName)
