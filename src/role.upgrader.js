@@ -58,7 +58,7 @@ var role = {
         if(container){
             //container.allowOverBooking(0)
             // cant have overbooking once we have storage, because it breaks the rKeepr
-            if((config.upgradeRate===RATE_FAST||config.upgradeRate===RATE_VERY_FAST) /*&& !creep.room.storage*/ ){
+            if(config.upgradeRate===RATE_VERY_FAST /*&& !creep.room.storage*/ ){
                 container.allowOverBooking(1500)
             }else{
                 container.allowOverBooking(0)

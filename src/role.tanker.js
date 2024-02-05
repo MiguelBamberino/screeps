@@ -9,8 +9,8 @@ var roleTanker = {
             budget=1300;
 
         if(budget >= 1500 ){ // RCL 5 - 1000 + 500 = 1500/1800 30 ext
-            return '10*2c1m';
-            //return '6*2c1m';
+            //return '10*2c1m';
+            return '6*2c1m';
 
         }
         else if(budget >= 1300 ){ // RCL 4 - 600 + 300 = 900/1300 20 ext

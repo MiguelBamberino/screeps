@@ -27,11 +27,16 @@ module.exports = {
         return;
     },
     shardSeasonTempCode:function(){
-
         try{
-            this.setupNode('Alpha','Beta')
+            this.setupNode('Alpha','Gamma',3)
         }catch (e) {
             console.log("Set-up error",e)
+        }
+        let route = mb.getMapRoute(Game.spawns['Alpha'].pos.roomName,'W13S24');
+        // route=[];
+        this.scoutRoom('Alpha','base-scout','W13S24',{x:25,y:25},route)
+        if(Game.creeps['base-scout'] && Game.rooms['W13S24'] && !Game.creeps['base-scout'].memory.arrivedIn){
+            Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
         }
 
         for(let n in nodes){
@@ -184,12 +189,12 @@ module.exports = {
 
     },
 
-    setupNode:function(feederName,targetName){
+    setupNode:function(feederName,targetName,gclTrigger){
 
         let t = targetName.charAt(0).toLowerCase();
         let f = feederName.charAt(0).toLowerCase();
 
-        if( nodes[f].online && Game.gcl.level>=2 && nodes[t].anchor){
+        if( nodes[f].online && Game.gcl.level>=gclTrigger && nodes[t].anchor){
             let targetRoomName = nodes[t].anchor.roomName;
 
             if(Game.rooms[targetRoomName]){
