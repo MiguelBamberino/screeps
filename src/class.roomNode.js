@@ -1148,6 +1148,9 @@ class RoomNode{
                     // need to leave open space to container for rkeeper
                     this.workforce_quota.upgrader.required=8;
                 }
+                if(this.storage() && this.energySurplus<50000){
+                    this.workforce_quota.upgrader.required=1;
+                }
             }
 
             else if(this.upgradeRate===RATE_FAST && Game.cpu.bucket>5000){

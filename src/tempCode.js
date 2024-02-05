@@ -34,9 +34,9 @@ module.exports = {
         }
         let route = mb.getMapRoute(Game.spawns['Alpha'].pos.roomName,'W13S24');
         // route=[];
-        this.scoutRoom('Alpha','base-scout','W13S24',{x:25,y:25},route)
+        //this.scoutRoom('Alpha','base-scout','W13S24',{x:25,y:25},route)
         if(Game.creeps['base-scout'] && Game.rooms['W13S24'] && !Game.creeps['base-scout'].memory.arrivedIn){
-            Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
+           // Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
         }
 
         for(let n in nodes){
@@ -196,6 +196,10 @@ module.exports = {
 
         if( nodes[f].online && Game.gcl.level>=gclTrigger && nodes[t].anchor){
             let targetRoomName = nodes[t].anchor.roomName;
+            let phaseOut = (Game.spawns[targetName]);
+
+            if(phaseOut)nodes[f].upgradeRate = RATE_FAST;
+            else nodes[f].upgradeRate = RATE_SLOW;
 
             if(Game.rooms[targetRoomName]){
                 // setup standing spots, before feeder gang turns up. Important this happens before harvesters arrive.
@@ -204,7 +208,7 @@ module.exports = {
             }
             this.startupRoomNoVision(feederName,targetRoomName, {
                 report:true,
-                phaseOut:(Game.spawns[targetName]),
+                phaseOut:phaseOut,
                 workerCount:4,workerBody:'4w4c4m',
                 defend:(Game.spawns[targetName]&&Game.spawns[targetName].room.controller.level>3),
                 defenderSpot:{x:nodes[t].anchor.x-3,y:nodes[t].anchor.y-1}
@@ -2294,8 +2298,10 @@ module.exports = {
 
                 if(config.phaseOut && !creep)continue;
 
+                this.maintainRoadsInRoom(spawnName,creepName,[roomName],bodyPlan,true,true,true);
 
-
+                    continue;
+                // old code below
                 if(dismantle_ids.length>0){
 
                     let id = dismantle_ids[c]?dismantle_ids[c]:dismantle_ids[0];
@@ -2379,7 +2385,17 @@ module.exports = {
                 let res = creep.actOrMoveTo('dropHarvest',source);
                 // creep.say("dh:"+res)
             }else{
-                this.actOrMove2(creep,target,"harvest");
+
+                let route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,target.pos.roomName);
+                if(route){
+                    let res = this.traverseRooms(creep,route);
+                    creep.say("trv:"+res);
+                    return res;
+                }else{
+                    return creep.moveToPos(rp(target.pos.x,target.pos.y,target.pos.roomName))
+                }
+
+                //this.actOrMove2(creep,target,"harvest");
             }
 
         }
@@ -2597,15 +2613,25 @@ module.exports = {
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
 
+            if(creep.pos.roomName===target.pos.roomName) {
 
-            if(controller && controller.reservation && controller.reservation.username!='MadDokMike'){
-                creep.say("atck:"+this.actOrMove2(creep,target,"attackController"));
-            }
-            else if(controller && (!controller.sign || (controller.sign &&  controller.sign.username!='MadDokMike') ) ){
-                creep.say("sign:"+this.actOrMove2(creep,target,'signController',"R.I.P tiny humans."));
-                creep.say("claim:"+this.actOrMove2(creep,target,"claimController"));
+                if (controller && controller.reservation && controller.reservation.username != 'MadDokMike') {
+                    creep.say("atck:" + this.actOrMove2(creep, target, "attackController"));
+                } else if (controller && (!controller.sign || (controller.sign && controller.sign.username != 'MadDokMike'))) {
+                    creep.say("sign:" + this.actOrMove2(creep, target, 'signController', "R.I.P tiny humans."));
+                    creep.say("claim:" + this.actOrMove2(creep, target, "claimController"));
+                } else {
+                    creep.say("claim:" + this.actOrMove2(creep, target, "claimController"));
+                }
             }else{
-                creep.say("claim:"+this.actOrMove2(creep,target,"claimController"));
+                let route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,target.pos.roomName);
+                if(route){
+                    let res = this.traverseRooms(creep,route);
+                    creep.say("trv:"+res);
+                    return res;
+                }else{
+                    return creep.moveToPos(rp(target.pos.x,target.pos.y,target.pos.roomName))
+                }
             }
         }
     },
@@ -2644,7 +2670,7 @@ module.exports = {
     scoutRoom:function(spawnName,cname,roomName,watchSpot={x:25,y:25},roomTraversal=[], bodyPlan='1m'){
         // clog(spawnName)
         if(!Game.creeps[cname]){
-            Game.spawns[spawnName].spawnCreepX(bodyPlan,cname);
+            this.queueSpawn(spawnName,cname,bodyPlan,{},true,true);
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
@@ -2654,7 +2680,10 @@ module.exports = {
             // if(creep.name=='Barry1')clog(roomTraversal);
 
             // if(creep.pos.roomName=='W14N14')creep.memory.riskyBiscuits=true;
-
+            if(roomTraversal.length===0) {
+                let route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName, roomName);
+                if (route) roomTraversal = route;
+            }
             if(roomTraversal.length>0 && creep.pos.roomName!==roomName){
                 let res = this.traverseRooms(creep,roomTraversal);
                 // if(creep.name=='Barry1')clog("trav:"+res);
@@ -2811,10 +2840,10 @@ module.exports = {
             }
         }
     },
-    maintainRoadsInRoom:function(spawnName,cname,roomNames,parts,harvestSources=true,keepSpawning=true){
+    maintainRoadsInRoom:function(spawnName,cname,roomNames,parts,harvestSources=true,keepSpawning=true,priority=false){
 
         if(!Game.creeps[cname]){
-            this.queueSpawn(spawnName,cname,parts,{},keepSpawning)
+            this.queueSpawn(spawnName,cname,parts,{},keepSpawning,priority)
         }
 
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
@@ -2824,6 +2853,19 @@ module.exports = {
             if(typeof roomNames ==='string'){
                 roomNames = [roomNames];
             }
+
+            if(!roomNames.includes(creep.pos.roomName)){
+                let route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,roomNames[0]);
+                if(route){
+                    let res = this.traverseRooms(creep,route);
+                    creep.say("trv:"+res);
+                    return res;
+                }else{
+                    return creep.moveToPos(rp(25,25,roomNames[0]))
+                }
+            }
+
+
 
             if(creep.isWorking()) {
 
@@ -3609,7 +3651,76 @@ module.exports = {
         }
 
     },
+    remoteStealer:function(spawnName,cname,bodyPlan,targetRoom,storage_id,keepSpawning=true){
+        if(!Game.creeps[cname]){
 
+            this.queueSpawn(spawnName,cname,bodyPlan,{},keepSpawning);
+        }
+        if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+            let creep = Game.creeps[cname];
+
+            if(creep.isFull()){
+                return creep.actOrMoveTo('transfer',gob(storage_id),RESOURCE_ENERGY)
+            }
+
+            if(creep.pos.roomName === targetRoom){
+
+                if(!creep.memory.scanned){
+                    mb.scanRoom(targetRoom);
+                    creep.memory.scanned = true;
+                }
+
+                let hostileIDs = (Game.rooms[targetRoom])?Game.rooms[targetRoom].getDangerousCreeps():[];
+
+                let targetContainer = gob(creep.memory.container_id);
+                let targetDrop = gob(creep.memory.drop_id);
+                let closestSrc = false;
+                let closestDist = 999;
+
+                if(!targetContainer && !targetDrop){
+                    let sources = mb.getAllSourcesForRoom(targetRoom);
+
+                    for(let src of sources){
+
+                        let dist = src.pos.getRangeTo(creep);
+                        if(dist<closestDist){
+                            closestSrc = src;
+                            closestDist = dist;
+
+                            let container = src.pos.lookForNearStructures(STRUCTURE_CONTAINER);
+                            if(container && !container.storingAtLeast(creep.store.getCapacity(RESOURCE_ENERGY))){
+                                targetContainer = container;
+                                creep.memory.container_id = container.id;
+                            }else{
+                                let drop = src.pos.lookForNearbyResource(RESOURCE_ENERGY);
+                                if(drop.amount>50){
+                                    targetDrop = drop;
+                                    creep.memory.drop_id = drop.id;
+                                }
+                            }
+
+                        }
+                    }
+                }
+                if(targetContainer && !targetContainer.isEmpty()){
+                    return creep.actOrMoveTo('withdraw',targetContainer,RESOURCE_ENERGY)
+                }
+                if(drop){
+                    return creep.actOrMoveTo('pickup',drop)
+                }
+                if(closestSrc){
+                    return creep.moveToPos(closestSrc);
+                }
+
+
+            }else{
+
+                return creep.moveToPos(rp(25,25,targetRoom));
+
+            }
+
+        }
+    },
     mosquitoAttack:function(spawnName,cname,targetRoomName,roomTraversal=[], dropLocation=undefined , bodyPlan='1m1c', keepSpawning=true){
 
         // CODE : dont stop at container empty, gets killed
@@ -3624,7 +3735,6 @@ module.exports = {
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
             let container = gob(creep.memory.container_id);
-
 
             let hostileIDs = (Game.rooms[targetRoomName])?Game.rooms[targetRoomName].getDangerousCreeps():[];
             // clog(hostiles.length,cname)

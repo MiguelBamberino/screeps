@@ -6,9 +6,10 @@ gui.tradeStats = true;
 gui.nodeSrcStats = true;
 gui.nodeControllerStats =true;
 gui.showDropStats = true;
-logs.runRCLSpeedStats = true;
+logs.runRCLSpeedStats = false;
 mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21','W16S20','W15S20','W14S20','W13S20','W12S20','W11S20','W11S21','W11S22','W12S22','W12S23','W12S24','W13S24'])
-
+//mb.createMapRoute(['W21S22','W22S22','W23S22','W24S22','W24S21','W25S21','W26S21','W26S20','W27S20','W28S20','W29S20','W30S20','W31S20','W32S20','W33S20','W34S20','W34S21','W35S21'])
+//mb.createMapRoute(['W21S22','W22S22','W23S22','W24S22','W24S21','W25S21','W26S21','W26S20','W27S20','W28S20','W28S21','W29S21','W30S21','W31S21','W32S21','W32S22'])
 module.exports = {
     allowRespawnDetection:false,
     cpuLimit:100,
@@ -16,7 +17,8 @@ module.exports = {
         return {
             a: new RoomNode('Alpha', {anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_FAST}),
             b: new RoomNode('Beta', {anchor:rp(13,15,'W22S17'),buildFast: false,spawnFacing:LEFT, upgradeRate: RATE_FAST}),
-            g: new RoomNode('Gamma', {anchor:rp(28,4,'W13S24'),buildFast: false,spawnFacing:TOP, upgradeRate: RATE_FAST})
+           // g: new RoomNode('Gamma', {anchor:rp(26,16,'W35S21'),buildFast: false,spawnFacing:TOP,armFacing:BOTTOM,armAnchor:rp(26,14,'W35S21'), upgradeRate: RATE_FAST})
+            g: new RoomNode('Gamma', {anchor:rp(6,14,'W32S22'),buildFast: false,spawnFacing:TOP, upgradeRate: RATE_FAST})
         }
     }
 };

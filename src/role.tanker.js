@@ -206,8 +206,8 @@ var roleTanker = {
 
                         roomNames = [config.coreRoomName,config.funnelRoomName];
                     }
-                    //console.log(creep.name,roomNames)
-                    target = creep.getUpgradeStoreToFill(roomNames);
+                    let fillController = (!storage || storage && storage.storingAtLeast(50000))
+                    if(fillController)target = creep.getUpgradeStoreToFill(roomNames);
 
                 }
 
@@ -319,7 +319,8 @@ var roleTanker = {
 
             // if not enough E in the mines, then draw from storage
             if(!target /*&& creep.memory.lastTransferTo!==STRUCTURE_STORAGE*/){
-                target = creep.reserveWithdrawalFromStorage(config.coreRoomName);
+                // stop colecting from storage now. thats rkeepers job
+                //target = creep.reserveWithdrawalFromStorage(config.coreRoomName);
                 if(target){
                     //  creep.memory.lastWithdrewFrom=STRUCTURE_STORAGE
                 }
@@ -332,7 +333,7 @@ var roleTanker = {
 
             }else{
 
-                if(!config.inRecoveryMode && config.upgradeRate===RATE_VERY_FAST && config.remoteRoomNames.length>0){
+                if(!config.inRecoveryMode  && config.remoteRoomNames.length>0){
                     let priorityRN = config.remoteRoomNames[0];
                     creep.moveToPos(rp(25,25,priorityRN))
                     creep.say("predict")
