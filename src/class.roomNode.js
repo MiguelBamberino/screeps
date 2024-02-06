@@ -1148,9 +1148,11 @@ class RoomNode{
                     // need to leave open space to container for rkeeper
                     this.workforce_quota.upgrader.required=8;
                 }
-                if(this.storage() && this.energySurplus<50000){
+                // if we are below our rainy day fund and the energy at the controller is drying out, then calm down
+                if(this.storage() && this.energySurplus<50000 && this.energyAtController < 2500){
                     this.workforce_quota.upgrader.required=1;
                 }
+                
             }
 
             else if(this.upgradeRate===RATE_FAST && Game.cpu.bucket>5000){

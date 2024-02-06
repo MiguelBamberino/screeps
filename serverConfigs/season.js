@@ -1,7 +1,7 @@
 // hello world
 gui.nodeStats = true;
 gui.remoteStats = true;
-gui.speedRunStats = true;
+gui.speedRunStats = false;
 gui.tradeStats = true;
 gui.nodeSrcStats = true;
 gui.nodeControllerStats =true;
@@ -15,10 +15,25 @@ module.exports = {
     cpuLimit:100,
     loadNodes(){
         return {
-            a: new RoomNode('Alpha', {anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_FAST}),
-            b: new RoomNode('Beta', {anchor:rp(13,15,'W22S17'),buildFast: false,spawnFacing:LEFT, upgradeRate: RATE_FAST}),
-           // g: new RoomNode('Gamma', {anchor:rp(26,16,'W35S21'),buildFast: false,spawnFacing:TOP,armFacing:BOTTOM,armAnchor:rp(26,14,'W35S21'), upgradeRate: RATE_FAST})
-            g: new RoomNode('Gamma', {anchor:rp(6,14,'W32S22'),buildFast: false,spawnFacing:TOP, upgradeRate: RATE_FAST})
+            a: new RoomNode('Alpha', {
+                retreatSpot:rp(25,25,'W21S22'),anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_FAST,
+                imports:[
+                    {resource_type:RESOURCE_ENERGY,storageCap:100000},
+                    {resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
+
+                ],
+
+            }),
+            b: new RoomNode('Beta', {
+                retreatSpot:rp(25,25,'W22S17'),anchor:rp(13,15,'W22S17'),buildFast: false,spawnFacing:LEFT, upgradeRate: RATE_SLOW,
+                exports:[
+                    {resource_type:RESOURCE_ENERGY,exportOver:40000,batchSize:10000},
+                    {resource_type:RESOURCE_LEMERGIUM,exportOver:0,batchSize:10000},
+                ]
+
+            }),
+            // g: new RoomNode('Gamma', {anchor:rp(26,16,'W35S21'),buildFast: false,spawnFacing:TOP,armFacing:BOTTOM,armAnchor:rp(26,14,'W35S21'), upgradeRate: RATE_FAST})
+            g: new RoomNode('Gamma', {retreatSpot:rp(25,25,'W32S22'),anchor:rp(6,14,'W32S22'),buildFast: false,spawnFacing:TOP, upgradeRate: RATE_VERY_FAST})
         }
     }
 };

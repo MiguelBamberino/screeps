@@ -225,7 +225,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 // ---------- RCL 5 --------------------------------------------------
                 {type:STRUCTURE_LINK,offset:{x:0,y:2},rcl:5,replace:STRUCTURE_EXTENSION},
                 // ---------- RCL 6 --------------------------------------------------
-                //{type:STRUCTURE_TERMINAL,offset:{x:2,y:1},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true},
+                {type:STRUCTURE_TERMINAL,offset:{x:2,y:1},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true},
                 // ---------- RCL 7 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:4},rcl:7,name:(this.name+'-2') }
             ];
@@ -299,7 +299,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 // ---------- RCL 5 --------------------------------------------------
                 {type:STRUCTURE_LINK,offset:{x:2,y:0},rcl:5,replace:STRUCTURE_EXTENSION},
                 // ---------- RCL 6 --------------------------------------------------
-                //{type:STRUCTURE_TERMINAL,offset:{x:1,y:-2},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true},
+                {type:STRUCTURE_TERMINAL,offset:{x:1,y:-2},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true},
                 // ---------- RCL 7 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:4,y:0},rcl:7,name:(this.name+'-2')},
             ];

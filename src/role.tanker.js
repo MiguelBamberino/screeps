@@ -304,27 +304,9 @@ var roleTanker = {
                 else if(config.controller.level==4 && !storage)roomRange = config.remoteRoomNames;
 
                 target = creep.getFullestMineStore(roomRange);
-                if(target){
-                    //creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
-                }
-            }
-            /*
-            let storage = mb.getStorageForRoom(config.coreRoomName)
-            if(!target && storage && !storage.getMeta().streaming){
-    	        let terminal = mb.getTerminalForRoom(config.coreRoomName);
-                if(terminal && terminal.storingAtLeast(15000)){
-                    target = creep.reserveWithdrawalFromTerminal(config.coreRoomName);
-                }
-	        }*/
 
-            // if not enough E in the mines, then draw from storage
-            if(!target /*&& creep.memory.lastTransferTo!==STRUCTURE_STORAGE*/){
-                // stop colecting from storage now. thats rkeepers job
-                //target = creep.reserveWithdrawalFromStorage(config.coreRoomName);
-                if(target){
-                    //  creep.memory.lastWithdrewFrom=STRUCTURE_STORAGE
-                }
             }
+
             if(target){
                 creep.memory.lastWithdrewFrom=target.structureType;
                 let res = creep.actOrMoveTo("withdrawX",target,RESOURCE_ENERGY);
@@ -332,11 +314,14 @@ var roleTanker = {
                 return
 
             }else{
-
+                creep.say('bored')
+                return creep.moveToPos(config.retreatSpot)
+                // the below code has bugs, where tankers get stuck in remotes
                 if(!config.inRecoveryMode  && config.remoteRoomNames.length>0){
-                    let priorityRN = config.remoteRoomNames[0];
+                    const randI = Math.floor(Math.random() * (config.remoteRoomNames.length-1));
+                    let priorityRN = config.remoteRoomNames[randI];
                     creep.moveToPos(rp(25,25,priorityRN))
-                    creep.say("predict")
+                    creep.say("rand:"+randI)
                 }else{
                     creep.say('bored')
                     creep.moveToPos(config.retreatSpot)
