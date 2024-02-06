@@ -405,14 +405,14 @@ module.exports = {
         if(roads.length>0){
             // max roads should == net path lengths. roads make remote 2x efficient, so reduce path cost
             let rdMode = Math.floor(roads.length/2);
-            Memory.remotes[node.name][roomName].reason -= "-r["+rdMode+"],";
-            Memory.remotes[node.name][roomName].score+= rdMode;
+            Memory.remotes[node.name][roomName].reason += "-r["+rdMode+"],";
+            Memory.remotes[node.name][roomName].score-= rdMode;
         }
             // harvesters
         Memory.remotes[node.name][roomName].staff.required+=srcs.length;
-        if(srcs.length==1){
-            // lower score of single src rooms, by doubling their distance. Added src.length for tie breaker
-            Memory.remotes[node.name][roomName].score += 75+srcs.length;
+        if(srcs.length===1){
+            // lower score of single src rooms. Added src.length for tie breaker
+            Memory.remotes[node.name][roomName].score += 80+srcs.length;
             Memory.remotes[node.name][roomName].reason += "+1S,";
         }
         if(srcs.length===3 && lairs.length ===0){

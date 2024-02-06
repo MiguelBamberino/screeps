@@ -256,6 +256,9 @@ var roleTanker = {
         }
         else if(creep.isCollecting()){
 
+           // if(creep.pos.getRangeTo(config.controller)>5)
+                //creep.pickupResourcesAtMyFeet(RESOURCE_ENERGY,false,1);
+
             if(config.upgradeRate===RATE_VERY_FAST && !creep.memory.reserve_id){
                 let drop = false;
 
