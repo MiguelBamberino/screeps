@@ -34,13 +34,17 @@ module.exports = {
         }
         let route = mb.getMapRoute(Game.spawns['Alpha'].pos.roomName,'W13S24');
         // route=[];
-        //this.scoutRoom('Alpha','base-scout','W13S24',{x:25,y:25},route)
+        //this.scoutRoom('Beta','scout0','W24S19',{x:25,y:25})
+
+
+
         if(Game.creeps['base-scout'] && Game.rooms['W13S24'] && !Game.creeps['base-scout'].memory.arrivedIn){
            // Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
         }
 
         this.haulResources('Alpha','At1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
         this.haulResources('Alpha','At2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
+        this.haulResources('Alpha','At3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
 
 
         for(let n in nodes){
@@ -48,7 +52,7 @@ module.exports = {
             nodes[n].wallHeight=10000;//10k
             nodes[n].rampHeight=50000;//50k
         }
-
+        //this.remoteStealer('Beta','BhS0','1c1m','W23S18','65bea8796a4f1e7ff5aa6c17')
     },
     shardPrivateTempCode:function(){
         
@@ -354,6 +358,10 @@ module.exports = {
             Memory.remotes[node.name][roomName].score+=99999;
             return;
         }
+
+        // this fixes a bug where a remote goes offline, but subsequent runs override the reason string.
+        // this will get re-scouted eventually
+        if( !Memory.remotes[node.name][roomName].online &&  Memory.remotes[node.name][roomName].score)return;
 
         ///////////////////////////////////////////////////
         // Now lets score this potential remote
@@ -3714,7 +3722,8 @@ module.exports = {
                             closestDist = dist;
 
                             let container = src.pos.lookForNearStructures(STRUCTURE_CONTAINER);
-                            if(container && !container.storingAtLeast(creep.store.getCapacity(RESOURCE_ENERGY))){
+                            console.log(cname,container)
+                            if(container && container.store.getUsedCapacity(RESOURCE_ENERGY) >= creep.store.getCapacity(RESOURCE_ENERGY)  ){
                                 targetContainer = container;
                                 creep.memory.container_id = container.id;
                             }else{
