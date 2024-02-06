@@ -210,7 +210,7 @@ module.exports = {
                 report:true,
                 phaseOut:phaseOut,
                 workerCount:4,workerBody:'4w4c4m',
-                defend:(Game.spawns[targetName]&&Game.spawns[targetName].room.controller.level>3),
+                defend:(!Game.spawns[targetName] || Game.spawns[targetName].room.controller.level<3),
                 defenderSpot:{x:nodes[t].anchor.x-3,y:nodes[t].anchor.y-1}
             })
         }
