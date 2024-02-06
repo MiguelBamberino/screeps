@@ -206,9 +206,16 @@ var roleTanker = {
         if(creep.memory.job){
             this.doJob(creep,storage)
         }
-        
+
         if(!creep.memory.job){
-           creep.moveToPos(parkSpot) 
+
+            let drop = creep.getDroppedEnergy(25);
+            // while bored, go clean up. Make sure not to pick energy up from controller pile
+            if(drop && drop.pos.getRangeTo(config.controller)>5){
+                return creep.actOrMoveTo('pickup',drop);
+            }else{
+                return creep.moveToPos(parkSpot)
+            }
         }
 	},
 	

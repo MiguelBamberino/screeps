@@ -39,6 +39,9 @@ module.exports = {
            // Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
         }
 
+        this.haulResources('Alpha','At1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
+
+
         for(let n in nodes){
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
             nodes[n].wallHeight=10000;//10k

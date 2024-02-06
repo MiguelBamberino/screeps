@@ -24,6 +24,5 @@
     "@screeps/common": "github:screeps/common",
     "jest": "^26.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

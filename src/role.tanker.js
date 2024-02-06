@@ -70,7 +70,9 @@ var roleTanker = {
                         creep.memory.dropAt=false;
                         recipient.memory.waitFor = false;
 
-                        if(creep.transfer(recipient,RESOURCE_ENERGY)===ERR_FULL){
+                        if(recipient.haveSpaceFor( creep.storedAmount() )){
+                            return creep.transfer(recipient,RESOURCE_ENERGY)
+                        }else{
                             // drop it as the recipients feet. they'll pick it up
                             return creep.drop(RESOURCE_ENERGY);
                         }
