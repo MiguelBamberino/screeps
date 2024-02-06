@@ -30,8 +30,8 @@ var role = {
         if(budget >= 1800 ){ // RCL 5 - 1000 + 500 + 250 = 1750/1800 30 ext
             return '10w10c5m';
         }
-        else if(budget >= 1250 ){ // RCL 4 - 800 + 300 + 200 = 1300/1300 20 ext
-            return '10w2c3m';
+        else if(budget >= 1250 ){ // RCL 4 - 800 + 400 + 100 = 1300/1300 20 ext
+            return '8w8c2m';
         }
         else if(budget >= 800 ){ // RCL 3 - 400 + 300 + 100 =  800/800 10 ext
             return '4w6c2m';
