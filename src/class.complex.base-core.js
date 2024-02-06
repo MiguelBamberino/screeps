@@ -154,6 +154,20 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
         }
         return dirs;
     }
+    getStandingSpot(){
+        if(this.facing===TOP){
+            return rp(this.anchor.x-2,this.anchor.y+2,this.anchor.roomName);
+        }
+        if(this.facing===BOTTOM){
+            return rp(this.anchor.x+2,this.anchor.y-2,this.anchor.roomName);
+        }
+        if(this.facing===LEFT){
+            return rp(this.anchor.x+2,this.anchor.y+2,this.anchor.roomName);
+        }
+        if(this.facing===RIGHT){
+            return rp(this.anchor.x-2,this.anchor.y-2,this.anchor.roomName);
+        }
+    }
     getLayoutPlan(facing){
 
         if(facing===TOP){

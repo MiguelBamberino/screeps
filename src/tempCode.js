@@ -3652,6 +3652,11 @@ module.exports = {
 
     },
     remoteStealer:function(spawnName,cname,bodyPlan,targetRoom,storage_id,keepSpawning=true){
+
+        if(mb.isDeadlyRoom(targetRoom)){
+            keepSpawning = false;
+        }
+
         if(!Game.creeps[cname]){
 
             this.queueSpawn(spawnName,cname,bodyPlan,{},keepSpawning);
@@ -3671,6 +3676,17 @@ module.exports = {
                 }
 
                 let hostileIDs = (Game.rooms[targetRoom])?Game.rooms[targetRoom].getDangerousCreeps():[];
+                let closestHostile = false;
+                let distH = 999;
+                for(let id of hostileIDs){
+                    let hostile =  gob(id);
+                    if(!hostile)continue;
+                    let dist = creep.pos.getRangeTo(hostile);
+                    if(dist<distH){
+                        distH = dist;
+                        closestHostile = hostile;
+                    }
+                }
 
                 let targetContainer = gob(creep.memory.container_id);
                 let targetDrop = gob(creep.memory.drop_id);
