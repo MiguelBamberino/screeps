@@ -154,30 +154,21 @@ var roleTanker = {
             }
 
 
-            let target = false;
-            let hostiles = Game.rooms[config.coreRoomName].find(FIND_HOSTILE_CREEPS)
-            if(hostiles.length>0){
-                target = creep.getTowerToCharge([config.coreRoomName]);
-            }else{
+            let target = Game.getObjectById(creep.memory.reserve_id);
 
-                target = Game.getObjectById(creep.memory.reserve_id);
-            }
+            // before storage and rkeeper, the tankers fill this role, then after they just fetch from remotes
+            if(!storage){
+                if(!target){
+                    target = creep.getFillerStationToFill([config.coreRoomName]);
+                }
 
+                if(!target && creep.pos.roomName == config.coreRoomName){
+                    target = creep.getExtensionToCharge([config.coreRoomName]);
+                }
 
-            if(!target){
-                target = creep.getFillerStationToFill([config.coreRoomName]);
-            }
-
-            if(!target && creep.pos.roomName == config.coreRoomName){
-                target = creep.getExtensionToCharge([config.coreRoomName]);
-            }
-
-            if(!target){
-                target = creep.getTowerToCharge([config.coreRoomName]);
-            }
-
-            if(!target){
-                target = creep.getLabToCharge([config.coreRoomName]);
+                if(!target){
+                    target = creep.getTowerToCharge([config.coreRoomName]);
+                }
             }
 
             if(!target){

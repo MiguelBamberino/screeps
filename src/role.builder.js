@@ -29,10 +29,9 @@ var role = {
         let playerAttackers = Game.rooms[config.coreRoomName].getEnemyPlayerFighters(); 
         
         let cpuCreep = 'B-bu-3';
-        
-        let useWhatWeHave = (config.controller.level===1 && !creep.isEmpty())
+
     
-	    if( /*useWhatWeHave ||*/ creep.isWorking()) {
+	    if( creep.isWorking()) {
 
             if(config.energyAtController>7000) {
                 creep.say("bsssh")
@@ -124,29 +123,26 @@ var role = {
                 creep.memory.waitFor = false;
             }*/
 
-	        if(config.controller.level <=3 ){
-                
-                let drop = creep.getDropFromLocalSources(25);
-                
-                if(!drop){
-                    drop = creep.getDroppedEnergy(25);
-                }
-                
-                if(drop ){
-                    // if creep finds drop, they might have reserved E in a container, so release it
-                    if(creep.memory.reserve_id){
-                        let targetToClear = gob(creep.memory.reserve_id)
-                         creep.memory.reserve_id = false;
-                        if(targetToClear)targetToClear.fulfillWithdraw(creep.name);
-                    }
-                    // keep resetting the con site, so builder does stick to a site really far away
-                    //creep.memory.construction_site_id = false;
-                    return creep.actOrMoveTo("pickup",drop);
-                }
-                
-                //if( !srcs[i].haveContainer() )return creep.actOrMoveTo("harvest",srcs[i]);
+            let drop = false;
+
+	        if(config.controller.level <=3 ) {
+                drop = creep.getDropFromLocalSources(25);
             }
-            
+            if(!drop){
+                drop = creep.getDroppedEnergy(25);
+            }
+
+            if(drop ){
+                // if creep finds drop, they might have reserved E in a container, so release it
+                if(creep.memory.reserve_id){
+                    let targetToClear = gob(creep.memory.reserve_id)
+                     creep.memory.reserve_id = false;
+                    if(targetToClear)targetToClear.fulfillWithdraw(creep.name);
+                }
+                // keep resetting the con site, so builder does stick to a site really far away
+                //creep.memory.construction_site_id = false;
+                return creep.actOrMoveTo("pickup",drop);
+            }
 
            // if(creep.name==cpuCreep)logs.startCPUTracker(creep.name+':getEnergy');
 	        creep.getEnergy([config.coreRoomName]);
