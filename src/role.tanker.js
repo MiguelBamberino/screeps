@@ -314,6 +314,14 @@ var roleTanker = {
                 return
 
             }else{
+
+                let drop = creep.getDroppedEnergy(25);
+                // while bored, go clean up. Make sure not to pick energy up from controller pile
+                if(drop && drop.pos.getRangeTo(config.controller)>5){
+                    return creep.actOrMoveTo('pickup',drop);
+                }
+
+
                 creep.say('bored')
                 return creep.moveToPos(config.retreatSpot)
                 // the below code has bugs, where tankers get stuck in remotes
