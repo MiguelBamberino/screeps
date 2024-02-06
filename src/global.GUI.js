@@ -289,7 +289,7 @@ global.gui = {
                  Game.map.visual.text("Reason: "+details.reason,rp(2,9,remoteRN),textCSS)
                  Game.map.visual.text("Energy: "+totalE,rp(2,12,remoteRN),textCSS)
                  Game.map.visual.text("Staff: "+details.staff.count+"/"+details.staff.required,rp(2,15,remoteRN),textCSS)
-                Game.map.visual.text("lastSeen: "+details.lastSeen,rp(2,18,remoteRN),textCSS)
+                Game.map.visual.text("lastSeen: "+(Game.time -details.lastSeen)+"ago",rp(2,18,remoteRN),textCSS)
                 guiWM.drawArrowFromRoomToRoom(node.coreRoomName,remoteRN,colour)
                 
             }

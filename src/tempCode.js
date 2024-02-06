@@ -28,7 +28,7 @@ module.exports = {
     },
     shardSeasonTempCode:function(){
         try{
-            this.setupNode('Alpha','Gamma',3)
+            //this.setupNode('Alpha','Gamma',3)
         }catch (e) {
             console.log("Set-up error",e)
         }
@@ -296,7 +296,10 @@ module.exports = {
 
         //  We have to go explore
         if(!mb.hasRoom(roomName))return;
-        if(Game.rooms[roomName])Memory.remotes[node.name][roomName].lastSeen = Game.time;
+        if(Game.rooms[roomName]) {
+            Memory.remotes[node.name][roomName].lastSeen = Game.time;
+            Memory.remotes[node.name][roomName].online = true;// we can see this room, so we should be able to accurately score it
+        }
 
         let controller = mb.getControllerForRoom(roomName,false);
         let lairs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_KEEPER_LAIR], requireVision:false,justIDs:true })
@@ -514,16 +517,11 @@ module.exports = {
         for(let roomName in Memory.remotes[node.name]){
             let remote = Memory.remotes[node.name][roomName];
             let timeSinceSeen = Game.time - remote.lastSeen;
-            if(!mb.hasRoom(roomName) || timeSinceSeen>5000){
+            if(!mb.hasRoom(roomName) || (remote.isDangerous && timeSinceSeen>1500) || (!remote.isDangerous && timeSinceSeen>250) ){
 
                 roomToScout = roomName;
+                break;
 
-                if(Game.rooms[roomName]){
-                    mb.scanRoom(roomName);
-                    console.log(node.name,roomName," Just scanned. Scoring")
-                    this.scoreRemote(node,roomName);
-                    this.sortRemotes(node);
-                }
 
             }
         }
@@ -538,7 +536,16 @@ module.exports = {
             }
         }
 
-        if(roomToScout)this.scoutRoom(node.name,node.name+'-sc',roomToScout)
+        if(roomToScout){
+            this.scoutRoom(node.name,node.name+'-sc',roomToScout);
+
+            if(Game.rooms[roomToScout]){
+                mb.scanRoom(roomToScout);
+                console.log(node.name,roomToScout," Just scanned. Scoring")
+                this.scoreRemote(node,roomToScout);
+                this.sortRemotes(node);
+            }
+        }
 
     },
     placeRemoteRoads:function(node,src,currConSiteCount){
@@ -603,6 +610,7 @@ module.exports = {
 
             let remoteMemory = Memory.remotes[node.name][roomName];
             if(!remoteMemory){console.log(roomName,"No Memory for remote"); continue;}
+            if(Game.rooms[roomName])remoteMemory.lastSeen = Game.time;
             remoteMemory.staff.count= 0;
             // short term fix because invaderCores can be added after the fact and then not in cache
             if(Game.time%100===0)mb.scanRoom(roomName);

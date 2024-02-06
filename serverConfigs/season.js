@@ -16,7 +16,7 @@ module.exports = {
     loadNodes(){
         return {
             a: new RoomNode('Alpha', {
-                retreatSpot:rp(25,25,'W21S22'),anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_FAST,
+                retreatSpot:rp(25,25,'W21S22'),anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_VERY_FAST,
                 imports:[
                     {resource_type:RESOURCE_ENERGY,storageCap:100000},
                     {resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
