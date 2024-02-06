@@ -529,6 +529,36 @@ module.exports = {
         if(roomToScout)this.scoutRoom(node.name,node.name+'-sc',roomToScout)
 
     },
+    placeRemoteRoads:function(node,src,currConSiteCount){
+        let to = src.getStandingSpot();
+        if(to){
+            let result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{
+                swampCost:3,plainCost:2,maxOps:10000,
+                roomCallback: function(roomName) {
+                    let costMatrix = new PathFinder.CostMatrix;
+
+                    let structs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_ROAD]})
+                    for(let struct of structs){
+                        costMatrix.set(struct.pos.x, struct.pos.y, 1);
+                    }
+                    return costMatrix;
+                }
+
+            });
+
+            if(src.haveVision && result.path.length<(100-currConSiteCount) ){
+                for(let pos of result.path){
+                    let pos2 = rp(pos.x,pos.y,pos.roomName);
+                    if(pos2 && pos2.isWalkable() && !pos2.isEqualTo(to))
+                        pos2.createConstructionSite(STRUCTURE_ROAD);
+                }
+                src.setMetaAttr('pathed',true);
+                return result.path;
+            }
+            //clog(result.path.length,"Remote path: "+src.pos)
+        }
+        return [];
+    },
     runRemotes:function(node){
 
         // return
@@ -554,6 +584,8 @@ module.exports = {
             multiplier = 3000; // containers come online, so 2k+1k on floor
         let maxAllowedEnergyExcess = node.remoteRoomNames.length*multiplier;
         let tooMuchEnergyMined = (node.totalEnergyAtSources>maxAllowedEnergyExcess)
+        let tankerGap = node.workforce_quota.tanker.required - node.workforce_quota.tanker.count;
+        let currConSiteCount = Object.keys(Game.constructionSites).length;
         //if(tooMuchEnergyMined)console.log(node.name,'Too much EEE..stopping remote spawns',node.totalEnergyAtSources,'>',maxAllowedEnergyExcess)
         for(let roomName of node.remoteRoomNames){
 
@@ -573,7 +605,7 @@ module.exports = {
             let controller = mb.getControllerForRoom(roomName,false);
             let srcs =  mb.getSources({roomNames:[roomName],requireVision:false});
             let invadeCores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
-            let currConSiteCount = Object.keys(Game.constructionSites).length;
+
             let pathsToMaintain = false;
 
 
@@ -658,7 +690,9 @@ module.exports = {
                         remoteMemory.staff.count++;
                     }
                     let keepSpawningHarvy = (!remoteMemory.isDangerous && !tooMuchEnergyMined && !node.inRecoveryMode);
-                    this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src,keepSpawningHarvy);
+                    // if we have some tankers, but we need a harvester, then prioritise this
+                    let priorityHarvest = tankerGap < 5 && node.workforce_quota.tanker.count >0;
+                    this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src,keepSpawningHarvy,priorityHarvest);
 
                     if(src.haveVision && src.getMeta().pathed){
                         pathsToMaintain=true;
@@ -666,36 +700,8 @@ module.exports = {
 
                     if(src.haveVision && Game.time%1000===0 && currConSiteCount ===0)src.setMetaAttr('pathed',false);
 
-                    let conSpace = 100-currConSiteCount;
-
                     if(src.haveVision && !node.manual_noRoads.includes(roomName) && !src.getMeta().pathed && src.haveContainer() && currConSiteCount<15 && node.controller().level>3){
-                        let to = src.getStandingSpot();
-                        if(to){
-                            let result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{
-                                swampCost:3,plainCost:2,maxOps:10000,
-                                roomCallback: function(roomName) {
-                                    let costMatrix = new PathFinder.CostMatrix;
-
-                                    let structs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_ROAD]})
-                                    for(let struct of structs){
-                                        costMatrix.set(struct.pos.x, struct.pos.y, 1);
-                                    }
-                                    return costMatrix;
-                                }
-
-                            });
-
-                            if(src.haveVision && result.path.length<(100-currConSiteCount) ){
-                                for(let pos of result.path){
-                                    let pos2 = rp(pos.x,pos.y,pos.roomName);
-                                    if(pos2 && pos2.isWalkable() && !pos2.isEqualTo(to))
-                                        pos2.createConstructionSite(STRUCTURE_ROAD);
-                                }
-                                src.setMetaAttr('pathed',true);
-                                currConSiteCount+=result.path.length
-                            }
-                            //clog(result.path.length,"Remote path: "+src.pos)
-                        }
+                        currConSiteCount += this.placeRemoteRoads(node,src,currConSiteCount).length;
                     }
                 }
             }
