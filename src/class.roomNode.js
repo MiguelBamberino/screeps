@@ -28,6 +28,7 @@ class RoomNode{
             buildFast:false         >> if set, then the room will pipe as much energy as possible into building           
             remoteRoomNames:[]      >> string list of roomNames we are remote mining
             funnelRoomName:false    >> if set, then haulers will funnel energy to this room
+            surplusRequired:50000   >> The amount to be kept in reserve in the storage as a rainy day fund
             terminalEnergyCap:15000 >> The amount to be kept in reserve in the terminal
             towersBuildWalls:false  >> If true, then the towers will build up the walls in peace time
             wallHeight:5,000,000     >> How hight the walls should be
@@ -85,7 +86,8 @@ class RoomNode{
         this.funnelRoomName = options.funnelRoomName===undefined?false:options.funnelRoomName;
         
         this.terminalEnergyCap = options.terminalEnergyCap===undefined?15000:options.terminalEnergyCap;
-        
+        this.surplusRequired = options.surplusRequired===undefined?50000:options.surplusRequired;
+
         this.towersBuildWalls = options.towersBuildWalls===undefined?false:options.towersBuildWalls;
         this.wallHeight = options.wallHeight===undefined?5000000:options.wallHeight;
         this.rampHeight = options.rampHeight===undefined?25000000:options.rampHeight;
@@ -950,6 +952,7 @@ class RoomNode{
                     funnelRoomName:this.funnelRoomName,
                     upgradeRate:this.upgradeRate,
                     terminalEnergyCap:this.terminalEnergyCap,
+                    surplusRequired:this.surplusRequired,
                     towersBuildWalls:this.towersBuildWalls,
 
                     labComplex:this.labComplex,
@@ -1091,7 +1094,7 @@ class RoomNode{
             } 
         }
         
-        if(this.haveStorage && this.spaceInStorage<50000 && this.energySurplus > 50000){
+        if(this.haveStorage && this.spaceInStorage<50000 && this.energySurplus > this.surplusRequired){
             this.workforce_quota.harvester.required=0;
         }
         
@@ -1152,7 +1155,7 @@ class RoomNode{
                     this.workforce_quota.upgrader.required=8;
                 }
                 // if we are below our rainy day fund and the energy at the controller is drying out, then calm down
-                if(this.storage() && this.energySurplus<50000 && this.energyAtController < 2500){
+                if(this.storage() && this.energySurplus<this.surplusRequired && this.energyAtController < 2500){
                     this.workforce_quota.upgrader.required=1;
                 }
 

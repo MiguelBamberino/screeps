@@ -32,8 +32,10 @@ module.exports = {
                 ]
 
             }),
-            // g: new RoomNode('Gamma', {anchor:rp(26,16,'W35S21'),buildFast: false,spawnFacing:TOP,armFacing:BOTTOM,armAnchor:rp(26,14,'W35S21'), upgradeRate: RATE_FAST})
-            g: new RoomNode('Gamma', {retreatSpot:rp(25,25,'W32S22'),anchor:rp(6,14,'W32S22'),buildFast: false,spawnFacing:TOP, upgradeRate: RATE_VERY_FAST})
+            g: new RoomNode('Gamma', {
+                retreatSpot:rp(25,25,'W32S22'),anchor:rp(6,14,'W32S22'),buildFast: false,spawnFacing:TOP, upgradeRate: RATE_VERY_FAST,
+                surplusRequired:25000
+            })
         }
     }
 };

@@ -40,6 +40,7 @@ module.exports = {
         }
 
         this.haulResources('Alpha','At1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
+        this.haulResources('Alpha','At2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
 
 
         for(let n in nodes){

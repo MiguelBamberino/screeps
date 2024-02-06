@@ -101,7 +101,7 @@ var roleTanker = {
                 creep.memory.job = {target_id:targets[0].id,resource_type:RESOURCE_ENERGY,action:'fill'}
             }
         }
-        if(!creep.memory.job && energyInStorage>=50000 && energyInStorage>=creepSpace){
+        if(!creep.memory.job && energyInStorage>=config.surplusRequired && energyInStorage>=creepSpace){
             let targets = mb.getStructures({ types:[STRUCTURE_CONTAINER],roomNames:[config.coreRoomName],
                     filters:[{attribute:'isUpgraderStore',operator:'fn',value:[]},{attribute:'canReserveTransfer',operator:'fn',value:[creepSpace]} ]})
                     

@@ -195,7 +195,7 @@ var roleTanker = {
 
                     // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller. we hope there is ugraders there to use it
 
-                    if(config.upgradeRate===RATE_VERY_FAST  && (!storage || (storage && storage.storingAtLeast(10000,RESOURCE_ENERGY)) ) ){
+                    if(config.upgradeRate===RATE_VERY_FAST  && (!storage || (storage && storage.storingAtLeast(config.surplusRequired,RESOURCE_ENERGY)) ) ){
 
                         creep.memory.dropAt = config.controller.getContainer().pos;
                         creep.memory.giveToType = 'upgrader';
@@ -204,11 +204,11 @@ var roleTanker = {
 
                     // IF we're not upgrading like BRRRRRRR....., then use normal reservation system
                     let roomNames = [config.coreRoomName];
-                    if(config.funnelRoomName && storage && storage.storingAtLeast(50000)){
+                    if(config.funnelRoomName && storage && storage.storingAtLeast(config.surplusRequired)){
 
                         roomNames = [config.coreRoomName,config.funnelRoomName];
                     }
-                    let fillController = (!storage || storage && storage.storingAtLeast(50000))
+                    let fillController = (!storage || storage && storage.storingAtLeast(config.surplusRequired))
                     if(fillController)target = creep.getUpgradeStoreToFill(roomNames);
 
                 }
@@ -216,21 +216,13 @@ var roleTanker = {
             }
 
             if(!target && config.funnelRoomName){
-                if(storage && storage.storingAtLeast(50000)){
+                if(storage && storage.storingAtLeast(config.surplusRequired)){
                     //console.log(creep.name,"funneling")
                     target = creep.reserveTransferToStorage(config.funnelRoomName);
                 }
             }
 
             if(!target){
-                let terminal = mb.getTerminalForRoom(config.coreRoomName);
-                if(terminal && terminal.storingLessThan(10000)){
-                    target = creep.reserveTransferToTerminal(config.coreRoomName);
-                }
-            }
-
-
-            if(!target && creep.memory.lastWithdrewFrom!==STRUCTURE_STORAGE){
 
                 target = creep.reserveTransferToStorage(config.coreRoomName);
             }
