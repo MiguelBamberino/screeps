@@ -3729,8 +3729,8 @@ module.exports = {
                             closestSrc = src;
                             closestDist = dist;
 
-                            let container = src.pos.lookForNearStructures(STRUCTURE_CONTAINER);
-                            console.log(cname,container)
+                            let containers = src.pos.lookForNearStructures(STRUCTURE_CONTAINER);
+                            let container = (containers.length>0)?containers[0]:false
                             if(container && container.store.getUsedCapacity(RESOURCE_ENERGY) >= creep.store.getCapacity(RESOURCE_ENERGY)  ){
                                 targetContainer = container;
                                 creep.memory.container_id = container.id;
