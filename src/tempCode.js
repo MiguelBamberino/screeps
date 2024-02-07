@@ -480,7 +480,8 @@ module.exports = {
                 }
             }
             let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
-            for(let i=0; i<=3;i++)if(available[i])node.remoteRoomNames.push(available[i]);
+            let supportCount = node.controller().level>=7?4:3;
+            for(let i=0; i<=supportCount;i++)if(available[i])node.remoteRoomNames.push(available[i]);
         }
         console.log('to: ',node.remoteRoomNames)
     },

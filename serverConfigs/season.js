@@ -18,7 +18,7 @@ module.exports = {
     loadNodes(){
         return {
             a: new RoomNode('Alpha', {
-                retreatSpot:rp(25,25,'W21S22'),anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_VERY_FAST,
+                retreatSpot:rp(25,25,'W21S22'),anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_FAST,
                 labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600),
                 imports:[
                     {resource_type:RESOURCE_ENERGY,storageCap:100000},
@@ -28,7 +28,7 @@ module.exports = {
 
             }),
             b: new RoomNode('Beta', {
-                retreatSpot:rp(25,25,'W22S17'),anchor:rp(13,15,'W22S17'),buildFast: false,spawnFacing:LEFT, upgradeRate: RATE_SLOW,
+                retreatSpot:rp(25,25,'W22S17'),anchor:rp(13,15,'W22S17'),buildFast: false,spawnFacing:LEFT, upgradeRate: RATE_VERY_FAST,
                 exports:[
                     {resource_type:RESOURCE_ENERGY,exportOver:40000,batchSize:10000},
                     {resource_type:RESOURCE_LEMERGIUM,exportOver:0,batchSize:10000},
