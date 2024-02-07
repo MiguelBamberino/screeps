@@ -274,7 +274,7 @@ var roleTanker = {
 
             // collect from local MINES in this room first
             if(!target){
-                
+
                 target = creep.getFullestMineStore([config.coreRoomName]);
                 if(target){
                     // creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER

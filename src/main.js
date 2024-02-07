@@ -133,8 +133,9 @@ module.exports.loop = function () {
             console.log("ERROR:GUI",e);
             if(util.throwErrors)throw e;
         }
-        //gui.renderComplexPlan(nodes.a.coreComplex)
-       
+        //gui.renderComplexPlan(nodes.d.coreComplex)
+        //gui.renderComplexPlan(nodes.d.armComplex)
+
         if( Game.cpu.bucket>1000 && util.getServerName()==='shard3'){
              gui.renderComplexStats(nodes.t.extractorComplex)
             gui.renderComplexStats(nodes.i.extractorComplex)

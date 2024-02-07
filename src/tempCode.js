@@ -28,7 +28,7 @@ module.exports = {
     },
     shardSeasonTempCode:function(){
         try{
-            //this.setupNode('Alpha','Gamma',3)
+            this.setupNode('Gamma','Delta',4)
         }catch (e) {
             console.log("Set-up error",e)
         }
@@ -58,8 +58,13 @@ module.exports = {
 
 
         this.scoutPotentialBase('Beta','W15S13')
+
         this.scoutPotentialBase('Alpha','W13S24')
-        this.scoutPotentialBase('Alpha','W15S13')
+        this.scoutPotentialBase('Alpha','W11S21')
+        this.scoutPotentialBase('Alpha','W12S18')
+
+        this.scoutPotentialBase('Gamma','W38S23')
+        this.scoutPotentialBase('Gamma','W38S19')
         //this.remoteStealer('Beta','BhS0','4c4m','W23S18','65bea8796a4f1e7ff5aa6c17')
         //this.remoteStealer('Beta','BhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
     },
