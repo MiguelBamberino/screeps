@@ -7,7 +7,6 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
         this.haulJob=false;
         this.config = {}
         this.name = spawnName;
-        this.extraFastFillSpots = this.getExtraFillerSpots(facing);
 
     }
     run(config){
@@ -24,6 +23,8 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
     }
     runAllFillers(){
 
+
+        this.extraFastFillSpots = this.getExtraFillerSpots(this.facing);
 
         this.runFiller(this.name,this.name.charAt(0)+ 'FF0');
         this.runFiller(this.name,this.name.charAt(0)+'FF1');

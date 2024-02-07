@@ -100,17 +100,20 @@ var role = {
         }
 
         // relay energy into the container to share with other upgraders
-        if(config.upgradeRate===RATE_VERY_FAST && !container.isFull()){
+        if(Game.time %5===0 && config.upgradeRate===RATE_VERY_FAST && !creep.isFull()){
             // if we have drops then get them into the container quick, to avoid decay
             let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
 
             if(drop){
-                // only transfer the excess so we can still upgrade this tick
-                let amount = creep.storedAmount(RESOURCE_ENERGY) - creep.partCount(WORK);
-                let res = creep.transfer(container,RESOURCE_ENERGY,amount);
+                if(!container.isFull()){
 
-                creep.pickup(drop);
-                creep.say("rlay"+amount)
+                    // only transfer the excess so we can still upgrade this tick
+                    let amount = creep.storedAmount(RESOURCE_ENERGY) - creep.partCount(WORK);
+                    creep.transfer(container,RESOURCE_ENERGY,amount);
+                    creep.say("rlay"+amount)
+                }
+
+                creep.say("pkup:"+creep.pickup(drop));
             }
             else if(!creep.isEmpty() && container.isEmpty()){
                 let amount = creep.storedAmount(RESOURCE_ENERGY) / 2;

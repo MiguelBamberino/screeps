@@ -10,6 +10,8 @@ logs.runRCLSpeedStats = false;
 mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21','W16S20','W15S20','W14S20','W13S20','W12S20','W11S20','W11S21','W11S22','W12S22','W12S23','W12S24','W13S24'])
 //mb.createMapRoute(['W21S22','W22S22','W23S22','W24S22','W24S21','W25S21','W26S21','W26S20','W27S20','W28S20','W29S20','W30S20','W31S20','W32S20','W33S20','W34S20','W34S21','W35S21'])
 //mb.createMapRoute(['W21S22','W22S22','W23S22','W24S22','W24S21','W25S21','W26S21','W26S20','W27S20','W28S20','W28S21','W29S21','W30S21','W31S21','W32S21','W32S22'])
+
+
 module.exports = {
     allowRespawnDetection:false,
     cpuLimit:100,
@@ -17,6 +19,7 @@ module.exports = {
         return {
             a: new RoomNode('Alpha', {
                 retreatSpot:rp(25,25,'W21S22'),anchor:rp(17,37,'W21S22'),buildFast: false,spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'), upgradeRate: RATE_VERY_FAST,
+                labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600),
                 imports:[
                     {resource_type:RESOURCE_ENERGY,storageCap:100000},
                     {resource_type:RESOURCE_LEMERGIUM,storageCap:12000},

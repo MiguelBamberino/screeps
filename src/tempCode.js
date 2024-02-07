@@ -52,7 +52,8 @@ module.exports = {
             nodes[n].wallHeight=10000;//10k
             nodes[n].rampHeight=50000;//50k
         }
-        //this.remoteStealer('Beta','BhS0','1c1m','W23S18','65bea8796a4f1e7ff5aa6c17')
+        //this.remoteStealer('Beta','BhS0','4c4m','W23S18','65bea8796a4f1e7ff5aa6c17')
+        //this.remoteStealer('Beta','BhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
     },
     shardPrivateTempCode:function(){
         
@@ -321,6 +322,7 @@ module.exports = {
 
         if(lairs.length>0 && !node.manual_addRooms.includes(roomName) ){
             Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].isDangerous = true;
             Memory.remotes[node.name][roomName].reason = "sk-room";
             Memory.remotes[node.name][roomName].score+=99999;
             return;
@@ -342,6 +344,7 @@ module.exports = {
 
             if(Game.rooms[roomName].getInvaders().length >=3){
                 Memory.remotes[node.name][roomName].online = false;
+                Memory.remotes[node.name][roomName].isDangerous = true;
                 Memory.remotes[node.name][roomName].reason = "big-attack";
                 Memory.remotes[node.name][roomName].score+=99999;
                 return;
@@ -358,8 +361,19 @@ module.exports = {
             Memory.remotes[node.name][roomName].username = controller.owner.username;
             Memory.remotes[node.name][roomName].reason = "has-owner";
             Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].isDangerous = true;
             Memory.remotes[node.name][roomName].score+=99999;
             return;
+        }
+        if(controller && controller.reservation){
+            if(controller.reservation.username!=='MadDokMike' && controller.reservation.username!=='Invader'){
+                Memory.remotes[node.name][roomName].username = controller.reservation.username;
+                Memory.remotes[node.name][roomName].reason = "has-owner";
+                Memory.remotes[node.name][roomName].online = false;
+                Memory.remotes[node.name][roomName].isDangerous = true;
+                Memory.remotes[node.name][roomName].score+=99999;
+                return;
+            }
         }
 
         // this fixes a bug where a remote goes offline, but subsequent runs override the reason string.
@@ -3748,8 +3762,8 @@ module.exports = {
                 if(targetContainer && !targetContainer.isEmpty()){
                     return creep.actOrMoveTo('withdraw',targetContainer,RESOURCE_ENERGY)
                 }
-                if(drop){
-                    return creep.actOrMoveTo('pickup',drop)
+                if(targetDrop){
+                    return creep.actOrMoveTo('pickup',targetDrop)
                 }
                 if(closestSrc){
                     return creep.moveToPos(closestSrc);
