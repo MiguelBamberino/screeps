@@ -1,3 +1,26 @@
+
+===================================
+= Version 20.1.1
+===================================
+- Feature : added base scouting
+Tweaks:
+- up remote support from 4 to 5 at RCL 7
+- keeping rooms always scouted
+- tankers now leave room maintenance to rkeeper after storage
+- made storage surplus a config
+- tankers to clean up when idle
+- tidy remote road code + prioritise remote harvesters over tanker spam
+- rkeeper now parks at base
+
+Patches
+- reservation bugs
+- upgrader relay + remote shutdown + extra fillers
+- bug in remote stealer
+- remote bug
+- fixed tankers not dropping all E at controller + rkeeper to tidy up room
+- remote score gui bug
+- bug in setup code for defender
+
 ===================================
 = Version 20.1.0
 ===================================
