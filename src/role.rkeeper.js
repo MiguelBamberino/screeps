@@ -102,13 +102,18 @@ var roleTanker = {
             }
         }
         if(!creep.memory.job && energyInStorage>=config.surplusRequired && energyInStorage>=creepSpace){
-            let targets = mb.getStructures({ types:[STRUCTURE_CONTAINER],roomNames:[config.coreRoomName],
-                    filters:[{attribute:'isUpgraderStore',operator:'fn',value:[]},{attribute:'canReserveTransfer',operator:'fn',value:[creepSpace]} ]})
-                    
+            let container = config.controller.getContainer();
+            let target = false;
+            // only fill when empty, when upgrading Vfast. this seems counter-intuitive, but
+            // wen upgRate==Vfast, there is lots of none reservation-book transfers flying
+            if(config.upgradeRate===RATE_VERY_FAST){
+                if(container.isEmpty())target = container;
+            }else if(container.canReserveTransfer(creepSpace)){
+                target = container;
+            }
            
-            if(targets.length>0){
-                targets[0].reserveTransfer(creep.name,creepSpace);
-                creep.memory.job = {target_id:targets[0].id,resource_type:RESOURCE_ENERGY,action:'fill'}
+            if(target && target.reserveTransfer(creep.name,creepSpace)===OK){
+                creep.memory.job = {target_id:target.id,resource_type:RESOURCE_ENERGY,action:'fill'}
             }
         }
         

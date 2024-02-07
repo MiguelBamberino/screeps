@@ -42,9 +42,12 @@ module.exports = {
            // Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
         }
 
-        this.haulResources('Alpha','At1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
-        this.haulResources('Alpha','At2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
-        this.haulResources('Alpha','At3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),50)
+        this.haulResources('Alpha','At1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>10000),50)
+        this.haulResources('Alpha','At2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>10000),50)
+        this.haulResources('Alpha','At3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>10000),50)
+
+        this.haulResources('Beta','Bt1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
+        this.haulResources('Alpha','Bt2','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
 
 
         for(let n in nodes){
@@ -52,6 +55,11 @@ module.exports = {
             nodes[n].wallHeight=10000;//10k
             nodes[n].rampHeight=50000;//50k
         }
+
+
+        this.scoutPotentialBase('Beta','W15S13')
+        this.scoutPotentialBase('Alpha','W13S24')
+        this.scoutPotentialBase('Alpha','W15S13')
         //this.remoteStealer('Beta','BhS0','4c4m','W23S18','65bea8796a4f1e7ff5aa6c17')
         //this.remoteStealer('Beta','BhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
     },
@@ -196,6 +204,52 @@ module.exports = {
         this.runFactory('Delta',RESOURCE_BATTERY)
 
 
+    },
+
+    scoutPotentialBase:function(nodeName,roomName){
+
+        if(!Memory.baseScouts){
+            Memory.baseScouts = {};
+        }
+        if(!Memory.baseScouts[roomName]){
+            Memory.baseScouts[roomName] = {from:nodeName,travelTime:9999,status:'scouting',scoutPos:false,lastSeen:0}
+        }
+        let mission = Memory.baseScouts[roomName];
+        let scoutName = roomName+"-bsc";
+        let controller = mb.getControllerForRoom(roomName);
+
+        if(mission.status==='scouting'){
+            let targetPos = controller?controller.pos:{x:25,y:25};
+            this.scoutRoom(nodeName,scoutName,roomName,targetPos,[],'1t1m');
+
+            // if scout dies before TTL up THEN mark no path
+            if(mission.scoutPos && !Game.creeps[scoutName]){
+                mission.status = 'NO-PATH';
+            }
+            if(Game.creeps[scoutName]){
+                let creep = Game.creeps[scoutName];
+
+                if(creep.ticksToLive<920){
+                    mission.status = 'TOO-FAR';
+                }
+
+                if(Game.rooms[roomName] && !mb.hasRoom(roomName)){
+                    mb.scanRoom(roomName);
+                }
+                mission.scoutPos = creep.pos;
+                if(controller && creep.pos.isNearTo(controller)){
+                    creep.signController(controller,"🥑")
+                    mission.status = 'SAFE';
+                    mission.lastSeen = Game.time;
+                    mission.travelTime = 1500 - creep.ticksToLive;
+                }
+            }
+        }else{
+            if(Game.creeps[scoutName]){
+                Game.creeps[scoutName].say('done');
+            }
+        }
+        // room states : TOO-FAR, SCOUTING, NO-PATH, SAFE
     },
 
     setupNode:function(feederName,targetName,gclTrigger){
@@ -552,7 +606,7 @@ module.exports = {
         }
 
         if(roomToScout){
-            this.scoutRoom(node.name,node.name+'-sc',roomToScout);
+            this.scoutRoom(node.name,node.name+'-rsc',roomToScout);
 
             if(Game.rooms[roomToScout]){
                 mb.scanRoom(roomToScout);

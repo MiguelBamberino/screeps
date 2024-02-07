@@ -10,7 +10,7 @@ var roleTanker = {
 
         if(budget >= 1500 ){ // RCL 5 - 1000 + 500 = 1500/1800 30 ext
             //return '10*2c1m';
-            return '6*2c1m';
+            return '6*2c1m'; // big than this seems to choke up too much spawn time
 
         }
         else if(budget >= 1300 ){ // RCL 4 - 600 + 300 = 900/1300 20 ext
@@ -274,11 +274,8 @@ var roleTanker = {
 
             // collect from local MINES in this room first
             if(!target){
-
-                let station = creep.getFillerStationToFill([config.coreRoomName]);
-                let force = (station && station.isEmpty(RESOURCE_ENERGY));
-
-                target = creep.getFullestMineStore([config.coreRoomName],force);
+                
+                target = creep.getFullestMineStore([config.coreRoomName]);
                 if(target){
                     // creep.memory.lastWithdrewFrom=STRUCTURE_CONTAINER
                 }
