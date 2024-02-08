@@ -370,9 +370,15 @@ module.exports = {
         ///////////////////////////////////////////////////
         // Handle all shutdown/bad remote cases first
         ///////////////////////////////////////////////////
+        if(season6.isRoomFroze(roomName)){
+            Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].reason = "closed";
+            Memory.remotes[node.name][roomName].score+=99999;
+            return;
+        }
+        
         if(node.manual_ignoreRooms.includes(roomName)){
             Memory.remotes[node.name][roomName].online = false;
-
             Memory.remotes[node.name][roomName].reason = "manual-ignore";
             Memory.remotes[node.name][roomName].score+=99999;
             return;
