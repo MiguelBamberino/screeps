@@ -21,6 +21,11 @@ class RoomNode{
      * name >> name of the town and what will be used for spawn names
      * options:{
             spawnFacing:TOP         >> which way the main spawn should spawn its creeps
+            anchor:false            >> Where to place the 1st spawn and anchor whole base around
+            armAnchor:false         >> Where to place the 3rd spawn fast filler rect
+            armFacing:TOP           >> which way to face the 3rd spawn fast filler rect
+            buildTerminal:true      >> whether to build the terminal
+
             extraFastFillSpots:[]   >> any extra positions to sfend fast filler creeps
             logger:undefined        >> an object that allows this object to report messages to a log
             retreatSpot:undefined   >> where creeps should flee if attack & where idle creeps park
@@ -31,8 +36,8 @@ class RoomNode{
             surplusRequired:50000   >> The amount to be kept in reserve in the storage as a rainy day fund
             terminalEnergyCap:15000 >> The amount to be kept in reserve in the terminal
             towersBuildWalls:false  >> If true, then the towers will build up the walls in peace time
-            wallHeight:5,000,000     >> How hight the walls should be
-            rampHeight:25,000,000     >> How hight the ramparts should be
+            wallHeight:5,000,000     >> How high the walls should be
+            rampHeight:25,000,000     >> How high the ramparts should be
             armNuke:false           >> Whether this rooms Nuke should be kept armed
             labComplex:undefined    >> if set, then it will be used to run reactions
             makeResource:undefined  >> if set, then this resource will be made in the labComplex
@@ -70,6 +75,7 @@ class RoomNode{
         this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
         
         // options
+        this.buildTerminal = options.buildTerminal===undefined?true:options.buildTerminal;
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
         this.armFacing = options.armFacing===undefined?TOP:options.armFacing;
         this.armAnchor = options.armAnchor===undefined?rp(this.anchor.x,this.anchor.y+6,this.anchor.roomName):options.armAnchor;
@@ -107,6 +113,7 @@ class RoomNode{
         }
 
         this.coreComplex = new BaseCoreComplex(this.anchor,this.name,this.spawnFacing)
+        this.coreComplex.buildTerminal = this.buildTerminal;
         this.coreComplex.turnOn();
         this.armComplex = new ArmCoreComplex(this.armAnchor,this.name,this.armFacing)
         this.armComplex.turnOn();

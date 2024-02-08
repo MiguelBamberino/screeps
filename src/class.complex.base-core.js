@@ -171,8 +171,10 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
     }
     getLayoutPlan(facing){
 
+        let plans = [];
+
         if(facing===TOP){
-            return [
+            plans = [
                 // ---------- RCL 1 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name},
                 {type:STRUCTURE_CONTAINER,offset:{x:0,y:2},rcl:1,replacedAtRCL:4},
@@ -240,13 +242,14 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 // ---------- RCL 5 --------------------------------------------------
                 {type:STRUCTURE_LINK,offset:{x:0,y:2},rcl:5,replace:STRUCTURE_EXTENSION},
                 // ---------- RCL 6 --------------------------------------------------
-                {type:STRUCTURE_TERMINAL,offset:{x:2,y:1},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true},
                 // ---------- RCL 7 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:4},rcl:7,name:(this.name+'-2') }
             ];
+            if(this.buildTerminal)
+                plans.push({type:STRUCTURE_TERMINAL,offset:{x:2,y:1},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true})
         }
         if(facing===LEFT){
-            return [
+            plans= [
                 // ---------- RCL 1 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name},
                 {type:STRUCTURE_CONTAINER,offset:{x:2,y:0},rcl:1,replacedAtRCL:4},
@@ -314,10 +317,12 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 // ---------- RCL 5 --------------------------------------------------
                 {type:STRUCTURE_LINK,offset:{x:2,y:0},rcl:5,replace:STRUCTURE_EXTENSION},
                 // ---------- RCL 6 --------------------------------------------------
-                {type:STRUCTURE_TERMINAL,offset:{x:1,y:-2},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true},
                 // ---------- RCL 7 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:4,y:0},rcl:7,name:(this.name+'-2')},
             ];
+            if(this.buildTerminal)
+                plans.push({type:STRUCTURE_TERMINAL,offset:{x:1,y:-2},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true})
         }
+        return plans;
     }
 }

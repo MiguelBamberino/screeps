@@ -67,6 +67,7 @@ module.exports = {
             d: new RoomNode('Delta', {
                 retreatSpot:rp(26,25,'W38S19'),
                 anchor:rp(26,14,'W38S19'),spawnFacing:LEFT,armFacing:BOTTOM,armAnchor:rp(29,9,'W38S19'),
+                buildTerminal: false,
                 buildFast: true,
                 upgradeRate: RATE_VERY_FAST,
                 surplusRequired:25000
