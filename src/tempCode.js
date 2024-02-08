@@ -64,6 +64,7 @@ module.exports = {
 
         this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
         this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
+        this.remoteStealer('Alpha','AhS2','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
     },
     shardPrivateTempCode:function(){
         

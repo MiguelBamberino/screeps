@@ -7,7 +7,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
         this.haulJob=false;
         this.config = {}
         this.name = spawnName;
-
+        this.buildTerminal = true;
     }
     run(config){
         this.config = config;
