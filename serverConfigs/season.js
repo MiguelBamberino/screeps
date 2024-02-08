@@ -24,10 +24,11 @@ module.exports = {
                 anchor:rp(17,37,'W21S22'),spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'),
                 buildFast: false,
                 upgradeRate: RATE_FAST,
-                makeResource:RESOURCE_LEMERGIUM_ALKALIDE,
+                makeResource:RESOURCE_ZYNTHIUM_OXIDE,
                 labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600),
                 imports:[
                     {resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
+                    {resource_type:RESOURCE_ZYNTHIUM,storageCap:12000},
                 ],
                 exports:[
                     {resource_type:RESOURCE_ENERGY,exportOver:40000,batchSize:10000},
@@ -66,7 +67,7 @@ module.exports = {
             d: new RoomNode('Delta', {
                 retreatSpot:rp(26,25,'W38S19'),
                 anchor:rp(26,14,'W38S19'),spawnFacing:LEFT,armFacing:BOTTOM,armAnchor:rp(29,9,'W38S19'),
-                buildFast: false,
+                buildFast: true,
                 upgradeRate: RATE_VERY_FAST,
                 surplusRequired:25000
             })

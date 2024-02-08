@@ -44,6 +44,7 @@ module.exports = {
 
         this.haulResources('Alpha','Bt1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
         this.haulResources('Alpha','Bt2','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
+        this.haulResources('Alpha','Bt3','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
 
 
         for(let n in nodes){
@@ -3795,10 +3796,19 @@ module.exports = {
                     }
                 }
 
+                if(closestHostile ){
+                    return creep.actOrMoveTo('transfer',storage,RESOURCE_ENERGY)
+                }
+
                 let targetContainer = gob(creep.memory.container_id);
                 let targetDrop = gob(creep.memory.drop_id);
                 let closestSrc = false;
                 let closestDist = 999;
+
+                if(targetContainer && targetContainer.isEmpty()){
+                    targetContainer = false;
+                    creep.memory.container_id = false;
+                }
 
                 if(!targetContainer && !targetDrop){
                     let sources = mb.getAllSourcesForRoom(targetRoom);
@@ -3811,8 +3821,10 @@ module.exports = {
                             closestDist = dist;
 
                             let containers = src.pos.lookForNearStructures(STRUCTURE_CONTAINER);
-                            let container = (containers.length>0)?containers[0]:false
-                            if(container && container.store.getUsedCapacity(RESOURCE_ENERGY) >= creep.store.getCapacity(RESOURCE_ENERGY)  ){
+                            let container = (containers.length>0)?containers[0]:false;
+                            //console.log(creep.name,container)
+                            //if(container)console.log(container.store.getUsedCapacity(RESOURCE_ENERGY),creep.store.getFreeCapacity(RESOURCE_ENERGY))
+                            if(container && container.store.getUsedCapacity(RESOURCE_ENERGY) >= creep.store.getFreeCapacity(RESOURCE_ENERGY)  ){
                                 targetContainer = container;
                                 creep.memory.container_id = container.id;
                             }else{
