@@ -1109,11 +1109,11 @@ class RoomNode{
                 250, // RCL1
                 400, // RCL2
                 600, // RCL3
-                800, // RCL4
-                800, // RCL5
-                800, // RCL6
-                800, // RCL7
-                800 // RCL8
+                750, // RCL4
+                750, // RCL5
+                750, // RCL6
+                750, // RCL7
+                750 // RCL8
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
         this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )

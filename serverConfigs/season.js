@@ -10,7 +10,7 @@ logs.runRCLSpeedStats = false;
 mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21','W16S20','W15S20','W14S20','W13S20','W12S20','W11S20','W11S21','W11S22','W12S22','W12S23','W12S24','W13S24'])
 //mb.createMapRoute(['W21S22','W22S22','W23S22','W24S22','W24S21','W25S21','W26S21','W26S20','W27S20','W28S20','W29S20','W30S20','W31S20','W32S20','W33S20','W34S20','W34S21','W35S21'])
 //mb.createMapRoute(['W21S22','W22S22','W23S22','W24S22','W24S21','W25S21','W26S21','W26S20','W27S20','W28S20','W28S21','W29S21','W30S21','W31S21','W32S21','W32S22'])
-
+//mb.createMapRoute(['W21S22','W22S22','W21S22'])
 require('global.season6');
 
 module.exports = {
@@ -51,8 +51,16 @@ module.exports = {
                 retreatSpot:rp(25,25,'W32S22'),
                 anchor:rp(6,14,'W32S22'),spawnFacing:TOP,
                 buildFast: false,
-                upgradeRate: RATE_VERY_FAST,
-                surplusRequired:25000
+                upgradeRate: RATE_FAST,
+                surplusRequired:25000,
+                imports:[
+                    /*{resource_type:RESOURCE_ENERGY,storageCap:100000},*/
+                ],
+
+                exports:[
+                    {resource_type:RESOURCE_ENERGY,exportOver:25000,batchSize:10000},
+                    {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
+                ]
             }),
             d: new RoomNode('Delta', {
                 retreatSpot:rp(26,25,'W38S19'),

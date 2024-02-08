@@ -42,11 +42,7 @@ module.exports = {
            // Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
         }
 
-        this.haulResources('Alpha','At1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>10000),50)
-        this.haulResources('Alpha','At2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>10000),50)
-        this.haulResources('Alpha','At3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>10000),50)
-
-        this.haulResources('Beta','Bt1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
+        this.haulResources('Alpha','Bt1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
         this.haulResources('Alpha','Bt2','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
 
 
@@ -55,18 +51,19 @@ module.exports = {
             nodes[n].wallHeight=10000;//10k
             nodes[n].rampHeight=50000;//50k
         }
+        if(nodes.g.controller().level===6)
+            nodes.g.upgradeRate=RATE_FAST;
 
+        this.harvestAndCollectMineralFromSKRoom('Alpha','W24S24',  4,25000,true,false,350)
 
-        this.scoutPotentialBase('Beta','W15S13')
+        this.mosquitoAttack('Alpha','mosq-1','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
+        this.mosquitoAttack('Alpha','mosq-2','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
 
-        this.scoutPotentialBase('Alpha','W13S24')
-        this.scoutPotentialBase('Alpha','W11S21')
-        this.scoutPotentialBase('Alpha','W12S18')
+        //this.scoutPotentialBase('Alpha','W15S13')
+    this.withdrawThenUpgrade('Alpha','Aux1','20w2c20m','65bdfaacfb452d12e6e59d24','65a70f4a34fa299b8cef9ebd')
 
-        this.scoutPotentialBase('Gamma','W38S23')
-        this.scoutPotentialBase('Gamma','W38S19')
-        //this.remoteStealer('Beta','BhS0','4c4m','W23S18','65bea8796a4f1e7ff5aa6c17')
-        //this.remoteStealer('Beta','BhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
+        this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
+        this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
     },
     shardPrivateTempCode:function(){
         
@@ -2501,7 +2498,7 @@ module.exports = {
         }
     },
 
-    harvestAndCollectMineraFromSKRoom:function(nodeName,roomName, haulerCount =2,storageSafetyCap=50000,requireScout=false,guardOtherLairs=false,guardRefreshRate=275){
+    harvestAndCollectMineralFromSKRoom:function(nodeName,roomName, haulerCount =2,storageSafetyCap=50000,requireScout=false,guardOtherLairs=false,guardRefreshRate=275){
         let thing = this;
 
         let storage = Game.rooms[ Game.spawns[nodeName].pos.roomName ].storage;
@@ -3763,9 +3760,18 @@ module.exports = {
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
+            let storage = gob(storage_id)
+
+            if(!creep.memory.ready){
+                if( creep.pos.roomName !== storage.pos.roomName){
+                    return creep.moveToPos(storage);
+                }else{
+                    creep.memory.ready = true;
+                }
+            }
 
             if(creep.isFull()){
-                return creep.actOrMoveTo('transfer',gob(storage_id),RESOURCE_ENERGY)
+                return creep.actOrMoveTo('transfer',storage,RESOURCE_ENERGY)
             }
 
             if(creep.pos.roomName === targetRoom){
@@ -3928,7 +3934,7 @@ module.exports = {
                     let res = this.traverseRooms(creep,roomTraversal);
                     creep.say("trav:"+res);
                 }else{
-                    creep.moveTo(new RoomPosition(25,25,target.pos.roomName))
+                    creep.moveTo(new RoomPosition(25,25,targetRoomName))
                 }
             }
 
