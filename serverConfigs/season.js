@@ -13,6 +13,7 @@ mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21
 //mb.createMapRoute(['W21S22','W22S22','W21S22'])
 require('global.season6');
 
+
 module.exports = {
     allowRespawnDetection:false,
     cpuLimit:100,
@@ -23,7 +24,7 @@ module.exports = {
                 anchor:rp(17,37,'W21S22'),spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'),
                 buildFast: false,
                 upgradeRate: RATE_FAST,
-                makeResource:RESOURCE_LEMERGIUM_OXIDE,
+                makeResource:RESOURCE_LEMERGIUM_ALKALIDE,
                 labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600),
                 imports:[
                     {resource_type:RESOURCE_LEMERGIUM,storageCap:12000},
