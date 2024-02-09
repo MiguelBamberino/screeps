@@ -359,7 +359,7 @@ module.exports = {
         // High Scores ARE BAD , LOW scores ARE GOOD
         // score is src distances to spawn + controller distance to spawn
         if(!Memory.remotes[node.name][roomName])
-            Memory.remotes[node.name][roomName]={score:0,lastSeen:0,username:false,online:true,isDangerous:false,controllerSpots:0,reason:'scouting',staff:{count:0,required:0}};
+            Memory.remotes[node.name][roomName]={score:0,lastSeen:0,username:false,valid:true,online:true,isDangerous:false,controllerSpots:0,reason:'scouting',staff:{count:0,required:0}};
 
         //  We have to go explore
         if(!mb.hasRoom(roomName))return;
@@ -380,7 +380,15 @@ module.exports = {
         ///////////////////////////////////////////////////
         if(season6.isRoomFroze(roomName)){
             Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].valid = false;
             Memory.remotes[node.name][roomName].reason = "closed";
+            Memory.remotes[node.name][roomName].score+=99999;
+            return;
+        }
+        if(season6.isRoomFreezingSoon(roomName)){
+            Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].valid = false;
+            Memory.remotes[node.name][roomName].reason = "freeze-soon";
             Memory.remotes[node.name][roomName].score+=99999;
             return;
         }
@@ -401,6 +409,7 @@ module.exports = {
         }
         if(srcs.length===0){
             Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].valid = false;
             Memory.remotes[node.name][roomName].reason = "hallway";
             Memory.remotes[node.name][roomName].score+=99999;
             return;
@@ -433,6 +442,7 @@ module.exports = {
             Memory.remotes[node.name][roomName].username = controller.owner.username;
             Memory.remotes[node.name][roomName].reason = "has-owner";
             Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].valid = false;
             Memory.remotes[node.name][roomName].isDangerous = true;
             Memory.remotes[node.name][roomName].score+=99999;
             return;
@@ -603,13 +613,12 @@ module.exports = {
 
         for(let roomName in Memory.remotes[node.name]){
             let remote = Memory.remotes[node.name][roomName];
+            if(!remote.valid)continue; // dont waste time on invalid remotes
             let timeSinceSeen = Game.time - remote.lastSeen;
             if(!mb.hasRoom(roomName) || (remote.isDangerous && timeSinceSeen>1500) || (!remote.isDangerous && timeSinceSeen>250) ){
 
                 roomToScout = roomName;
                 break;
-
-
             }
         }
         if(!roomToScout){
