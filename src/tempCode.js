@@ -1,6 +1,7 @@
 let tankerRole=require('role.tanker');
 const roomNode = require('class.roomNode');
 let harvesterRole = require('role.harvester');
+
 module.exports = {
 
 // attack on Game.time 1075909. invader quad
@@ -42,9 +43,11 @@ module.exports = {
            // Game.creeps['base-scout'].memory.arrivedIn = Game.creeps['base-scout'].ticksToLive;
         }
 
-        this.haulResources('Alpha','Bt1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
-        this.haulResources('Alpha','Bt2','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
-        this.haulResources('Alpha','Bt3','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===6),50)
+        this.haulResources('Alpha','Bt1','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===6),50)
+        this.haulResources('Alpha','Bt2','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===6),50)
+        this.haulResources('Alpha','Bt3','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===6),50)
+
+        nodes.a.manual_addRooms=['W23S22'];
 
 
         for(let n in nodes){
@@ -56,16 +59,21 @@ module.exports = {
             nodes.g.upgradeRate=RATE_FAST;
 
         this.harvestAndCollectMineralFromSKRoom('Alpha','W24S24',  4,25000,true,false,350)
+        this.harvestAndCollectMineralFromSKRoom('Beta','W24S16',  4,25000,true,false,350)
 
         this.mosquitoAttack('Alpha','mosq-1','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
         this.mosquitoAttack('Alpha','mosq-2','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
 
         //this.scoutPotentialBase('Alpha','W15S13')
-    this.withdrawThenUpgrade('Alpha','Aux1','20w2c20m','65bdfaacfb452d12e6e59d24','65a70f4a34fa299b8cef9ebd')
+        this.withdrawThenUpgrade('Delta','Dux1','10w1c3m','65c5276780dfd5af2d29ee00','65a70e2934fa299b8cef879c')
 
-        this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
-        this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
-        this.remoteStealer('Alpha','AhS2','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
+        //this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
+        //this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
+        ///this.remoteStealer('Alpha','AhS2','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
+
+        if(nodes.a.storage().storingAtLeast(10000,RESOURCE_ZYNTHIUM_HYDRIDE)){
+            nodes.a.makeResource=RESOURCE_HYDROXIDE;
+        }
     },
     shardPrivateTempCode:function(){
         
@@ -376,7 +384,7 @@ module.exports = {
             Memory.remotes[node.name][roomName].score+=99999;
             return;
         }
-        
+
         if(node.manual_ignoreRooms.includes(roomName)){
             Memory.remotes[node.name][roomName].online = false;
             Memory.remotes[node.name][roomName].reason = "manual-ignore";
@@ -544,7 +552,7 @@ module.exports = {
                 }
             }
             let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
-            let supportCount = node.controller().level>=7?4:3;
+            let supportCount = node.controller().level>=7?5:3;
             for(let i=0; i<=supportCount;i++)if(available[i])node.remoteRoomNames.push(available[i]);
         }
         console.log('to: ',node.remoteRoomNames)
@@ -819,7 +827,7 @@ module.exports = {
 
             /////////////// Reservers  ///////////////////////////////////////////////////////
             // only reserve the first 3 priority remotes.
-            if(controller && ( remoteMemory.controllerDistance<50 || srcs.length==2 )  && eCap>=650){
+            if(controller && ( node.controller().level>=7 || remoteMemory.controllerDistance<50 || srcs.length===2 )  && eCap>=650){
                 let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
 
                 // dont spawn reserver if we've seen fighter in the room

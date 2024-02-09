@@ -35,10 +35,14 @@ class RoomNode{
             funnelRoomName:false    >> if set, then haulers will funnel energy to this room
             surplusRequired:50000   >> The amount to be kept in reserve in the storage as a rainy day fund
             terminalEnergyCap:15000 >> The amount to be kept in reserve in the terminal
+
             towersBuildWalls:false  >> If true, then the towers will build up the walls in peace time
             wallHeight:5,000,000     >> How high the walls should be
             rampHeight:25,000,000     >> How high the ramparts should be
             armNuke:false           >> Whether this rooms Nuke should be kept armed
+
+            homeMineralSurplus      >> how much mineral to keep, when store is below, extractrion will happen
+            extractMineral:true     >> ture/false, whether to extract the minerals
             labComplex:undefined    >> if set, then it will be used to run reactions
             makeResource:undefined  >> if set, then this resource will be made in the labComplex
             splitResource:undefined  >> if set, then this resource will be split in the labComplex
@@ -69,8 +73,9 @@ class RoomNode{
 
         let mineral = mb.getMineralForRoom(this.coreRoomName);
         this.homeMineralType = mineral.mineralType;
+        this.extractMineral = options.extractMineral===undefined?true:options.extractMineral;
         // if this room has not yet been claimed, we wont have vision to get mineral position
-        this.extractorComplex = (mineral)?new ExtractorComplex(mineral.pos,this.anchor,name):false;
+        this.extractorComplex = (mineral && this.extractMineral)?new ExtractorComplex(mineral.pos,this.anchor,name):false;
         this.totalEnergyAtSources=0;
         this.homeMineralSurplus =  options.homeMineralSurplus===undefined?80001:options.homeMineralSurplus;
         
@@ -1133,6 +1138,10 @@ class RoomNode{
         let upgraderGap = this.workforce_quota.upgrader.required - this.workforce_quota.upgrader.count;
         if(this.energyAtController>2000 && this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.tanker.count>1 && upgraderGap>3 && tankerGap<=5 ){
             // paused tanker spawn spam to spawn some consumption. stop e piling up at controller
+            this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
+        }
+        if(upgraderGap>2 && this.energyAtController>4000){
+            // stop spamming tankers and start consuming all the E piling up
             this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
         }
 

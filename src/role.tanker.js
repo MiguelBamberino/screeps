@@ -184,9 +184,17 @@ var roleTanker = {
                     }
                 }else{
 
-                    // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller. we hope there is ugraders there to use it
+                    // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller.
+                    // we hope there is ugraders there to use it
+                    let dropAtController = (config.upgradeRate===RATE_VERY_FAST);
+                    // if we have dropped below surplus, then dont drop it all at controller
+                    if(dropAtController && storage && storage.storingLessThan(config.surplusRequired,RESOURCE_ENERGY))
+                        dropAtController = false;
+                    // if energy is piling up too much, then dont drop it at controller, to avoid decay
+                    if(dropAtController && storage && config.energyAtController >4000)
+                        dropAtController = false;
 
-                    if(config.upgradeRate===RATE_VERY_FAST  && (!storage || (storage && storage.storingAtLeast(config.surplusRequired,RESOURCE_ENERGY)) ) ){
+                    if(  dropAtController ){
 
                         creep.memory.dropAt = config.controller.getContainer().pos;
                         creep.memory.giveToType = 'upgrader';

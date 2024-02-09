@@ -33,7 +33,7 @@ var role = {
     
 	    if( creep.isWorking()) {
 
-            if(config.energyAtController>7000) {
+            if(config.energyAtController>4000) {
                 creep.say("bsssh")
                 // too much E at controller, go pile in the praise
                 return creep.actOrMoveTo("upgradeController",config.controller);
@@ -112,7 +112,7 @@ var role = {
 	    
 	    else if(creep.isCollecting()){
 
-            if(config.energyAtController>7000) {
+            if(config.energyAtController>4000) {
                 let drop = creep.getDroppedEnergy(25);
                 if(drop)return creep.actOrMoveTo("pickup",drop);
             }
