@@ -5,8 +5,8 @@ const RUN_COOLDOWN_HAULER=10;
 class LabComplex extends AbstractComplex{
     
     
-    constructor(anchor,facing,fillerSize=600, draft=false){
-        super(anchor,facing,draft);
+    constructor(anchor,facing,fillerSize=600,maxRCL=8, draft=false){
+        super(anchor,facing,maxRCL,draft);
         this.makingResource = false;
         this.checkForHaulJobsAfter=Game.time;// this is used for CPU saving too. it limits the amount of checks we do on lab stores.
         this.fillerSize = fillerSize;// unlikely to change, but the size of the assigned hauler

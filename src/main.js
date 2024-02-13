@@ -2,6 +2,7 @@ global.BOT_VERSION='20.0';
 console.log("-----------------------------------------------")
 console.log("Global Reset:",Game.time)
 console.log("-----------------------------------------------")
+let st = Game.cpu.getUsed();
 
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
    
@@ -37,7 +38,7 @@ require('prototype.creep');
 require('prototype.creep.body');
 require('prototype.creep.actions')();
 
-
+console.log("LOAD-CPU-prototypes: "+(Game.cpu.getUsed() - st));
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Classes
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +48,7 @@ global.RoomNode = require('class.roomNode');
 global.LabComplex = require('class.complex.lab')
 
 
+console.log("LOAD-CPU-classes: "+(Game.cpu.getUsed() - st));
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Objects
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,14 +60,21 @@ require('global.logger');
 require('global.GUI');
 global.tests = require('globals.tests');
 
+
+console.log("LOAD-CPU-globals: "+(Game.cpu.getUsed() - st));
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Load in Server
 /////////////////////////////////////////////////////////////////////////////////////////////////
 util.loadServer();
+
+console.log("LOAD-CPU-loadServer: "+(Game.cpu.getUsed() - st));
 global.tempCode = require('tempCode')
 _memHak.register();
+
+console.log("LOAD-CPU-memhak: "+(Game.cpu.getUsed() - st));
 gui.init();
 
+console.log("LOAD-CPU-gui: "+(Game.cpu.getUsed() - st));
 logs.globalResetComplete();
 
 for(let n in nodes){
@@ -74,6 +83,8 @@ for(let n in nodes){
         trader.offerExport( exp.resource_type, nodes[n].coreRoomName );
     }
 }
+
+console.log("LOAD-CPU-all: "+(Game.cpu.getUsed() - st));
 
 module.exports.loop = function () {
     //return;

@@ -176,7 +176,7 @@ global.gui = {
     
         let u = Game.cpu.getUsed() - st;
         logs.guiCPU= u;
-        //console.log("GUI-CPU-used: "+u);  
+       // console.log("GUI-CPU-used: "+u);
     },
     
     renderSpeedRunStats:function(){
@@ -272,7 +272,12 @@ global.gui = {
                 if(priority==='backup'){
                     colour = '#ff8400';
                 }
-                if(!details.online){
+                if(details.valid ===false){
+                    priority='invalid';
+                    colour='#444444';
+                }
+                else if(!details.online){
+                    priority='offline';
                     colour = '#ff0000';
                 }
 

@@ -4,7 +4,7 @@ const ERR_OFF=-16;
 
 class AbstractComplex{
     
-    constructor(anchor,facing, draft=false){
+    constructor(anchor,facing,maxRCL=8, draft=false){
         
         this.anchor = anchor;
         // this is used to power down slowly, if we still have workers alive
@@ -20,6 +20,7 @@ class AbstractComplex{
         this.rcl = Game.rooms[anchor.roomName] ?Game.rooms[anchor.roomName].controller.level:0;
         this.allRequiredStructuresBuilt=true;
         this.minRCL = 99;
+        this.maxRCL= maxRCL;
         this.replaceHapped = false;
         this.structureLookup={};
         this.groupLookup={};
@@ -27,8 +28,6 @@ class AbstractComplex{
         this.setCostMatrixChanges(facing);
     }
     runTick(){
-        
-        
         
         if(Game.rooms[this.anchor.roomName].controller.level<this.minRCL){
             this.lastResult = ERR_RCL_NOT_ENOUGH;
@@ -99,6 +98,8 @@ class AbstractComplex{
             
             if(plan.rcl<this.minRCL)
                 this.minRCL=plan.rcl;
+
+            if(plan.rcl>this.maxRCL)continue;// allow us to only grow a complex upto a certain RCL
             
             plan.pos = new RoomPosition(this.anchor.x+plan.offset.x,this.anchor.y+plan.offset.y,this.anchor.roomName);
        

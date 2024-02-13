@@ -1128,6 +1128,11 @@ class RoomNode{
                 750 // RCL8
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
+        // bit of a patch, to try accomodate for RCL7. When we have 7 or more remotes, the distances
+        // will be bigger, therefore we'll need more haulers
+        if(this.remoteRoomNames.length>=7 && this.totalEnergyAtSources>15000)tankersPerX-=50;
+        if(this.remoteRoomNames.length>=7 && this.totalEnergyAtSources>20000)tankersPerX-=50;
+
         this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
         if(this.workforce_quota.rkeeper.required===0 && this.workforce_quota.tanker.required ===0){
             // at low RCL we always need 1 to do filling

@@ -41,7 +41,7 @@ global.reservationBook = {
             }
         }
         
-        logs.stopCPUTracker('rb.runTick');
+        logs.stopCPUTracker('rb.runTick',false);
     },
     getPage:function(id){
         if(!Memory.reservationBook[id]){

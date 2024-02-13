@@ -2,8 +2,8 @@ const AbstractComplex = require('class.complex.abstract')
 const fillerRole = require('./role.filler');
 module.exports = class BaseCoreComplex extends AbstractComplex {
 
-    constructor(anchor, spawnName, facing, draft = false) {
-        super(anchor, facing, draft);
+    constructor(anchor, spawnName, facing, maxRCL=8, draft = false) {
+        super(anchor, facing,maxRCL, draft);
         this.haulJob = false;
         this.config = {}
         this.name = spawnName;
@@ -89,6 +89,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:-1},rcl:5},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:0},rcl:5,replacedAtRCL: 8},
                 {type:STRUCTURE_TOWER,offset:{x:2,y:1},rcl:5,requiresRamp:true},
+                {type:STRUCTURE_EXTENSION,offset:{x:1,y:2},rcl:5},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:2},rcl:5},
                 // ---------- RCL 8 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:1,y:0},rcl:8,name:this.name+'-3',replace:true},

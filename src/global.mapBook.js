@@ -54,7 +54,7 @@ global.mb = {
         this.checkIntervals();
         this.checkRoomRepairs();
         this.reviewConstructions();
-        logs.stopCPUTracker('map.runTick');
+        logs.stopCPUTracker('map.runTick',false);
     },
     checkIntervals: function(){
         for(let t in this.intervals){

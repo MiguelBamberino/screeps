@@ -306,13 +306,51 @@ module.exports = function(){
                 opts.reusePath = 5;
             }
 
-            /*opts.costCallback = function(roomName,costMatrix){
+            opts.costCallback = function(roomName,costMatrix){
 
-                let mpCM = mb.getCostMatrix(roomName);
+               // let mpCM = mb.getCostMatrix(roomName);
 
-                if (mpCM) return mpCM;
-                else return costMatrix;
-            }*/
+               // if (mpCM) return mpCM; breaks base room, because builddings are now 0, not 255
+                if(roomName==='W35S21'){
+                    costMatrix.set(26,19,100)
+                    costMatrix.set(28,19,100)
+                    costMatrix.set(27,20,100)
+                    costMatrix.set(27,22,100)
+                    costMatrix.set(26,21,100)
+                    costMatrix.set(28,21,100)
+
+                }
+
+                if(roomName==='W16S22'){
+                    costMatrix.set(0,10,50)
+                    costMatrix.set(0,11,50)
+                    costMatrix.set(0,12,50)
+                    costMatrix.set(0,13,50)
+                    costMatrix.set(0,14,50)
+                    costMatrix.set(0,15,50)
+                }
+                if(roomName==='W16S24'){
+
+                    costMatrix.set(3,49,255)
+                    costMatrix.set(4,49,255)
+                    costMatrix.set(5,49,255)
+                    costMatrix.set(6,49,255)
+                    costMatrix.set(7,49,255)
+                    costMatrix.set(8,49,255)
+                    costMatrix.set(9,49,255)
+                    costMatrix.set(10,49,255)
+                    costMatrix.set(11,49,255)
+                    costMatrix.set(12,49,255)
+                    costMatrix.set(13,49,255)
+                    costMatrix.set(14,49,255)
+                    costMatrix.set(15,49,255)
+                    costMatrix.set(16,49,255)
+                    costMatrix.set(17,49,255)
+                    costMatrix.set(18,49,255)
+                }
+
+                return costMatrix;
+            }
             
             // real hacky for now. Only runs if we're not a fighty boi
             if(Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
@@ -348,14 +386,14 @@ module.exports = function(){
                 
                 opts.costCallback = function(roomName,costMatrix){
                     let room = Game.rooms[roomName];
-                     let mpCM = mb.getCostMatrix(roomName);
+                   //  let mpCM = mb.getCostMatrix(roomName);
                     
-                    if (!room && !mpCM) return costMatrix;
+                    if (!room ) return costMatrix;
                     
-                   if (roomName==='E6N4' ) {
+                   if (roomName==='W15S24' ) {
                         
                             for(let y=47; y<=49;y++){
-                                 for(let x=0; x<=3;x++){
+                                 for(let x=0; x<=49;x++){
                                  
                                     costMatrix.set(x, y, 255);
                                    if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
@@ -363,6 +401,25 @@ module.exports = function(){
                             }
                     
                         }
+                    if(roomName==='W16S24'){
+
+                        costMatrix.set(3,49,255)
+                        costMatrix.set(4,49,255)
+                        costMatrix.set(5,49,255)
+                        costMatrix.set(6,49,255)
+                        costMatrix.set(7,49,255)
+                        costMatrix.set(8,49,255)
+                        costMatrix.set(9,49,255)
+                        costMatrix.set(10,49,255)
+                        costMatrix.set(11,49,255)
+                        costMatrix.set(12,49,255)
+                        costMatrix.set(13,49,255)
+                        costMatrix.set(14,49,255)
+                        costMatrix.set(15,49,255)
+                        costMatrix.set(16,49,255)
+                        costMatrix.set(17,49,255)
+                        costMatrix.set(18,49,255)
+                    }
                    
                    
                     for(let id of hostileIDs){

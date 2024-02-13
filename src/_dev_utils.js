@@ -318,8 +318,9 @@ global.util = {
             // Check if the link is within 2 of a source
              let foundOneSrc = false;
             for (const source of sources) {
-               
-                if (link.pos.inRangeTo(source, 2)) {
+
+                let standingSpot = source.getStandingSpot();
+                if (standingSpot && link.pos.isNearTo(standingSpot)) {
                     source.setLink(link);
                     // sometimes 2 sources, share 1 link
                     if(!foundOneSrc){

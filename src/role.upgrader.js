@@ -17,24 +17,24 @@ var role = {
         }
 
         // !! WARNING!! Don't have >15 WORK parts, because thats max upgrade amount at RCL 8
-        if(depotE>200000 && budget >=2450){
+        if(config.controller.level===8 && budget >=2450){
             // RCL ? - 1400 + 700 + 350 = 2450/1800 30 ext
             return '15w10c4m';
 
         }
 
-        /*  if(budget >= 2000 ){ // RCL 6 - 1200 + 500 + 300 = 2000/1800 30 ext
-              return '12w10c6m';
+          if(budget >= 2000 ){ // RCL 6 - 1600 + 200 + 200 = 2000/1800 30 ext
+              return '16w4c4m';
           }
-          else*/
-        if(budget >= 1800 ){ // RCL 5 - 1000 + 500 + 250 = 1750/1800 30 ext
-            return '10w10c5m';
+
+        else if(budget >= 1800 ){ // RCL 5 - 1200 + 200 + 150 = 1550/1800 30 ext
+            return '12w4c3m';
         }
-        else if(budget >= 1250 ){ // RCL 4 - 800 + 400 + 100 = 1300/1300 20 ext
-            return '8w8c2m';
+        else if(budget >= 1250 ){ // RCL 4 - 800 + 200 + 100 = 1100/1300 20 ext
+            return '8w4c2m';
         }
-        else if(budget >= 800 ){ // RCL 3 - 400 + 300 + 100 =  800/800 10 ext
-            return '4w6c2m';
+        else if(budget >= 800 ){ // RCL 3 - 500 + 200 + 100 =  800/800 10 ext
+            return '5w4c2m'; // we want 4c to hold
         }
         else if(budget >= 550){ // RCL 2 - 400 + 50 + 100 =  550/550 5 ext
             return '4w1c2m';
