@@ -251,7 +251,7 @@ class RoomNode{
                   
                     // this is checked before run, in order to stop it getting turned back on when windDown==0
                     if(  Game.cpu.bucket<6000 || mineral.mineralAmount > 10000 && !this.extractorComplex.isWindingDown() &&  this.storage().storedAmount(this.homeMineralType) > this.homeMineralSurplus ){
-                        clog("winding down. We have enough resources. Current timer:"+this.extractorComplex.windDownTimer,this.name)
+                        if(Game.time%10===0)clog("winding down. We have enough resources. Current timer:"+this.extractorComplex.windDownTimer,this.name)
                         this.extractorComplex.windDown();
                     }
 					
@@ -1134,6 +1134,9 @@ class RoomNode{
         if(this.remoteRoomNames.length>=7 && this.totalEnergyAtSources>20000)tankersPerX-=50;
 
         this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
+        if(this.workforce_quota.tanker.required>50)
+            this.workforce_quota.tanker.required=50;
+
         if(this.workforce_quota.rkeeper.required===0 && this.workforce_quota.tanker.required ===0){
             // at low RCL we always need 1 to do filling
             this.workforce_quota.tanker.required = 1;
@@ -1182,7 +1185,7 @@ class RoomNode{
 
             }
 
-            else if(this.upgradeRate===RATE_FAST && Game.cpu.bucket>5000){
+            else if(this.upgradeRate===RATE_FAST && Game.cpu.bucket>3000){
                 let thresholds= {
                     999999:5,
                     2000:5,

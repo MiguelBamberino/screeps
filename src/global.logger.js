@@ -170,6 +170,11 @@ global.logs = {
         return d;
     },
     startCPUTracker: function(tag){
+        let used = Game.cpu.getUsed();
+        if(used>400){
+            clog(JSON.stringify(this.getCPULog()) )
+            throw new Error("CPU-OVERLOAD. could not run ["+tag+"]. Already used:"+used+" CPU");
+        }
         this.cpuTrackers[tag] = {start:Game.cpu.getUsed(),stop:false};
     },
     stopCPUTracker: function(tag,conslog=false){

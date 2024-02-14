@@ -265,6 +265,8 @@ global.util = {
     allowTick: function(){
         if(!_SERVER_CONFIG){console.log("ERROR: no _SERVER_CONFIG setup") ;return false;}
         if(nodes===undefined){console.log("ERROR: no nodes setup") ;return false;}
+        let used = Game.cpu.getUsed();
+        if(used>400){console.log("ERROR: loop skipped. ",used,"cpu used before loop.") ;return false;}
         if(!Memory.debugTick)return true;
         if(Memory.debugTick===true){
             Memory.debugTick=Game.time;

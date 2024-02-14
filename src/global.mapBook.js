@@ -50,11 +50,11 @@ global.mb = {
     heap_rooms:{},
     
     runTick: function(){
-        logs.startCPUTracker('map.runTick');
+
         this.checkIntervals();
         this.checkRoomRepairs();
         this.reviewConstructions();
-        logs.stopCPUTracker('map.runTick',false);
+
     },
     checkIntervals: function(){
         for(let t in this.intervals){
@@ -317,8 +317,8 @@ global.mb = {
     },
 
     // get all source in an room
-    getAllSourcesForRoom: function(roomName){
-        return this.getSources({roomNames:[roomName]});
+    getAllSourcesForRoom: function(roomName,requireVision=true){
+        return this.getSources({roomNames:[roomName],requireVision:requireVision});
     },
 
     //////////////////////////////////////////////////////////////////////////////////////////

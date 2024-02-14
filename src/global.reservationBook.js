@@ -7,7 +7,7 @@ global.reservationBook = {
     },
     runTick:function(){
         
-        logs.startCPUTracker('rb.runTick');
+
         for(let id in Memory.reservationBook){
             
             let structure = Game.getObjectById(id);
@@ -41,7 +41,7 @@ global.reservationBook = {
             }
         }
         
-        logs.stopCPUTracker('rb.runTick',false);
+
     },
     getPage:function(id){
         if(!Memory.reservationBook[id]){

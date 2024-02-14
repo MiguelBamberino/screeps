@@ -261,7 +261,9 @@ var roleTanker = {
 
                 if(!drop ){
                     // collect from remote if we have enough TTL and not overflowing locally
-                    if(creep.ticksToLive>100 && config.totalEnergyAtLocalSources <4000){
+                    // added gt%5 to add randomness and avoid all tankers going local and creating a
+                    // traffic jam, which can cause the bot spiral crash
+                    if(creep.ticksToLive>100 && config.totalEnergyAtLocalSources <4000 && Game.time%5===0){
                         drop = creep.getDropFromRemoteSources(config.remoteRoomNames)
                     }
 

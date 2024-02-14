@@ -2,7 +2,6 @@ global.BOT_VERSION='20.0';
 console.log("-----------------------------------------------")
 console.log("Global Reset:",Game.time)
 console.log("-----------------------------------------------")
-let st = Game.cpu.getUsed();
 
 if(!Memory.VERSION){Memory.VERSION=BOT_VERSION;}
    
@@ -38,7 +37,6 @@ require('prototype.creep');
 require('prototype.creep.body');
 require('prototype.creep.actions')();
 
-console.log("LOAD-CPU-prototypes: "+(Game.cpu.getUsed() - st));
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Classes
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +46,6 @@ global.RoomNode = require('class.roomNode');
 global.LabComplex = require('class.complex.lab')
 
 
-console.log("LOAD-CPU-classes: "+(Game.cpu.getUsed() - st));
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Objects
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,21 +57,16 @@ require('global.logger');
 require('global.GUI');
 global.tests = require('globals.tests');
 
-
-console.log("LOAD-CPU-globals: "+(Game.cpu.getUsed() - st));
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Load in Server
 /////////////////////////////////////////////////////////////////////////////////////////////////
 util.loadServer();
 
-console.log("LOAD-CPU-loadServer: "+(Game.cpu.getUsed() - st));
 global.tempCode = require('tempCode')
 _memHak.register();
 
-console.log("LOAD-CPU-memhak: "+(Game.cpu.getUsed() - st));
 gui.init();
 
-console.log("LOAD-CPU-gui: "+(Game.cpu.getUsed() - st));
 logs.globalResetComplete();
 
 for(let n in nodes){
@@ -84,8 +76,6 @@ for(let n in nodes){
     }
 }
 
-console.log("LOAD-CPU-all: "+(Game.cpu.getUsed() - st));
-
 module.exports.loop = function () {
     //return;
     if(!util.allowTick()){return}
@@ -94,51 +84,58 @@ module.exports.loop = function () {
 
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
     //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E7N5']._debugSetEnemies(['bob']);
-
-        
+    try {
         logs.mainLoopStarted();
-
+        logs.startCPUTracker('rb.runTick');
         reservationBook.runTick();
-        
-        logs.startCPUTracker('nodes');
-        for(let n in nodes){
-            //logs.startCPUTracker(nodes[n].name);
-            try{
+        logs.stopCPUTracker('rb.runTick',false);
 
-                if(nodes[n].allowCPUShutdown && Game.cpu.bucket<2000)nodes[n].online=false;
-                if(nodes[n].online)nodes[n].runTick();
-            }catch (e){
-                console.log("ERROR:",nodes[n].name);
+        logs.startCPUTracker('nodes');
+        for (let n in nodes) {
+            logs.startCPUTracker(nodes[n].name);
+            try {
+
+                if (nodes[n].allowCPUShutdown && Game.cpu.bucket < 2000) nodes[n].online = false;
+                if (nodes[n].allowCPUShutdown && Game.cpu.bucket > 4000) nodes[n].online = true;
+                if (nodes[n].online) nodes[n].runTick();
+            } catch (e) {
+                console.log("ERROR:", nodes[n].name);
                 console.log(e);
-                if(util.throwErrors)throw e;
+                if (util.throwErrors) throw e;
             }
-            //logs.stopCPUTracker(nodes[n].name,true);
+            logs.stopCPUTracker(nodes[n].name, false);
         }
-       logs.stopCPUTracker('nodes',false);
-        
+        logs.stopCPUTracker('nodes', false);
+
+        logs.startCPUTracker('map.runTick');
         mb.runTick();
-        
-        if(Game.cpu.bucket>1000 || Game.time < 50){
+        logs.stopCPUTracker('map.runTick',false);
+
+        if (Game.cpu.bucket > 1000 || Game.time < 50) {
             logs.startCPUTracker('tempCode');
             tempCode.run();
-            logs.stopCPUTracker('tempCode',false);
-            
+            logs.stopCPUTracker('tempCode', false);
+
         }
-        
-        if(Game.cpu.bucket>8000 && Game.time%100===0 && util.getServerName()==='shard3'){
+
+        if (Game.cpu.bucket > 8000 && Game.time % 100 === 0 && util.getServerName() === 'shard3') {
             runMarket();
         }
-        if(Game.cpu.bucket>5000 && Game.time%20===0){
+        if (Game.cpu.bucket > 5000 && Game.time % 20 === 0) {
             logs.startCPUTracker('processOrders');
             trader.processOrders();
-            logs.stopCPUTracker('processOrders',false);
+            logs.stopCPUTracker('processOrders', false);
         }
-        
+
         logs.mainLoopEnded();
-        
+
+    }catch (e) {
+        console.log("ERROR:Main-Loop",e);
+    }
         //////// GUI CODE  //////////////////////////////////
         try {
-
+            let used = Game.cpu.getUsed();
+            if(used>400){console.log("ERROR: loop cut short. ",used,"cpu used before GUI.") ;return false;}
             gui.render();
         }catch (e){
             console.log("ERROR:GUI",e);

@@ -22,18 +22,19 @@ module.exports = {
         }
 
         logs.startCPUTracker('manageInterRoomTrading2');
-        if(Game.time%10==0)this.manageInterRoomTrading2()
+        if(Game.time%10===0)this.manageInterRoomTrading2()
         logs.stopCPUTracker('manageInterRoomTrading2',false);
 
         return;
     },
     shardSeasonTempCode:function(){
+        let thing = this;
         try{
             //if(Game.gcl.level===5)this.setupNode('Gamma','Epsilon')
-            //if(season6.isRoomFreezingSoon('W38S19'))this.setupNode('Gamma','Epsilon')
-            if(Game.gcl.level===6)this.setupNode('Gamma','Zeta')
-            //if(season6.daysUntilFreeze('W38S19')===0){
-            if(Game.gcl.progress>18000000){
+            //if(season6.isRoomFreezingSoon('W38S19'))this.setupNode('Gamma','Theta')
+            //if(Game.gcl.level===6)this.setupNode('Alpha','Zeta',true,true)
+            if(season6.daysUntilFreeze('W38S19')===0){
+            //if(Game.gcl.progress>18000000){
                 this.scoutRoom('Gamma','W33S25-sc','W33S25')
                 this.keepRoomClearOfLv0InvaderCores('Gamma','ic-killer-W33S25','10a10m','W33S25')
                 this.scoutRoom('Gamma','W33S26-sc','W33S26')
@@ -46,9 +47,19 @@ module.exports = {
         }catch (e) {
             console.log("Set-up error",e)
         }
-
+        this.rotateCreep('def-W13S24-', function(activeCreepName){
+                let route = mb.getMapRoute(Game.spawns['Alpha'].pos.roomName,'W13S24');
+            thing.fightyBoi('Alpha',activeCreepName,'10m4a6r10m1h1m','W13S24',route,{
+                kiteSpots:[rp(19,23,'W13S24'),rp(14,19,'W13S24'),rp(12,27,'W13S24')],
+                attackStructures:false
+            })
+        },600)
+        this.fightyBoi('Zeta','def-0','1r1m','W13S24',[],{
+            reckless:true,
+            attackStructures:false
+        })
         //this.scoutRoom('Beta','scout0','W24S19',{x:25,y:25})
-
+/*
         this.harassRemote('Beta','W24S18','2m2a5r7m1h1m',{
             kiteSpots:[rp(37,22,'W24S18'),rp(30,23,'W24S18'),rp(35,27,'W24S18')],
             waitSpot:rp(17,25,'W24S18'),
@@ -59,6 +70,14 @@ module.exports = {
             waitSpot:rp(42,20,'W25S18'),
             useBreaker:true
         })
+*/
+        for(let i=0;i<6;i++) {
+            let id = (nodes.z.workforce_quota.upgrader.count===9)?'65ccb7e7063c93d4b6eb8703':'65ccd0b54a118d8c1ead8f78';
+                this.remoteStealer('Zeta', 'ZhS' + i, '2c2m', 'W12S23', id)
+        }
+        for(let i=6;i<8;i++) {
+            this.remoteStealer('Zeta', 'ZhS' + i, '2c2m', 'W12S24', '65ccd0b54a118d8c1ead8f78')
+        }
 
 
         this.haulResources('Beta','Btx1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===7),50)
@@ -67,40 +86,41 @@ module.exports = {
         this.haulResources('Gamma','Gtx1','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
         this.haulResources('Gamma','Gtx2','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
         this.haulResources('Gamma','Gtx3','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
+        this.haulResources('Gamma','Gtx4','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
 
         this.haulResources('Alpha','Atx1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
         this.haulResources('Alpha','Atx2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
-        this.haulResources('Alpha','Atx3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
-        this.haulResources('Alpha','Atx4','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
 
-        nodes.a.manual_addRooms=['W23S22','W22S24','W23S21'];
-        nodes.b.manual_addRooms=['W22S15'];
-        nodes.g.manual_addRooms=['W34S22'];
-        nodes.d.manual_addRooms=['W36S19','W36S18'];
-        nodes.e.manual_ignoreRooms=['W34S22'];
+        this.haulResources('Epsilon','Etx1','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Epsilon','Etx2','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Epsilon','Etx3','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Epsilon','Etx4','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
 
-
-
-
+        if(Game.cpu.bucket>4000)nodes.a.manual_addRooms=['W23S22','W22S24','W23S21'];
+        if(Game.cpu.bucket>4000 && !mb.isDeadlyRoom('W34S25'))nodes.t.manual_addRooms=['W35S25'];
+        //nodes.b.manual_addRooms=['W22S15'];
+        //nodes.d.manual_addRooms=['W36S19','W36S18'];
 
         for(let n in nodes){
+            logs.startCPUTracker('fullAutomateRoomNode-'+n);
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
+            logs.stopCPUTracker('fullAutomateRoomNode-'+n,false);
             nodes[n].wallHeight=10000;//10k
             nodes[n].rampHeight=50000;//50k
         }
         if(nodes.a.controller().level===8) nodes.a.upgradeRate=RATE_VERY_SLOW;
         if(nodes.b.controller().level===8) nodes.b.upgradeRate=RATE_VERY_SLOW;
 
-        this.harvestAndCollectMineralFromSKRoom('Alpha','W24S24',  3,3,25000,true,false,350)
+        //this.harvestAndCollectMineralFromSKRoom('Alpha','W24S24',  3,3,25000,true,false,350)
         //this.harvestAndCollectMineralFromSKRoom('Beta','W24S16',  3,3,25000,true,false,350)
         //this.harvestAndCollectMineralFromSKRoom('Gamma','W34S24',  2,3,25000,true,false,350,[rp(8,4,'W34S24'),rp(8,5,'W34S24')])
 
         // this.mosquitoAttack('Alpha','mosq-1','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
         // this.mosquitoAttack('Alpha','mosq-2','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
 
-        this.scoutPotentialBase('Alpha','W13S24',true)
-        this.withdrawThenUpgrade('Delta','Dux1','10w1c3m','65c7a0626921a37d895634c5','65a70e2934fa299b8cef879c')
-        if(nodes.e.controller().level<6)this.withdrawThenUpgrade('Gamma','Gux1','10w1c10m','65c8dd27cf43176e2d3f0dd7','65a70e5d34fa299b8cef8c67')
+        //this.scoutPotentialBase('Alpha','W13S24',true)
+        if(Game.cpu.bucket>4000 && nodes.e.online)
+            this.withdrawThenUpgrade('Gamma','Gux1','6w1c6m','65cc49e9bfd30d4587edaa02','65a70e5d34fa299b8cef8c67')
 
         //this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
         //this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
@@ -356,7 +376,9 @@ module.exports = {
 
 
         if(room.energyCapacityAvailable>=300){
+            logs.startCPUTracker('fullAutomateRoomNode-'+node.name);
             this.runRemotes(node);
+            logs.stopCPUTracker('fullAutomateRoomNode-'+node.name);
         }
 
         if(room.controller.level>=4){
@@ -383,12 +405,14 @@ module.exports = {
         }
 
         //if(Game.time%500===0)this.removeRedundantRoads(node)
+        logs.startCPUTracker('manageConstructionSites-'+node.name);
         if(Game.time%20===0)this.manageConstructionSites(node);
         this.defendHomeRoom(node)
+        logs.stopCPUTracker('manageConstructionSites-'+node.name);
     },
 
     scoreRemote:function(node,roomName){
-
+        logs.startCPUTracker('scoreRemote-'+node.name+'-'+roomName);
         //console.log("SCORING REMOTE ",node.name, " >> ",roomName )
         if(!Memory.remotes)Memory.remotes={};
         if(!Memory.remotes[node.name])Memory.remotes[node.name]={};
@@ -418,57 +442,42 @@ module.exports = {
         ///////////////////////////////////////////////////
         // Handle all shutdown/bad remote cases first
         ///////////////////////////////////////////////////
+        let online = true;
         if(season6.isRoomFroze(roomName)){
-            Memory.remotes[node.name][roomName].online = false;
             Memory.remotes[node.name][roomName].valid = false;
             Memory.remotes[node.name][roomName].reason = "closed";
-            Memory.remotes[node.name][roomName].score+=99999;
-            return;
+            online=false;
         }
-        if(season6.isRoomFreezingSoon(roomName)){
-            Memory.remotes[node.name][roomName].online = false;
+        else if(season6.isRoomFreezingSoon(roomName)){
             Memory.remotes[node.name][roomName].valid = false;
             Memory.remotes[node.name][roomName].reason = "freeze-soon";
-            Memory.remotes[node.name][roomName].score+=99999;
-            return;
+            online=false;
         }
-
-        if(node.manual_ignoreRooms.includes(roomName)){
-            Memory.remotes[node.name][roomName].online = false;
+        else if(node.manual_ignoreRooms.includes(roomName)){
             Memory.remotes[node.name][roomName].reason = "manual-ignore";
-            Memory.remotes[node.name][roomName].score+=99999;
-            return;
+            online=false;
         }
-
-        if(lairs.length>0 && !node.manual_addRooms.includes(roomName) ){
-            Memory.remotes[node.name][roomName].online = false;
+        else if(lairs.length>0 && !node.manual_addRooms.includes(roomName) ){
             Memory.remotes[node.name][roomName].isDangerous = true;
             Memory.remotes[node.name][roomName].reason = "sk-room";
-            Memory.remotes[node.name][roomName].score+=99999;
-            return;
+            online=false;
         }
-        if(srcs.length===0){
-            Memory.remotes[node.name][roomName].online = false;
+        else if(srcs.length===0){
             Memory.remotes[node.name][roomName].valid = false;
             Memory.remotes[node.name][roomName].reason = "hallway";
-            Memory.remotes[node.name][roomName].score+=99999;
-            return;
+            online=false;
         }
-        if(invadeCores.length>0 && invadeCores[0].level>0){
-            Memory.remotes[node.name][roomName].online = false;
+        else if(invadeCores.length>0 && invadeCores[0].level>0){
             Memory.remotes[node.name][roomName].reason = "invader-core";
-            Memory.remotes[node.name][roomName].score+=99999;
-            return;
+            online=false;
         }
 
         if(Game.rooms[roomName]){
 
             if(Game.rooms[roomName].getInvaders().length >=3){
-                Memory.remotes[node.name][roomName].online = false;
                 Memory.remotes[node.name][roomName].isDangerous = true;
                 Memory.remotes[node.name][roomName].reason = "big-attack";
-                Memory.remotes[node.name][roomName].score+=99999;
-                return;
+                online=false;
             }
             if(Game.rooms[roomName].getDangerousCreeps().length >=1){
                 Memory.remotes[node.name][roomName].score+=100;
@@ -481,26 +490,29 @@ module.exports = {
         if(controller && controller.owner){
             Memory.remotes[node.name][roomName].username = controller.owner.username;
             Memory.remotes[node.name][roomName].reason = "has-owner";
-            Memory.remotes[node.name][roomName].online = false;
             Memory.remotes[node.name][roomName].valid = false;
             Memory.remotes[node.name][roomName].isDangerous = true;
-            Memory.remotes[node.name][roomName].score+=99999;
-            return;
+            online=false;
         }
         if(controller && controller.reservation){
             if(controller.reservation.username!=='MadDokMike' && controller.reservation.username!=='Invader'){
                 Memory.remotes[node.name][roomName].username = controller.reservation.username;
                 Memory.remotes[node.name][roomName].reason = "has-owner";
-                Memory.remotes[node.name][roomName].online = false;
                 Memory.remotes[node.name][roomName].isDangerous = true;
-                Memory.remotes[node.name][roomName].score+=99999;
-                return;
+                online=false;
             }
         }
 
         // this fixes a bug where a remote goes offline, but subsequent runs override the reason string.
         // this will get re-scouted eventually
-        if( !Memory.remotes[node.name][roomName].online &&  Memory.remotes[node.name][roomName].score)return;
+        if( !Memory.remotes[node.name][roomName].online &&  Memory.remotes[node.name][roomName].score)online=false;
+
+        if(!online){
+            Memory.remotes[node.name][roomName].online = false;
+            Memory.remotes[node.name][roomName].score+=99999;
+            logs.stopCPUTracker('scoreRemote-'+node.name+'-'+roomName);
+            return;
+        }
 
         ///////////////////////////////////////////////////
         // Now lets score this potential remote
@@ -541,7 +553,9 @@ module.exports = {
         let netSrcPathLength = 0;
         for(let src of srcs){
             let to = src.pos;
-            result = PathFinder.search(Game.spawns[node.name].pos, rp(to.x,to.y,to.roomName) ,{swampCost:2,maxOps:10000});
+            logs.startCPUTracker('pathing-'+node.name+'-'+to);
+            result = PathFinder.search(Game.spawns[node.name].pos,{pos:rp(to.x,to.y,to.roomName),range:1} ,{swampCost:2,maxOps:10000});
+            logs.stopCPUTracker('pathing-'+node.name+'-'+to);
             netSrcPathLength +=result.path.length;
             let c = '';
             if(src.haveVision && src.haveContainer()){
@@ -582,14 +596,17 @@ module.exports = {
             Memory.remotes[node.name][roomName].staff.required+=1;
 
             let cPos = controller.pos;
-            result = PathFinder.search(Game.spawns[node.name].pos, rp(cPos.x,cPos.y,cPos.roomName) ,{swampCost:2,maxOps:10000});
+            logs.startCPUTracker('pathing-'+node.name+'-controller');
+            result = PathFinder.search(Game.spawns[node.name].pos, {pos:rp(cPos.x,cPos.y,cPos.roomName),range:1 } ,{swampCost:2,maxOps:10000});
+            logs.stopCPUTracker('pathing-'+node.name+'-controller');
             Memory.remotes[node.name][roomName].score+= result.path.length;
             Memory.remotes[node.name][roomName].controllerDistance = result.path.length;
             Memory.remotes[node.name][roomName].reason += "C["+result.path.length+"],";
         }
-
+        logs.stopCPUTracker('scoreRemote-'+node.name+'-'+roomName);
     },
     sortRemotes:function(node){
+        logs.startCPUTracker('sortRemotes-'+node.name);
         //console.log(node.name," remote sorted from: ",node.remoteRoomNames)
         let toSorted = [];
         node.remoteRoomNames = [];
@@ -605,18 +622,19 @@ module.exports = {
             let supportCount = node.controller().level>=7?6:3;
             for(let i=0; i<=supportCount;i++)if(available[i])node.remoteRoomNames.push(available[i]);
         }
+        logs.stopCPUTracker('sortRemotes-'+node.name);
         //console.log('to: ',node.remoteRoomNames)
     },
     detectRemotes:function(node){
 
         if(node.remotesLoaded)return;
-
+        logs.startCPUTracker('detectRemotes-'+node.name);
         if(node.manual_ignoreRooms===undefined)node.manual_ignoreRooms = [];
         if(node.manual_noRoads===undefined)node.manual_noRoads = [];
         if(node.manual_addRooms===undefined)node.manual_addRooms = [];
 
         let adjRooms = Game.map.describeExits(node.coreRoomName);
-        console.log(node.name," remote boot up. Scoring")
+        //console.log(node.name," remote boot up. Scoring")
         for(let dir in adjRooms){
             dir = dir*1;
             if(dir===TOP){
@@ -644,6 +662,7 @@ module.exports = {
         if(node.manual_addRooms)for(let rn of node.manual_addRooms)this.scoreRemote(node,rn);
 
         this.sortRemotes(node);
+        logs.stopCPUTracker('detectRemotes-'+node.name);
         node.remotesLoaded = true;
     },
     scoutRemotes:function(node){
@@ -715,7 +734,7 @@ module.exports = {
         return [];
     },
     runRemotes:function(node){
-
+        logs.startCPUTracker('runRemotes-'+node.name);
         // return
         this.detectRemotes(node);
         this.scoutRemotes(node);
@@ -915,7 +934,7 @@ module.exports = {
             this.lastSort= Game.time;
         }
 
-
+        logs.stopCPUTracker('runRemotes-'+node.name);
     },
     /**
      * remove walls that have later ended up with a structure on then
@@ -2303,8 +2322,8 @@ module.exports = {
         if(!config.phaseOut)this.rotateScouts(spawnName,roomName,roomName,{x:25,y:25});
         // can not we see the room, then wait for scout
         if(!Game.rooms[roomName]){
-            console.log("Scouting:",roomName)
-            return;
+            if(Game.time%10===0)console.log("Scouting:",roomName)
+            //return;
         }
 
         if(!mb.hasRoom(roomName))mb.scanRoom(roomName);
@@ -2361,15 +2380,11 @@ module.exports = {
             phaseOut:conf.phaseOut===undefined?false:conf.phaseOut
         }
 
-        let room = Game.rooms[roomName];
+        if(Game.rooms[roomName] && !mb.hasRoom(roomName))mb.scanRoom(roomName);
+        if(mb.hasRoom(roomName)){
 
-        if(!mb.hasRoom(roomName))mb.scanRoom(roomName);
-        let container_ids=[];
-        let dismantle_ids=[];
-        let wall_ids = [];
-        if(room){
-
-            if(room.controller.owner){
+            let controller = mb.getControllerForRoom(roomName,false);
+            if(controller.owner && controller.owner.username!=='MadDokMike'){
                 console.log("ROOM_SETUP: Error. ",roomName," is already owned")
                 return;
             }
@@ -2380,13 +2395,13 @@ module.exports = {
 
             // Firstly, lets go make a claim on the room
             let claimerBody = config.swampy?'1cl5m':'1cl1m';
-            if(!config.reserve){
+            if(!controller.owner  && !config.reserve){
                 if(Game.time%10===0 && config.report)console.log("ROOM_SETUP: claiming...",roomName)
 
-                this.claimRoom(spawnName,roomName+'-cl',room.controller,claimerBody,true,true);
+                this.claimRoom(spawnName,roomName+'-cl',controller,claimerBody,true,true);
             }
-            if(config.reserve){
-                this.reserverRoom(spawnName,roomName+'-cl',room.controller,claimerBody,true);
+            if(!controller.owner  && config.reserve){
+                this.reserverRoom(spawnName,roomName+'-cl',controller,claimerBody,true);
             }
 
             if(cores.length>0){
@@ -2398,75 +2413,15 @@ module.exports = {
                 this.constantGuardRoom(spawnName,roomName+'-guard',roomName,defenderBody, conf.defenderSpot );
             }
 
-
-            if(config.dismantleStructures){
-                let structures = mb.getStructures({
-                    roomNames:[roomName],
-                    /*types:[STRUCTURE_TOWER,STRUCTURE_EXTENSION,STRUCTURE_SPAWN,STRUCTURE_STORAGE],*/
-                    /*filters:[{attribute:'isEmpty',operator:'fn',value:[]}]*/
-
-                });
-                for(let obj of structures){
-                    if(obj.owner && obj.owner.username!=='MadDokMike'
-                        && obj.structureType !== STRUCTURE_CONTROLLER
-                        &&(!obj.store || obj.isEmpty()))
-                        dismantle_ids.push(obj.id);
-                }
-            }
-
-            // if there are RUINs then do we want to draw on their energy?
-            if(config.drawFromRuins){
-                let ruins = room.find(FIND_RUINS);
-
-                for(let r in ruins){
-                    if(ruins[r].store.getUsedCapacity(RESOURCE_ENERGY)>0){
-                        container_ids.push(ruins[r].id);
-                    }
-                }
-            }
-            if(config.drawFromStructures){
-                let structures = mb.getStructures({
-                    roomNames:[roomName],
-                    // doesn't play well once you start building own stuff. designed to steal other users stuff
-                    types:[STRUCTURE_TOWER,STRUCTURE_EXTENSION,STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TERMINAL],
-                    filters:[{attribute:'storingAtLeast',operator:'fn',value:[1]}]
-
-                });
-                for(let obj of structures){
-                    if(!obj.owner || obj.owner.username!='MadDokMike')container_ids.push(obj.id);
-                }
-
-
-            }
-
-
             // now lets set up the harvesters and register and mine stores
             if(config.harvestSources){
-                let sources  = mb.getAllSourcesForRoom(roomName);
+                let sources  = mb.getAllSourcesForRoom(roomName,false);
                 let harvesterBody = config.swampy?'6w12m1c':'6w6m1c';
                 for(let s in sources){
-                    this.harvestPoint(spawnName,roomName+'-h'+s,harvesterBody,sources[s],(!config.phaseOut),true);
+                    let harvyName = roomName+'-h'+s;
+                    if(config.phaseOut && !Game.creeps[harvyName])continue;
+                    this.harvestPoint(spawnName,harvyName,harvesterBody,sources[s],(!config.phaseOut),true);
                 }
-            }
-            let containers = mb.getStructures({
-                roomNames:[roomName],
-                // doesn't play well once you start building own stuff. designed to steal other users stuff
-                types:[STRUCTURE_CONTAINER],
-                filters:[{attribute:'isMineStore',operator:'fn',value:[]},{attribute:'storingAtLeast',operator:'fn',value:[250]}]
-
-            });
-            // clog(containers.length,'containers')
-            for(let obj of containers)
-                container_ids.push(obj.id);
-
-            if(config.buildUpSites){
-                let walls = mb.getStructures({
-                    roomNames:[roomName],
-                    types:[STRUCTURE_RAMPART,STRUCTURE_WALL],
-                    filters:[{attribute:'hits',operator:'<',value:[50000]}]
-                });
-                if(walls.length>0)wall_ids.push(walls[0].id);
-
             }
 
             // now lets deploy the workers to draw from all containers
@@ -2476,64 +2431,12 @@ module.exports = {
                 let creep = Game.creeps[creepName];
 
                 if(config.phaseOut && !creep)continue;
-
-                this.maintainRoadsInRoom(spawnName,creepName,[roomName],bodyPlan,true,true,true);
-
-                    continue;
-                // old code below
-                if(dismantle_ids.length>0){
-
-                    let id = dismantle_ids[c]?dismantle_ids[c]:dismantle_ids[0];
-
-                    this.farmStructureThenUpgrade(spawnName,creepName,bodyPlan,id,room.controller.id)
-
-                }else if(container_ids.length>0){
-                    let sid = (c % 2);
-                    let id = container_ids[sid]?container_ids[sid]:container_ids[0];
-
-
-                    if(creep && creep.isEmpty()){
-                        creep.memory.fix_id=false;
-                    }
-
-                    let repT = (creep)?gob(creep.memory.fix_id):false;
-                    if(creep && repT && repT.hits < repT.hitsMax){
-                        this.withdrawThenRepair(spawnName,creepName,bodyPlan,id,creep.memory.fix_id);
-                        continue;
-                    }
-
-
-                    let container = Game.getObjectById(id);
-                    let conSite = mb.getNearestConstruction(container.pos, [roomName]);
-
-                    let fixable = mb.getNearestRepairTarget(container.pos, [roomName]);
-                    if( fixable && fixable.hits < 3000 ){
-                        wall_ids.push(fixable.id);
-                    }
-
-                    if(config.buildUpSites  && (conSite || wall_ids.length>0)){
-                        if(wall_ids.length>0){
-
-                            let repair_id = wall_ids[sid]?wall_ids[sid]:wall_ids[0];
-                            if(creep){
-                                creep.memory.fix_id=repair_id
-                            }
-
-                            // creep.say('R')
-                            this.withdrawThenRepair(spawnName,creepName,bodyPlan,id,repair_id);
-                        }else{
-
-                            // creep.say('B')
-                            // withdrawThenBuild: function(spawnName,cname,parts,container_id,site_id, WithdrawOnBuild=false,keepSpawning=true,prioritySpawn=false)
-                            this.withdrawThenBuild(spawnName,creepName,bodyPlan,id,conSite.id,false,true,true);
-                        }
-
-                    }else{
-                        //creep.say('U')
-                        this.withdrawThenUpgrade(spawnName,creepName,bodyPlan,id,room.controller.id);
-                    }
-
+                if(creep && !mb.haveConstructions([roomName]) && !creep.isEmpty()){
+                    creep.actOrMoveTo("upgradeController",controller)
+                }else{
+                    this.maintainRoadsInRoom(spawnName,creepName,[roomName],bodyPlan,true,true,true);
                 }
+
 
             }
 
