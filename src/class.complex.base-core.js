@@ -99,6 +99,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
     }
     getExtraFillerSpots(facing){
         // only run for RCL 4,5,6
+        if(!Game.rooms[this.anchor.roomName].storage)return [];
         if([1,2,3,7,8].includes(this.controller().level))return [];
 
         if(facing===TOP){

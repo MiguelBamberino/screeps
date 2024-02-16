@@ -332,7 +332,18 @@ module.exports = function(){
                     costMatrix.set(1,5,255)
                     costMatrix.set(1,7,255)
                 }
-
+                if(roomName==='W35S25'){
+                    costMatrix.set(49,43,255)
+                    costMatrix.set(49,44,255)
+                    costMatrix.set(49,45,255)
+                    costMatrix.set(49,46,255)
+                    costMatrix.set(49,47,255)
+                    costMatrix.set(48,43,255)
+                    costMatrix.set(48,44,255)
+                    costMatrix.set(48,45,255)
+                    costMatrix.set(48,46,255)
+                    costMatrix.set(48,47,255)
+                }
                 if(roomName==='W16S22'){
                     costMatrix.set(0,10,50)
                     costMatrix.set(0,11,50)
@@ -434,6 +445,10 @@ module.exports = function(){
                         costMatrix.set(1,4,255)
                         costMatrix.set(1,5,255)
                         costMatrix.set(1,7,255)
+                        costMatrix.set(26,6,255)
+                        costMatrix.set(27,7,100)
+                        costMatrix.set(29,7,100)
+                        costMatrix.set(28,6,255)
                     }
 
                    if (roomName==='W15S24' || roomName==='W14S23') {

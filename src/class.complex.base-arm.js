@@ -41,9 +41,9 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
                 {type:STRUCTURE_TOWER,offset:{x:1,y:2},rcl:5,requiresRamp:true},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:2},rcl:5},
                 // ---------- RCL 8 --------------------------------------------------
-                {type:STRUCTURE_SPAWN,offset:{x:0,y:1},rcl:8,name:this.name+'-3',replace:true},
+                {type:STRUCTURE_SPAWN,offset:{x:0,y:1},rcl:8,name:this.name+'-3',replace:STRUCTURE_EXTENSION},
                 {type:STRUCTURE_CONTAINER,offset:{x:0,y:0},rcl:8},
-                {type:STRUCTURE_LINK,offset:{x:0,y:2},rcl:8,replace:true},
+                {type:STRUCTURE_LINK,offset:{x:0,y:2},rcl:8,replace:STRUCTURE_EXTENSION},
 
             ];
         }
@@ -66,9 +66,9 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
                 {type:STRUCTURE_TOWER,offset:{x:1,y:-2},rcl:5,requiresRamp:true},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:-2},rcl:5},
                 // ---------- RCL 8 --------------------------------------------------
-                {type:STRUCTURE_SPAWN,offset:{x:0,y:-1},rcl:8,name:this.name+'-3',replace:true},
+                {type:STRUCTURE_SPAWN,offset:{x:0,y:-1},rcl:8,name:this.name+'-3',replace:STRUCTURE_EXTENSION},
                 {type:STRUCTURE_CONTAINER,offset:{x:0,y:0},rcl:8},
-                {type:STRUCTURE_LINK,offset:{x:0,y:-2},rcl:8,replace:true},
+                {type:STRUCTURE_LINK,offset:{x:0,y:-2},rcl:8,replace:STRUCTURE_EXTENSION},
 
             ];
         }
@@ -92,9 +92,9 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
                 {type:STRUCTURE_EXTENSION,offset:{x:1,y:2},rcl:5},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:2},rcl:5},
                 // ---------- RCL 8 --------------------------------------------------
-                {type:STRUCTURE_SPAWN,offset:{x:1,y:0},rcl:8,name:this.name+'-3',replace:true},
+                {type:STRUCTURE_SPAWN,offset:{x:1,y:0},rcl:8,name:this.name+'-3',replace:STRUCTURE_EXTENSION},
                 {type:STRUCTURE_CONTAINER,offset:{x:0,y:0},rcl:8},
-                {type:STRUCTURE_LINK,offset:{x:2,y:0},rcl:8,replace:true},
+                {type:STRUCTURE_LINK,offset:{x:2,y:0},rcl:8,replace:STRUCTURE_EXTENSION},
 
             ];
         }
@@ -117,9 +117,9 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
                 {type:STRUCTURE_TOWER,offset:{x:-2,y:1},rcl:5,requiresRamp:true},
                 {type:STRUCTURE_EXTENSION,offset:{x:-2,y:2},rcl:5},
                 // ---------- RCL 8 --------------------------------------------------
-                {type:STRUCTURE_SPAWN,offset:{x:-1,y:0},rcl:8,name:this.name+'-3',replace:true},
+                {type:STRUCTURE_SPAWN,offset:{x:-1,y:0},rcl:8,name:this.name+'-3',replace:STRUCTURE_EXTENSION},
                 {type:STRUCTURE_CONTAINER,offset:{x:0,y:0},rcl:8},
-                {type:STRUCTURE_LINK,offset:{x:-2,y:0},rcl:8,replace:true},
+                {type:STRUCTURE_LINK,offset:{x:-2,y:0},rcl:8,replace:STRUCTURE_EXTENSION},
 
             ];
         }

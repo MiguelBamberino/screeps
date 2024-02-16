@@ -372,10 +372,12 @@ class RoomNode{
                 let structure = gob(id);
                 if(!structure){
                     // somethings been destroyed
+                    Memory.safemode_reason="lost spawn/storage/terminal";
                     this.controller().activateSafeMode();break;
                 }
                 if(structure.hits<structure.hitsMax){
                    // somethings is being destroyed
+                    Memory.safemode_reason="took dmg on spawn/storage/terminal";
                     this.controller().activateSafeMode();break; 
                 }
             }
@@ -385,10 +387,12 @@ class RoomNode{
         
         if(this.controller().level < 4 && enemyNearCoreSpawn ){
             // likely we will lose spawn if enemy is this close at low level
+            Memory.safemode_reason="RCL<4 enemyNearCoreSpawn";
             this.controller().activateSafeMode();
         }
         
         if(claimAttackDetected){
+            Memory.safemode_reason="claimAttackDetected";
             this.controller().activateSafeMode();
         }
         

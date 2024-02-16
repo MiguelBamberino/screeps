@@ -131,6 +131,7 @@ module.exports.loop = function () {
 
     }catch (e) {
         console.log("ERROR:Main-Loop",e);
+        if (util.throwErrors) throw e;
     }
         //////// GUI CODE  //////////////////////////////////
         try {

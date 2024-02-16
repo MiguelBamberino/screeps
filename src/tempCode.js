@@ -31,54 +31,98 @@ module.exports = {
         let thing = this;
         try{
             //if(Game.gcl.level===5)this.setupNode('Gamma','Epsilon')
-            //if(season6.isRoomFreezingSoon('W38S19'))this.setupNode('Gamma','Theta')
+            if(season6.isRoomFreezingSoon('W35S21'))this.setupNode('Alpha','Delta')
             //if(Game.gcl.level===6)this.setupNode('Alpha','Zeta',true,true)
-            if(season6.daysUntilFreeze('W38S19')===0){
+            if(season6.daysUntilFreeze('W35S21')===0){
             //if(Game.gcl.progress>18000000){
-                this.scoutRoom('Gamma','W33S25-sc','W33S25')
-                this.keepRoomClearOfLv0InvaderCores('Gamma','ic-killer-W33S25','10a10m','W33S25')
-                this.scoutRoom('Gamma','W33S26-sc','W33S26')
-                this.keepRoomClearOfLv0InvaderCores('Gamma','ic-killer-W33S26','10a10m','W33S26')
-                this.scoutRoom('Gamma','W32S25-sc','W32S25')
-                this.keepRoomClearOfLv0InvaderCores('Gamma','ic-killer-W32S25','10a10m','W32S25')
+                this.scoutRoom('Alpha','W25S22-sc','W25S22')
+                this.keepRoomClearOfLv0InvaderCores('Alpha','ic-killer-W25S22','10a10m','W25S22')
+                this.scoutRoom('Alpha','W25S23-sc','W25S23')
+                this.keepRoomClearOfLv0InvaderCores('Alpha','ic-killer-W25S23','10a10m','W25S23')
+                this.scoutRoom('Alpha','W24S23-sc','W24S23')
+                this.keepRoomClearOfLv0InvaderCores('Alpha','ic-killer-W24S23','10a10m','W24S23')
             }
 
             //this.reserverRoom('Gamma','buff-man',Game.rooms['W36S21'].controller,'4cl4m',true,true)
         }catch (e) {
             console.log("Set-up error",e)
         }
-        this.rotateCreep('def-W13S24-', function(activeCreepName){
+        /*this.rotateCreep('def-W13S24-', function(activeCreepName){
                 let route = mb.getMapRoute(Game.spawns['Alpha'].pos.roomName,'W13S24');
-            thing.fightyBoi('Alpha',activeCreepName,'10m4a6r10m1h1m','W13S24',route,{
+            thing.fightyBoi('Alpha',activeCreepName,'25m20r5h','W13S24',route,{
                 kiteSpots:[rp(19,23,'W13S24'),rp(14,19,'W13S24'),rp(12,27,'W13S24')],
+                waitSpot:rp(27,15,'W13S24'),
+                attackRange:5,
                 attackStructures:false
             })
-        },600)
-        this.fightyBoi('Zeta','def-0','1r1m','W13S24',[],{
+        },600)*/
+/*
+        this.fightyBoi('Zeta','def-0','2r2m','W13S24',[],{
             reckless:true,
+            waitSpot:rp(24,12,'W13S24'),
+            attackRange:8,
+            spawnPriority:true,
             attackStructures:false
         })
+        this.fightyBoi('Zeta','def-1','5a5m','W13S24',[],{
+            reckless:true,
+            waitSpot:rp(28,12,'W13S24'),
+            attackRange:8,
+            spawnPriority:true,
+            attackStructures:false
+        })
+        this.fightyBoi('Zeta','def-2','5a5m','W13S24',[],{
+            reckless:true,
+            waitSpot:rp(27,12,'W13S24'),
+            attackRange:5,
+            spawnPriority:true,
+            attackStructures:false
+        })*/
         //this.scoutRoom('Beta','scout0','W24S19',{x:25,y:25})
-/*
-        this.harassRemote('Beta','W24S18','2m2a5r7m1h1m',{
-            kiteSpots:[rp(37,22,'W24S18'),rp(30,23,'W24S18'),rp(35,27,'W24S18')],
-            waitSpot:rp(17,25,'W24S18'),
-            useBreaker:true
+      //  Memory.attacks['W19S24'] = -5;
+        //25m19r6h
+        this.harassRemote('Alpha','W22S28','10*1a1r+5r25m',{
+            kiteSpots:[rp(37,25,'W22S28'),rp(33,20,'W22S28'),rp(30,24,'W22S28')],
+            waitSpot:rp(41,31,'W22S28'),
+            spawnPriority:true,
+            useHealer:true,
+            healerBody:'8h8m'
+            //useBreaker:true
         })
-        this.harassRemote('Beta','W25S18','2m2a5r7m1h1m',{
-            kiteSpots:[rp(23,22,'W25S18'),rp(17,23,'W25S18'),rp(20,28,'W25S18')],
-            waitSpot:rp(42,20,'W25S18'),
-            useBreaker:true
+       /*
+        this.harassRemote('Alpha','W19S24','25m20r5h',{
+            kiteSpots:[rp(13,38,'W19S24'),rp(26,18,'W19S24'),rp(28,41,'W19S24')],
+            waitSpot:rp(30,31,'W19S24'),
+            spawnPriority:true
+            //useBreaker:true
         })
-*/
-        for(let i=0;i<6;i++) {
-            let id = (nodes.z.workforce_quota.upgrader.count===9)?'65ccb7e7063c93d4b6eb8703':'65ccd0b54a118d8c1ead8f78';
-                this.remoteStealer('Zeta', 'ZhS' + i, '2c2m', 'W12S23', id)
-        }
-        for(let i=6;i<8;i++) {
-            this.remoteStealer('Zeta', 'ZhS' + i, '2c2m', 'W12S24', '65ccd0b54a118d8c1ead8f78')
-        }
 
+        this.harassRemote('Alpha','W20S25','10m10r5h5m',{
+            waitSpot:rp(23,28,'W20S25'),
+            spawnPriority:true
+        })
+        */
+        /*try {
+            this.scheduledAttack('Alpha', 'W22S28', 'A1-', rp(25, 15, 'W22S28'), 1, {
+                duoCount: 2,
+                musterSpot: rp(25, 30, 'W22S27'),
+                leaderBody: '10*1a1r+5r25m',
+                //  routeRequired:false,// dont require route
+                //leaderBody:'2m31w5r12m',
+                //leaderBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65a02aba2246ca0067c44607'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'65a0154a202246003071a027'}],
+                healerBody: '2m18h18m',
+                //healerBody:'7t8m20h1m',
+                //healerBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65a02aba2246ca0067c44607'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659ffbe1e7138d002dfb3dba'}],
+                renewSpawn: 'Alpha', spawnFacing: LEFT
+
+            })
+        }catch (e) {
+            console.log("ERROR:scheduledAttack",e)
+        }*/
+
+        for(let i=0;i<5;i++) {
+            this.remoteStealer('Zeta', 'ZhS' + i, '2c2m', 'W12S23', '65ce05c9a290b013defc95ca')
+        }
 
         this.haulResources('Beta','Btx1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===7),50)
         this.haulResources('Beta','Btx2','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===7),50)
@@ -90,11 +134,15 @@ module.exports = {
 
         this.haulResources('Alpha','Atx1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
         this.haulResources('Alpha','Atx2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
+        this.haulResources('Alpha','Atx3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
+        this.haulResources('Alpha','Atx4','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
 
-        this.haulResources('Epsilon','Etx1','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Epsilon','Etx2','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Epsilon','Etx3','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Epsilon','Etx4','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Gamma','Etx1','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Gamma','Etx2','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Gamma','Etx3','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Gamma','Etx4','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Gamma','Etx5','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Gamma','Etx6','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
 
         if(Game.cpu.bucket>4000)nodes.a.manual_addRooms=['W23S22','W22S24','W23S21'];
         if(Game.cpu.bucket>4000 && !mb.isDeadlyRoom('W34S25'))nodes.t.manual_addRooms=['W35S25'];
@@ -108,8 +156,11 @@ module.exports = {
             nodes[n].wallHeight=10000;//10k
             nodes[n].rampHeight=50000;//50k
         }
+        nodes.z.wallHeight=1000000;//10k
+        nodes.z.rampHeight=1000000;//50k
         if(nodes.a.controller().level===8) nodes.a.upgradeRate=RATE_VERY_SLOW;
         if(nodes.b.controller().level===8) nodes.b.upgradeRate=RATE_VERY_SLOW;
+        if(nodes.g.controller().level===8) nodes.b.upgradeRate=RATE_VERY_SLOW;
 
         //this.harvestAndCollectMineralFromSKRoom('Alpha','W24S24',  3,3,25000,true,false,350)
         //this.harvestAndCollectMineralFromSKRoom('Beta','W24S16',  3,3,25000,true,false,350)
@@ -366,15 +417,6 @@ module.exports = {
         let room = spawn.room;
         let storage = mb.getStorageForRoom(room.name)
 
-
-        if(room.controller.level>=7){
-            // switch focus to wall building
-            if(node.upgradeRate!==RATE_OFF && node.upgradeRate===RATE_VERY_SLOW) node.upgradeRate = RATE_SLOW;
-            node.buildFast=room.getEnemyPlayerCreeps().length>0?true: false;
-        }
-
-
-
         if(room.energyCapacityAvailable>=300){
             logs.startCPUTracker('fullAutomateRoomNode-'+node.name);
             this.runRemotes(node);
@@ -385,11 +427,6 @@ module.exports = {
             node.wallHeight=10000;//10k
             node.rampHeight=50000;//50k
 
-
-            if(storage){
-                //this.manageWalls(node);
-                node.extraFastFillSpots=[rp(spawn.pos.x-1,spawn.pos.y+3,room.name),rp(spawn.pos.x+1,spawn.pos.y+3,room.name)];
-            }
         }
         if(room.controller.level>=5){
             node.wallHeight=500000; //500k
@@ -400,9 +437,6 @@ module.exports = {
             node.rampHeight=5000000;//5m
         }
 
-        if(Game.spawns[node.name+'-2']){
-            node.extraFastFillSpots=[];
-        }
 
         //if(Game.time%500===0)this.removeRedundantRoads(node)
         logs.startCPUTracker('manageConstructionSites-'+node.name);
@@ -1285,6 +1319,7 @@ module.exports = {
 
 
         let logCPUUsag= false;
+        config.routeRequired =         config.routeRequired!==undefined?      config.routeRequired:true;
 
         if(Memory.scheduledAttackState===undefined){
             Memory.scheduledAttackState = {};
@@ -1299,8 +1334,8 @@ module.exports = {
             return;
 
         }
-        let route = mb.getMapRoute(Game.spawns[nodeName].pos.roomName,attackRoom);
-        if(!route){
+        let route = config.routeRequired?mb.getMapRoute(Game.spawns[nodeName].pos.roomName,attackRoom):[];
+        if(config.routeRequired && !route){
             console.log("ATTACK ERROR: not route for "+Game.spawns[nodeName].pos.roomName+" >> "+attackRoom)
             return;
         }
@@ -1322,7 +1357,7 @@ module.exports = {
         }
 
         //////// Config Defaults  ////////////////////////////////////////////////////////
-        let defaultMuster =  rp(25,25,route[(route.length -2)])
+        let defaultMuster = route.length>0? rp(25,25,route[(route.length -2)]):entryPoint;
 
         config.musterSpot =         config.musterSpot!==undefined?      config.musterSpot:defaultMuster;
         config.destroyBanks =       config.destroyBanks!==undefined?    config.destroyBanks:true;
@@ -3859,7 +3894,10 @@ module.exports = {
                     return creep.actOrMoveTo('pickup',targetDrop)
                 }
                 if(closestSrc){
-                    return creep.moveToPos(closestSrc);
+                    if(closestSrc.pos.getRangeTo(creep)>3) {
+                        return creep.moveToPos(closestSrc);
+                    }
+                    creep.say('wait')
                 }
 
 
@@ -4312,10 +4350,11 @@ module.exports = {
      **/
     duoBois:function(nodeName,duoName, targetRoom,config={}){
 
+        config.routeRequired =    config.routeRequired!==undefined? config.routeRequired:true;
 
         if( !Game.spawns[nodeName] )return;
-        let route = mb.getMapRoute(Game.spawns[nodeName].pos.roomName,targetRoom);
-        if(!route){
+        let route = config.routeRequired?mb.getMapRoute(Game.spawns[nodeName].pos.roomName,targetRoom):[];
+        if(config.routeRequired && !route){
             console.log("ATTACK ROUTE ERROR: no route for "+Game.spawns[nodeName].pos.roomName+" >> "+targetRoom)
             return;
         }
@@ -4566,6 +4605,18 @@ module.exports = {
 
 
             }else if( creep.memory.phase==='mustering' ){
+
+                let hostiles = Game.rooms[creep.pos.roomName].getHostiles();
+                if(hostiles.length>0){
+                    for (let hostile of hostiles){
+                        if(hostile.pos.getRangeTo(creep)<=4){
+                            creep.actOrMoveTo("attack",hostile);
+                            creep.rangedAttack(hostile);
+                            break
+                        }
+                    }
+                }
+
 
                 logs.startCPUTracker('scheduledAttack-'+cname+'-mustering');
                 if(!creep.pos.isNearTo(musterSpot)){
