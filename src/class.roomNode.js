@@ -445,9 +445,9 @@ class RoomNode{
     runCreeps(){
         
        let playerAttackers = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
-       logs.startCPUTracker(this.name+':runAllFillers');
-       this.runAllFillers();
-        logs.stopCPUTracker(this.name+':runAllFillers');
+      // logs.startCPUTracker(this.name+':runAllFillers');
+       //this.runAllFillers();
+       // logs.stopCPUTracker(this.name+':runAllFillers');
         
         for(let roleName in this.workforce_quota){
             this.workforce_quota[roleName].count = 0;

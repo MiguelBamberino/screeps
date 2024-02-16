@@ -15,10 +15,54 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
     }
     runComplex(){
         if(!this.config)return;
-        if(this.config.spawnFastFillerReady){
+        if(Game.spawns[this.name+'-3']){
 
-            //this.runAllFillers();
+            this.runAllFillers();
         }
+    }
+    runAllFillers(){
+
+        this.runFiller(this.name+'-3',this.name.charAt(0)+ 'FF4');
+        this.runFiller(this.name+'-3',this.name.charAt(0)+'FF5');
+
+    }
+    runFiller(spawnName,creepName){
+
+        if(!Game.spawns[spawnName])return;
+
+        let mainSpawnDirs = this.getMainSpawnDirs(this.facing);
+        let fillerSpawnDirs = this.getFillerSpawnDirs(this.facing);
+
+        // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot.
+        Game.spawns[spawnName].forceDirectionHack = mainSpawnDirs;
+
+        if(!Game.creeps[creepName]){
+            let bodyPlan = fillerRole.getParts(0,this.config);
+            Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,fillerSpawnDirs);
+        }
+        if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){
+            let creep = Game.creeps[creepName];
+            fillerRole.run(creep,this.config);
+        }
+    }
+    getMainSpawnDirs(facing){
+        return facing;
+    }
+    getFillerSpawnDirs(facing){
+        let dirs =[];
+        if(facing===TOP){
+            dirs = [LEFT,RIGHT];
+        }
+        if(facing===LEFT){
+            dirs = [TOP,BOTTOM];
+        }
+        if(facing===RIGHT){
+            dirs = [TOP,BOTTOM];
+        }
+        if(facing===BOTTOM){
+            dirs = [LEFT,RIGHT];
+        }
+        return dirs;
     }
     getLayoutPlan(facing){
 

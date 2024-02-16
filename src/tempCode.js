@@ -137,12 +137,12 @@ module.exports = {
         this.haulResources('Alpha','Atx3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
         this.haulResources('Alpha','Atx4','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
 
-        this.haulResources('Gamma','Etx1','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Gamma','Etx2','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Gamma','Etx3','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Gamma','Etx4','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Gamma','Etx5','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
-        this.haulResources('Gamma','Etx6','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50)
+        this.haulResources('Epsilon','Etx1','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
+        this.haulResources('Epsilon','Etx2','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
+        this.haulResources('Epsilon','Etx3','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
+        this.haulResources('Epsilon','Etx4','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
+        this.haulResources('Epsilon','Etx5','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
+        this.haulResources('Epsilon','Etx6','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<7),50,1,rp(26,26,'W35S21'))
 
         if(Game.cpu.bucket>4000)nodes.a.manual_addRooms=['W23S22','W22S24','W23S21'];
         if(Game.cpu.bucket>4000 && !mb.isDeadlyRoom('W34S25'))nodes.t.manual_addRooms=['W35S25'];
@@ -1107,17 +1107,28 @@ module.exports = {
     manageConstructionSites:function(node){
 
         if(node.controller().level>=2)this.buildRoadsToSrcArndController(node)
-        if(node.controller().level==5)this.buildAtRCL5(node)
-        if(node.controller().level==6)this.buildAtRCL6(node)
-        if(node.controller().level==7)this.buildAtRCL7(node)
+        if(node.controller().level===5)this.buildAtRCL5(node)
+        if(node.controller().level===6)this.buildAtRCL6(node)
+        if(node.controller().level===7)this.buildAtRCL7(node)
+        if(node.controller().level===8)this.buildAtRCL8(node)
     },
     linksSetup:{},
+    buildAtRCL8:function(node){
+        let spawn = Game.spawns[node.name];
+        let room = spawn.room;
+
+        let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
+        if(linkCount===4 && this.linksSetup[room.name]!==linkCount){
+            util.setLinksInRoom(room.name,false);
+            this.linksSetup[room.name]=linkCount;
+        }
+    },
     buildAtRCL7:function(node){
         let spawn = Game.spawns[node.name];
         let room = spawn.room;
 
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
-        if(linkCount==3 && this.linksSetup[room.name]!=linkCount){
+        if(linkCount===3 && this.linksSetup[room.name]!==linkCount){
             util.setLinksInRoom(room.name,false);
             this.linksSetup[room.name]=linkCount;
         }

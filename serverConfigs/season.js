@@ -27,7 +27,7 @@ module.exports = {
                 retreatSpot:rp(25,25,'W21S22'),
                 anchor:rp(17,37,'W21S22'),spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'),
                 buildFast: false,
-                upgradeRate: RATE_FAST,
+                upgradeRate: RATE_VERY_SLOW,
                 makeResource:RESOURCE_HYDROXIDE,
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_OXIDE,RESOURCE_ZYNTHIUM_HYDRIDE,RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_HYDRIDE],
                 labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600,7),
@@ -110,7 +110,7 @@ module.exports = {
                 surplusRequired:25000
             }),
             t: new RoomNode('Theta', {
-                retreatSpot:rp(20,21,'W33S25'),
+                retreatSpot:rp(32,25,'W33S25'),
                 anchor:rp(21,19,'W33S25'),spawnFacing:TOP,armFacing:LEFT,armAnchor:rp(26,20,'W33S25'),
                 buildTerminal: false,
                 extractMineral:true,
