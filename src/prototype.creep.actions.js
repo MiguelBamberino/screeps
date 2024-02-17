@@ -352,6 +352,12 @@ module.exports = function(){
                     costMatrix.set(0,14,50)
                     costMatrix.set(0,15,50)
                 }
+                if(roomName==='W12S24'){
+                    costMatrix.set(49,20,255)
+                    costMatrix.set(49,21,255)
+                    costMatrix.set(49,22,255)
+                    costMatrix.set(49,23,255)
+                }
                 if (roomName==='W15S24' || roomName==='W14S23' || roomName==='W14S24') {
 
                     for(let y=47; y<=49;y++){

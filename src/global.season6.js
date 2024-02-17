@@ -44,7 +44,7 @@ global.season6 = {
         const now = new Date();
         const currentHour = now.getHours();
         if(currentHour<17)return false;
-        if(currentHour>18)return false;
+        if(currentHour>18)return true;
 
         let state = Game.map.getRoomStatus(roomName);
         if(!state)return true;

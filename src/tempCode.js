@@ -29,10 +29,13 @@ module.exports = {
     },
     shardSeasonTempCode:function(){
         let thing = this;
+
+
         try{
             //if(Game.gcl.level===5)this.setupNode('Gamma','Epsilon')
             if(season6.isRoomFreezingSoon('W35S21'))this.setupNode('Alpha','Delta')
-            //if(Game.gcl.level===6)this.setupNode('Alpha','Zeta',true,true)
+            if(Game.gcl.level===7)this.setupNode('Zeta','Kappa',true,true)
+
             if(season6.daysUntilFreeze('W35S21')===0){
             //if(Game.gcl.progress>18000000){
                 this.scoutRoom('Alpha','W25S22-sc','W25S22')
@@ -47,48 +50,35 @@ module.exports = {
         }catch (e) {
             console.log("Set-up error",e)
         }
-        /*this.rotateCreep('def-W13S24-', function(activeCreepName){
-                let route = mb.getMapRoute(Game.spawns['Alpha'].pos.roomName,'W13S24');
-            thing.fightyBoi('Alpha',activeCreepName,'25m20r5h','W13S24',route,{
-                kiteSpots:[rp(19,23,'W13S24'),rp(14,19,'W13S24'),rp(12,27,'W13S24')],
-                waitSpot:rp(27,15,'W13S24'),
-                attackRange:5,
-                attackStructures:false
-            })
-        },600)*/
-/*
-        this.fightyBoi('Zeta','def-0','2r2m','W13S24',[],{
-            reckless:true,
-            waitSpot:rp(24,12,'W13S24'),
-            attackRange:8,
-            spawnPriority:true,
-            attackStructures:false
-        })
-        this.fightyBoi('Zeta','def-1','5a5m','W13S24',[],{
-            reckless:true,
-            waitSpot:rp(28,12,'W13S24'),
-            attackRange:8,
-            spawnPriority:true,
-            attackStructures:false
-        })
-        this.fightyBoi('Zeta','def-2','5a5m','W13S24',[],{
-            reckless:true,
-            waitSpot:rp(27,12,'W13S24'),
-            attackRange:5,
-            spawnPriority:true,
-            attackStructures:false
-        })*/
+
+        if(!season6.isRoomFroze('W34S25')){
+            this.rotateCreep('W34S25-sk-guard-', function(activeCreepName){
+                thing.constantGuardSKRoom('Gamma',activeCreepName,'W34S25', ['65a70e7034fa299b8cef8e5d','65a70e7034fa299b8cef8e5a','65a70e7034fa299b8cef8e61'],'20m20a5h5m')
+            },500)
+        }
+
         //this.scoutRoom('Beta','scout0','W24S19',{x:25,y:25})
       //  Memory.attacks['W19S24'] = -5;
         //25m19r6h
-        this.harassRemote('Alpha','W22S28','10*1a1r+5r25m',{
-            kiteSpots:[rp(37,25,'W22S28'),rp(33,20,'W22S28'),rp(30,24,'W22S28')],
-            waitSpot:rp(41,31,'W22S28'),
+        this.harassRemote('Zeta','W4S21','4*1a1r+8m',{
+            ////kiteSpots:[rp(37,25,'W22S28'),rp(33,20,'W22S28'),rp(30,24,'W22S28')],
+            waitSpot:rp(10,23,'W4S21'),
             spawnPriority:true,
-            useHealer:true,
-            healerBody:'8h8m'
-            //useBreaker:true
-        })
+            targetStructureTypes:[STRUCTURE_EXTENSION,STRUCTURE_SPAWN]
+           // useHealer:true,
+        },750,true)
+
+        this.harassRemote('Zeta','W10S20','4*1a1r+8m',{
+            ////kiteSpots:[rp(37,25,'W22S28'),rp(33,20,'W22S28'),rp(30,24,'W22S28')],
+            waitSpot:rp(7,31,'W4S22'),
+            spawnPriority:true,
+        },500,true)
+
+        this.harassRemote('Zeta','W9S20','4*1a1r+8m',{
+            ////kiteSpots:[rp(37,25,'W22S28'),rp(33,20,'W22S28'),rp(30,24,'W22S28')],
+            waitSpot:rp(7,31,'W4S22'),
+            spawnPriority:true,
+        },500,true)
        /*
         this.harassRemote('Alpha','W19S24','25m20r5h',{
             kiteSpots:[rp(13,38,'W19S24'),rp(26,18,'W19S24'),rp(28,41,'W19S24')],
@@ -123,44 +113,70 @@ module.exports = {
         for(let i=0;i<5;i++) {
             this.remoteStealer('Zeta', 'ZhS' + i, '2c2m', 'W12S23', '65ce05c9a290b013defc95ca')
         }
+        if(!season6.isRoomFroze('W35S25')){
+            for(let i=0;i<6;i++) {
+                this.remoteStealer('Gamma', 'GhS' + i, '10c10m', 'W35S25', '65ce0a495bd2521e32c8f186')
+            }
+        }
 
-        this.haulResources('Beta','Btx1','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===7),50)
-        this.haulResources('Beta','Btx2','8c4m',gob('65bea8796a4f1e7ff5aa6c17'),gob('65bdfaacfb452d12e6e59d24'),[RESOURCE_ENERGY],[],(nodes.b.controller().level===7),50)
+        this.parentBoostHaulController('Gamma','Theta',rp(20,34,'W33S25'))
+        this.parentBoostHaulController('Zeta','Zeta',rp(32,9,'W13S24'),1)
 
-        this.haulResources('Gamma','Gtx1','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
-        this.haulResources('Gamma','Gtx2','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
-        this.haulResources('Gamma','Gtx3','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
-        this.haulResources('Gamma','Gtx4','8c4m',gob('65c206bd631ab7d52225f9c8'),gob('65c16dba22957318c5a1a2d7'),[RESOURCE_ENERGY],[],(nodes.g.controller().level===7),50)
-
-        this.haulResources('Alpha','Atx1','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
-        this.haulResources('Alpha','Atx2','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
-        this.haulResources('Alpha','Atx3','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
-        this.haulResources('Alpha','Atx4','8c4m',gob('65bc69883f6f38b9bf56c0c5'),gob('65bbf3aa22957333209fd1dc'),[RESOURCE_ENERGY],[],(nodes.a.controller().level===7),50)
-
-        this.haulResources('Epsilon','Etx1','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
-        this.haulResources('Epsilon','Etx2','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
-        this.haulResources('Epsilon','Etx3','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
-        this.haulResources('Epsilon','Etx4','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
-        this.haulResources('Epsilon','Etx5','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<8),50,1,rp(26,26,'W35S21'))
-        this.haulResources('Epsilon','Etx6','8c4m',gob('65ca4ef45bd252cc67c7c83e'),gob('65c8fbf7937a97fa500bc3cf'),[RESOURCE_ENERGY],[],(nodes.e.controller().level<7),50,1,rp(26,26,'W35S21'))
+        if(!season6.isRoomFroze('W33S25')) {
+            let Tcontainer = gob('65d1058e179abc292b78fec8');
+            this.withdrawThenUpgrade('Gamma','Gux1','10w1c10m',Tcontainer.id,'65a70e8334fa299b8cef8fd9',false,rp(17,33,'W33S25'))
+            this.withdrawThenUpgrade('Gamma','Gux2','10w1c10m',Tcontainer.id,'65a70e8334fa299b8cef8fd9',false,rp(17,34,'W33S25'))
+            this.withdrawThenUpgrade('Gamma','Gux3','10w1c10m',Tcontainer.id,'65a70e8334fa299b8cef8fd9',false,rp(18,34,'W33S25'))
+            this.withdrawThenUpgrade('Gamma','Gux4','10w1c10m',Tcontainer.id,'65a70e8334fa299b8cef8fd9',false,rp(18,35,'W33S25'))
+            this.haulResources('Gamma', 'Gtx21', '10c5m', gob('65d0f4f563669e6daf5287d8'), Tcontainer, [RESOURCE_ENERGY], [], (nodes.t.controller().level < 8), 50, 1, rp(21, 34, 'W33S25'))
+            this.haulResources('Gamma', 'Gtx22', '10c5m', gob('65d0f4f563669e6daf5287d8'), Tcontainer, [RESOURCE_ENERGY], [], (nodes.t.controller().level < 8), 50, 1, rp(21, 34, 'W33S25'))
+            this.haulResources('Gamma', 'Gtx23', '10c5m', gob('65d0f4f563669e6daf5287d8'), Tcontainer, [RESOURCE_ENERGY], [], (nodes.t.controller().level < 8), 50, 1, rp(21, 34, 'W33S25'))
+            this.haulResources('Gamma', 'Gtx24', '10c5m', gob('65d0f4f563669e6daf5287d8'), Tcontainer, [RESOURCE_ENERGY], [], (nodes.t.controller().level < 8), 50, 1, rp(21, 34, 'W33S25'))
+        }
 
         if(Game.cpu.bucket>4000)nodes.a.manual_addRooms=['W23S22','W22S24','W23S21'];
-        if(Game.cpu.bucket>4000 && !mb.isDeadlyRoom('W34S25'))nodes.t.manual_addRooms=['W35S25'];
-        //nodes.b.manual_addRooms=['W22S15'];
-        //nodes.d.manual_addRooms=['W36S19','W36S18'];
+        if(Game.cpu.bucket>3000 && !mb.isDeadlyRoom('W34S25') && !season6.isRoomFroze('W34S25'))nodes.t.manual_addRooms=['W34S25'];
+        if(Game.cpu.bucket>6000)nodes.b.manual_addRooms=['W22S15','W23S15'];
+        nodes.g.manual_addRooms=['W34S22','W34S21','W32S23','W34S23'];
+        nodes.z.manual_ignoreRooms=['W12S24'];
 
         for(let n in nodes){
             logs.startCPUTracker('fullAutomateRoomNode-'+n);
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
             logs.stopCPUTracker('fullAutomateRoomNode-'+n,false);
+
+            let homeRoom = nodes.a.coreRoomName
+            if(season6.isRoomFreezingSoon(nodes[n].coreRoomName)){
+                nodes[n].surplusRequired=2000;
+                nodes[n].terminalEnergyCap=200000;
+                let term = nodes[n].terminal();
+                if(term){
+                    nodes[n].imports = [];
+                    let sentSomething = false;
+                    for(let conf of nodes[n].exports){
+                        if(term.storingAtLeast(1,conf.resource_type)){
+                            if(term.send(conf.resource_type,term.storedAmount(conf.resource_type),homeRoom)===OK){
+                                sentSomething=true;
+                            }
+                        }
+                    }
+                    if(!sentSomething){
+                        term.send(RESOURCE_ENERGY,1000,nodes.a.coreRoomName)
+                    }
+                }
+            }
+
+
             nodes[n].wallHeight=10000;//10k
             nodes[n].rampHeight=50000;//50k
+            if(nodes[n].controller().level===8) nodes[n].upgradeRate=RATE_VERY_SLOW;
+
+
         }
-        nodes.z.wallHeight=1000000;//10k
-        nodes.z.rampHeight=1000000;//50k
-        if(nodes.a.controller().level===8) nodes.a.upgradeRate=RATE_VERY_SLOW;
-        if(nodes.b.controller().level===8) nodes.b.upgradeRate=RATE_VERY_SLOW;
-        if(nodes.g.controller().level===8) nodes.b.upgradeRate=RATE_VERY_SLOW;
+        nodes.z.wallHeight=1000000;//1m
+        nodes.z.rampHeight=1000000;//1m
+
+
 
         //this.harvestAndCollectMineralFromSKRoom('Alpha','W24S24',  3,3,25000,true,false,350)
         //this.harvestAndCollectMineralFromSKRoom('Beta','W24S16',  3,3,25000,true,false,350)
@@ -169,9 +185,9 @@ module.exports = {
         // this.mosquitoAttack('Alpha','mosq-1','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
         // this.mosquitoAttack('Alpha','mosq-2','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
 
-        //this.scoutPotentialBase('Alpha','W13S24',true)
-        if(Game.cpu.bucket>4000 && nodes.e.online)
-            this.withdrawThenUpgrade('Gamma','Gux1','6w1c6m','65cc49e9bfd30d4587edaa02','65a70e5d34fa299b8cef8c67')
+        this.scoutPotentialBase('Zeta','W3S27',true)
+        if(Game.cpu.bucket>4000 && nodes.d.online)
+            this.withdrawThenUpgrade('Alpha','Aux1','6w1c6m','65d0f20863669e78c15286d1','65a70f1034fa299b8cef9a1e')
 
         //this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
         //this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
@@ -322,6 +338,26 @@ module.exports = {
         this.runFactory('Delta',RESOURCE_BATTERY)
 
 
+    },
+
+    parentBoostHaulController:function(feederName,boostName,waitSpot=false,supportCount=3){
+        try {
+            let boostKey = boostName.charAt(0);
+            let term = nodes[boostKey.toLowerCase()].terminal();
+            let storage = nodes[boostKey.toLowerCase()].storage();
+            let container = nodes[boostKey.toLowerCase()].controller().getContainer();
+            if (term && storage && container) {
+                let keepSpawning = (nodes[boostKey.toLowerCase()].controller().level < 8);
+                for (let i = 0; i < (supportCount*2); i++) {
+                    this.haulResources(feederName, boostKey + 'tx' + i, '8c4m', storage, container, [RESOURCE_ENERGY], [], keepSpawning, 50,1,waitSpot)
+                    i++;
+                    this.haulResources(feederName, boostKey + 'tx' + i, '8c4m', term, container, [RESOURCE_ENERGY], [], keepSpawning, 50,1,waitSpot)
+
+                }
+            }
+        }catch (e) {
+            console.log("ERROR:parentBoostHaulController",e)
+        }
     },
 
     scoutPotentialBase:function(nodeName,roomName,swampy=false){
@@ -614,9 +650,9 @@ module.exports = {
             Memory.remotes[node.name][roomName].score += 80+srcs.length;
             Memory.remotes[node.name][roomName].reason += "+1S,";
         }
-        if(srcs.length===3 && lairs.length ===0){
-            Memory.remotes[node.name][roomName].score -= 200;
-            Memory.remotes[node.name][roomName].reason += "+CSR,";
+        if(srcs.length===3){
+            Memory.remotes[node.name][roomName].score -=  lairs.length ===0?200:100;
+            Memory.remotes[node.name][roomName].reason +=  lairs.length ===0?"-CSR,":"-sk,";
         }
 
 
@@ -654,6 +690,8 @@ module.exports = {
             }
             let available = toSorted.sort((a,b) => a.score - b.score).map(object => object.name)
             let supportCount = node.controller().level>=7?6:3;
+            supportCount = node.controller().level===8?8:supportCount;
+
             for(let i=0; i<=supportCount;i++)if(available[i])node.remoteRoomNames.push(available[i]);
         }
         logs.stopCPUTracker('sortRemotes-'+node.name);
@@ -3875,10 +3913,10 @@ module.exports = {
 
                     for(let src of sources){
 
-                        let dist = src.pos.getRangeTo(creep);
-                        if(dist<closestDist){
-                            closestSrc = src;
-                            closestDist = dist;
+                       // let dist = src.pos.getRangeTo(creep);
+                       // if(dist<closestDist){
+                           // closestSrc = src;
+                           // closestDist = dist;
 
                             let containers = src.pos.lookForNearStructures(STRUCTURE_CONTAINER);
                             let container = (containers.length>0)?containers[0]:false;
@@ -3887,15 +3925,18 @@ module.exports = {
                             if(container && container.store.getUsedCapacity(RESOURCE_ENERGY) >= creep.store.getFreeCapacity(RESOURCE_ENERGY)  ){
                                 targetContainer = container;
                                 creep.memory.container_id = container.id;
+                                break;
                             }else{
                                 let drop = src.pos.lookForNearbyResource(RESOURCE_ENERGY);
                                 if(drop.amount>50){
                                     targetDrop = drop;
                                     creep.memory.drop_id = drop.id;
+                                    break;
                                 }
+
                             }
 
-                        }
+                        //}
                     }
                 }
                 if(targetContainer && !targetContainer.isEmpty()){

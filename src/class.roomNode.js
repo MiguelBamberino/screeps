@@ -819,100 +819,7 @@ class RoomNode{
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Filler Code
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    runAllFillers(){
-        return;
-         if(this.spawnFastFillerReady){
-            this.runFiller(this.name,this.name.charAt(0)+ 'FF0');
-            this.runFiller(this.name,this.name.charAt(0)+'FF1');
-           let i=2;
 
-            if(Game.spawns[this.name+'-2']){
-                this.runFiller(this.name+'-2', (this.name.charAt(0))+'FF2');
-                this.runFiller(this.name+'-2', (this.name.charAt(0))+ 'FF3');
-                i+=2;
-            }
-            if(this.name=='Zeta' && Game.spawns['Zeta-3']){
-                this.runFiller(this.name+'-3', (this.name.charAt(0))+'FF4');
-                this.runFiller(this.name+'-3', (this.name.charAt(0))+ 'FF5');
-                i+=2;
-            }
-            if(this.name=='Beta' && Game.spawns['Beta-3']){
-                this.runFiller(this.name+'-3', (this.name.charAt(0))+'FF4');
-                this.runFiller(this.name+'-3', (this.name.charAt(0))+ 'FF5');
-                i+=2;
-            }
-             
-            for(let pos of this.extraFastFillSpots){
-                
-                this.runFiller(this.name,this.name.charAt(0)+'FF'+i,pos);
-                i++;
-            }
-        }
-    }
-    runFiller(spawnName,creepName,moveToSpot=false){
-        
-        if(!Game.spawns[spawnName])return;
-        
-        // erghh...screwed me over too many times. Will do long term fix one day. Stop the tempCode creeps from spawning into a fast filler spot. 
-        // nob heads!
-        
-        Game.spawns[spawnName].forceDirectionHack = this.getMainSpawnSpots();
-        
-        if(spawnName=='Zeta-3'||spawnName=='Theta-3')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,TOP,TOP_RIGHT];
-        if(spawnName=='Iota-2'||spawnName=='Lambda-2')Game.spawns[spawnName].forceDirectionHack = [TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
-        if(spawnName=='Theta-2')Game.spawns[spawnName].forceDirectionHack = [TOP_LEFT,LEFT,BOTTOM_LEFT];
-        if(['Zeta-2','Beta-2','Alpha-2','Gamma-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
-            Game.spawns[spawnName].forceDirectionHack = [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
-        
-		 if(spawnName=='Beta-3')Game.spawns[spawnName].forceDirectionHack = [BOTTOM];
-		
-	//	logs.startCPUTracker(this.name+creepName+':spawn'); 
-        if(!Game.creeps[creepName]){
-            
-            let bodyPlan = creepRoles['filler'].getParts(0,this.getConfig());
-            
-            let dirs = (moveToSpot)?this.getMainSpawnSpots():this.getMainSpawnFillerSpots();
-            if(moveToSpot){
-                bodyPlan.push(MOVE);
-            }
-            
-            
-            
-             if(spawnName=='Zeta-3')
-                Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[BOTTOM_LEFT,BOTTOM_RIGHT]);
-            else if(['Zeta-2','Beta-2','Alpha-2','Gamma-2','Delta-2','Epsilon-2','Kappa-2','Mu-2'].includes(spawnName))
-                Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,TOP_RIGHT]);
-            else if(spawnName=='Iota-2'||spawnName=='Lambda-2')
-                Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_LEFT,BOTTOM_LEFT]);
-            else if(spawnName=='Theta-2')
-                Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[TOP_RIGHT,BOTTOM_RIGHT]);
-			 else if(['Beta-3','Kappa-3','Mu-3'].includes(spawnName))
-                Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,[LEFT,RIGHT]);
-
-            else{ 
-                // this is the base spawn, so should have one adj to terminal. we need to increase transfer throughput
-                if( this.terminal() && (this.upgradeRate===RATE_FAST || this.upgradeRate===RATE_VERY_FAST) ){
-                    bodyPlan.push(CARRY);
-                } 
-                
-                let res = Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs);
-                
-            }
-        }
-       // logs.stopCPUTracker(this.name+creepName+':spawn'); 
-        
-       // logs.startCPUTracker(this.name+creepName+':run'); 
-        if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){
-            let creep = Game.creeps[creepName];
-            
-            if(moveToSpot && !creep.pos.isEqualTo(moveToSpot)){
-                   creep.moveTo(moveToSpot);
-            }else{
-                 creepRoles['filler'].run(creep,this.getConfig());
-            }
-        }
-       // logs.stopCPUTracker(this.name+creepName+':run'); 
-    }
     getMainSpawnSpots(){
         
         if(this.spawnFacing===TOP){
@@ -928,22 +835,7 @@ class RoomNode{
             return [BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
         }
     }
-    getMainSpawnFillerSpots(){
-        let dirs =[];
-        if(this.spawnFacing===TOP){
-            dirs = [BOTTOM_LEFT,BOTTOM_RIGHT];
-        }
-        if(this.spawnFacing===LEFT){
-            dirs = [TOP_RIGHT,BOTTOM_RIGHT];
-        }
-        if(this.spawnFacing===RIGHT){
-            dirs = [TOP_LEFT,BOTTOM_LEFT];
-        }
-        if(this.spawnFacing===BOTTOM){
-            dirs = [TOP_LEFT,TOP_RIGHT];
-        }
-        return dirs;
-    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Spawning Code
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1012,33 +904,13 @@ class RoomNode{
                     
 
                 if(Game.spawns[this.name+'-2'] && cname===ERR_BUSY){
-                    let dirs = [];
-                    if(this.name=='Iota'){
-                        dirs=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT];
-                    }
-                    if(this.name=='Zeta' || this.name=='Beta'|| this.name=='Alpha'){
-                        dirs=[BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
-                    }
-                    if(this.name=='cc'){
-                        dirs=[TOP_LEFT,TOP,TOP_RIGHT];
-                    }
-                    if(this.name=='Theta'){
-                        dirs=[TOP_LEFT,LEFT,BOTTOM_LEFT];
-                    }
-          
-                    cname = Game.spawns[this.name+'-2'].createCreep(bodyPlan,{role:roleName},false,dirs);
+
+                    cname = Game.spawns[this.name+'-2'].createCreep(bodyPlan,{role:roleName},false);
                
                 } 
                 if(Game.spawns[this.name+'-3'] && cname===ERR_BUSY){
-                    let dirs = [];
-            
-                    if(this.name=='Iota'){
-                        dirs=[TOP_LEFT,TOP,TOP_RIGHT];
-                    }
-                    if(this.name=='Beta'|| this.name=='Alpha'){
-                        dirs=[BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT];
-                    }
-                    cname = Game.spawns[this.name+'-3'].createCreep(bodyPlan,{role:roleName},false,dirs);
+
+                    cname = Game.spawns[this.name+'-3'].createCreep(bodyPlan,{role:roleName},false);
    
                 } 
                
@@ -1129,7 +1001,7 @@ class RoomNode{
                 750, // RCL5
                 750, // RCL6
                 750, // RCL7
-                750 // RCL8
+                2000 // RCL8 >>> we switch to 1k carry at this point
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
         // bit of a patch, to try accomodate for RCL7. When we have 7 or more remotes, the distances

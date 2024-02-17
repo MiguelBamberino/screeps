@@ -153,7 +153,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex {
                 // row 1
                 {type:STRUCTURE_EXTENSION,offset:{x:-1,y:-2},rcl:5},
                 {type:STRUCTURE_EXTENSION,offset:{x:-1,y:0},rcl:5,replacedAtRCL: 8},
-                {type:STRUCTURE_EXTENSION,offset:{x:-1,y:-2},rcl:5},
+                {type:STRUCTURE_EXTENSION,offset:{x:-1,y:2},rcl:5},
                 // row 2
                 {type:STRUCTURE_EXTENSION,offset:{x:-2,y:-2},rcl:5},
                 {type:STRUCTURE_EXTENSION,offset:{x:-2,y:-1},rcl:5},

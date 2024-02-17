@@ -17,11 +17,16 @@ var role = {
         }
 
         // !! WARNING!! Don't have >15 WORK parts, because thats max upgrade amount at RCL 8
-        if(config.controller.level===8 && budget >=2450){
-            // RCL ? - 1400 + 700 + 350 = 2450/1800 30 ext
-            return '15w10c4m';
+        if(config.controller.level===8 && budget >=1850){
+            // RCL ? - 1500 + 150 + 200 = 2450/1800 30 ext
+            return '15w3c4m';
 
         }
+        if(config.controller.level===7 && config.upgradeRate===RATE_VERY_FAST && budget >= 2450 ){
+            // RCL 7 - 1600 + 200 + 250
+            return '20w4c5m';
+        }
+
 
           if(budget >= 2000 ){ // RCL 6 - 1600 + 200 + 200 = 2000/1800 30 ext
               return '16w4c4m';

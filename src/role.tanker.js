@@ -8,6 +8,12 @@ var roleTanker = {
         if(budget>1300 && config.upgradeRate===RATE_VERY_FAST)
             budget=1300;
 
+        if(config.controller.level===8){
+            // we can afford the spawn time delays, to make bigger creeps, to reduce CPU
+            // we aren't going to be upgrading fast either, so no need to for high throughput
+            return '10*2c1m';
+        }
+
         if(budget >= 1500 ){ // RCL 5 - 1000 + 500 = 1500/1800 30 ext
             //return '10*2c1m';
             return '6*2c1m'; // big than this seems to choke up too much spawn time
