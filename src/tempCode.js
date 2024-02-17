@@ -928,6 +928,9 @@ module.exports = {
             // if we have 3 srcs, we have a sk room
             if(srcs.length===3 && eCap >=1300)
                 harvesterBodyPlan="10w1c5m";
+            // save on CPU at higher RCLs:
+            if(node.controller().level>=7)
+                harvesterBodyPlan="12w1c6m";
 
             if(!invaderReserved && invadeCores.length===0){
                 for(let src of srcs){
@@ -969,6 +972,7 @@ module.exports = {
             // only reserve the first 3 priority remotes.
             if(controller && ( node.controller().level>=7 || remoteMemory.controllerDistance<50 || srcs.length===2 )  && eCap>=650){
                 let bodyPlan = eCap>=1300?'2cl2m':'1cl1m';
+                bodyPlan = eCap>=2600?'4cl4m':bodyPlan;
 
                 // dont spawn reserver if we've seen fighter in the room
                 // if we dont have vision, we dont have a harvester near src
@@ -986,7 +990,8 @@ module.exports = {
 
 
                 this.reserverRoom(node.name,reserverName,controller,bodyPlan,false,keepSpawningResy)
-                if(remoteMemory.controllerSpots>1){
+                // if we are still on 1 spawn, then spawn 1 extra claimer to cover gap
+                if(remoteMemory.controllerSpots>1 && node.controller().level<7){
                    // let doubleTeam = (invaderReserved || invadeCores.length>0);
                     // we used to only spawn in support to fend off invaderCores, but there is adv to getting the reservation highg
                     // and keeping it high, on high value remotes.
