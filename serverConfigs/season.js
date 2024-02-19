@@ -122,6 +122,7 @@ module.exports = {
                 buildFast: false,
                 upgradeRate: RATE_VERY_FAST,
                 surplusRequired:25000,
+                labComplex:new LabComplex( rp( 30,9,'W13S24' ),TOP_LEFT,600,7),
                 imports:[
                     {resource_type:RESOURCE_ENERGY,storageCap:100000},
                 ],

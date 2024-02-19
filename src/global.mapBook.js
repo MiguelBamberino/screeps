@@ -947,7 +947,7 @@ global.mb = {
         let key = this._makePathKey(from,to);
 
         if(!this.paths[key]){
-            logs.startCPUTracker('getPath:new')
+            logs.startCPUTracker('getPath:new '+from+" to "+to)
             let newPath = PathFinder.search(from,{pos:to,range:range} ,
                 {
                     swampCost:5,plainCost:3,maxOps:10000,
@@ -961,7 +961,7 @@ global.mb = {
                         return costMatrix;
                     }
                 });
-            logs.stopCPUTracker('getPath:new',true)
+            logs.stopCPUTracker('getPath:new '+from+" to "+to,true)
             if(!newPath.incomplete)
                 this.paths[key] = newPath.path;
             else

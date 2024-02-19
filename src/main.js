@@ -144,6 +144,8 @@ module.exports.loop = function () {
         }
         //gui.renderComplexPlan(nodes.k.coreComplex)
         //gui.renderComplexPlan(nodes.k.armComplex)
+        //let labs = new LabComplex( rp( 30,9,'W13S24' ),TOP_LEFT,600,7,true)
+        //gui.renderComplexPlan(labs)
 
         if( Game.cpu.bucket>1000 && util.getServerName()==='shard3'){
              gui.renderComplexStats(nodes.t.extractorComplex)

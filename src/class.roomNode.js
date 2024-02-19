@@ -1001,7 +1001,7 @@ class RoomNode{
                 750, // RCL5
                 750, // RCL6
                 750, // RCL7
-                2500 // RCL8 >>> we switch to 1k carry at this point
+                2750 // RCL8 >>> we switch to 1k carry at this point
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
         // bit of a patch, to try accomodate for RCL7. When we have 7 or more remotes, the distances

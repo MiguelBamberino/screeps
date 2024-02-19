@@ -145,6 +145,8 @@ module.exports = {
             if(season6.isRoomFreezingSoon(nodes[n].coreRoomName)){
                 nodes[n].surplusRequired=2000;
                 nodes[n].terminalEnergyCap=200000;
+                nodes[n].buildFast=false;
+                nodes[n].upgradeRate=RATE_VERY_SLOW;
                 let term = nodes[n].terminal();
                 if(term){
                     nodes[n].imports = [];
@@ -874,6 +876,9 @@ module.exports = {
                         for(let point of path){
                             let pos = rp(point.x,point.y,point.roomName);
                             if( !pos.lookForStructure(STRUCTURE_ROAD) && pos.isWalkable() ){
+                                if(pos.lookForConstruction()){
+                                    break; // this stops us placing more, before we have completed the path
+                                }
                                 if(mb.addConstruction(pos,STRUCTURE_ROAD)===OK){
                                     console.log(node.name,'placed road at ',pos)
                                     placed=true;break;
