@@ -1,5 +1,30 @@
 
 ===================================
+= Version 20.2.0
+===================================
+Feature
+- added CPU overload safety breaks
+- complexes can now have a maxRCL and limit how much is built
+- coreComplex can be built without the terminal
+- added fast filling to armComplex. now fully removed from roomNode.js
+- ability to turn off mineral extraction for a room
+- mb.getPath(from,to) will use pathFinder then cache path on HEAP
+- remote roads are now built 1 at a time, from home room
+
+Tweaks
+- tuning haulers to be bigger at RCL7 & 8
+- setting controller standing square is now moved to Controller prototype
+- bit of protection to stop tankers dropping too much at controller
+- changing ugrader body sizes at high RCL
+
+Patches
+- fixed bug in util.setLinksInRoom()
+- a few bugs in different rotations of armComplex
+- fixed bug where none dangerous enemies near spawn triggers safemode
+- can now pull sources without vision
+
+
+===================================
 = Version 20.1.1
 ===================================
 - Feature : added base scouting
