@@ -362,3 +362,49 @@ Structure.prototype.isMarkedForDismantle=function(val){
 Structure.prototype.markForDismantling=function(){
     return this.setMetaAttr('markedForDismantle',true);
 }
+
+//
+
+StructureController.prototype.setControllerStandingSpots=function(anchor,renew=false){
+
+    if(!renew && this.getStandingSpot())return;
+
+    let best = this.pos.findBestStandingSpots(anchor,3,9);
+
+    let sorted = [];
+    let lpp = best.path[(best.path.length-2)];
+    let entryPos = rp(lpp.x,lpp.y,best.containerSpot.roomName);
+    for(let pos of best.standingSpots){
+        if(pos.isEqualTo(best.containerSpot))
+            sorted[0]=pos;
+        else
+            sorted[ best.containerSpot.getDirectionTo(pos) ] = pos;
+    }
+    let chainLookup = {};
+    chainLookup[TOP]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0];
+    chainLookup[TOP_RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0];
+    chainLookup[RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0];
+
+    chainLookup[BOTTOM_RIGHT]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0];
+    chainLookup[BOTTOM]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0];
+
+    chainLookup[BOTTOM_LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0];
+    chainLookup[LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0];
+
+    chainLookup[TOP_LEFT]=[TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0];
+
+    let chain = [];
+    let start = best.containerSpot.getDirectionTo(entryPos);
+    for(let i in chainLookup[start]){
+        let dir = chainLookup[start][i];
+        if( sorted[dir] )chain.push(sorted[dir])
+
+    }
+    this.setStandingSpot(best.containerSpot);
+    this.setStandingSpots(chain);
+
+    best.containerSpot.colourIn('red')
+    for(let p in chain)chain[p].colourIn('yellow',0.5,p)
+    for(let p of best.path)Game.rooms[best.containerSpot.roomName].visual.text('X',p.x,p.y);
+
+}

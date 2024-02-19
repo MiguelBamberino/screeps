@@ -48,10 +48,15 @@ var role = {
             return [WORK, WORK, CARRY,MOVE];
         }
     },
-
+    /**
+     *
+     * @param creep
+     * @param config
+     * @param config.controller StructureController
+     * @param config.upgradeRate
+     * @returns {*}
+     */
     run: function(creep,config){
-
-
 
         let controller = config.controller;
 
@@ -166,17 +171,6 @@ var role = {
 
 
 
-    },
-    siteToBuild: function(creep,config){
-
-        var site = Game.getObjectById(creep.memory.construction_site_id);
-        if(site){
-            return site;
-        }
-
-        let obj = mb.getNearestConstruction(creep.pos, [config.coreRoomName]);
-        creep.memory.construction_site_id=obj.id;
-        return obj;
     },
 
     getExtToCharge:function(creep){

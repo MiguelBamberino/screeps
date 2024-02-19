@@ -13,7 +13,7 @@ let _memHak = require('_memHak');
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Constants
 /////////////////////////////////////////////////////////////////////////////////////////////////
-global.BOT_ALLIES = ['Kalgen'];
+global.BOT_ALLIES = ['Kalgen','WhiteTurbine'];
 global. _SERVER_CONFIG = false;
 global.RATE_VERY_FAST='very-fast';
 global.RATE_FAST='fast';
@@ -142,8 +142,8 @@ module.exports.loop = function () {
             console.log("ERROR:GUI",e);
             if(util.throwErrors)throw e;
         }
-        //gui.renderComplexPlan(nodes.d.coreComplex)
-        //gui.renderComplexPlan(nodes.d.armComplex)
+        //gui.renderComplexPlan(nodes.k.coreComplex)
+        //gui.renderComplexPlan(nodes.k.armComplex)
 
         if( Game.cpu.bucket>1000 && util.getServerName()==='shard3'){
              gui.renderComplexStats(nodes.t.extractorComplex)

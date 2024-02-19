@@ -333,7 +333,7 @@ class RoomNode{
             let rangeToTower = towers.length>0?towers[0].pos.getRangeTo(enemy):99;
             let rangeToCoreSpawn = this.anchor.getRangeTo(enemy);
             
-            if(rangeToCoreSpawn<=2){
+            if( (enemy.isFighter() || enemy.isDismantler()) && rangeToCoreSpawn<=2){
                 enemyNearCoreSpawn=true;
             }
             
@@ -1001,7 +1001,7 @@ class RoomNode{
                 750, // RCL5
                 750, // RCL6
                 750, // RCL7
-                2000 // RCL8 >>> we switch to 1k carry at this point
+                2500 // RCL8 >>> we switch to 1k carry at this point
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
         // bit of a patch, to try accomodate for RCL7. When we have 7 or more remotes, the distances
@@ -1202,7 +1202,7 @@ class RoomNode{
 
     checkAndSetupStandingSpots(reset=false){
         if(!this.controller().getStandingSpot()||reset){
-            this.setControllerStandingSpots();
+            this.controller().setControllerStandingSpots(this.anchor,reset);
             this.setSourceStandingSpots();
         }
     }
@@ -1217,50 +1217,6 @@ class RoomNode{
             src.setStandingSpots(best.standingSpots)   
         }
     }
-    setControllerStandingSpots(renew=false){
-        
-        if(!renew && this.controller().getStandingSpot())return;
-        
-        let best = this.controller().pos.findBestStandingSpots(this.anchor,3,9);
-        
-        let sorted = [];
-        let lpp = best.path[(best.path.length-2)];
-        let entryPos = rp(lpp.x,lpp.y,best.containerSpot.roomName);
-        for(let pos of best.standingSpots){
-            if(pos.isEqualTo(best.containerSpot))
-                sorted[0]=pos;
-            else
-                sorted[ best.containerSpot.getDirectionTo(pos) ] = pos;    
-        }
-        let chainLookup = {};
-        chainLookup[TOP]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,,BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0];
-        chainLookup[TOP_RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0];
-        chainLookup[RIGHT]=[TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,0];
-        
-        chainLookup[BOTTOM_RIGHT]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0];
-        chainLookup[BOTTOM]=[BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,0];
-        
-        chainLookup[BOTTOM_LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0];
-        chainLookup[LEFT]=[BOTTOM_LEFT,LEFT,TOP_LEFT,TOP,TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM,0];
-        
-        chainLookup[TOP_LEFT]=[TOP_LEFT,LEFT,BOTTOM_LEFT,BOTTOM,BOTTOM_RIGHT,RIGHT,TOP_RIGHT,TOP,0];
-        
-        let chain = [];
-        let start = best.containerSpot.getDirectionTo(entryPos);
-        for(let i in chainLookup[start]){
-            let dir = chainLookup[start][i];
-            if( sorted[dir] )chain.push(sorted[dir])
-            
-        }
-        this.controller().setStandingSpot(best.containerSpot);
-        this.controller().setStandingSpots(chain);
-        
-        best.containerSpot.colourIn('red')
-        for(let p in chain)chain[p].colourIn('yellow',0.5,p)
-        for(let p of best.path)Game.rooms[best.containerSpot.roomName].visual.text('X',p.x,p.y);
-        
-    }
-    
 
 }
 module.exports = RoomNode;

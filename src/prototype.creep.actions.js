@@ -176,80 +176,7 @@ module.exports = function(){
         let position = new RoomPosition(x,y,roomName);
         return this.moveToPos(position);
     }
-    /**
-     * Move towards a target, using the creeps mapBook to get and follow a path
-     * returns -13 if no mapBook set
-     */ 
-    Creep.prototype.moveToUsingMap = function(target){
-            
-            if(!this.mapBook){
-                return -13;
-            }
-            let path = false;
-            if(this.memory._path){
-                path = this.mapBook.getPath(this.memory._path.key);
-            }
-            if(!path || this.iAmStuck() || !this.myPathIsStillValid(target)){
-                path = this.createPathTo(target);
-            }
-            
-            let spot = path[this.memory._path.progress];
-        
-            if(spot && this.pos.isEqualTo(spot.x,spot.y)){
-                this.memory._path.progress+=1;
-                this.memory._path.attempts=0; // we actually moved, so rest the attempts
-                this.memory._path.waiting=0;
-            }
-            
-            let cutPath = path.slice(this.memory._path.progress);
-            let r =  this.moveByPath(  cutPath );
-            //this.say(r);
-            if(r===ERR_NOT_FOUND){
-                this.memory._path.attempts=100;
-            }
-             
-            if(r===OK){
-              this.memory._path.attempts+=1;// track how many attempts to move, we make  
-              
-            }
-            this.memory._path.waiting+=1;
-            
-            this.room.visual.poly(cutPath, {stroke: '#ffffff',lineStyle:'dashed'});
-            return r;
-    }
-    /**
-     * Is there an obstacle on my path that is not moving?
-     */ 
-    Creep.prototype.iAmStuck = function(){
-        return  (this.memory._path.attempts > 4 || this.memory._path.waiting>10);
-    }
-    /**
-     * Has the target changed from our cached target?
-     */ 
-    Creep.prototype.myPathIsStillValid = function(target){
-        if(this.memory._path){
-            let rp =  this.mapBook.getRoomPositionFrom(target);
-            let tk = this.mapBook.positionToString(rp );
-            if(tk==this.memory._path.targetKey){
-                return true;
-            }
-        }
-        return false;
-    }
-    /**
-     * Get a path link from the mapBook, in order to navigate along it
-     * returns false if no mapBook set, otherwise a path array
-     */ 
-    Creep.prototype.createPathTo = function(target){
-        if(!this.mapBook){
-            return false;
-        }
-        let pk = this.mapBook.createPath(this.pos,target);
-        let path = this.mapBook.getPath(pk);
-        let tk = this.mapBook.positionToString( this.mapBook.getRoomPositionFrom(target) );
-        this.memory._path = { key:pk, eta:(Game.time+path.length),waiting:0,progress:0,attempts:0,  targetKey:tk };
-        return path;
-    }
+
     /**
      * Move towards the given target, drawing the path.
      * Will use mapBook by default. Set useMapBook=false to use creep.moveTo()
@@ -257,69 +184,193 @@ module.exports = function(){
     Creep.prototype.moveToPos=function(target,useMapBook=false){
 
         let result = false;
-        //let isCivillian = ( this.partCount(ATTACK)===0 && this.partCount(RANGED_ATTACK)===0);
-        //if(target.name)this.say(target.name)
-        if(useMapBook){
-          result= this.moveToUsingMap(target);
-        }else{
-         
-            let creep = this;// so callback works
-            let hostileIDs = this.room.getDangerousCreeps();
- 
-            let opts = {
-                maxOps:10000,reusePath:10,ignoreCreeps:true,
-                visualizePathStyle: {stroke: '#ffffff'}
-                 
-            }
-            
-            if(creep.partCount(MOVE) >= (creep.body.length/2) ){
-          
-                opts.ignoreRoads = true;
+
+        let creep = this;// so callback works
+        let hostileIDs = this.room.getDangerousCreeps();
+
+        let opts = {
+            maxOps:10000,reusePath:10,ignoreCreeps:true,
+            visualizePathStyle: {stroke: '#ffffff'}
+
+        }
+
+        if(creep.partCount(MOVE) >= (creep.body.length/2) ){
+
+            opts.ignoreRoads = true;
+
+        }
+        if(creep.isASwampRat() ){
+            opts.swampCost = 1;
+        }
+
+        let rn = target.roomName ?target.roomName :target.pos.roomName;
+        //if(this.name==='harrass-1')console.log('rn',rn,target.name,target.id)
+        if(rn ==this.pos.roomName){
+            // this shrinks pathfinding and forces creep to stay in this room. It also avoid ERR_NO_PATH from weird terrain that
+            // would make the creep leave the room to move around
+            opts.maxRooms = 1;
+            /*opts.costCallback = function(roomName,costMatrix){
+                return mb.getCostMatrix('no-exit');
+            }*/
+
+        }
+        //if(this.name==='harrass-1')clog(opts)
+
+        if(Game.shard.name =='shard3'){
+            opts.reusePath = 50;
+        }
+        if(creep.memory.swampCost){
+            opts.swampCost = creep.memory.swampCost;
+        }
+        // if we're  still on the same space as last tick, then lets try move around the noobs
+        if(this.memory.last_pos == this.pos.x+"-"+this.pos.y){
+            opts.ignoreCreeps=false;
+            opts.reusePath = 5;
+        }
+
+        opts.costCallback = function(roomName,costMatrix){
+
+            // let mpCM = mb.getCostMatrix(roomName);
+
+            // if (mpCM) return mpCM; breaks base room, because builddings are now 0, not 255
+            if(roomName==='W35S21'){
+                costMatrix.set(26,19,100)
+                costMatrix.set(28,19,100)
+                costMatrix.set(27,20,100)
+                costMatrix.set(27,22,100)
+                costMatrix.set(26,21,100)
+                costMatrix.set(28,21,100)
 
             }
-            if(creep.isASwampRat() ){
-                opts.swampCost = 1;
+            if(roomName==='W13S24'){
+                costMatrix.set(0,2,255)
+                costMatrix.set(0,3,255)
+                costMatrix.set(0,4,255)
+                costMatrix.set(0,5,255)
+                costMatrix.set(0,7,255)
+                costMatrix.set(1,2,255)
+                costMatrix.set(1,3,255)
+                costMatrix.set(1,4,255)
+                costMatrix.set(1,5,255)
+                costMatrix.set(1,7,255)
             }
-  
-            let rn = target.roomName ?target.roomName :target.pos.roomName; 
-            //if(this.name==='harrass-1')console.log('rn',rn,target.name,target.id)
-            if(rn ==this.pos.roomName){
-                // this shrinks pathfinding and forces creep to stay in this room. It also avoid ERR_NO_PATH from weird terrain that
-                // would make the creep leave the room to move around
-                opts.maxRooms = 1;
-                /*opts.costCallback = function(roomName,costMatrix){
-                    return mb.getCostMatrix('no-exit');
-                }*/
-                
+            if(roomName==='W35S25'){
+                costMatrix.set(49,43,255)
+                costMatrix.set(49,44,255)
+                costMatrix.set(49,45,255)
+                costMatrix.set(49,46,255)
+                costMatrix.set(49,47,255)
+                costMatrix.set(48,43,255)
+                costMatrix.set(48,44,255)
+                costMatrix.set(48,45,255)
+                costMatrix.set(48,46,255)
+                costMatrix.set(48,47,255)
             }
-            //if(this.name==='harrass-1')clog(opts)
-            
-            if(Game.shard.name =='shard3'){
-                opts.reusePath = 50;
+            if(roomName==='W16S22'){
+                costMatrix.set(0,10,50)
+                costMatrix.set(0,11,50)
+                costMatrix.set(0,12,50)
+                costMatrix.set(0,13,50)
+                costMatrix.set(0,14,50)
+                costMatrix.set(0,15,50)
             }
-            if(creep.memory.swampCost){
-                opts.swampCost = creep.memory.swampCost;
+            if(roomName==='W12S24'){
+                costMatrix.set(49,20,255)
+                costMatrix.set(49,21,255)
+                costMatrix.set(49,22,255)
+                costMatrix.set(49,23,255)
             }
-            // if we're  still on the same space as last tick, then lets try move around the noobs
-            if(this.memory.last_pos == this.pos.x+"-"+this.pos.y){
-                opts.ignoreCreeps=false;
-                opts.reusePath = 5;
+            if(roomName==='W33S23'||roomName==='W33S24'||roomName==='W33S22'){
+                for(let y=0; y<=49;y++){
+                    for(let x=0; x<1;x++){
+
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
             }
+            if (roomName==='W15S24' || roomName==='W14S23' || roomName==='W14S24') {
+
+                for(let y=47; y<=49;y++){
+                    for(let x=0; x<=49;x++){
+
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+
+            }
+            if ( roomName==='W16S24' ) {
+                let terrain = Game.map.getRoomTerrain(roomName)
+                for(let y=31; y<=37;y++){
+                    for(let x=0; x<=49;x++){
+
+                        if(terrain.get(x,y)===TERRAIN_MASK_SWAMP){
+                            costMatrix.set(x, y, 1);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("green");
+                        }
+                    }
+                }
+                for(let y=38; y<=49;y++){
+                    for(let x=0; x<=49;x++){
+
+                        if(terrain.get(x,y)!==TERRAIN_MASK_WALL){
+                            costMatrix.set(x, y, 255);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                        }
+                    }
+                }
+                costMatrix.set(15,37,255)
+                costMatrix.set(16,37,255)
+                costMatrix.set(17,37,255)
+                costMatrix.set(18,37,255)
+                costMatrix.set(19,37,255)
+                costMatrix.set(20,37,255)
+                costMatrix.set(21,37,255)
+
+            }
+
+            return costMatrix;
+        }
+
+        // real hacky for now. Only runs if we're not a fighty boi
+        if(creep.pos.roomName!=='W16S24' && Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
+
+            opts.reusePath=2;
+
+            let hostiles = [];
+            for(let id of hostileIDs){
+                let hostile = gob(id)
+                if(!hostile)continue;
+                hostiles.push(hostile)
+                let theirTotalFightParts = hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
+                let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
+                creep.memory.fleeZoneOfControl = false;
+                if(
+                    creep.memory.dontFlee===undefined &&
+                    this.pos.getRangeTo(hostile) < 5
+                    && myTotalFightyParts < theirTotalFightParts
+                    && !BOT_ALLIES.includes(hostile.owner.username)
+                    ){
+                    // if the creep is too close, then flee, before repathing
+                    let r = target.pos?target.pos.roomName:target.roomName;
+                    target = new RoomPosition(25,25,r);
+                    creep.memory.fleeZoneOfControl = true;
+                    creep.say('flee')
+                    //clog(hostile.name+" stronger than "+creep.name ,'fleeing')
+                }
+
+            }
+
+
+            this.renderAvoidance(hostiles);
 
             opts.costCallback = function(roomName,costMatrix){
+                let room = Game.rooms[roomName];
+               //  let mpCM = mb.getCostMatrix(roomName);
 
-                // let mpCM = mb.getCostMatrix(roomName);
+                if (!room ) return costMatrix;
 
-                // if (mpCM) return mpCM; breaks base room, because builddings are now 0, not 255
-                if(roomName==='W35S21'){
-                    costMatrix.set(26,19,100)
-                    costMatrix.set(28,19,100)
-                    costMatrix.set(27,20,100)
-                    costMatrix.set(27,22,100)
-                    costMatrix.set(26,21,100)
-                    costMatrix.set(28,21,100)
-
-                }
                 if(roomName==='W13S24'){
                     costMatrix.set(0,2,255)
                     costMatrix.set(0,3,255)
@@ -331,187 +382,67 @@ module.exports = function(){
                     costMatrix.set(1,4,255)
                     costMatrix.set(1,5,255)
                     costMatrix.set(1,7,255)
+                    costMatrix.set(26,6,255)
+                    costMatrix.set(27,7,100)
+                    costMatrix.set(29,7,100)
+                    costMatrix.set(28,6,255)
                 }
-                if(roomName==='W35S25'){
-                    costMatrix.set(49,43,255)
-                    costMatrix.set(49,44,255)
-                    costMatrix.set(49,45,255)
-                    costMatrix.set(49,46,255)
-                    costMatrix.set(49,47,255)
-                    costMatrix.set(48,43,255)
-                    costMatrix.set(48,44,255)
-                    costMatrix.set(48,45,255)
-                    costMatrix.set(48,46,255)
-                    costMatrix.set(48,47,255)
-                }
-                if(roomName==='W16S22'){
-                    costMatrix.set(0,10,50)
-                    costMatrix.set(0,11,50)
-                    costMatrix.set(0,12,50)
-                    costMatrix.set(0,13,50)
-                    costMatrix.set(0,14,50)
-                    costMatrix.set(0,15,50)
-                }
-                if(roomName==='W12S24'){
-                    costMatrix.set(49,20,255)
-                    costMatrix.set(49,21,255)
-                    costMatrix.set(49,22,255)
-                    costMatrix.set(49,23,255)
-                }
-                if (roomName==='W15S24' || roomName==='W14S23' || roomName==='W14S24') {
 
-                    for(let y=47; y<=49;y++){
-                        for(let x=0; x<=49;x++){
+               if (roomName==='W15S24' || roomName==='W14S23') {
 
-                            costMatrix.set(x, y, 255);
-                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
-                        }
-                    }
+                        for(let y=47; y<=49;y++){
+                             for(let x=0; x<=49;x++){
 
-                }
-                if ( roomName==='W16S24' ) {
-                    let terrain = Game.map.getRoomTerrain(roomName)
-                    for(let y=31; y<=37;y++){
-                        for(let x=0; x<=49;x++){
-
-                            if(terrain.get(x,y)===TERRAIN_MASK_SWAMP){
-                                costMatrix.set(x, y, 1);
-                                if(Game.rooms[roomName])rp(x,y,roomName).colourIn("green");
-                            }
-                        }
-                    }
-                    for(let y=38; y<=49;y++){
-                        for(let x=0; x<=49;x++){
-
-                            if(terrain.get(x,y)!==TERRAIN_MASK_WALL){
                                 costMatrix.set(x, y, 255);
-                                if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                               if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
                             }
                         }
+
                     }
-                    costMatrix.set(15,37,255)
-                    costMatrix.set(16,37,255)
-                    costMatrix.set(17,37,255)
-                    costMatrix.set(18,37,255)
-                    costMatrix.set(19,37,255)
-                    costMatrix.set(20,37,255)
-                    costMatrix.set(21,37,255)
 
-                }
 
-                return costMatrix;
-            }
-            
-            // real hacky for now. Only runs if we're not a fighty boi
-            if(creep.pos.roomName!=='W16S24' && Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
-                
-                opts.reusePath=2;
-                
-                let hostiles = [];
                 for(let id of hostileIDs){
                     let hostile = gob(id)
                     if(!hostile)continue;
-                    hostiles.push(hostile)
-                    let theirTotalFightParts = hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
+                    let range = 2;
+                    let theirTotalFightParts= hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
                     let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
-                    creep.memory.fleeZoneOfControl = false;
+
+
                     if(
-                        creep.memory.dontFlee===undefined &&
-                        this.pos.getRangeTo(hostile) < 5 
-                        && myTotalFightyParts < theirTotalFightParts 
+                        Game.shard.name !=='shard3' &&
+                        // only avoid creep that are stronger
+                        myTotalFightyParts < theirTotalFightParts
+                        // dont avoid if we opt in for risks or need to flee from an avoid area
+                         && !creep.memory.riskyBiscuits && !creep.memory.fleeZoneOfControl
+                         // ally list
                         && !BOT_ALLIES.includes(hostile.owner.username)
+                        // if we are avoiding SKs, then add them to the avoid list
+                        || (creep.memory.avoidSkeepers && hostile.owner.username=='Source Keeper')
                         ){
-                        // if the creep is too close, then flee, before repathing
-                        let r = target.pos?target.pos.roomName:target.roomName;
-                        target = new RoomPosition(25,25,r);
-                        creep.memory.fleeZoneOfControl = true;
-                        creep.say('flee')
-                        //clog(hostile.name+" stronger than "+creep.name ,'fleeing')
+                        // changed to dist 5 because if crep & enemy diagonally move closer on same tick, they can move in range 3
+                        if(hostile.partCount(RANGED_ATTACK)>0)range=5;
+
+                        if(creep.memory.touchingCloth)range = range-1;
+
+                        let avoids = hostile.pos.getPositionsInRange(range);
+                       //clog(hostile.name+" stronger than "+creep.name ,'avoiding')
+                        for(let a of avoids){
+                            costMatrix.set(a.x, a.y, 255);
+                            //a.colourIn("orange");
+                        }
                     }
-                    
                 }
-                
-                
-                this.renderAvoidance(hostiles);
-                
-                opts.costCallback = function(roomName,costMatrix){
-                    let room = Game.rooms[roomName];
-                   //  let mpCM = mb.getCostMatrix(roomName);
-                    
-                    if (!room ) return costMatrix;
-
-                    if(roomName==='W13S24'){
-                        costMatrix.set(0,2,255)
-                        costMatrix.set(0,3,255)
-                        costMatrix.set(0,4,255)
-                        costMatrix.set(0,5,255)
-                        costMatrix.set(0,7,255)
-                        costMatrix.set(1,2,255)
-                        costMatrix.set(1,3,255)
-                        costMatrix.set(1,4,255)
-                        costMatrix.set(1,5,255)
-                        costMatrix.set(1,7,255)
-                        costMatrix.set(26,6,255)
-                        costMatrix.set(27,7,100)
-                        costMatrix.set(29,7,100)
-                        costMatrix.set(28,6,255)
-                    }
-
-                   if (roomName==='W15S24' || roomName==='W14S23') {
-                        
-                            for(let y=47; y<=49;y++){
-                                 for(let x=0; x<=49;x++){
-                                 
-                                    costMatrix.set(x, y, 255);
-                                   if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
-                                }
-                            }
-                    
-                        }
-
-                   
-                    for(let id of hostileIDs){
-                        let hostile = gob(id)
-                        if(!hostile)continue;
-                        let range = 2;
-                        let theirTotalFightParts= hostile.partCount(ATTACK)+hostile.partCount(RANGED_ATTACK);
-                        let myTotalFightyParts = creep.partCount(ATTACK)+creep.partCount(RANGED_ATTACK);
-                        
-                      
-                        if(
-                            Game.shard.name !=='shard3' &&
-                            // only avoid creep that are stronger
-                            myTotalFightyParts < theirTotalFightParts
-                            // dont avoid if we opt in for risks or need to flee from an avoid area
-                             && !creep.memory.riskyBiscuits && !creep.memory.fleeZoneOfControl
-                             // ally list
-                            && !BOT_ALLIES.includes(hostile.owner.username)
-                            // if we are avoiding SKs, then add them to the avoid list
-                            || (creep.memory.avoidSkeepers && hostile.owner.username=='Source Keeper') 
-                            ){
-                            // changed to dist 5 because if crep & enemy diagonally move closer on same tick, they can move in range 3
-                            if(hostile.partCount(RANGED_ATTACK)>0)range=5;
-                            
-                            if(creep.memory.touchingCloth)range = range-1;
-                            
-                            let avoids = hostile.pos.getPositionsInRange(range);
-                           //clog(hostile.name+" stronger than "+creep.name ,'avoiding')
-                            for(let a of avoids){
-                                costMatrix.set(a.x, a.y, 255);
-                                //a.colourIn("orange");
-                            }
-                        }
-                    }
-                    return costMatrix;
-                };
-            }
-   
-            result= this.moveTo(target,opts);
-            this.debugSay("M:"+result)
-            if(result===OK){
-                this.memory.last_pos = this.pos.x+"-"+this.pos.y;
-            }
+                return costMatrix;
+            };
         }
+
+        result= this.moveTo(target,opts);
+        this.debugSay("M:"+result)
+        if(result===OK){
+            this.memory.last_pos = this.pos.x+"-"+this.pos.y;
+        }
+
         this.traceMsg("moveTo->"+target+"="+result);
         return result;
    }

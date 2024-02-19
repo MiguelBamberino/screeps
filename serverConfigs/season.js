@@ -14,12 +14,16 @@ mb.createMapRoute(['W21S22','W21S23','W21S24','W20S24','W20S25','W19S25'])
 mb.createMapRoute(['W21S22','W21S23','W21S24','W22S24','W22S25','W22S25','W22S26','W22S27','W22S28'])
 mb.createMapRoute(['W22S17','W23S17','W23S18','W24S18'])
 mb.createMapRoute(['W13S24','W12S24','W12S25','W11S25','W11S26','W10S26','W9S26','W8S26','W8S27','W7S27','W6S27','W5S27','W4S27','W3S27'])
+mb.createMapRoute(['W13S24','W12S24','W12S25','W11S25','W10S25','W10S24','W9S24','W8S24'])
 // harrass UncleDian
+mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21','W16S20','W15S20','W14S20','W13S20','W12S20'])
+mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21','W16S20','W15S20','W14S20','W13S20','W12S20','W11S20','W10S20','W9S20','W8S20','W7S20','W6S20','W5S20','W5S21','W4S21'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21','W4S21'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21','W4S21','W4S22'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20'])
+mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W11S20'])
 require('global.season6');
 
 module.exports = {
@@ -31,10 +35,11 @@ module.exports = {
                 retreatSpot:rp(25,25,'W21S22'),
                 anchor:rp(17,37,'W21S22'),spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'),
                 buildFast: false,
-                terminalEnergyCap:20000,
+                terminalEnergyCap:100000,
                 upgradeRate: RATE_VERY_SLOW,
-                makeResource:RESOURCE_HYDROXIDE,
+                makeResource:RESOURCE_GHODIUM,
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_OXIDE,RESOURCE_ZYNTHIUM_HYDRIDE,RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_HYDRIDE],
+                //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE],
                 labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600,7),
                 imports:[
                     {resource_type:RESOURCE_LEMERGIUM,storageCap:48000},
@@ -44,7 +49,7 @@ module.exports = {
                     {resource_type:RESOURCE_HYDROGEN,storageCap:48000},
                 ],
                 exports:[
-                    {resource_type:RESOURCE_ENERGY,exportOver:40000,batchSize:10000},
+                    {resource_type:RESOURCE_ENERGY,exportOver:20000,batchSize:10000},
                 ]
 
             }),
@@ -84,7 +89,7 @@ module.exports = {
                 ]
             }),
             d: new RoomNode('Delta', {
-                retreatSpot:rp(26,25,'W38S19'),
+                retreatSpot:rp(40,36,'W25S22'),
                 anchor:rp(28,35,'W25S22'),spawnFacing:TOP,armFacing:RIGHT,armAnchor:rp(24,37,'W25S22'),
                 allowCPUShutdown:true,
                 buildTerminal: true,
@@ -94,12 +99,12 @@ module.exports = {
                 surplusRequired:25000
             }),
             e: new RoomNode('Epsilon', {
-                retreatSpot:rp(20,21,'W35S21'),
-                anchor:rp(25,20,'W35S21'),spawnFacing:LEFT,armFacing:LEFT,armAnchor:rp(31,20,'W35S21'),
+                retreatSpot:rp(20,21,'W8S24'),
+                anchor:rp(32,26,'W8S24'),spawnFacing:TOP,
                 allowCPUShutdown:true,
                 buildTerminal: true,
                 extractMineral:true,
-                buildFast: false,
+                buildFast: true,
                 upgradeRate: RATE_VERY_FAST,
                 imports:[
                     {resource_type:RESOURCE_ENERGY,storageCap:100000},
@@ -128,10 +133,10 @@ module.exports = {
                 retreatSpot:rp(32,25,'W33S25'),
                 anchor:rp(21,19,'W33S25'),spawnFacing:TOP,armFacing:LEFT,armAnchor:rp(26,20,'W33S25'),
                 buildTerminal: true,
-                extractMineral:true,
+                extractMineral:false,
                 buildFast: false,
                 upgradeRate: RATE_VERY_FAST,
-                surplusRequired:25000,
+                surplusRequired:10000,
                 imports:[
                     {resource_type:RESOURCE_ENERGY,storageCap:100000},
                 ],
@@ -149,11 +154,11 @@ module.exports = {
                 surplusRequired:25000
             }),
             k: new RoomNode('Kappa', {
-                retreatSpot:rp(30,20,'W3S27'),
-                anchor:rp(25,24,'W3S27'),spawnFacing:LEFT,armFacing:LEFT,armAnchor:rp(27,24,'W3S27'),
+                retreatSpot:rp(30,20,'E1S23'),
+                anchor:rp(10,37,'E1S23'),spawnFacing:LEFT,armFacing:TOP,armAnchor:rp(5,28,'E1S23'),
                 buildTerminal: false,
                 extractMineral:true,
-                buildFast: false,
+                buildFast: true,
                 upgradeRate: RATE_VERY_FAST,
                 surplusRequired:25000
             })

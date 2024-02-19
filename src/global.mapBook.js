@@ -344,7 +344,7 @@ global.mb = {
                 }
                 
             }else{
-                clog("no vision",name)
+                //clog("no vision",name)
             }
         }
     },
@@ -939,71 +939,42 @@ global.mb = {
     //////////////////////////////////////////////////////////////////////////////////////////
     // Path Functions
     //////////////////////////////////////////////////////////////////////////////////////////
-    markPathUsed: function(key){
-        this.paths[key].uses+=1;
+
+    _makePathKey(from,to){
+        return from.roomName+'-'+from.x+'-'+from.y+'>>'+to.roomName+'-'+to.x+'-'+to.y;
     },
-    savePath: function(key,_path){
-        this.paths[key] = { path:_path, created:Game.time, uses:1 };
-    },
-    havePath: function(key){
-        return (this.paths[key])?true:false;
-    },
-    getPath: function(key){
-        if(this.paths[key]){
-            return this.paths[key].path;
+    getPath: function(from,to,range=1){
+        let key = this._makePathKey(from,to);
+
+        if(!this.paths[key]){
+            logs.startCPUTracker('getPath:new')
+            let newPath = PathFinder.search(from,{pos:to,range:range} ,
+                {
+                    swampCost:5,plainCost:3,maxOps:10000,
+                    roomCallback: function(roomName) {
+                        let costMatrix = new PathFinder.CostMatrix;
+
+                        let structs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_ROAD]})
+                        for(let struct of structs){
+                            costMatrix.set(struct.pos.x, struct.pos.y, 1);
+                        }
+                        return costMatrix;
+                    }
+                });
+            logs.stopCPUTracker('getPath:new',true)
+            if(!newPath.incomplete)
+                this.paths[key] = newPath.path;
+            else
+                return ERR_NO_PATH;// no possible path exists
         }
-        return false;
+
+        return this.paths[key];
     },
-    deletePath: function(key){
-        if(this.paths[key]){
-            delete this.paths[key];
-            return true;
-        }
-        return false;
-        
-    },
-    allPaths:function(){
-        return this.paths;
-    },
+
     pathCount: function(){
         return Object.keys(this.paths).length;
     },
-    auditPaths: function(){
-        
-        for(let pk in this.allPaths() ){
-            let path = this.getPath(pk);
-            let timePassed = Game.time -path.created;
-            if(timePassed >= this.PATH_CACHE_KEEP_PERIOD){
-                if(path.uses < this.PATH_CACHE_PURGE_THRESHOLD){
-                    this.deletePath(pk)
-                }
-            }
-            
-        }
-    },
-    createPath: function(from,to){
-        
-        let fromRpos = this.getRoomPositionFrom(from);
-        let toRpos = this.getRoomPositionFrom(to);
-       
-        let k = this.createPathKey(fromRpos,toRpos);
-        if(!this.havePath(k)){
-           this.savePath(k,fromRpos.findPathTo(toRpos)); 
-        }else{
-            this.markPathUsed(k);
-        }
-        
-        return k;
-    },
 
-    createPathKey: function(from,to){
-        return this.positionToString(from)+'>'+this.positionToString(to);
-    },
-    expandPathKey: function(pathKey){
-        let bits=pathKey.split('>');
-        
-        return { from:this.stringToPosition(bits[0]), to: this.stringToPosition(bits[1]) };
-    },
     //////////////////////////////////////////////////////////////////////////////////////////
     // MapRoute Functions
     //////////////////////////////////////////////////////////////////////////////////////////
