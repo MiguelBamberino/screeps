@@ -90,6 +90,8 @@ class AbstractComplex{
      * Use the layout plan to find any existing structures and load them in local lookups
      */ 
     detectExistingStructures(){
+        if(!Game.rooms[this.anchor.roomName])return;
+
         this.allRequiredStructuresBuilt=true;
         this.structureLookup=[];
         this.groupLookup=[];

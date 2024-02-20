@@ -212,6 +212,7 @@ class RoomNode{
         this.coreComplex.run(this.getConfig())
         this.armComplex.run(this.getConfig())
 
+        if(this.controller().level===0)return;
 
            // logs.startCPUTracker(this.name+':decideWorkforceQuotas');
         this.decideWorkforceQuotas();
@@ -1203,18 +1204,19 @@ class RoomNode{
     checkAndSetupStandingSpots(reset=false){
         if(!this.controller().getStandingSpot()||reset){
             this.controller().setControllerStandingSpots(this.anchor,reset);
-            this.setSourceStandingSpots();
+            this.setSourceStandingSpots(reset);
         }
     }
     
     setSourceStandingSpots(reset=false){
         
         for(let src of this.sources()){
-            if(!reset && src.getStandingSpot())continue;
-            let best = src.pos.findBestStandingSpots(this.anchor,1,3);
-            clog(best,src.pos.x)
-            src.setStandingSpot(best.containerSpot)
-            src.setStandingSpots(best.standingSpots)   
+            if(reset || !src.getStandingSpot() || src.getStandingSpots().length===0) {
+                let best = src.pos.findBestStandingSpots(this.anchor, 1, 3);
+                clog(best, src.pos.x)
+                src.setStandingSpot(best.containerSpot)
+                src.setStandingSpots(best.standingSpots)
+            }
         }
     }
 

@@ -454,6 +454,8 @@ global.mb = {
          roomNames:[], ['W23S43'...]
          filters:[], many of {attribute:'',value:mixed,operator:'=|fn'}
          orderBy:{} >> {attr|fn|calc:'',value:mixed,dir:ASC|DESC}
+         justIDs:bool >> if true, an array on IDs is returned
+         requireVision:bool >> if false, then an array of objects containing id & pos is returned
      }
      */ 
     getStructures: function(query={},blog=false){

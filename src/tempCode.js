@@ -36,6 +36,7 @@ module.exports = {
 
         try{
             //if(Game.gcl.level===5)this.setupNode('Gamma','Epsilon')
+            //this.setupNode('Alpha','Theta')
             if(season6.isRoomFreezingSoon('W33S25'))this.setupNode('Epsilon','Kappa')
             //if(Game.gcl.level===7)this.setupNode('Zeta','Epsilon',false,true)
 
@@ -95,7 +96,7 @@ module.exports = {
 
 
         if(Game.time%250===0) nodes.b.terminal().send(RESOURCE_ENERGY,100000,nodes.z.coreRoomName)
-        if(Game.time%250===0 && !season6.isRoomFreezingSoon('W33S25')&& nodes.t.terminal().storingLessThan(20000)) nodes.g.terminal().send(RESOURCE_ENERGY,20000,nodes.t.coreRoomName)
+        if(Game.time%250===0 && !season6.isRoomFroze('W32S22')&& nodes.d.terminal().storingLessThan(20000)) nodes.g.terminal().send(RESOURCE_ENERGY,20000,nodes.d.coreRoomName)
 
         for(let i=0;i<2;i++) {
             this.remoteStealer('Alpha', 'AhS' + i, '8c8m', 'W24S23', nodes.d.storage().id)
@@ -107,32 +108,35 @@ module.exports = {
             this.remoteStealer('Alpha', 'AhS' + i, '8c8m', 'W26S21', nodes.d.storage().id)
         }
 
-        this.parentBoostHaulController('Gamma','Theta',rp(20,34,'W33S25'),3,'65d1058e179abc292b78fec8')
+        // this function broke last freeze. needs freeze protection
+        //this.parentBoostHaulController('Gamma','Theta',rp(20,34,'W33S25'),3,'65d1058e179abc292b78fec8')
 
         this.haulResources('Zeta', 'Ztx1', '10c5m', gob('65d109b7179abc4d5d79002c'), gob('65ccd0b54a118d8c1ead8f78'), [RESOURCE_ENERGY], [], (nodes.z.controller().level < 8), 50, 1, rp(31, 9, 'W13S24'))
         this.haulResources('Zeta', 'Ztx2', '10c5m', gob('65d109b7179abc4d5d79002c'), gob('65ccd0b54a118d8c1ead8f78'), [RESOURCE_ENERGY], [], (nodes.z.controller().level < 8), 50, 1, rp(31, 9, 'W13S24'))
         this.haulResources('Zeta', 'Ztx3', '10c5m', gob('65d109b7179abc4d5d79002c'), gob('65ccd0b54a118d8c1ead8f78'), [RESOURCE_ENERGY], [], (nodes.z.controller().level < 8), 50, 1, rp(31, 9, 'W13S24'))
 
 
-        if(!season6.isRoomFroze('W33S25')) {
-            let Tcontainer1 = nodes.t.controller().getContainer();
-            let Tcontainer2 = gob('65d1058e179abc292b78fec8')
-            let haulContainer = Tcontainer1.isFull()?Tcontainer2:Tcontainer1;
-            haulContainer = Tcontainer1.isFull()&&nodes.t.energyAtController<4000?{id:'drop',pos:nodes.t.controller().getStandingSpot()}:Tcontainer1;
-            this.withdrawThenUpgrade('Theta','Tux1','20w2c5m',Tcontainer2.id,'65a70e8334fa299b8cef8fd9',false,rp(18,35,'W33S25'),nodes.t.controller().level<8)
-            this.withdrawThenUpgrade('Theta','Tux2','20w2c5m',Tcontainer2.id,'65a70e8334fa299b8cef8fd9',false,rp(18,34,'W33S25'),nodes.t.controller().level<8)
+        if(!season6.isRoomFroze('W25S22')) {
+            //let container1 = nodes.d.controller().getContainer();
+            let targetNode = nodes.d;
+            let haulContainer = gob('65d220fdd96e92da1d34d8c0')
+            //let haulContainer = contanier1.isFull()?contanier1:contanier1;
+            //haulContainer = contanier1.isFull()&&nodes.t.energyAtController<4000?{id:'drop',pos:nodes.t.controller().getStandingSpot()}:Tcontainer1;
+            //haulContainer = contanier1.isFull()&&nodes.t.energyAtController<4000?{id:'drop',pos:nodes.t.controller().getStandingSpot()}:Tcontainer1;
+            this.withdrawThenUpgrade('Alpha','Aux1','20w2c20m',haulContainer.id,targetNode.controller().id,false,rp(34,34,'W25S22'),targetNode.controller().level<8)
+            this.withdrawThenUpgrade('Alpha','Aux2','20w2c20m',haulContainer.id,targetNode.controller().id,false,rp(35,35,'W25S22'),targetNode.controller().level<8)
+            this.withdrawThenUpgrade('Alpha','Aux2','20w2c20m',haulContainer.id,targetNode.controller().id,false,rp(34,35,'W25S22'),targetNode.controller().level<8)
 
-            for(let i=0;i<6;i++){
-                this.haulResources('Theta', 'Ttx3'+i, '20c10m', gob('65d0f4f563669e6daf5287d8'), haulContainer, [RESOURCE_ENERGY], [], (nodes.t.controller().level < 8), 50, 1, rp(21, 34, 'W33S25'))
+            for(let i=0;i<2;i++){
+                this.haulResources('Alpha', 'Atx3'+i, '20c10m',targetNode.terminal(), haulContainer, [RESOURCE_ENERGY], [], (targetNode.controller().level < 8), 50, 1, rp(32, 34, 'W25S22'))
             }
         }
 
         if(Game.cpu.bucket>4000)nodes.a.manual_addRooms=['W23S22','W22S24','W23S21'];
         if(Game.cpu.bucket>6000)nodes.b.manual_addRooms=['W22S15','W23S15'];
         nodes.g.manual_addRooms=[];
-        if(!season6.isRoomFreezingSoon('W33S23') && !season6.isRoomFroze('W33S23')){
-            nodes.g.manual_addRooms.push('W32S23')
-        }
+        nodes.g.manual_ignoreRooms=['W32S23'];
+
         nodes.z.manual_ignoreRooms=['W12S24','W12S23'];
         nodes.t.manual_ignoreRooms=['W32S24','W32S26']
 
@@ -146,7 +150,6 @@ module.exports = {
                 nodes[n].surplusRequired=2000;
                 nodes[n].terminalEnergyCap=200000;
                 nodes[n].buildFast=false;
-                nodes[n].upgradeRate=RATE_VERY_SLOW;
                 let term = nodes[n].terminal();
                 if(term){
                     nodes[n].imports = [];
@@ -183,9 +186,14 @@ module.exports = {
         // this.mosquitoAttack('Alpha','mosq-1','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
         // this.mosquitoAttack('Alpha','mosq-2','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
 
-        //this.scoutPotentialBase('Zeta','W3S27',true)
-        if(Game.cpu.bucket>4000 && nodes.d.online)
-            this.withdrawThenUpgrade('Alpha','Aux1','6w1c6m','65d0f20863669e78c15286d1','65a70f1034fa299b8cef9a1e')
+        this.scoutPotentialBase('Kappa','W2S19',true)
+        this.scoutPotentialBase('Kappa','W1S19',true)
+        this.scoutPotentialBase('Kappa','W1S19',true)
+        this.scoutPotentialBase('Kappa','W1S17',true)
+        this.scoutPotentialBase('Kappa','W2S17',true)
+        this.scoutPotentialBase('Kappa','W4S21',true)
+        //if(Game.cpu.bucket>4000 && nodes.d.online)
+            //this.withdrawThenUpgrade('Alpha','Aux1','6w1c6m','65d0f20863669e78c15286d1','65a70f1034fa299b8cef9a1e')
 
         //this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
         //this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
@@ -474,7 +482,7 @@ module.exports = {
                 }
                 mission.scoutPos = creep.pos;
                 if(controller && creep.pos.isNearTo(controller)){
-                    creep.signController(controller,"🥑")
+                    creep.signController(controller,"🥑 claim this if you want fight me 🗡️")
                     mission.status = 'SAFE';
                     mission.lastSeen = Game.time;
                     mission.travelTime = 1500 - creep.ticksToLive;
@@ -503,6 +511,7 @@ module.exports = {
             if(Game.rooms[targetRoomName]){
                 // setup standing spots, before feeder gang turns up. Important this happens before harvesters arrive.
                 nodes[t].checkAndSetupStandingSpots();
+                if(Game.time%250===0)nodes[t].coreComplex.detectExistingStructures();
                 mb.addConstruction(nodes[t].anchor,STRUCTURE_SPAWN,targetName)
             }
             let workerBody = swampy ? '4w4c12m':'4w4c4m';
@@ -608,7 +617,7 @@ module.exports = {
             Memory.remotes[node.name][roomName].reason = "manual-ignore";
             online=false;
         }
-        else if(lairs.length>0 && !node.manual_addRooms.includes(roomName) ){
+        else if(lairs.length>0 && node.controller().level<7 ){
             Memory.remotes[node.name][roomName].isDangerous = true;
             Memory.remotes[node.name][roomName].reason = "sk-room";
             online=false;
@@ -630,9 +639,10 @@ module.exports = {
                 Memory.remotes[node.name][roomName].reason = "big-attack";
                 online=false;
             }
-            if(Game.rooms[roomName].getDangerousCreeps().length >=1){
+            // switched to player fighters to stop false fires from skeepers and allies.
+            if(Game.rooms[roomName].getInvaders().length>=1 || Game.rooms[roomName].getEnemyPlayerFighters().length >=1){
                 Memory.remotes[node.name][roomName].score+=100;
-                Memory.remotes[node.name][roomName].reason += "Dngr"
+                Memory.remotes[node.name][roomName].reason += ",Dngr"
                 Memory.remotes[node.name][roomName].isDangerous = true;
             }else{
                 Memory.remotes[node.name][roomName].isDangerous = false;
@@ -875,6 +885,11 @@ module.exports = {
                     if(path!==ERR_NO_PATH){
                         for(let point of path){
                             let pos = rp(point.x,point.y,point.roomName);
+
+                            // make sure we can see the position, because a path may go through a room
+                            // we don't have vision on
+                            if(!Game.rooms[ pos.roomName ])continue;
+
                             if( !pos.lookForStructure(STRUCTURE_ROAD) && pos.isWalkable() ){
                                 if(pos.lookForConstruction()){
                                     break; // this stops us placing more, before we have completed the path
@@ -919,7 +934,7 @@ module.exports = {
         let multiplier = 2000; // base for early RCL, to allow 1k on floor per src
         if(node.controller().level>=4)
             multiplier = 3000; // containers come online, so 2k+1k on floor
-        let maxAllowedEnergyExcess = node.remoteRoomNames.length*multiplier;
+        let maxAllowedEnergyExcess = node.remoteRoomNames.length*multiplier*2;
         let tooMuchEnergyMined = (node.totalEnergyAtSources>maxAllowedEnergyExcess)
         let tankerGap = node.workforce_quota.tanker.required - node.workforce_quota.tanker.count;
         //if(tooMuchEnergyMined)console.log(node.name,'Too much EEE..stopping remote spawns',node.totalEnergyAtSources,'>',maxAllowedEnergyExcess)
@@ -982,11 +997,15 @@ module.exports = {
             // >>>>>> Kill Invaders / players >>>>>>>>>>>>>>>>
             this.defendRoom(node.name,roomName+'-guard',roomName);
 
-
             if(srcs.length===3){
-                /* this.rotateCreep(roomName+'-sk-guard-', function(activeCreepName){
-                     //thing.constantGuardSKRoom(node.name,activeCreepName,roomName, ['658f1c709ddf0f005f9abd67','658f1c709ddf0f005f9abd64','658f1c709ddf0f005f9abd63'],'20m20a5h5m')
-                 },250)*/
+                let lairIDs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_KEEPER_LAIR],justIDs:true})
+                if(lairIDs.length>0){
+                    let thing = this;
+                    this.rotateCreep(roomName+'-sk-guard-', function(activeCreepName){
+                        thing.constantGuardSKRoom(node.name,activeCreepName,roomName, lairIDs,'24m19a6h1m')
+                    },250)
+                }
+
 
             }
 

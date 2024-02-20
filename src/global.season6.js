@@ -6,6 +6,14 @@ global.season6 = {
     bootup(){
 
     },
+    clearMapBookOfFrozenRooms:function(){
+        for(let roomName in mb.allRooms()){
+            if(this.isRoomFroze(roomName)){
+                console.log("Room:",roomName," froze. Deleting")
+                mb.deleteRoom(roomName);
+            }
+        }
+    },
     freezeDateFor(roomName){
         const startDate = new Date(this.startDate);
         const date = new Date(startDate);

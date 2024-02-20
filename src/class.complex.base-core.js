@@ -176,9 +176,12 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
 
         if(facing===TOP){
             plans = [
+                // ---------- RCL 0 --------------------------------------------------
+                {type:STRUCTURE_CONTAINER,offset:{x:2,y:2},rcl:0,replacedAtRCL:2},
+                {type:STRUCTURE_CONTAINER,offset:{x:-2,y:2},rcl:0,replacedAtRCL:2},
+                {type:STRUCTURE_CONTAINER,offset:{x:0,y:2},rcl:0,replacedAtRCL:4},
                 // ---------- RCL 1 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name},
-                {type:STRUCTURE_CONTAINER,offset:{x:0,y:2},rcl:1,replacedAtRCL:4},
                 // ---------- RCL 2 --------------------------------------------------
                 // row -1 (top road)
                 {type:STRUCTURE_ROAD,offset:{x:-2,y:-1},rcl:2},
@@ -206,7 +209,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 {type:STRUCTURE_EXTENSION,offset:{x:-2,y:1},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:1},rcl:3,replacedAtRCL:6},
                 // row 2
-                {type:STRUCTURE_CONTAINER,offset:{x:-2,y:2},rcl:3},
+                //{type:STRUCTURE_CONTAINER,offset:{x:-2,y:2},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:-1,y:2},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:1,y:2},rcl:3},
                 {type:STRUCTURE_EXTENSION,offset:{x:2,y:2},rcl:3,replacedAtRCL:4},
@@ -251,9 +254,13 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
         }
         if(facing===LEFT){
             plans= [
+                // ---------- RCL 0 --------------------------------------------------
+                {type:STRUCTURE_CONTAINER,offset:{x:2,y:-2},rcl:0,replacedAtRCL:2},
+                {type:STRUCTURE_CONTAINER,offset:{x:2,y:2},rcl:0,replacedAtRCL:2},
+                {type:STRUCTURE_CONTAINER,offset:{x:2,y:0},rcl:0,replacedAtRCL:4},
                 // ---------- RCL 1 --------------------------------------------------
                 {type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name},
-                {type:STRUCTURE_CONTAINER,offset:{x:2,y:0},rcl:1,replacedAtRCL:4},
+
                 // ---------- RCL 2 --------------------------------------------------
                 // column -1 (top road)
                 {type:STRUCTURE_ROAD,offset:{x:-1,y:-2},rcl:2},

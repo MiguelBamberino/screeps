@@ -131,6 +131,7 @@ module.exports.loop = function () {
 
     }catch (e) {
         console.log("ERROR:Main-Loop",e);
+        console.log("STACK:",e.stack);
         if (util.throwErrors) throw e;
     }
         //////// GUI CODE  //////////////////////////////////

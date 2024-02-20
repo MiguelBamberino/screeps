@@ -94,8 +94,14 @@ module.exports = {
                 allowCPUShutdown:true,
                 buildTerminal: true,
                 extractMineral:true,
-                buildFast: true,
+                buildFast: false,
                 upgradeRate: RATE_VERY_FAST,
+                imports:[
+                    {resource_type:RESOURCE_ENERGY,storageCap:100000},
+                ],
+                exports:[
+                    {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:10000},
+                ],
                 surplusRequired:25000
             }),
             e: new RoomNode('Epsilon', {
@@ -131,9 +137,9 @@ module.exports = {
                 ]
             }),
             t: new RoomNode('Theta', {
-                retreatSpot:rp(32,25,'W33S25'),
-                anchor:rp(21,19,'W33S25'),spawnFacing:TOP,armFacing:LEFT,armAnchor:rp(26,20,'W33S25'),
-                buildTerminal: true,
+                retreatSpot:rp(32,25,'W23S23'),
+                anchor:rp(24,29,'W23S23'),spawnFacing:TOP,
+                buildTerminal: false,
                 extractMineral:false,
                 buildFast: false,
                 upgradeRate: RATE_VERY_FAST,
