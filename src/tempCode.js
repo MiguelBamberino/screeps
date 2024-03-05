@@ -44,11 +44,11 @@ module.exports = {
             //this.startupRoomNoVision('Theta','E15S32',{workerBody:'15*1w1c1m',workerCount:3,defend:false})
 
             this.startupNewRoomWithVision('E18S14', 'Kappa',
-                {workerCount:3,workerBody:'8*1w1c1m',harvestSources:false,
+                {workerCount:5,workerBody:'8*1w1c1m',harvestSources:true,
                     swampy:false,defend:false})
 
             this.startupNewRoomWithVision('W13S23', 'Zeta',
-                {workerCount:2,workerBody:'15*1w1c1m',harvestSources:true,
+                {workerCount:1,workerBody:'15*1w1c1m',harvestSources:true,
                     swampy:false,defend:false})
 
            // this.startupRoomNoVision('Delta', 'E8S15',{workerBody:'8*1w1c1m',workerCount:2,harvesterBody:'6w1c6m',haulToController:false,defend:true})
@@ -122,24 +122,22 @@ module.exports = {
 
         //this.selfBoostHaulController(nodes.z,rp(34,8,'W13S24'))
        // this.selfBoostHaulController(nodes.g,rp(8,13,nodes.g.coreRoomName),'30c15m',)
-        this.selfBoostHaulController(nodes.t,rp(16,20,nodes.t.coreRoomName),'30c15m')
-        this.selfBoostHaulController(nodes.t,rp(16,20,nodes.t.coreRoomName),'30c15m',false,'2')
+        //this.selfBoostHaulController(nodes.t,rp(16,20,nodes.t.coreRoomName),'30c15m')
+        //this.selfBoostHaulController(nodes.t,rp(16,20,nodes.t.coreRoomName),'30c15m',false,'2')
         this.selfBoostHaulController(nodes.b,rp(9,34,nodes.b.coreRoomName),'20c10m')
         this.selfBoostHaulController(nodes.i,rp(16,18,nodes.i.coreRoomName),'30c15m')
         this.selfBoostHaulController(nodes.i,rp(16,18,nodes.i.coreRoomName),'30c15m',false,'2')
         this.selfBoostHaulController(nodes.i,rp(16,18,nodes.i.coreRoomName),'30c15m',false,'3')
         //if(!season6.isRoomFroze(nodes.a.coreRoomName) && Game.time%500===0)nodes.a.terminal().send(RESOURCE_ENERGY,30000,nodes.g.coreRoomName)
 
-        if(Game.time%250===0 && nodes.i.terminal().haveSpaceFor(30000))
-            nodes.e.terminal().send(RESOURCE_ENERGY,30000,nodes.i.coreRoomName)
+        if(Game.time%250===0 && nodes.t.terminal().haveSpaceFor(30000))
+            nodes.e.terminal().send(RESOURCE_ENERGY,30000,nodes.t.coreRoomName)
         else if(Game.time%250===0 && nodes.b.terminal().haveSpaceFor(30000))
             nodes.e.terminal().send(RESOURCE_ENERGY,30000,nodes.b.coreRoomName)
 
-        if(Game.time%250===0)
-            nodes.z.terminal().send(RESOURCE_ENERGY,30000,nodes.i.coreRoomName)
+        if(Game.time%250===0 && nodes.z.terminal())nodes.z.terminal().send(RESOURCE_ENERGY,30000,nodes.i.coreRoomName)
 
-        if(Game.time%250===0)
-            nodes.t.terminal().send(RESOURCE_ENERGY,30000,nodes.b.coreRoomName)
+        //if(Game.time%250===0) nodes.t.terminal().send(RESOURCE_ENERGY,30000,nodes.b.coreRoomName)
 
         // this function broke last freeze. needs freeze protection
        // this.parentBoostHaulController('Alpha','Delta',rp(40,36,'W25S22'),2,'15*2c1m')
@@ -190,6 +188,7 @@ module.exports = {
             logs.startCPUTracker('fullAutomateRoomNode-'+n);
             if(n==='t' && Game.cpu.bucket<4000)continue;
             if(n==='k' && Game.cpu.bucket<5000)continue;
+            if(n==='g' && Game.cpu.bucket<6000)continue;
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
             logs.stopCPUTracker('fullAutomateRoomNode-'+n,false);
 

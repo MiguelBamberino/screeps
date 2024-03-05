@@ -1,6 +1,6 @@
 global.season6 = {
-    startingWestCoord:50,
-    startDate:'2024-02-02',// 2nd, because event started 1st, but shutdowns started 2nd
+    startingWestCoord:20,
+    startDate:'2024-03-01',// 2nd, because event started 1st, but shutdowns started 2nd
     shutdownHour:18,
     shutdownLookup:{},
     bootup(){
@@ -31,18 +31,9 @@ global.season6 = {
         const startDate = new Date(this.startDate);
         const date = new Date(startDate);
         const coords =this.explodeRoomName(roomName)
-        const daysToAdd = Math.abs(-50 - coords.x);
-        date.setDate(date.getDate() + daysToAdd);
+        const daysToAdd = Math.abs(-23 - coords.x);
+        date.setDate(date.getDate() + (daysToAdd/2));
         return date;
-    },
-    freezeDayAfterStart(roomName){
-        const startDate = new Date(this.startDate);
-        const freezeDate = this.freezeDateFor(roomName);
-        // Calculate the difference in milliseconds
-        const differenceInMilliseconds = freezeDate - startDate ;
-        // Convert milliseconds to days
-        const differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
-        return Math.abs(differenceInDays);
     },
 
     daysUntilFreeze(roomName){
@@ -54,10 +45,46 @@ global.season6 = {
         const differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
         return differenceInDays;
     },
+    daysUntilThaw(roomName){
+        const startDate = new Date(); // today
+        let state = Game.map.getRoomStatus(roomName);
+        if(!state)return 0;
+        if(state.status==='normal')return 0
+        const thawDate = new Date(state.timestamp);
+
+        // Calculate the difference in milliseconds
+        const differenceInMilliseconds = thawDate - startDate  ;
+        // Convert milliseconds to days
+        const differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+        return differenceInDays;
+    },
+    hoursUntilThaw(roomName){
+        const startDate = new Date(); // today
+        let state = Game.map.getRoomStatus(roomName);
+        if(!state)return 0;
+        if(state.status==='normal')return 0
+        const thawDate = new Date(state.timestamp);
+
+        // Calculate the difference in milliseconds
+        const differenceInMilliseconds = thawDate - startDate  ;
+        // Convert milliseconds to hours
+        const differenceInHrs = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 ));
+        return differenceInHrs;
+    },
     isFreezingToday(roomName){
         return (this.daysUntilFreeze(roomName)===0)
     },
+    isThawingToday(roomName){
+        return (this.daysUntilFreeze(roomName)===0)
+    },
     isRoomFroze(roomName){
+
+
+        let state = Game.map.getRoomStatus(roomName);
+        if(!state)return true;
+        return (state.status==='closed')
+
+        /*
         let daysLeft = this.daysUntilFreeze(roomName);
         if(daysLeft<0)return true;
         if(daysLeft>0)return false;
@@ -66,10 +93,8 @@ global.season6 = {
         const currentHour = now.getHours();
         if(currentHour<17)return false;
         if(currentHour>18)return true;
+        */
 
-        let state = Game.map.getRoomStatus(roomName);
-        if(!state)return true;
-        return (state.status==='closed')
     },
     isRoomFreezingSoon(roomName){
         let daysLeft = this.daysUntilFreeze(roomName);

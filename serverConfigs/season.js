@@ -195,7 +195,7 @@ module.exports = {
                 buildTerminal: true,
                 extractMineral:false,
                 buildFast: false,
-                upgradeRate: RATE_FAST,
+                upgradeRate: RATE_SLOW,
                 terminalEnergyCap:200000,
                 surplusRequired:10000,
                 makeResource:RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
