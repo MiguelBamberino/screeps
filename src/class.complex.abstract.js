@@ -89,7 +89,7 @@ class AbstractComplex{
     /**
      * Use the layout plan to find any existing structures and load them in local lookups
      */ 
-    detectExistingStructures(){
+    detectExistingStructures(placeEarlyUntilRCL=0){
         if(!Game.rooms[this.anchor.roomName])return;
 
         this.allRequiredStructuresBuilt=true;
@@ -111,7 +111,7 @@ class AbstractComplex{
             if(plan.group && this.groupLookup[plan.group]===undefined){
                 this.groupLookup[plan.group]=[];
             }
-            if(this.rcl>=plan.rcl){
+            if(this.rcl>=plan.rcl || (placeEarlyUntilRCL>=plan.rcl)){
                 let struct = plan.pos.lookForStructure(plan.type)
                 if(struct){
                     this.structureLookup[plan.type].push(struct.id);

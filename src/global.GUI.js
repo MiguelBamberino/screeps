@@ -356,7 +356,8 @@ global.gui = {
         if( mainAttacker && targetRamp ){
             node.room().visual.line(mainAttacker.pos,targetRamp.pos)
         }
-        if(mainAttacker){
+        // make sure they're not on the edge, otherwise the room visual fails. y+1 becomes 50 etc.
+        if(mainAttacker && !mainAttacker.onRoomEdge() && !mainAttacker.nearRoomEdge()){
             
             let towers = mb.getStructures({roomNames:[node.coreRoomName],types:[STRUCTURE_TOWER]})
             let towerStats = "dist[";
@@ -474,7 +475,7 @@ global.gui = {
             
             for(let role in node.workforce_quota){
                 let quota = node.workforce_quota[role];
-                lines.push({ key:role, value: quota.count+"/"+quota.required});
+                lines.push({ key:role, value: quota.count+"/"+quota.active+"/"+quota.required});
             }
             let renderPos = new RoomPosition(41,10,node.coreRoomName);
             

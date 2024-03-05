@@ -35,147 +35,193 @@ module.exports = {
 
 
         try{
-            //if(Game.gcl.level===5)this.setupNode('Gamma','Epsilon')
-            //this.setupNode('Alpha','Theta')
-            if(season6.isRoomFreezingSoon('W33S25'))this.setupNode('Epsilon','Kappa')
-            //if(Game.gcl.level===7)this.setupNode('Zeta','Epsilon',false,true)
+            //if(Game.gcl.level===8)
+            //this.setupNode('Alpha','Gamma')
+           // if(season6.isRoomFreezingSoon(nodes.d.coreRoomName))
+               // this.setupNode('Theta','Alpha',{workerBody:'15*1w1c1m',workerCount:3,defend:true})
 
-            //if(season6.daysUntilFreeze('W35S21')===0){
-            /*if(Game.gcl.progress>18000000){
-        this.keepRoomsClearOfInvaderCores('Alpha',['W25S23','W24S23'])
+           // if(season6.isRoomFreezingSoon(nodes.g.coreRoomName))
+            //this.startupRoomNoVision('Theta','E15S32',{workerBody:'15*1w1c1m',workerCount:3,defend:false})
 
-            }*/
+            this.startupNewRoomWithVision('E18S14', 'Kappa',
+                {workerCount:3,workerBody:'8*1w1c1m',harvestSources:false,
+                    swampy:false,defend:false})
 
+            this.startupNewRoomWithVision('W13S23', 'Zeta',
+                {workerCount:2,workerBody:'15*1w1c1m',harvestSources:true,
+                    swampy:false,defend:false})
+
+           // this.startupRoomNoVision('Delta', 'E8S15',{workerBody:'8*1w1c1m',workerCount:2,harvesterBody:'6w1c6m',haulToController:false,defend:true})
+
+
+            //this.scoutPotentialBase('Theta','E15S32',true)
             //this.reserverRoom('Gamma','buff-man',Game.rooms['W36S21'].controller,'4cl4m',true,true)
         }catch (e) {
             console.log("Set-up error",e)
         }
 
-        this.keepRoomsClearOfInvaderCores('Alpha',['W25S23','W24S23'])
-        this.keepRoomsClearOfInvaderCores('Zeta',['W7S24','W7S25'])
+        if(nodes.z.storage().storingAtLeast(10000,RESOURCE_UTRIUM_LEMERGITE)){
+            nodes.z.makeResource= RESOURCE_ZYNTHIUM_KEANITE;
+            nodes.z.labComplex.make(RESOURCE_ZYNTHIUM_KEANITE);
+        }
+        if(nodes.z.storage().storingAtLeast(10000,RESOURCE_ZYNTHIUM_KEANITE)){
+            nodes.z.makeResource= RESOURCE_CATALYZED_GHODIUM_ALKALIDE;
+            nodes.z.labComplex.make(RESOURCE_CATALYZED_GHODIUM_ALKALIDE);
+        }
 
-        //this.scoutRoom('Beta','scout0','W24S19',{x:25,y:25})
-      //  Memory.attacks['W19S24'] = -5;
-        //25m19r6h
-       /*
-        this.harassRemote('Alpha','W19S24','25m20r5h',{
-            kiteSpots:[rp(13,38,'W19S24'),rp(26,18,'W19S24'),rp(28,41,'W19S24')],
-            waitSpot:rp(30,31,'W19S24'),
-            spawnPriority:true
-            //useBreaker:true
-        })
+        //this.keepRoomsClearOfInvaderCores('Zeta',['W7S24','W7S25'])
+        /*try{
+            if(Game.cpu.bucket>6000)
+            this.harvestAndCollectMineralNoContainer('Zeta',
+                '65a7178f2b6fcef1eea24b5d',rp(33,8,'W14S24'),nodes.z.storage().id,
+                RESOURCE_KEANIUM,'5*2c1m','20w10c10m','-K',1,rp(33,3,'W14S24'))
 
-        this.harassRemote('Alpha','W20S25','10m10r5h5m',{
-            waitSpot:rp(23,28,'W20S25'),
-            spawnPriority:true
-        })
-        */
-        /*
-        try {
-            this.scheduledAttack('Alpha', 'W4S21', 'A2-', rp(10, 20, 'W4S21'), 1, {
-                duoCount: 1,
-                dontWait:true,
-                musterSpot: rp(41, 27, 'W5S21'),
-                //leaderBody: '20w+5rm',
-                //  routeRequired:false,// dont require route
-                leaderBody:'2m31w5r12m',
-                //leaderBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65a02aba2246ca0067c44607'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'65a0154a202246003071a027'}],
-                leaderBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65a02aba2246ca0067c44607'}],
-                //healerBody: '2m18h18m', // RCL7
-                healerBody: '4t20h8m', // RCL7
-                //healerBody:'7t8m20h1m',
-                healerBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65a02aba2246ca0067c44607'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659ffbe1e7138d002dfb3dba'}],
-                //healerBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65a02aba2246ca0067c44607'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'659ffbe1e7138d002dfb3dba'}],
-                renewSpawn: 'Alpha', spawnFacing: LEFT
-
-            })
         }catch (e) {
-            console.log("ERROR:scheduledAttack",e)
+            console.log(e.stack)
         }*/
 
 
+        /*this.attackMission2('Epsilon',['W8S26','W8S25','W9S25','W7S25'],'1a1m','Ex1',{
+            spawnPriority:true,
+            fightyBoi2:true,
+            attackStructures:false,
+        },100,false)*/
 
-        if(Game.time%250===0) nodes.b.terminal().send(RESOURCE_ENERGY,100000,nodes.z.coreRoomName)
-        if(Game.time%250===0 && !season6.isRoomFroze('W32S22')&& nodes.d.terminal().storingLessThan(20000)) nodes.g.terminal().send(RESOURCE_ENERGY,20000,nodes.d.coreRoomName)
+        this.attackMission('Theta','E15S31','20m10r5h','T1-guard',{
+            spawnPriority:true,
+            waitSpot:rp(21,39,'E15S31'),
+            attackStructures:false,
+            keepSpawning:true
+        },750,true)
 
-        for(let i=0;i<2;i++) {
-            this.remoteStealer('Alpha', 'AhS' + i, '8c8m', 'W24S23', nodes.d.storage().id)
+
+/*
+        try {
+            this.scheduledAttack('Theta', 'E12S32', 'Tx1', rp(19, 3, 'E12S32'), 1102454, {
+                duoCount: 2,
+                dontMuster:true,
+                routeRequired:true,
+                musterSpot: rp(13, 39, 'E12S31'),
+                leaderBody: '20*1s1r+5r25m',
+                //  routeRequired:false,// dont require route
+                //leaderBody:'2m30w6r12m',
+                //leaderBody:'2m31w5r12m',
+                //leaderBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65c3b7cffb452d88c9e7c723'},{resource_type:RESOURCE_ZYNTHIUM_ACID,lab_id:'65c38d8e1dd34b549866ecec'}],
+                //leaderBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65a02aba2246ca0067c44607'}],
+                healerBody: '2m18h18m', // RCL7
+                //healerBody: '2m36h12m', // RCL8
+                //healerBody:'7t8m25h1m', / RCL7 with gd boosts
+                //healerBoostPlans:[{resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,lab_id:'65c3b7cffb452d88c9e7c723'},{resource_type:RESOURCE_LEMERGIUM_ALKALIDE,lab_id:'65c3a45473ade15e92a4288d'}],
+                renewSpawn: 'Theta', spawnFacing: TOP
+
+            })
+        }catch (e) {
+            console.log("ERROR:scheduledAttack",e.stack)
         }
-        for(let i=2;i<4;i++) {
-            this.remoteStealer('Alpha', 'AhS' + i, '8c8m', 'W25S23', nodes.d.storage().id)
-        }
-        for(let i=4;i<6;i++) {
-            this.remoteStealer('Alpha', 'AhS' + i, '8c8m', 'W26S21', nodes.d.storage().id)
-        }
+*/
+
+        //this.selfBoostHaulController(nodes.z,rp(34,8,'W13S24'))
+       // this.selfBoostHaulController(nodes.g,rp(8,13,nodes.g.coreRoomName),'30c15m',)
+        this.selfBoostHaulController(nodes.t,rp(16,20,nodes.t.coreRoomName),'30c15m')
+        this.selfBoostHaulController(nodes.t,rp(16,20,nodes.t.coreRoomName),'30c15m',false,'2')
+        this.selfBoostHaulController(nodes.b,rp(9,34,nodes.b.coreRoomName),'20c10m')
+        this.selfBoostHaulController(nodes.i,rp(16,18,nodes.i.coreRoomName),'30c15m')
+        this.selfBoostHaulController(nodes.i,rp(16,18,nodes.i.coreRoomName),'30c15m',false,'2')
+        this.selfBoostHaulController(nodes.i,rp(16,18,nodes.i.coreRoomName),'30c15m',false,'3')
+        //if(!season6.isRoomFroze(nodes.a.coreRoomName) && Game.time%500===0)nodes.a.terminal().send(RESOURCE_ENERGY,30000,nodes.g.coreRoomName)
+
+        if(Game.time%250===0 && nodes.i.terminal().haveSpaceFor(30000))
+            nodes.e.terminal().send(RESOURCE_ENERGY,30000,nodes.i.coreRoomName)
+        else if(Game.time%250===0 && nodes.b.terminal().haveSpaceFor(30000))
+            nodes.e.terminal().send(RESOURCE_ENERGY,30000,nodes.b.coreRoomName)
+
+        if(Game.time%250===0)
+            nodes.z.terminal().send(RESOURCE_ENERGY,30000,nodes.i.coreRoomName)
+
+        if(Game.time%250===0)
+            nodes.t.terminal().send(RESOURCE_ENERGY,30000,nodes.b.coreRoomName)
 
         // this function broke last freeze. needs freeze protection
-        //this.parentBoostHaulController('Gamma','Theta',rp(20,34,'W33S25'),3,'65d1058e179abc292b78fec8')
+       // this.parentBoostHaulController('Alpha','Delta',rp(40,36,'W25S22'),2,'15*2c1m')
+        if( !season6.isRoomFroze(nodes.g.coreRoomName)){
+            let feeders = [nodes.z,nodes.e,nodes.t];
+            if(!season6.isRoomFroze(nodes.a.coreRoomName))feeders.push(nodes.a)
+            this.season6_FunnelUpgradeRoomBeforeFreeze('Gamma','W19S24',rp(26,45,'W19S24'),feeders,[],6,10)
 
-        this.haulResources('Zeta', 'Ztx1', '10c5m', gob('65d109b7179abc4d5d79002c'), gob('65ccd0b54a118d8c1ead8f78'), [RESOURCE_ENERGY], [], (nodes.z.controller().level < 8), 50, 1, rp(31, 9, 'W13S24'))
-        this.haulResources('Zeta', 'Ztx2', '10c5m', gob('65d109b7179abc4d5d79002c'), gob('65ccd0b54a118d8c1ead8f78'), [RESOURCE_ENERGY], [], (nodes.z.controller().level < 8), 50, 1, rp(31, 9, 'W13S24'))
-        this.haulResources('Zeta', 'Ztx3', '10c5m', gob('65d109b7179abc4d5d79002c'), gob('65ccd0b54a118d8c1ead8f78'), [RESOURCE_ENERGY], [], (nodes.z.controller().level < 8), 50, 1, rp(31, 9, 'W13S24'))
-
-
-        if(!season6.isRoomFroze('W25S22')) {
-            //let container1 = nodes.d.controller().getContainer();
-            let targetNode = nodes.d;
-            let haulContainer = gob('65d220fdd96e92da1d34d8c0')
-            //let haulContainer = contanier1.isFull()?contanier1:contanier1;
-            //haulContainer = contanier1.isFull()&&nodes.t.energyAtController<4000?{id:'drop',pos:nodes.t.controller().getStandingSpot()}:Tcontainer1;
-            //haulContainer = contanier1.isFull()&&nodes.t.energyAtController<4000?{id:'drop',pos:nodes.t.controller().getStandingSpot()}:Tcontainer1;
-            this.withdrawThenUpgrade('Alpha','Aux1','20w2c20m',haulContainer.id,targetNode.controller().id,false,rp(34,34,'W25S22'),targetNode.controller().level<8)
-            this.withdrawThenUpgrade('Alpha','Aux2','20w2c20m',haulContainer.id,targetNode.controller().id,false,rp(35,35,'W25S22'),targetNode.controller().level<8)
-            this.withdrawThenUpgrade('Alpha','Aux2','20w2c20m',haulContainer.id,targetNode.controller().id,false,rp(34,35,'W25S22'),targetNode.controller().level<8)
-
-            for(let i=0;i<2;i++){
-                this.haulResources('Alpha', 'Atx3'+i, '20c10m',targetNode.terminal(), haulContainer, [RESOURCE_ENERGY], [], (targetNode.controller().level < 8), 50, 1, rp(32, 34, 'W25S22'))
-            }
         }
 
-        if(Game.cpu.bucket>4000)nodes.a.manual_addRooms=['W23S22','W22S24','W23S21'];
-        if(Game.cpu.bucket>6000)nodes.b.manual_addRooms=['W22S15','W23S15'];
-        nodes.g.manual_addRooms=[];
-        nodes.g.manual_ignoreRooms=['W32S23'];
 
-        nodes.z.manual_ignoreRooms=['W12S24','W12S23'];
-        nodes.t.manual_ignoreRooms=['W32S24','W32S26']
+        if(false) {
+            let targetNode = nodes.g;
+            let supportNode = nodes.a;
+            let prefix = supportNode.name.charAt(0)+'ux';
+            let haulContainer = gob('65dfb91d63669e58d457eb0e')
+            let drawFrom = targetNode.storage().storingAtLeast(targetNode.surplusRequired)?targetNode.storage():targetNode.terminal();
+
+            let keepSpawning = Game.cpu.bucket>6000 && targetNode.controller().level<8 && drawFrom.storingAtLeast(20000);
+            keepSpawning = false;
+            let haulerWaitSpot = rp(8, 12, targetNode.coreRoomName);
+            let spots = [rp(9,11,targetNode.coreRoomName),rp(9,10,targetNode.coreRoomName),rp(10,10,targetNode.coreRoomName),rp(10,11,targetNode.coreRoomName)];
+            for(let s in spots){
+                this.rotateCreep(prefix+s+'-', function(activeCreepName){
+                        thing.withdrawThenUpgrade(supportNode.name,activeCreepName,'20w4c20m',haulContainer.id,targetNode.controller().id,false,spots[s],keepSpawning)
+                },500)
+            }
+
+            this.rotateCreep(prefix+'-h-', function(activeCreepName){
+                thing.haulResources(targetNode.name, activeCreepName, '20c10m',drawFrom, haulContainer, [RESOURCE_ENERGY], [], keepSpawning, 50, 1, haulerWaitSpot)
+            },200)
+
+        }
+
+       // nodes.a.manual_addRooms=['W23S22','W23S21','W22S24'];
+       // nodes.b.manual_addRooms=['W22S15','W23S15'];
+        //nodes.g.manual_ignoreRooms=['W19S27'];
+        //nodes.g.manual_addRooms=['W18S27','W19S23'];
+        nodes.e.manual_addRooms=['W6S24','W6S23'];
+        nodes.a.manual_ignoreRooms=['E14S31'];
+        nodes.z.manual_ignoreRooms=['W12S24'];
+        nodes.t.manual_addRooms=['E8S28']
+        nodes.i.manual_addRooms=['E1S19','E4S19','E1S17']
+
+        this.maintainRoadsInRoom('Zeta','swampy-joe',['W12S24','W12S25'],'1w3c8m')
 
         for(let n in nodes){
             logs.startCPUTracker('fullAutomateRoomNode-'+n);
+            if(n==='t' && Game.cpu.bucket<4000)continue;
+            if(n==='k' && Game.cpu.bucket<5000)continue;
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
             logs.stopCPUTracker('fullAutomateRoomNode-'+n,false);
 
-            let homeRoom = nodes.a.coreRoomName
-            if(season6.isRoomFreezingSoon(nodes[n].coreRoomName)){
-                nodes[n].surplusRequired=2000;
-                nodes[n].terminalEnergyCap=200000;
-                nodes[n].buildFast=false;
-                let term = nodes[n].terminal();
+            let homeRoom = nodes.t.coreRoomName
+            let term = nodes[n].terminal();
+            if(season6.isRoomFreezingSoon(nodes[n].coreRoomName)) {
+                nodes[n].surplusRequired = 2000;
+                nodes[n].terminalEnergyCap = 200000;
+                nodes[n].buildFast = false;
+
+                if(term && !term.isEmpty())term.send(RESOURCE_ENERGY,1000,homeRoom)
+
+            }
+            if(season6.isFreezingToday(nodes[n].coreRoomName)){
+
                 if(term){
                     nodes[n].imports = [];
-                    let sentSomething = false;
                     for(let conf of nodes[n].exports){
+                        nodes[n].exports.exportOver =0;// flush it all out
+
                         if(term.storingAtLeast(1,conf.resource_type)){
                             if(term.send(conf.resource_type,term.storedAmount(conf.resource_type),homeRoom)===OK){
-                                sentSomething=true;
+                                break;
                             }
                         }
                     }
-                    if(!sentSomething){
-                        term.send(RESOURCE_ENERGY,1000,nodes.a.coreRoomName)
-                    }
+
                 }
             }
-
-
-            nodes[n].wallHeight=10000;//10k
-            nodes[n].rampHeight=50000;//50k
             if(nodes[n].controller().level===8) nodes[n].upgradeRate=RATE_VERY_SLOW;
 
-
         }
-        nodes.z.wallHeight=1000000;//1m
-        nodes.z.rampHeight=1000000;//1m
 
 
 
@@ -183,25 +229,6 @@ module.exports = {
         //this.harvestAndCollectMineralFromSKRoom('Beta','W24S16',  3,3,25000,true,false,350)
         //this.harvestAndCollectMineralFromSKRoom('Gamma','W34S24',  2,3,25000,true,false,350,[rp(8,4,'W34S24'),rp(8,5,'W34S24')])
 
-        // this.mosquitoAttack('Alpha','mosq-1','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
-        // this.mosquitoAttack('Alpha','mosq-2','W23S19',[],rp(15,3,'W23S20'),'2*1c1m')
-
-        this.scoutPotentialBase('Kappa','W2S19',true)
-        this.scoutPotentialBase('Kappa','W1S19',true)
-        this.scoutPotentialBase('Kappa','W1S19',true)
-        this.scoutPotentialBase('Kappa','W1S17',true)
-        this.scoutPotentialBase('Kappa','W2S17',true)
-        this.scoutPotentialBase('Kappa','W4S21',true)
-        //if(Game.cpu.bucket>4000 && nodes.d.online)
-            //this.withdrawThenUpgrade('Alpha','Aux1','6w1c6m','65d0f20863669e78c15286d1','65a70f1034fa299b8cef9a1e')
-
-        //this.remoteStealer('Alpha','AhS0','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
-        //this.remoteStealer('Alpha','AhS1','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
-        ///this.remoteStealer('Alpha','AhS2','4c4m','W24S18','65bea8796a4f1e7ff5aa6c17')
-
-        if(nodes.a.storage().storingAtLeast(28000,RESOURCE_UTRIUM_LEMERGITE)){
-            nodes.a.makeResource=RESOURCE_LEMERGIUM_OXIDE;
-        }
     },
     shardPrivateTempCode:function(){
         
@@ -234,7 +261,7 @@ module.exports = {
         }
 
         this.haulResources('Beta','Bt1','3c3m',{id:'65941912da3a1700880722ab',pos:{x:44,y:44,roomName:'E7N3'}},gob('6590f66c28e72200640769e0'),[RESOURCE_ENERGY],[],(Game.cpu.bucket>1000),200)
-
+/*
         this.harassRemote('Gamma','E25N30','25m20r5h',{
             reckless:true,
             spawnPriority:true,
@@ -242,7 +269,7 @@ module.exports = {
             keepSpawning:false,
             waitSpot:{x:30,y:24},
             retreatSpot:rp(25,25,'E25N30')
-        },350)
+        },350)*/
 
         this.scheduledAttack('Delta','E24N21','D1-',rp(27,35,'E24N21'),1,{
             duoCount:2,
@@ -355,48 +382,152 @@ module.exports = {
         }
 
     },
-    season6_FunnelUpgradeRoomBeforeFreeze:function(feederName,roomName,anchor,waitSpot,haulerCount=10){
+    /**
+     *
+     * @param feederName - string  - name of room that is feeding this room. Note this Alpha/Beta etc.
+     * @param roomName - string  - room to be boosted by feeder room
+     * @param anchor - RoomPos - where to pivot controller block standing spots. Also where towers are placed
+     * @param supportNodes - array - room node objects that are contributing energy to boost. These will terminal.send() energy to feeder/roomName at RCL6
+     * @param boostPlans - array = an array of boost plans for upgraders
+     * @param upgrCount - int - how many upgraders to run. default 6
+     * @param haulerCount - int - how many haulers to run pre RCL6. default 12
+     * @returns {number|number|*}
+     */
+    season6_FunnelUpgradeRoomBeforeFreeze:function(feederName,roomName,anchor,supportNodes=[],boostPlans=[],upgrCount=5,haulerCount=12){
 
         try {
             let targetRoom = Game.rooms[roomName];
             let prefix = feederName.charAt(0);
+            let feederNode = nodes[ prefix.toLowerCase() ]
 
-            if (!targetRoom || (targetRoom && !targetRoom.owner)) {
-                this.claimRoom(feederName, roomName + 'cl', '1cl1m', true, true)
-            }
 
             this.maintainRoadsInRoom(feederName, roomName + '-w0', roomName, '5w5c5m');
 
+            if (!targetRoom || (targetRoom && !targetRoom.controller.owner)) {
+                // return so we dont start spawning the crew before claim loads un
+                let c = targetRoom?targetRoom.controller:{id:'no',pos:{x:25,y:25,roomName:roomName}}
+                return this.claimRoom(feederName, roomName + 'clx',c ,'1cl1m' , true,true)
+            }
+            if(Game.creeps[roomName + 'clx'])Game.creeps[roomName + 'clx'].suicide();
+
             for (let src of mb.getAllSourcesForRoom(roomName)) {
+                let targetStore = targetRoom.controller.getContainer();
+                if(!targetStore || (targetStore &&  targetStore.isFull())){
+                    targetStore = {id:'drop',pos:targetRoom.controller.getStandingSpot()}
+                }
+                let drawFrom = src.getContainer();
+                if(drawFrom){
+                    this.haulResources(feederName, prefix + 'tx' + src.id,'8*2c1m',drawFrom,targetStore,[RESOURCE_ENERGY],[],targetRoom.controller.level<8, 50,1,anchor)
+                }
                 this.harvestPoint(feederName, roomName + 'h' + src.id, '10w1c5m', src);
             }
-            if (!targetRoom) return;
+
 
             if (!targetRoom.controller.getStandingSpot()) {
                 targetRoom.controller.setControllerStandingSpots(anchor);
             }
 
-            let targetStore = targetRoom.constructor.getContainer();
+            if(targetRoom.getDangerousCreeps().length>0 && !targetRoom.controller.safeMode){
+                targetRoom.controller.activateSafeMode();
+            }
+            if(targetRoom.controller.safeModeCooldown && !targetRoom.controller.safeMode){
+                let thing=this;
+                this.rotateCreep('def-'+targetRoom+'-', function(activeCreepName){
+
+                    thing.fightyBoi(feederNode.name,activeCreepName,'20a4r25m1h',targetRoom.name,[],{
+                        spawnPriority:true,
+                        reckless:true,
+                        attackStructures:false,
+
+                    })
+                },250);
+            }
+
+           // if(targetRoom.storage)feederNode.funnelRoomName = targetRoom.name;
+
+            // if we now have a terminal in boost room, then feeder can send too and void hauling
+            if(targetRoom.terminal )supportNodes.push(feederNode)
+
+            if(supportNodes.length>0){
+
+                for(let node of supportNodes){
+                    if(Game.time%50===0 && node.terminal()){
+                        let res = -404;
+                        if(targetRoom.terminal && targetRoom.terminal.storingLessThan(20000)){
+                            res = node.terminal().send(RESOURCE_ENERGY,20000,targetRoom.name)
+                            console.log(node.name, " sending resources to boost room ",targetRoom.name,"res:",res)
+
+                        }else if(feederNode.terminal() && feederNode.terminal().storingLessThan(40000)){
+                            res = node.terminal().send(RESOURCE_ENERGY,20000,feederNode.coreRoomName)
+                            console.log(node.name, " sending resources to boost room ",feederNode.coreRoomName,"res:",res)
+                        }
+
+                    }
+                }
+            }
+
+
+            let targetStore = targetRoom.controller.getContainer();
+            let replacingContainer = false;
             if (!targetStore) {
-                if(targetRoom.controller.level<4)
-                    mb.addConstruction(targetRoom.controller.getStandingSpot(), STRUCTURE_CONTAINER);
-                else
-                    mb.addConstruction(targetRoom.controller.getStandingSpot(), STRUCTURE_STORAGE);
+                let site = targetRoom.controller.getStandingSpot().lookForConstruction();
+
+                if(targetRoom.controller.level< 4) {
+
+                    let storage = targetRoom.controller.getStandingSpot().lookForStructure(STRUCTURE_CONTAINER)
+                    if(storage)targetRoom.controller.setContainer(storage)
+                    else mb.addConstruction(targetRoom.controller.getStandingSpot(), STRUCTURE_CONTAINER);
+
+                }else if(targetRoom.controller.level=== 4){
+                    if(!site){
+                        replacingContainer = true;// we'll use this to shift upgraders out of the way
+
+                        let storage = targetRoom.controller.getStandingSpot().lookForStructure(STRUCTURE_STORAGE)
+                        if(storage)targetRoom.controller.setContainer(storage)
+                        else mb.addConstruction(targetRoom.controller.getStandingSpot(), STRUCTURE_STORAGE);
+                    }
+                }else if(targetRoom.controller.level=== 6){
+                    if(!site){
+                        replacingContainer = true;// we'll use this to shift upgraders out of the way
+
+                        let storage = targetRoom.controller.getStandingSpot().lookForStructure(STRUCTURE_TERMINAL)
+                        if(storage)targetRoom.controller.setContainer(storage)
+                        else mb.addConstruction(targetRoom.controller.getStandingSpot(), STRUCTURE_TERMINAL);
+                    }
+                }
+
             }
             if(targetRoom.controller.level===4 && !targetRoom.storage){
                 let c = targetRoom.controller.getStandingSpot().lookForStructure(STRUCTURE_CONTAINER);
                 if(c)c.destroy();
             }
+            if(targetRoom.controller.level===6 && !targetRoom.terminal){
+                let c = targetRoom.controller.getStandingSpot().lookForStructure(STRUCTURE_STORAGE);
+                if(c)c.destroy();
+            }
 
-            if (targetRoom && targetRoom.owner && targetRoom.owner.username === 'MadDokMike') {
+            let upgradersAlive = 0;
+            if (targetRoom && targetRoom.controller.owner && targetRoom.controller.owner.username === 'MadDokMike') {
 
-                let upgrCount = targetRoom.controller.level < 4 ? 8 : 7;
+                //let upgrCount = 6;
+
                 for (let i = 0; i < upgrCount; i++) {
                     let cname = prefix + 'ux' + i;
                     if (!Game.creeps[cname] && targetRoom.controller.level<8) {
-                        this.queueSpawn(feederName, cname, '30w3c15m', {}, true, true);
+                        let mem= {};
+                        if(boostPlans.length>0){
+                            mem.boostPlans = boostPlans;
+                        }
+                        this.queueSpawn(feederName, cname, '30w3c15m', {memory:mem}, true, true);
                     }
-                    if (Game.creeps[cname] && !Game.creeps[cname].spawning) {
+
+                    if(replacingContainer){
+                        // move upgraders out of way, to place storage
+                        let creep = targetRoom.controller.getStandingSpot().lookForCreep();
+                        if(creep)creep.moveToPos(anchor)
+                    }
+                    if (!replacingContainer && Game.creeps[cname] && !Game.creeps[cname].spawning) {
+                        upgradersAlive++;
                         upgraderRole.run(Game.creeps[cname], {
                                 controller: targetRoom.controller,
                                 upgradeRate: RATE_VERY_FAST
@@ -406,23 +537,45 @@ module.exports = {
                 }
             }
             for (let i = 0; i < haulerCount; i++) {
-                let targetStore = targetRoom.constructor.getContainer();
-                if(!targetStore){
-                    targetStore = {id:'drop',pos:targetRoom.constructor.getStandingSpot()}
+                let targetStore = targetRoom.controller.getContainer();
+                if(!targetStore || (targetStore &&  targetStore.isFull())){
+                    targetStore = {id:'drop',pos:targetRoom.controller.getStandingSpot()}
                 }
-                let drawFrom = nodes[ prefix.toLowerCase() ].storage();
-                this.haulResources(feederName, prefix + 'tx' + i,'20*1c1m',
-                    drawFrom,targetStore,[RESOURCE_ENERGY],[],targetRoom.controller.level<8,
-                    50,1,waitSpot)
+                let drawFrom = feederNode.storage().storingAtLeast(feederNode.surplusRequired)?feederNode.storage():feederNode.terminal();
+                let keepSpawning = upgradersAlive>0 && targetRoom.controller.level<8 && !targetRoom.terminal;
+                this.haulResources(feederName, prefix + 'tx' + i,'10*2c1m',
+                    drawFrom,targetStore,[RESOURCE_ENERGY],[],keepSpawning,
+                    50,1,anchor)
             }
 
         }catch (e) {
             console.log("ERROR:season6_FunnelUpgradeRoomBeforeFreeze",e)
+            console.log("ERROR:season6_FunnelUpgradeRoomBeforeFreeze",e.stack)
         }
 
     },
+    selfBoostHaulController:function(node,waitSpot,haulerSize='20c10m',extraContainerID,suffix='',leadTime=300,cpuBreak=5000){
+        let prefix = node.name.charAt(0);
+        let pullFrom = node.storage().storingLessThan(node.surplusRequired)?node.terminal():node.storage();
+        let thing = this;
+        let keepSpawning = (node.controller().level<8 && Game.cpu.bucket>cpuBreak && pullFrom.storingAtLeast(10000))
+        let extraContainer = gob(extraContainerID);
+        let targetContainer = node.controller().getContainer();
+        if(extraContainer && !targetContainer.isEmpty() && extraContainer.isEmpty()){
+            targetContainer = extraContainer;
+        }
+        this.rotateCreep(prefix+'tx'+suffix,function(activeCreepName){
+            // stop rkeeper bouncing
+            if(Game.creeps[activeCreepName])node.controller().getContainer().reserveTransfer(activeCreepName,Game.creeps[activeCreepName].store.getCapacity(),true)
 
-    parentBoostHaulController:function(feederName,boostName,waitSpot=false,supportCount=3,extraContainerID=false){
+            thing.haulResources(node.name,activeCreepName,haulerSize,
+                pullFrom,targetContainer,[RESOURCE_ENERGY],[],
+                keepSpawning,25,1,waitSpot,true)
+
+        },leadTime)
+
+    },
+    parentBoostHaulController:function(feederName,boostName,waitSpot=false,supportCount=3,haulerBody='5*2c1m',extraContainerID=false){
         try {
             let boostKey = boostName.charAt(0);
             let term = nodes[boostKey.toLowerCase()].terminal();
@@ -431,16 +584,16 @@ module.exports = {
 
             if(extraContainerID && container.isFull())container = gob(extraContainerID)
 
-            if(container.isFull()){
+            if(container.isFull() && nodes[boostKey.toLowerCase()].energyAtController<5000){
                 container = {id:'drop',pos:nodes[boostKey.toLowerCase()].controller().getStandingSpot()}
             }
 
             if (term && storage && container) {
                 let keepSpawning = (nodes[boostKey.toLowerCase()].controller().level < 8);
                 for (let i = 0; i < (supportCount*2); i++) {
-                    this.haulResources(feederName, boostKey + 'tx' + i, '10c5m', storage, container, [RESOURCE_ENERGY], [], keepSpawning, 50,1,waitSpot)
+                    this.haulResources(feederName, boostKey + 'tx' + i, haulerBody, storage, container, [RESOURCE_ENERGY], [], keepSpawning, 50,1,waitSpot)
                     i++;
-                    this.haulResources(feederName, boostKey + 'tx' + i, '10c5m', term, container, [RESOURCE_ENERGY], [], keepSpawning, 50,1,waitSpot)
+                    this.haulResources(feederName, boostKey + 'tx' + i, haulerBody, term, container, [RESOURCE_ENERGY], [], keepSpawning, 50,1,waitSpot)
 
                 }
             }
@@ -470,7 +623,7 @@ module.exports = {
             if(mission.scoutPos && !Game.creeps[scoutName]){
                 mission.status = 'NO-PATH';
             }
-            if(Game.creeps[scoutName]){
+            if(Game.creeps[scoutName] && !Game.creeps[scoutName].spawning){
                 let creep = Game.creeps[scoutName];
 
                 if(creep.ticksToLive<920){
@@ -496,34 +649,33 @@ module.exports = {
         // room states : TOO-FAR, SCOUTING, NO-PATH, SAFE
     },
 
-    setupNode:function(feederName,targetName,swampy=false,far=false){
+    setupNode:function(feederName,targetName,config={}){
 
         let t = targetName.charAt(0).toLowerCase();
         let f = feederName.charAt(0).toLowerCase();
 
         if( nodes[f].online  && nodes[t].anchor){
             let targetRoomName = nodes[t].anchor.roomName;
-            let phaseOut = (Game.spawns[targetName]);
 
-            if(phaseOut)nodes[f].upgradeRate = RATE_FAST;
-            else nodes[f].upgradeRate = RATE_SLOW;
+            config.swampy = config.swampy===undefined?false:config.swampy;
+            config.prepUpToRCL = config.prepUpToRCL===undefined?1:config.prepUpToRCL;
+            config.switchRoomOnAtRCL = config.switchRoomOnAtRCL===undefined?1:config.switchRoomOnAtRCL;
+            config.workerBody = config.workerBody===undefined?'4w4c4m':config.workerBody
+            config.workerBody = config.swampy ? config.workerBody+'6m':config.workerBody;
+            config.phaseOut = (Game.spawns[targetName]);
+            //config.defend = (!Game.spawns[targetName] || Game.spawns[targetName].room.controller.level<3);
+            config.defenderSpot = {x:nodes[t].anchor.x-3,y:nodes[t].anchor.y-1};
+
 
             if(Game.rooms[targetRoomName]){
                 // setup standing spots, before feeder gang turns up. Important this happens before harvesters arrive.
                 nodes[t].checkAndSetupStandingSpots();
-                if(Game.time%250===0)nodes[t].coreComplex.detectExistingStructures();
+                if(Game.time%250===0)nodes[t].coreComplex.detectExistingStructures(config.prepUpToRCL);
                 mb.addConstruction(nodes[t].anchor,STRUCTURE_SPAWN,targetName)
+                mb.addConstruction(nodes[t].controller().getStandingSpot(),STRUCTURE_CONTAINER)
             }
-            let workerBody = swampy ? '4w4c12m':'4w4c4m';
-            let workerCount = far?6:4;// if its far away, then we send more workers to keep up rate
-            this.startupRoomNoVision(feederName,targetRoomName, {
-                report:true,
-                swampy:swampy,
-                phaseOut:phaseOut,
-                workerCount:workerCount,workerBody:workerBody,
-                defend:(!Game.spawns[targetName] || Game.spawns[targetName].room.controller.level<3),
-                defenderSpot:{x:nodes[t].anchor.x-3,y:nodes[t].anchor.y-1}
-            })
+
+            this.startupRoomNoVision(feederName,targetRoomName, config)
         }
     },
 
@@ -538,37 +690,29 @@ module.exports = {
     fullAutomateRoomNode:function(node){
 
         if(!node)return
-        let spawn = Game.spawns[node.name];
-        if(!spawn)return spawn
-        let room = spawn.room;
-        let storage = mb.getStorageForRoom(room.name)
+        try{
+            let spawn = Game.spawns[node.name];
+            if(!spawn)return spawn
+            let room = spawn.room;
+            let storage = mb.getStorageForRoom(room.name)
 
-        if(room.energyCapacityAvailable>=300){
-            logs.startCPUTracker('fullAutomateRoomNode-'+node.name);
-            this.runRemotes(node);
-            logs.stopCPUTracker('fullAutomateRoomNode-'+node.name);
+            if(room.energyCapacityAvailable>=300){
+                logs.startCPUTracker('fullAutomateRoomNode-'+node.name);
+                this.runRemotes(node);
+                logs.stopCPUTracker('fullAutomateRoomNode-'+node.name);
+            }
+
+
+            //if(Game.time%500===0)this.removeRedundantRoads(node)
+            logs.startCPUTracker('manageConstructionSites-'+node.name);
+            if(Game.time%20===0)this.manageConstructionSites(node);
+            this.defendHomeRoom(node)
+            logs.stopCPUTracker('manageConstructionSites-'+node.name);
+        }catch (e) {
+            console.log(node.name,e)
+            console.log(node.name,e.stack)
         }
 
-        if(room.controller.level>=4){
-            node.wallHeight=10000;//10k
-            node.rampHeight=50000;//50k
-
-        }
-        if(room.controller.level>=5){
-            node.wallHeight=500000; //500k
-            node.rampHeight=500000;//500k
-        }
-        if(room.controller.level>=6 && room.terminal){
-            node.wallHeight=1000000;//5m
-            node.rampHeight=5000000;//5m
-        }
-
-
-        //if(Game.time%500===0)this.removeRedundantRoads(node)
-        logs.startCPUTracker('manageConstructionSites-'+node.name);
-        if(Game.time%20===0)this.manageConstructionSites(node);
-        this.defendHomeRoom(node)
-        logs.stopCPUTracker('manageConstructionSites-'+node.name);
     },
 
     scoreRemote:function(node,roomName,logPath=false){
@@ -582,7 +726,19 @@ module.exports = {
         // High Scores ARE BAD , LOW scores ARE GOOD
         // score is src distances to spawn + controller distance to spawn
         if(!Memory.remotes[node.name][roomName])
-            Memory.remotes[node.name][roomName]={score:999,lastSeen:0,username:false,valid:true,online:true,isDangerous:false,controllerSpots:0,reason:'scouting',staff:{count:0,required:0}};
+            Memory.remotes[node.name][roomName]={
+                score:999,
+                type:'na',
+                lastSeen:0,
+                username:false,
+                valid:true,
+                online:true,
+                isDangerous:false,
+                guardActive:false,
+                controllerSpots:0,
+                reason:'scouting',
+                staff:{count:0,required:0}
+        };
 
 
         //  We have to go explore
@@ -597,7 +753,13 @@ module.exports = {
         let invadeCores = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_INVADER_CORE]})
         let srcs = mb.getSources({roomNames:[roomName],requireVision:false});
 
-
+        if(lairs.length>0){
+            Memory.remotes[node.name][roomName].type = "skr";
+        }else if(srcs.length===3){
+            Memory.remotes[node.name][roomName].type = "csr";
+        }else if(controller){
+            Memory.remotes[node.name][roomName].type = "pr";
+        }
 
         ///////////////////////////////////////////////////
         // Handle all shutdown/bad remote cases first
@@ -634,15 +796,15 @@ module.exports = {
 
         if(Game.rooms[roomName]){
 
-            if(Game.rooms[roomName].getInvaders().length >=3){
+            if(Game.rooms[roomName].getInvaders().length >=3 ){
                 Memory.remotes[node.name][roomName].isDangerous = true;
                 Memory.remotes[node.name][roomName].reason = "big-attack";
-                online=false;
+                // exclude offlining skr for now, because these attacks are regular and shutdown the room running. Keep it running and let creeps flee or sk-gaurd chase down invaaer
+                online=(Memory.remotes[node.name][roomName].type !=='skr');
             }
             // switched to player fighters to stop false fires from skeepers and allies.
             if(Game.rooms[roomName].getInvaders().length>=1 || Game.rooms[roomName].getEnemyPlayerFighters().length >=1){
-                Memory.remotes[node.name][roomName].score+=100;
-                Memory.remotes[node.name][roomName].reason += ",Dngr"
+
                 Memory.remotes[node.name][roomName].isDangerous = true;
             }else{
                 Memory.remotes[node.name][roomName].isDangerous = false;
@@ -682,6 +844,10 @@ module.exports = {
         Memory.remotes[node.name][roomName].score = 0;
         Memory.remotes[node.name][roomName].staff={count:0,required:0};
 
+        if(Memory.remotes[node.name][roomName].isDangerous){
+            Memory.remotes[node.name][roomName].score+=100;
+            Memory.remotes[node.name][roomName].reason += "Dngr,"
+        }
 
         if(controller && controller.reservation){
             Memory.remotes[node.name][roomName].username = controller.reservation.username;
@@ -714,6 +880,14 @@ module.exports = {
         Memory.remotes[node.name][roomName].reason += "S["
         let netSrcPathLength = 0;
         for(let src of srcs){
+
+            if(Game.rooms[roomName] && Memory.remotes[node.name][roomName].type ==='skr'){
+                if(!src.getLair()){
+                    let lair = mb.getNearestStructure(src.pos,[STRUCTURE_KEEPER_LAIR],[src.pos.roomName])
+                    src.setLair(lair)
+                }
+            }
+
 
             path = mb.getPath(node.anchor,src.pos)
             if(path===ERR_NO_PATH){
@@ -840,12 +1014,14 @@ module.exports = {
             let remote = Memory.remotes[node.name][roomName];
             if(!remote.valid)continue; // dont waste time on invalid remotes
             let timeSinceSeen = Game.time - remote.lastSeen;
+            //if(node.name==='Theta')console.log(roomName,timeSinceSeen,remote.isDangerous)
             if(!mb.hasRoom(roomName) || (remote.isDangerous && timeSinceSeen>1500) || (!remote.isDangerous && timeSinceSeen>250) ){
 
                 roomToScout = roomName;
                 break;
             }
         }
+        //if(node.name==='Theta')console.log('roomToScout',roomToScout)
         if(!roomToScout){
             // no priority room to scout, lets maintain vision on any room, we lost vision
             // this helps ensure we can always see drops/containers, even if we lose all the harvesters
@@ -876,6 +1052,10 @@ module.exports = {
                 if(placed || !src.haveVision)break;
                 // only do 1 road segment at a time for the whole remote. This reduces duplicate roads
 
+                // might already have a road being built or container. dont split focus and create too many roads
+                // also reduce road spam bug trigger when road partial built and global reset happes
+                if(mb.haveConstructions([src.pos.roomName]))continue;
+
                 let to = src.getStandingSpot();
                 let frequency = src.getMeta().pathed?250:50;
                 if(Game.time%frequency===0   && to){
@@ -892,10 +1072,11 @@ module.exports = {
 
                             if( !pos.lookForStructure(STRUCTURE_ROAD) && pos.isWalkable() ){
                                 if(pos.lookForConstruction()){
+                                    placed=true;
                                     break; // this stops us placing more, before we have completed the path
                                 }
                                 if(mb.addConstruction(pos,STRUCTURE_ROAD)===OK){
-                                    console.log(node.name,'placed road at ',pos)
+                                    //console.log(node.name,'placed road at ',pos)
                                     placed=true;break;
                                 }
                             }else{
@@ -998,12 +1179,26 @@ module.exports = {
             this.defendRoom(node.name,roomName+'-guard',roomName);
 
             if(srcs.length===3){
-                let lairIDs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_KEEPER_LAIR],justIDs:true})
+                //let lairIDs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_KEEPER_LAIR],justIDs:true})
+                let lairIDs = [];
+                if(!Game.rooms[roomName]){
+                    // if we cant see the room, just get in the room with default
+                    lairIDs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_KEEPER_LAIR],justIDs:true})
+                }else{
+                    for(let src of srcs){
+                        let lair = src.getLair();
+                        if(lair)lairIDs.push(lair.id);
+                    }
+
+                }
                 if(lairIDs.length>0){
                     let thing = this;
                     this.rotateCreep(roomName+'-sk-guard-', function(activeCreepName){
-                        thing.constantGuardSKRoom(node.name,activeCreepName,roomName, lairIDs,'24m19a6h1m')
-                    },250)
+
+                        remoteMemory.guardActive = (Game.creeps[activeCreepName] && Game.creeps[activeCreepName].pos.roomName===roomName);
+                        thing.constantGuardSKRoom(node.name,activeCreepName,roomName, lairIDs,'20m19a6h5m')
+                       // thing.duoHealer(node.name,activeCreepName,roomName, lairIDs,'23m19a6h2m')
+                    },350)
                 }
 
 
@@ -1046,9 +1241,10 @@ module.exports = {
                         remoteMemory.staff.count++;
                     }
                     let keepSpawningHarvy = (!remoteMemory.isDangerous && !tooMuchEnergyMined && !node.inRecoveryMode);
+                    if(remoteMemory.type==='skr' && !remoteMemory.guardActive)keepSpawningHarvy=false;
                     // if we have some tankers, but we need a harvester, then prioritise this
                     let priorityHarvest = tankerGap < 5 && node.workforce_quota.tanker.count >0;
-                    this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src,keepSpawningHarvy,priorityHarvest);
+                    this.harvestPoint(node.name,harveyName,harvesterBodyPlan,src,(remoteMemory.type==='skr'),keepSpawningHarvy,priorityHarvest);
 
                 }
             }
@@ -1056,13 +1252,15 @@ module.exports = {
             /////////////// Others  ///////////////////////////////////////////////////////
             if(!node.manual_noRoads.includes(roomName) && invadeCores.length===0 && node.controller().level>=3){
                 let keepSpawningRoady = harvestersAlive>0  && !node.inRecoveryMode;
-                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,'1w3c2m',true,keepSpawningRoady);
+                if(remoteMemory.type==='skr' && !remoteMemory.guardActive)keepSpawningRoady=false;
+                let wBody = (remoteMemory.type ==='skr')?'2w6c4m':'1w3c2m'
+                this.maintainRoadsInRoom(node.name,roomName+'-w',roomName,wBody,true,keepSpawningRoady);
                 this.manageRemoteRoads(node,srcs);
             }
 
 
             if(srcs.length===3){
-                this.pickupSKRoomDrops(node.name,roomName+'-scav',roomName,'5*1c1m')
+                this.pickupSKRoomDrops(node.name,roomName+'-scav',roomName,'5*1c1m',(remoteMemory.type==='skr' && !remoteMemory.guardActive))
             }
 
 
@@ -1196,7 +1394,12 @@ module.exports = {
         let spawn = Game.spawns[node.name];
         let room = spawn.room;
         let hostileIds = room.getEnemyPlayerFighters();
-        if(hostileIds.length==0)return;
+
+        if(hostileIds.length===0){
+            hostileIds = room.getInvaders();
+            if(hostileIds.length<3)hostileIds=[];
+        }
+        if(hostileIds.length===0)return;
 
         let towers = mb.getStructures({roomNames:[room.name],types:[STRUCTURE_TOWER]})
 
@@ -1259,7 +1462,7 @@ module.exports = {
         let room = spawn.room;
 
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
-        if(linkCount===4 && this.linksSetup[room.name]!==linkCount){
+        if( this.linksSetup[room.name]!==linkCount){
             util.setLinksInRoom(room.name,false);
             this.linksSetup[room.name]=linkCount;
         }
@@ -1269,7 +1472,7 @@ module.exports = {
         let room = spawn.room;
 
         let linkCount = mb.countStructures([STRUCTURE_LINK],[room.name])
-        if(linkCount===3 && this.linksSetup[room.name]!==linkCount){
+        if(this.linksSetup[room.name]!==linkCount){
             util.setLinksInRoom(room.name,false);
             this.linksSetup[room.name]=linkCount;
         }
@@ -1471,6 +1674,7 @@ module.exports = {
 
         let logCPUUsag= false;
         config.routeRequired =         config.routeRequired!==undefined?      config.routeRequired:true;
+        config.dontMuster =            config.dontMuster!==undefined?      config.dontMuster:false;
 
         if(Memory.scheduledAttackState===undefined){
             Memory.scheduledAttackState = {};
@@ -1532,7 +1736,7 @@ module.exports = {
 
 
             // Attack Targets  ////////////////////////////////////////
-            let target_ids =['65d0ee28063c93f50aecf60a'];
+            let target_ids =['65d2e5b39ddf5e7256143ce8'];
             let destroyResourceBanks=false;
             if(config.attackWhenReady){
                 // entry rampart
@@ -1612,19 +1816,23 @@ module.exports = {
                 if(Game.creeps[myCreepName] && config.musterSpot.getRangeTo(Game.creeps[myCreepName])<4){
                     readyCount++;
                 }
-                if(Game.creeps[myCreepName])aliveCount++;
+                if(Game.creeps[myCreepName]){
+                    aliveCount++;
+                    if(Game.time%10===0)console.log(attackName, myCreepName,Game.creeps[myCreepName].pos)
+                }
             }
 
             if(aliveCount===0 &&  Memory.scheduledAttackState[attackName]==='attacking'){
                 Memory.scheduledAttackState[attackName]='ended'
             }
 
-            if(readyCount===(config.duoCount*2) || config.dontWait){
+            if(readyCount===(config.duoCount*2) || ( config.dontMuster && aliveCount===(config.duoCount*2) )){
                 Memory.scheduledAttackState[attackName]='attacking';
                 config.attackWhenReady = true;
             }else{
                 if(Memory.scheduledAttackState[attackName]==='mustering' && Game.time%3===0){
-                    clog(readyCount+'/'+allCreepNames.length,attackName+'musteredCount=')
+                    clog(readyCount+'/'+allCreepNames.length,attackName+' musteredCount=')
+                    clog(aliveCount+'/'+allCreepNames.length,attackName+' aliveCount=')
                 }
             }
 
@@ -2346,7 +2554,7 @@ module.exports = {
             this.haulResources(spawnName,cname,'1m20c',storage,terminal,[resource_type]);
         }
     },
-    haulResources:function(spawnName,cname,parts,sourceStore,targetStore,resource_types,roomTraversal=[],keepSpawning=true,tickToLiveTo=1,minDrawSize=1,waitSpot=undefined){
+    haulResources:function(spawnName,cname,parts,sourceStore,targetStore,resource_types,roomTraversal=[],keepSpawning=true,tickToLiveTo=1,minDrawSize=1,waitSpot=undefined,prioritySpawn = false){
 
         let creep = Game.creeps[cname]?Game.creeps[cname]:false;
         if(creep && cname=='BBux2-fe-3')clog(targetStore,creep.name)
@@ -2374,7 +2582,7 @@ module.exports = {
         //if(tickToLiveTo===3)clog(resource_type,'yo')
         if(!Game.creeps[cname] ){
 
-            this.queueSpawn(spawnName,cname,parts,{},keepSpawning);
+            this.queueSpawn(spawnName,cname,parts,{},keepSpawning,prioritySpawn);
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning ){
 
@@ -2383,14 +2591,20 @@ module.exports = {
             }
             // creep.say(resource_type)
             // clog(creep.store.getUsedCapacity(resource_type),resource_type)
-            if(creep.store.getUsedCapacity(resource_type)==0){
+            if(creep.store.getUsedCapacity(resource_type)===0){
 
-                if(roomTraversal.length>0 && creep.pos.roomName!=sourceStore.pos.roomName){
+                if(roomTraversal.length>0 && creep.pos.roomName!==sourceStore.pos.roomName){
                     let res =  this.traverseRooms(creep,roomTraversal);
                     // creep.say("w-r:"+res);
                 }else{
 
-                    if(sourceStore.id=='creep'){
+                    if(waitSpot && creep.memory.waitFor>0){
+                        creep.memory.waitFor--;
+                        creep.say("wait")
+                        return creep.moveToPos(waitSpot);
+                    }
+
+                    if(sourceStore.id==='creep'){
 
                         let rp = new RoomPosition(sourceStore.pos.x,sourceStore.pos.y,sourceStore.pos.roomName);
                         if(!creep.pos.isNearTo(rp)){
@@ -2403,6 +2617,8 @@ module.exports = {
                                 let drops = rp.lookForResource(resource_type)
                                 if(drops.length>0)
                                     creep.pickup(drops[0])
+                                else
+                                    creep.memory.waitFor=25;
                             }
                         }
                     }else{
@@ -2443,7 +2659,7 @@ module.exports = {
                 }else{
                     let res = 404;
                     //if(creep.name=='thor-1')clog(targetStore.id,resource_type)
-                    if(waitSpot && targetStore.store && targetStore.isFull()){
+                    if(waitSpot && targetStore.store && targetStore.isFull(resource_type)){
                         creep.moveToPos(waitSpot);
                         res = 'wait';
                     }else{
@@ -2552,9 +2768,13 @@ module.exports = {
 
         let config={
             report:conf.report===undefined?false:conf.report,
+            stealFromUsername:conf.stealFromUsername===undefined?false:conf.stealFromUsername,
             swampy:conf.swampy===undefined?false:conf.swampy,
             workerCount:conf.workerCount===undefined?4:conf.workerCount,
             workerBody:conf.workerBody===undefined?'4w4c4m':conf.workerBody,
+            harvesterBody:conf.harvesterBody===undefined?'6w1c6m':conf.harvesterBody,
+            haulerBody:conf.haulerBody===undefined?'4*2c1m':conf.haulerBody,
+            haulToController:conf.haulToController===undefined?false:conf.haulToController,
             drawFromRuins:conf.drawFromRuins===undefined?false:conf.drawFromRuins,
             drawFromStructures:conf.drawFromStructures===undefined?false:conf.drawFromStructures,
             harvestSources:conf.harvestSources===undefined?true:conf.harvestSources,
@@ -2570,7 +2790,7 @@ module.exports = {
         if(mb.hasRoom(roomName)){
 
             let controller = mb.getControllerForRoom(roomName,false);
-            if(controller.owner && controller.owner.username!=='MadDokMike'){
+            if(controller.owner && controller.owner.username!=='MadDokMike' && controller.owner.username!==config.stealFromUsername ){
                 console.log("ROOM_SETUP: Error. ",roomName," is already owned")
                 return;
             }
@@ -2581,32 +2801,47 @@ module.exports = {
 
             // Firstly, lets go make a claim on the room
             let claimerBody = config.swampy?'1cl5m':'1cl1m';
-            if(!controller.owner  && !config.reserve){
+            if( (!controller.owner || controller.owner.username===config.stealFromUsername )){
                 if(Game.time%10===0 && config.report)console.log("ROOM_SETUP: claiming...",roomName)
 
                 this.claimRoom(spawnName,roomName+'-cl',controller,claimerBody,true,true);
             }
-            if(!controller.owner  && config.reserve){
-                this.reserverRoom(spawnName,roomName+'-cl',controller,claimerBody,true);
-            }
+
 
             if(cores.length>0){
-                return; // we dont want to spawn workers until the core is delt with.
+                return; // we dont want to spawn workers until the core is dealt with.
             }
 
             if(config.defend){
-                let defenderBody = config.swampy?'2t2m +11m + 4*1a1m1r1m + 1h1m':'2t2m + 4*1a1m1r1m + 1h1m';
-                this.constantGuardRoom(spawnName,roomName+'-guard',roomName,defenderBody, conf.defenderSpot );
+                let defenderBody = config.swampy?'10m + 4*1a1r + 10m2h':'4m + 4*1a1r + 10m2h';
+                if(Game.creeps[roomName+'-guard'] && config.swampy)Game.creeps[roomName+'-guard'].memory.swampCost=1;
+
+                let route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,roomName)
+                if(!route)route=[];
+
+                this.fightyBoi(spawnName,roomName+'-guard',defenderBody,roomName,route,{
+                    attackStructures:false,
+                    waitSpot:conf.defenderSpot
+                })
+               // this.constantGuardRoom(spawnName,roomName+'-guard',roomName,defenderBody, conf.defenderSpot );
             }
 
             // now lets set up the harvesters and register and mine stores
             if(config.harvestSources){
                 let sources  = mb.getAllSourcesForRoom(roomName,false);
-                let harvesterBody = config.swampy?'6w12m1c':'6w6m1c';
+                let harvesterBody = config.swampy?config.harvesterBody+'6m':config.harvesterBody;
                 for(let s in sources){
                     let harvyName = roomName+'-h'+s;
+                    if(Game.creeps[harvyName] && config.swampy)Game.creeps[harvyName].memory.swampCost=1;
                     if(config.phaseOut && !Game.creeps[harvyName])continue;
-                    this.harvestPoint(spawnName,harvyName,harvesterBody,sources[s],(!config.phaseOut),true);
+                    this.harvestPoint(spawnName,harvyName,harvesterBody,sources[s],false,(!config.phaseOut),true);
+
+                    if(config.haulToController && sources[s].haveContainer()){
+                        this.haulResources(spawnName,harvyName+'-h',config.haulerBody,
+                            sources[s].getContainer(),{id:'drop',pos:controller.pos},
+                            [RESOURCE_ENERGY],[],!config.phaseOut,25,1,false,true)
+                    }
+
                 }
             }
 
@@ -2615,9 +2850,10 @@ module.exports = {
                 let bodyPlan = config.workerBody;
                 let creepName = roomName+'-w'+c;
                 let creep = Game.creeps[creepName];
+                if(creep && config.swampy)creep.memory.swampCost = 1;
 
                 if(config.phaseOut && !creep)continue;
-                if(creep && !mb.haveConstructions([roomName]) && !creep.isEmpty()){
+                if(creep && creep.pos.roomName===roomName && creep.isWorking() && !creep.isEmpty() && ( !mb.haveConstructions([roomName]) || controller.ticksToDowngrade<2000 ) ){
                     creep.actOrMoveTo("upgradeController",controller)
                 }else{
                     this.maintainRoadsInRoom(spawnName,creepName,[roomName],bodyPlan,true,true,true);
@@ -2630,7 +2866,7 @@ module.exports = {
     },
 
     // designed to harvest a source, but first build a container to drop into,then pickup E at feet
-    harvestPoint:function(spawnName,cname,bodyPlan,target,keepSpawning=true,prioritySpawn=false){
+    harvestPoint:function(spawnName,cname,bodyPlan,target,watchLair=false, keepSpawning=true,prioritySpawn=false){
 
         if(!Game.creeps[cname] && !Memory.invaderSeen[target.pos.roomName]){
             this.queueSpawn(spawnName,cname,bodyPlan,{},keepSpawning,prioritySpawn);
@@ -2644,15 +2880,41 @@ module.exports = {
                 let dangerIds = creep.room.getDangerousCreeps();
                 for(let id of dangerIds){
                     let hostile = gob(id);
-                    if(hostile && hostile.pos.getRangeTo(creep)<5){
-                        return creep.moveToPos(rp(25,25,creep.pos.roomName))
+                    if(!hostile)continue;
+                    let allowedRange = (hostile.owner.username==='Source Keeper')?5:99;
+                    if(Game.spawns[spawnName] && (!Game.spawns[spawnName].controller || !Game.spawns[spawnName].controller.safeMode) && hostile.pos.getRangeTo(creep)<allowedRange){
+                        creep.say("flee")
+                        creep.memory.flee_until = Game.time + 50;
+                        return creep.moveToPos(Game.spawns[spawnName])
                     }
+                }
+                if(watchLair){
+                    let lair = gob(creep.memory.lair_id)
+                    if(creep.memory.lair_id===undefined){
+                        lair = mb.getNearestStructure(target.pos,[STRUCTURE_KEEPER_LAIR],[target.pos.roomName])
+                        creep.memory.lair_id = lair.id;
+                    }
+                    if((lair.ticksToSpawn===undefined || lair.ticksToSpawn<15) ){
+
+                        if(creep.pos.getRangeTo(lair)<8)
+                            return creep.moveToPos(rp(25,25,target.pos.roomName))
+                        else
+                            return creep.say("wait")
+                    }
+
                 }
 
                 let source =  Game.getObjectById(target.id)
                 let res = creep.actOrMoveTo('dropHarvest',source);
                 // creep.say("dh:"+res)
             }else{
+
+                if(creep.memory.flee_until && creep.memory.flee_until>Game.time){
+                    if(creep.onRoomEdge() || creep.nearRoomEdge()) {
+                        return creep.moveToPos(Game.spawns[spawnName])
+                    }
+                    return creep.say("dngr!");
+                }
 
                 let route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,target.pos.roomName);
                 if(route){
@@ -2759,7 +3021,7 @@ module.exports = {
             for(let i in mineSpots){
                 if(i>=harvesterCap)continue;// safety cap for now, to stop too many harvesters
 
-                this.harvestAndCollectMineralNoContainer(nodeName,mineral.id,mineSpots[i],storage.id,mineral.mineralType,'4*2c1m','20W10c10m','-'+i,haulerCount,guardActive)
+                this.harvestAndCollectMineralNoContainer(nodeName,mineral.id,mineSpots[i],storage.id,mineral.mineralType,'4*2c1m','20W10c10m','-'+i,haulerCount,false,guardActive)
             }
 
         }
@@ -2784,7 +3046,7 @@ module.exports = {
 
     },
 
-    harvestAndCollectMineralNoContainer:function(spawnName,mineral_id,standingSpot,store_id,mineral_type,haulerBody='1m2c',harvesterBody='10W2m',creep_suffix='',haulerCount=1,keepSpawning=true){
+    harvestAndCollectMineralNoContainer:function(spawnName,mineral_id,standingSpot,store_id,mineral_type,haulerBody='1m2c',harvesterBody='10W2m',creep_suffix='',haulerCount=1,haulerWaitSpot=false,keepSpawning=true){
 
         let roomName = Game.spawns[spawnName].pos.roomName;
         let mineral = gob(mineral_id);
@@ -2801,11 +3063,11 @@ module.exports = {
 
                 this.haulResources(spawnName,haulerName,haulerBody,
                     {id:'creep',pos:standingSpot},
-                    {id:store_id,pos:{x:1,y:1,roomName:roomName}},[mineral_type],[],keepSpawning,200 );
+                    {id:store_id,pos:{x:1,y:1,roomName:roomName}},[mineral_type],[],keepSpawning,200,1,haulerWaitSpot );
             }
         }
     },
-    harvestMineral:function(spawnName,cname,bodyPlan,target,resource_type,standingSpot=undefined,keepSpawning=true){
+    harvestMineral:function(spawnName,cname,bodyPlan,target,resource_type,standingSpot=undefined, watchLair=false,keepSpawning=true){
         let mineral = (target)?gob(target.id):false;
         // clog(standingSpot)
         if(!Game.creeps[cname] && mineral && (mineral.amount>0 || mineral.mineralAmount>0) ){
@@ -2815,6 +3077,9 @@ module.exports = {
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
 
+            // we must have just lost vision, keep moving to target
+            if(!mineral)return creep.moveToPos(target.pos)
+
             let dangerIds = creep.room.getDangerousCreeps();
             for(let id of dangerIds){
                 let hostile = gob(id);
@@ -2823,11 +3088,30 @@ module.exports = {
                 }
             }
 
+            if(watchLair && creep.pos.roomName === mineral.pos.roomName){
+                let lair = gob(creep.memory.lair_id)
+                if(creep.memory.lair_id===undefined){
+                    lair = mb.getNearestStructure(target.pos,[STRUCTURE_KEEPER_LAIR],[target.pos.roomName])
+                    creep.memory.lair_id = lair.id;
+                }
+                if(lair && (lair.ticksToSpawn===undefined || lair.ticksToSpawn<25) ){
+
+                    if(creep.pos.getRangeTo(lair)<5)
+                        return creep.moveToPos(rp(25,25,target.pos.roomName))
+                    else
+                        return creep.say("wait")
+                }
+
+            }
+
+
+
+
             if(standingSpot && !creep.pos.isEqualTo(standingSpot)){
                 creep.moveToPos(standingSpot);
                 return;
             }
-            let drop = creep.pos.lookForNearbyResource(resource_type);
+            let drop = (Game.time%10===0)?creep.pos.lookForNearbyResource(resource_type):false;
             //clog(drop.id,cname)
             if(drop){
                 creep.pickup(drop)
@@ -2888,13 +3172,17 @@ module.exports = {
 
             if(creep.pos.roomName===target.pos.roomName) {
 
-                if (controller && controller.reservation && controller.reservation.username !== 'MadDokMike') {
+                if ( (controller.reservation && controller.reservation.username !== 'MadDokMike') || (controller.owner && controller.owner.username !== 'MadDokMike')  ) {
+
                     creep.say("atck:" + this.actOrMove2(creep, target, "attackController"));
-                } else if (controller && (!controller.sign || (controller.sign && controller.sign.username !== 'MadDokMike'))) {
-                    creep.say("sign:" + this.actOrMove2(creep, target, 'signController', "R.I.P tiny humans."));
-                    creep.say("claim:" + this.actOrMove2(creep, target, "claimController"));
-                } else {
-                    creep.say("claim:" + this.actOrMove2(creep, target, "claimController"));
+
+                } else  {
+                    creep.signController(controller, "🥑");
+                    let res = creep.actOrMoveTo('claimController',controller);
+                    if(res===ERR_GCL_NOT_ENOUGH){
+                        res = creep.actOrMoveTo('reserveController',controller);
+                    }
+                    creep.say("claim:" + res);
                 }
             }else{
                 let route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,target.pos.roomName);
@@ -2928,7 +3216,7 @@ module.exports = {
                 this.actOrMove2(creep,target,"attackController");
             }
             else if(controller && (!controller.sign || (controller.sign &&  controller.sign.username!='MadDokMike') ) ){
-                this.actOrMove2(creep,target,'signController',"R.I.P tiny humans.");
+                this.actOrMove2(creep,target,'signController',"🥑 ");
             }else{
                 if(controller && attemptClaim){
                     let res = this.actOrMove2(creep,target,"claimController");
@@ -3081,12 +3369,11 @@ module.exports = {
         }
 
     },
-    pickupSKRoomDrops:function(spawnName,cname,roomName,parts='5*1c1m'){
+    pickupSKRoomDrops:function(spawnName,cname,roomName,parts='5*1c1m',keepSpawning=true){
 
         if(!Game.creeps[cname]){
 
-            if(Game.spawns[spawnName].spawning && Game.spawns[spawnName+'-2'])spawnName=spawnName+'-2';
-            Game.spawns[spawnName].spawnCreepX(parts,cname);
+            this.queueSpawn(spawnName,cname,parts,{},keepSpawning)
         }
 
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
@@ -3170,7 +3457,7 @@ module.exports = {
                 }
 
                 let target = Game.getObjectById(creep.memory.target_to_fix_id);
-                if(!target || target.hits==target.hitsMax){
+                if(!target || target.hits===target.hitsMax){
                     target = mb.getNearestRepairTarget(creep.pos, roomNames);
                     if(target){
                         creep.memory.target_to_fix_id = target.id;
@@ -3181,7 +3468,8 @@ module.exports = {
                     if(target.isMarkedForDismantle())return creep.actOrMoveTo('dismantle',target);
                     else return creep.actOrMoveTo('repair',target);
                 }else{
-                    //creep.say('no targets')
+                    creep.say('no targets')
+                    return creep.moveToPos(rp(25,25,roomNames[0]))
                 }
 
             }else if(creep.isCollecting()) {
@@ -3197,7 +3485,7 @@ module.exports = {
                     return res;
 
                 }else if(harvestSources){
-                    let source = creep.getNearestSource(roomNames);
+                    let source = creep.getNearestSource(roomNames,false);
                     return creep.actOrMoveTo("harvest",source);
                 }else{
                     creep.say('no E')
@@ -3633,6 +3921,135 @@ module.exports = {
             }
         }
     },
+    attackMission: function(spawnName,targetRoom,bodyPlan='1a1m',attackName,attackConfig={},refreshRate=350,useMapRoute=false){
+        if(Memory.attacks===undefined)Memory.attacks= {};
+        if( !Game.spawns[spawnName] )return;
+        let route = [];
+        if(useMapRoute)
+            route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,targetRoom);
+        if(useMapRoute && !route){
+            console.log("ATTACK ERROR: not route for "+Game.spawns[spawnName].pos.roomName+" >> "+targetRoom)
+            return;
+        }
+
+        let thing = this;
+
+        this.rotateCreep(attackName+'-', function(activeCreepName){
+
+            if(Memory.attacks[targetRoom]===undefined)Memory.attacks[targetRoom]=-5;
+
+            if(Game.creeps[activeCreepName] && Memory.attacks[targetRoom]!=='stop')
+                Memory.attacks[targetRoom] = Game.creeps[activeCreepName].ticksToLive
+            // if we had the creep and then its gone, but TTL is over 5, assume it was killed
+            if( !Game.creeps[activeCreepName] && Memory.attacks[targetRoom]>50 )Memory.attacks[targetRoom] = activeCreepName+' defeated:'+Game.time;
+
+            if( Number.isInteger(Memory.attacks[targetRoom]) || Game.creeps[activeCreepName]  ){
+
+                if(attackConfig.useHealer)
+                    attackConfig.healerName=activeCreepName+'-healer';
+
+
+                if(attackConfig.fightyBoi2){
+                    thing.fightyBoi2(spawnName,activeCreepName,bodyPlan,targetRoom,route,attackConfig)
+                }
+                else if(attackConfig.teamCount){
+                    for(let i=0;i<attackConfig.teamCount;i++){
+                        thing.fightyBoi(spawnName,activeCreepName+'-'+i,bodyPlan,targetRoom,route,attackConfig)
+                    }
+                }else{
+                    thing.fightyBoi(spawnName,activeCreepName,bodyPlan,targetRoom,route,attackConfig)
+                }
+
+                if(attackConfig.useHealer && attackConfig.keepSpawning) {
+                    if (Game.creeps[attackConfig.healerName]
+                        && !Game.creeps[attackConfig.healerName].spawning
+                        && Game.creeps[attackConfig.healerName].memory.phase === 'spawning'
+                        && Game.creeps[activeCreepName]){
+                        Game.creeps[attackConfig.healerName].memory.phase = 'following';
+                    }
+                    thing.duoHealer(spawnName,attackConfig.healerName,attackConfig.healerBody,activeCreepName)
+                }
+
+
+                if(attackConfig.useBreaker){
+                    let retreatTo = attackConfig.retreatSpot?attackConfig.retreatSpot:Game.spawns[spawnName]
+                    thing.breakStructures(spawnName,targetRoom+'-br','10w10m',targetRoom,[],'all',retreatTo,attackConfig.keepSpawning)
+                }
+
+
+            }
+
+        },refreshRate)
+
+
+    },
+    attackMission2: function(spawnName,targetRooms,bodyPlan='1a1m',attackName,attackConfig={},refreshRate=350,useMapRoute=false){
+
+
+        try{
+            if(Memory.attacks===undefined)Memory.attacks= {};
+            if( !Game.spawns[spawnName] )return;
+            let route = [];
+            if(useMapRoute)
+                route = mb.getMapRoute(Game.spawns[spawnName].pos.roomName,targetRooms[0]);
+            if(useMapRoute && !route){
+                console.log("ATTACK ERROR: not route for "+Game.spawns[spawnName].pos.roomName+" >> "+targetRooms[0])
+                return;
+            }
+
+            let thing = this;
+
+            this.rotateCreep(attackName+'-', function(activeCreepName){
+
+                if(Memory.attacks[attackName]===undefined)Memory.attacks[attackName]=-5;
+
+                if(Game.creeps[activeCreepName] && Memory.attacks[attackName]!=='stop')
+                    Memory.attacks[attackName] = Game.creeps[activeCreepName].ticksToLive
+                // if we had the creep and then its gone, but TTL is over 5, assume it was killed
+                if( !Game.creeps[activeCreepName] && Memory.attacks[attackName]>50 )Memory.attacks[attackName] = activeCreepName+' defeated:'+Game.time;
+
+                if( Number.isInteger(Memory.attacks[attackName]) || Game.creeps[activeCreepName]  ){
+
+                    if(attackConfig.useHealer)
+                        attackConfig.healerName=activeCreepName+'-healer';
+
+                    else if(attackConfig.teamCount){
+                        /*for(let i=0;i<attackConfig.teamCount;i++){
+                            thing.fightyBoi(spawnName,activeCreepName+'-'+i,bodyPlan,targetRoom,route,attackConfig)
+                        }*/
+                    }else{
+                        thing.fightyBoi2(spawnName,activeCreepName,bodyPlan,targetRooms,route,attackConfig)
+                    }
+
+                    if(attackConfig.useHealer && attackConfig.keepSpawning) {
+                        if (Game.creeps[attackConfig.healerName]
+                            && !Game.creeps[attackConfig.healerName].spawning
+                            && Game.creeps[attackConfig.healerName].memory.phase === 'spawning'
+                            && Game.creeps[activeCreepName]){
+                            Game.creeps[attackConfig.healerName].memory.phase = 'following';
+                        }
+                        thing.duoHealer(spawnName,attackConfig.healerName,attackConfig.healerBody,activeCreepName)
+                    }
+
+
+                    if(attackConfig.useBreaker){
+                        let retreatTo = attackConfig.retreatSpot?attackConfig.retreatSpot:Game.spawns[spawnName]
+                        thing.breakStructures(spawnName,attackName+'-br','10w10m',targetRooms[0],[],'all',retreatTo,attackConfig.keepSpawning)
+                    }
+
+
+                }
+
+            },refreshRate)
+        }catch (e) {
+            console.log("ERROR:attackMission2",e)
+            console.log(e.stack)
+        }
+
+
+
+
+    },
     harassRemote: function(spawnName,targetRoom,bodyPlan='1a1m',attackConfig={},refreshRate=350,useMapRoute=false){
         if(Memory.attacks===undefined)Memory.attacks= {};
         if( !Game.spawns[spawnName] )return;
@@ -3670,8 +4087,16 @@ module.exports = {
                     thing.fightyBoi(spawnName,activeCreepName,bodyPlan,targetRoom,route,attackConfig)
                 }
 
-                if(attackConfig.useHealer)
+                if(attackConfig.useHealer) {
+                    if (Game.creeps[attackConfig.healerName]
+                        && !Game.creeps[attackConfig.healerName].spawning
+                        && Game.creeps[attackConfig.healerName].memory.phase === 'spawning'
+                        && Game.creeps[activeCreepName]){
+                            Game.creeps[attackConfig.healerName].memory.phase = 'following';
+                    }
                     thing.duoHealer(spawnName,attackConfig.healerName,attackConfig.healerBody,activeCreepName)
+                }
+
 
                 if(attackConfig.useBreaker){
                     let retreatTo = attackConfig.retreatSpot?attackConfig.retreatSpot:Game.spawns[spawnName]
@@ -3725,6 +4150,7 @@ module.exports = {
         config.targetStructureTypes =config.targetStructureTypes?config.targetStructureTypes:[STRUCTURE_CONTAINER,STRUCTURE_ROAD];
         config.keepSpawning = config.keepSpawning!==undefined?config.keepSpawning:true;
         config.spawnPriority = config.spawnPriority!==undefined?config.spawnPriority:false;
+        config.avoidSkeepers = config.avoidSkeepers!==undefined?config.avoidSkeepers:true;
 
 
 
@@ -3735,6 +4161,8 @@ module.exports = {
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
+
+            creep.memory.avoidSkeepers = config.avoidSkeepers;
 
             if(creep.memory.kiteIndex===undefined){
                 creep.memory.kiteIndex=0;
@@ -3774,6 +4202,7 @@ module.exports = {
 
                     }else{
                         if(!hostile || creep.pos.getRangeTo(hostile)<=3)creep.moveToPos(config.retreatSpot);
+                        if(hostile &&  creep.pos.getRangeTo(hostile)>3)creep.moveToPos( hostile );
                         creep.moveOffRoomEdge();
 
                     }
@@ -3798,6 +4227,8 @@ module.exports = {
                     for(let id of hostileIDs){
                         let hostile = gob(id);
                         if(!hostile)continue;
+                        if(config.avoidSkeepers && hostile.owner.username==='Source Keeper')continue;
+
                         let rangeToCreep = hostile.pos.getRangeTo(creep);
                         if(rangeToCreep<=3)hostilesIn3++;
 
@@ -3809,17 +4240,19 @@ module.exports = {
                         // collapse above rules to this code:
 
                         // are we likely to get kited/out-shot? then run off early
-                        if(!config.reckless && hostile.canOutShoot(creep)){
+                        if(hostile.canOutShoot(creep)){
                             if(rangeToCreep <= 5 )
                                 flee = "too-op";
-                            else
-                                continue;//we don't want to select for a target. just ignore until closer
+                           // else >> dont do this. it break target selection sometimes, when we can outshoot and out fight. we want to chase
+                                //continue;//we don't want to select for a target. just ignore until closer
                         }
                         // if hostile more puncy, but in shoot range we could flee and kite this bitch
                         if(rangeToCreep <= 3 && hostile.isMorePunchyThan(creep)){
                             flee = "kiteable";// close enough to kite.
                             creep.rangedAttack(hostile); // get a cheeky shot in
                         }
+
+                        if(config.reckless && creep.partCount(ATTACK)>0)flee= false;
 
                         if(flee){
                             creep.memory.flee_reason = flee;
@@ -3936,6 +4369,7 @@ module.exports = {
                     else if(closestTargetDistance < 4 && creep.partCount(RANGED_ATTACK))creep.rangedAttack(target);
 
                 }else{
+                    creep.say("mTW")
                     creep.moveToPos(waitingPosition)
                 }
 
@@ -3952,12 +4386,349 @@ module.exports = {
                     creep.say("wait");
                     return;
                 }
+
+                let hostileIds = creep.room.getDangerousCreeps();
+                for(let id of hostileIds){
+                    let hostile = gob(id);
+                    if(!hostile)continue;
+                    creep.rangedAttack(hostile);
+                    if(creep.partCount(ATTACK)>0)return creep.actOrMoveTo('attack',hostile);
+                }
+
                 if(roomTraversal.length>0){
                     let res = this.traverseRooms(creep,roomTraversal);
                     creep.say("trav:"+res);
                 }else{
 
                     creep.moveToPos(waitingPosition)
+                }
+
+            }
+
+        }
+
+    },
+    /**
+     *
+     * @param sring spawnName
+     * @param string cname
+     * @param string bodyPlan
+     * @param array targetRoomNames
+     * @param Array roomTraversal
+     * @param Object config
+     *      -> RoomPosition config.retreatSpot -> [default:spawn] where to retreat to, if in danger
+     *      -> {X:1,Y:1} config.waitSpot -> [default:(25,25)] where to wait, in target room
+     *
+     *      -> int config.attackRange -> [default:99] how far to react-to/chase creeps to.
+     *      -> bool config.attackCivilians -> [default:true] true/false to attack and kill civilian creeps
+     *      -> bool config.attackStructures -> [default:true] true/false to attack and destroy structures
+     *      -> array config.targetStructureTypes ->  [default:[road,container] ] what kind of structures to target
+     * @param attackStructures
+     * @returns {*}
+     */
+    fightyBoi2: function(spawnName,cname,bodyPlan,targetRoomNames,roomTraversal=[],config={}){
+
+        // TEST: maxRange
+        // CODE: if collective power of X creeps in 5 is too much, then dodge out
+        // CODE: kamikazeSpot
+        // CODE: public message
+        // CODE: ability to bounce between remotes
+        // CODE: track if they're kiting and abandon
+        // CODE : can catch if move speed is slower
+        // CODE: split flee code to kite and gfo. When kiting, want to keep dist=3. when gfo...gfo
+        // CODE: maybe not turn around if enemy can still hurt us. just keep kiting until dead? we are getting chip dmg
+
+        config.retreatSpot =config.retreatSpot?config.retreatSpot:Game.spawns[spawnName].pos;
+        config.kiteSpots =config.kiteSpots?config.kiteSpots:[];
+        config.waitSpot = config.waitSpot?config.waitSpot:{x:25,y:25};
+        config.attackRange =config.attackRange?config.attackRange:99;
+        config.reckless =config.reckless!==undefined?config.reckless:false;
+        config.attackCivilians =config.attackCivilians!==undefined?config.attackCivilians:true;
+        config.attackStructures = config.attackStructures!==undefined?config.attackStructures:true;
+        config.healerName =config.healerName?config.healerName:false;
+        config.targetStructureTypes =config.targetStructureTypes?config.targetStructureTypes:[STRUCTURE_CONTAINER,STRUCTURE_ROAD];
+        config.keepSpawning = config.keepSpawning!==undefined?config.keepSpawning:true;
+        config.spawnPriority = config.spawnPriority!==undefined?config.spawnPriority:false;
+        config.avoidSkeepers = config.avoidSkeepers!==undefined?config.avoidSkeepers:true;
+
+
+
+        let healer = config.healerName?Game.creeps[config.healerName]:false;
+
+        if(!Game.creeps[cname]){
+            this.queueSpawn(spawnName,cname,bodyPlan,{},config.keepSpawning,config.spawnPriority);
+        }
+        if(Game.creeps[cname] && !Game.creeps[cname].spawning){
+            let creep = Game.creeps[cname];
+
+            creep.memory.avoidSkeepers = config.avoidSkeepers;
+            if(creep.memory.targetRoomName===undefined){
+                creep.memory.targetRoomName = targetRoomNames[0];
+            }
+            if(creep.memory.scanned===undefined){
+                creep.memory.scanned = [];
+            }
+
+            if(creep.memory.kiteIndex===undefined){
+                creep.memory.kiteIndex=0;
+            }
+
+            // if wait coords, then wait in the first room, else wait in specified room
+            let waitRoom = config.waitSpot.roomName?config.waitSpot.roomName:targetRoomNames[0]
+            let waitingPosition = rp(config.waitSpot.x,config.waitSpot.y,waitRoom);
+
+            if(creep.memory.flee_from_id){
+                let hostile = gob(creep.memory.flee_from_id);
+                // are we now stronger?
+                if( hostile && creep.isMorePunchyThan(hostile) && creep.isMoreShootyThan(hostile) ){
+
+                    // hostile has been weakened. stop fleeing
+                    creep.memory.flee_from_id=false;
+                    creep.memory.flee_from_room=false;
+                    creep.memory.hostile_dies_at = false;
+                }
+                if(creep.memory.hostile_dies_at < Game.time || (creep.pos.roomName===creep.memory.flee_from_room && !hostile) ){
+
+                    creep.memory.flee_from_id=false;
+                    creep.memory.flee_from_room=false;
+                    creep.memory.hostile_dies_at = false;
+                }else{
+                    creep.heal(creep);
+                    if(hostile && creep.partCount(RANGED_ATTACK))creep.rangedAttack(hostile);
+
+
+                    if(creep.memory.flee_reason==='kiteable' && config.kiteSpots.length>0 ){
+
+
+                        if(creep.pos.isNearTo( config.kiteSpots[creep.memory.kiteIndex] )){
+                            creep.memory.kiteIndex++;
+                        }
+                        if(creep.memory.kiteIndex>=config.kiteSpots.length){
+                            creep.memory.kiteIndex=0;
+                        }
+                        if(!hostile || creep.pos.getRangeTo(hostile)<=3)creep.moveToPos( config.kiteSpots[creep.memory.kiteIndex] );
+                        if(hostile &&  creep.pos.getRangeTo(hostile)>3)creep.moveToPos( hostile );
+
+                    }else{
+                        if(!hostile || creep.pos.getRangeTo(hostile)<=3)creep.moveToPos(config.retreatSpot);
+                        if(hostile &&  creep.pos.getRangeTo(hostile)>3)creep.moveToPos( hostile );
+                        creep.moveOffRoomEdge();
+
+                    }
+
+
+                    return;
+                }
+            }
+
+            if( targetRoomNames.includes(creep.pos.roomName)){
+
+                let target = false;
+                let closestTargetDistance = 99;
+                let flee = false;
+                creep.memory.avoidEdges = true;
+
+                //////// Check Hostile Targets ///////////////////////////////////
+                let hostileIDs = creep.room.getDangerousCreeps(1);
+                let hostilesIn3 = 0;
+                if(hostileIDs.length>0){
+
+                    for(let id of hostileIDs){
+                        let hostile = gob(id);
+                        if(!hostile)continue;
+                        if(config.avoidSkeepers && hostile.owner.username==='Source Keeper')continue;
+
+                        let rangeToCreep = hostile.pos.getRangeTo(creep);
+                        if(rangeToCreep<=3)hostilesIn3++;
+
+                        // Rules to follow:
+                        // hostile IS more Punchy & more shooty >> ignore, then flee when close
+                        // hostile IS less Punchy & more shooty >> ignore, then flee when close
+                        // hostile IS more Punchy & less shooty >> approach, then kite
+                        // hostile IS less Punchy & less shooty >> approach, then chase
+                        // collapse above rules to this code:
+
+                        // are we likely to get kited/out-shot? then run off early
+                        if(hostile.canOutShoot(creep)){
+                            if(rangeToCreep <= 5 )
+                                flee = "too-op";
+                            // else >> dont do this. it break target selection sometimes, when we can outshoot and out fight. we want to chase
+                            //continue;//we don't want to select for a target. just ignore until closer
+                        }
+                        // if hostile more puncy, but in shoot range we could flee and kite this bitch
+                        if(rangeToCreep <= 3 && hostile.isMorePunchyThan(creep)){
+                            flee = "kiteable";// close enough to kite.
+                            creep.rangedAttack(hostile); // get a cheeky shot in
+                        }
+
+                        if(config.reckless && creep.partCount(ATTACK)>0)flee= false;
+
+                        if(flee){
+                            creep.memory.flee_reason = flee;
+                            creep.memory.flee_from_id = hostile.id;
+                            creep.memory.flee_from_room=hostile.pos.roomName;
+                            creep.memory.hostile_dies_at = Game.time + hostile.ticksToLive;
+                            // run awaaayyy
+                            if(creep.memory.flee_reason==='kiteable' && config.kiteSpots.length>0 ){
+                                return creep.moveToPos(config.kiteSpots[ creep.memory.kiteIndex ]);
+                            }else{
+                                return creep.moveToPos(config.retreatSpot);
+                            }
+                        }
+
+                        // if we can punch MF, then lets punch the closest
+                        if(rangeToCreep < closestTargetDistance ){
+                            target = hostile;
+                            closestTargetDistance = rangeToCreep;
+                        }
+                    }
+                }
+                //////// Heal if safe from Hostiles ///////////////////////////////////
+                if( (closestTargetDistance > 1 || creep.partCount(ATTACK)===0 ) && creep.hits < creep.hitsMax){
+                    creep.heal(creep); // heal if hurt and out of punch range
+                }
+                else if(closestTargetDistance !==1 && closestTargetDistance <= 4){
+
+                    creep.heal(creep);//pre-heal when close
+                }
+
+
+                if(!creep.memory.scanned.includes(creep.pos.roomName)){
+                    mb.scanRoom(creep.pos.roomName);
+                    creep.memory.scanned.push(creep.pos.roomName);
+                }
+
+                //////// Pick Civilian Target ///////////////////////////////////
+                if(!target && config.attackCivilians) {
+                    // we we lock on civies, then we don't get to count them and RMA
+                    // = gob(creep.memory.civillian_id);
+                    //if (target)
+                    closestTargetDistance = creep.pos.getRangeTo(target);
+
+                    if (!target) {
+                        let civilianIDs = creep.room.getEnemyPlayerCivilians();
+                        closestTargetDistance = 99;
+                        for (let id of civilianIDs) {
+                            let civilian = gob(id);
+                            if (!civilian) continue;
+
+                            let dist = creep.pos.getRangeTo(civilian);
+
+                            if(dist<=3)hostilesIn3++;
+
+                            if (dist < closestTargetDistance) {
+                                target = civilian;
+                                closestTargetDistance = dist;
+                                creep.memory.civillian_id = target.id;
+                                creep.memory.structure_id = false;
+                            }
+                        }
+                    }
+                }
+                //////// ELSE Pick structure Target ///////////////////////////////////
+                if(!target && config.attackStructures && creep.memory.structure_id !=="none"){
+                    target = gob(creep.memory.structure_id);
+
+                    if(!target){
+                        target = mb.getNearestStructure(creep.pos,config.targetStructureTypes,[creep.pos.roomName]);
+                        if(target){
+                            creep.memory.structure_id= target.id;
+                        }else{
+                            creep.memory.structure_id="none"
+                        }
+                    }
+                    if(target)closestTargetDistance = creep.pos.getRangeTo(target)
+                }
+                //clog(hostilesIn3,creep.name+" hostilesIn3")
+                if(target){
+
+
+                    if(cname==='bob'){
+                        console.log(creep.name,config.attackStructures,"target:",target.id,target.name,target.pos, " range:",closestTargetDistance);
+                    }
+
+
+                    // if target is a creep:
+                    if(target.body){
+                        if(healer && creep.pos.getRangeTo(healer)>=2 ){
+                            creep.say("wait");
+                            rangeToWaitingPos = 200;
+                        }
+
+                        // don't move towards targets on/close to room edge, to avoid getting pinged out of the room
+                        if(!target.onRoomEdge() && !target.nearRoomEdge() ){
+                            // only chase, if its in the attack buble of the waiting spot
+                            let rangeToWaitingPos = target.pos.getRangeTo(waitingPosition);
+                            let dontMoveCloser = (creep.partCount(RANGED_ATTACK)>0&&creep.partCount(ATTACK)===0&&closestTargetDistance===3)
+                            let stepBack = (creep.partCount(RANGED_ATTACK)>0&&creep.partCount(ATTACK)===0&&closestTargetDistance<3)
+                            // if we are ranged only and too close, then step back
+                            if(stepBack){
+                                let newDir = creep.pos.getReverseDirectionTo(target);
+                                creep.move(newDir);
+                            }
+                            // IF we are chasing, then we want to always call a move intent, to insure we keep pace if its moving
+                            else if(rangeToWaitingPos <= config.attackRange && !dontMoveCloser)creep.moveToPos(target);
+                        }
+                    }else if(closestTargetDistance>1){
+                        // non-creeps are fixed targets so just use normal pathing code
+                        creep.moveToPos(target);
+                    }
+
+                    if(closestTargetDistance===1)creep.attack(target);
+                    if(hostilesIn3>1 && creep.partCount(RANGED_ATTACK))creep.rangedMassAttack()
+                    else if(closestTargetDistance < 4 && creep.partCount(RANGED_ATTACK))creep.rangedAttack(target);
+
+                }else{
+                    if(targetRoomNames.length>1){
+
+                        if(creep.memory.targetRoomName===creep.pos.roomName && !creep.onRoomEdge() && !creep.nearRoomEdge()){
+                            for(let i in targetRoomNames){
+                                if(targetRoomNames[i] === creep.memory.targetRoomName){
+                                    creep.memory.targetRoomName = targetRoomNames[((i*1)+1)]?targetRoomNames[((i*1)+1)]:targetRoomNames[0];
+                                    break;
+                                }
+                            }
+                        }
+                        creep.say("mv to "+creep.memory.targetRoomName)
+                        creep.moveToPos(rp(25,25,creep.memory.targetRoomName))
+                    }else {
+                        creep.say("wait")
+                        creep.moveToPos(waitingPosition)
+                    }
+                }
+
+
+            }else{
+                creep.moveOffRoomEdge();
+
+                if(  creep.hits < creep.hitsMax){
+                    creep.heal(creep); // heal if hurt and out of punch range
+                }
+
+                let hostileIds = creep.room.getDangerousCreeps();
+                let hostile = false;
+                for(let id of hostileIds){
+                    hostile = gob(id);
+                    if(hostile)break;
+                }
+
+                if(hostile){
+                    creep.rangedAttack(hostile);
+                    creep.attack(hostile);
+                }
+
+                if(healer && creep.pos.getRangeTo(healer)>=2 ){
+                    return creep.say("WfH");
+                }else{
+
+                    if(hostile){
+                        creep.moveToPos(hostile);
+                    }else if(roomTraversal.length>0){
+                        let res = this.traverseRooms(creep,roomTraversal);
+                        creep.say("trav:"+res);
+                    }else{
+                        creep.moveToPos(waitingPosition)
+                    }
                 }
 
             }
@@ -4200,16 +4971,23 @@ module.exports = {
             }else{
 
 
-                if(retreatSpot && Game.rooms[roomName].getEnemyPlayerFighters().length > 0){
-                    let hostileIDs =  Game.rooms[roomName].getEnemyPlayerFighters();
-                    for(let hid of hostileIDs){
-                        let hostile = gob(hid);
-                        if(hostile && hostile.pos.getRangeTo(creep)<10){
-                            if(creep.partCount(HEAL)) creep.heal(creep)
-                            return creep.moveToPos(retreatSpot);
+                if(retreatSpot){
+                    let retreat = false;
+                    if(Game.rooms[roomName].getEnemyPlayerFighters().length > 0) {
+                        let hostileIDs = Game.rooms[roomName].getEnemyPlayerFighters();
+                        for (let hid of hostileIDs) {
+                            let hostile = gob(hid);
+                            if (hostile && hostile.pos.getRangeTo(creep) < 10) {
+                                retreat=true;break;
+                            }
                         }
                     }
+                    if(creep.hits < creep.hitsMax)retreat=true;
 
+                    if(retreat){
+                        if (creep.partCount(HEAL)) creep.heal(creep)
+                        return creep.moveToPos(retreatSpot);
+                    }
 
                 }
 
@@ -4535,7 +5313,8 @@ module.exports = {
             console.log("ATTACK ROUTE ERROR: no route for "+Game.spawns[nodeName].pos.roomName+" >> "+targetRoom)
             return;
         }
-        let defaultMuster =  rp(25,25,route[(route.length -2)])
+        let mroom = route.length>0?route[(route.length -2)]:targetRoom;
+        let defaultMuster =  rp(25,25,mroom)
 
         config.musterSpot =         config.musterSpot!==undefined?      config.musterSpot:defaultMuster;
         config.retreatSpot =        config.retreatSpot!==undefined?     config.retreatSpot:config.musterSpot;
@@ -5396,7 +6175,7 @@ module.exports = {
                 }else{
                     delete Memory.invaderSeen[roomName];
                     creep.say('safe');
-                    creep.suicide();
+                   // creep.suicide();
                 }
             }else{
                 creep.moveOffRoomEdge();
@@ -6034,8 +6813,10 @@ module.exports = {
                 if(enemies.length>0){
                     creep.heal(creep)
                 }
-
-                this.traverseRooms(creep,roomTraversal);
+                if(roomTraversal.length===0)
+                    creep.moveToPos(retreatRoomPos)
+                else
+                    this.traverseRooms(creep,roomTraversal);
             }else{
                 this.roomBounceDrain(creep,retreatRoomPos)
             }

@@ -79,6 +79,7 @@ global.mb = {
         
         for(let roomName in Game.rooms){
             if(this.havePermanentVision(roomName)){
+                if(Memory.mapBook.rooms[roomName])delete Memory.mapBook.rooms[roomName];
                 this.scanRoom(roomName)
             }
         }
@@ -957,8 +958,12 @@ global.mb = {
                         let costMatrix = new PathFinder.CostMatrix;
 
                         let structs = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_ROAD]})
+                        let walls = mb.getStructures({roomNames:[roomName],types:[STRUCTURE_WALL]})
                         for(let struct of structs){
                             costMatrix.set(struct.pos.x, struct.pos.y, 1);
+                        }
+                        for(let struct of walls){
+                            costMatrix.set(struct.pos.x, struct.pos.y, 2555);
                         }
                         return costMatrix;
                     }

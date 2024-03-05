@@ -414,4 +414,12 @@ global.util = {
             console.log(`Link ID: ${link.id} ${link.pos} | Type: ${linkType} >> ${recips}`);
         }
     },
+    cleanUpCreepMemory:function(){
+        for(let name in Memory.creeps){
+            if(!Game.creeps[name]){
+                console.log("Memory.creeps.",name," no longer needed")
+                delete Memory.creeps[name]
+            }
+        }
+    }
 };

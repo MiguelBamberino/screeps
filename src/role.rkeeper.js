@@ -64,12 +64,33 @@ var roleTanker = {
         // if already carrying some mineral, but no job, then go put it back in storage
         if(!creep.memory.job && stored_type && stored_type!==RESOURCE_ENERGY){
             creep.memory.job = {target_id:'nope',resource_type:stored_type,action:'empty'}
-        }  
-        
+        }
+
+        /////// High Priority Jobs //////////////////////////////////
+
+        if(!creep.memory.job  && Game.rooms[creep.pos.roomName].getDangerousCreeps().length>0 && energyInStorage>=creepSpace){
+            let towerSpace = creepSpace>=1000?500:creepSpace;
+            let tower = mb.getNearestStructure(creep.pos,[STRUCTURE_TOWER],[config.coreRoomName],[{attribute:'canReserveTransfer',operator:'fn',value:[towerSpace]}])
+            if(tower){
+                tower.reserveTransfer(creep.name,creepSpace);
+                creep.memory.job = {target_id:tower.id,resource_type:RESOURCE_ENERGY,action:'fill'}
+            }
+        }
+
+        if(!config.inRecoveryMode && config.upgradeBoostPlan.length>0 && !creep.memory.job){
+            // assume there is one lab
+            let lab = gob(config.upgradeBoostPlan[0].lab_id);
+            let rs = config.upgradeBoostPlan[0].resource_type;
+            if(!lab.isFull(RESOURCE_ENERGY)){
+                creep.memory.job ={ target_id:lab.id, resource_type:RESOURCE_ENERGY, action:'fill' };
+            }else if(!lab.isFull(rs) && storage.storingAtLeast(creepSpace,rs)){
+                creep.memory.job ={ target_id:lab.id, resource_type:rs, action:'fill' };
+            }
+        }
+
+
         /////// RESOURCE_ENERGY Jobs //////////////////////////////////
 
-        
-        
         if(!creep.memory.job && energyInStorage>=creepSpace && this.shouldCheckForFillJobs(creep,config) ){
             let reserveAmount = config.controller.level===8?200: ( config.controller.level===7?0:50 );
             let ext =  mb.getNearestStructure(creep.pos,[STRUCTURE_EXTENSION],[config.coreRoomName],[{attribute:'canReserveTransfer',operator:'fn',value:[1]}])
@@ -81,8 +102,8 @@ var roleTanker = {
                 creep.memory.fillingInProgress = false; // if we got this far then we have filled all extensions and spawns
             }
         }
-        
-        if(!creep.memory.job){
+
+        if(!creep.memory.job  ){
             let mineStore = mb.getFullestStructure([STRUCTURE_CONTAINER], [config.coreRoomName],
                     [ {attribute:'isMineStore',operator:'fn',value:[]},{attribute:'canReserveWithdraw',operator:'fn',value:[creepSpace]}])
             if(mineStore){
@@ -91,7 +112,9 @@ var roleTanker = {
                 creep.memory.job = {target_id:mineStore.id,resource_type:RESOURCE_ENERGY,action:'empty'}
             }
         }
-        if(!creep.memory.job && energyInStorage>=creepSpace){
+
+        // once the storage has a link, we can relay from storage and save rkeepers time. This does mean spawn3 fast filler has to rely on its link
+        if(!creep.memory.job && energyInStorage>=creepSpace && (!storage || !storage.getLink())){
             let targets = mb.getStructures({ types:[STRUCTURE_CONTAINER],roomNames:[config.coreRoomName],
                     filters:[{attribute:'isFillerStore',operator:'fn',value:[]},{attribute:'canReserveTransfer',operator:'fn',value:[creepSpace]} ]})
                     
@@ -151,14 +174,16 @@ var roleTanker = {
             //if(creep.name==='G-rk-0')clog(haulJob);
             if( haulJob ){
                 // we check for atleast 5, to make sure we don't leave small crappy bits in the storage
-                if(haulJob.action =='fill' && storage.storingAtLeast(5,haulJob.resource_type)){
+                if(haulJob.action ==='fill' && storage.storingAtLeast(5,haulJob.resource_type)){
                  creep.memory.job ={ target_id:haulJob.id, resource_type:haulJob.resource_type, action:haulJob.action };
                 }
-                if(haulJob.action =='empty' && storage.haveSpaceFor(creepSpace,haulJob.resource_type)){
+                if(haulJob.action ==='empty' && storage.haveSpaceFor(creepSpace,haulJob.resource_type)){
                  creep.memory.job ={ target_id:haulJob.id, resource_type:haulJob.resource_type, action:haulJob.action };
                 }
             }
         }
+
+
 
         /////// Import Jobs //////////////////////////////////
         if(!creep.memory.job){
@@ -178,9 +203,10 @@ var roleTanker = {
         /////// Export Jobs //////////////////////////////////
         if(!creep.memory.job){
             for(let exportConf of config.exports){
+                let a = exportConf.exportOver===0?1:exportConf.exportOver+creepSpace;
 
                 if( 
-                    storage.storingAtLeast( (exportConf.exportOver+creepSpace), exportConf.resource_type ) 
+                    storage.storingAtLeast( a, exportConf.resource_type )
                     && terminal.storingLessThan( exportConf.batchSize, exportConf.resource_type )
                     && terminal.haveSpaceFor( creepSpace, exportConf.resource_type )
                     ){
@@ -212,11 +238,13 @@ var roleTanker = {
             this.doJob(creep,storage)
         }
 
+
+
         if(!creep.memory.job){
 
             let drop = creep.getDroppedEnergy(25);
             // while bored, go clean up. Make sure not to pick energy up from controller pile
-            if(drop && drop.pos.getRangeTo(config.controller)>5){
+            if(drop && (drop.pos.getRangeTo(config.controller)>5 || config.controller.level ===8)){
                 return creep.actOrMoveTo('pickup',drop);
             }else{
                 return creep.moveToPos(parkSpot)
@@ -300,7 +328,7 @@ var roleTanker = {
             let job = creep.memory.job;
             let jobTarget = Game.getObjectById(job.target_id);
 
-            if(job.action=='fill'){
+            if(job.action==='fill'){
                 
                 if(creep.carryingAtleast(1,job.resource_type)){
                     
@@ -324,7 +352,7 @@ var roleTanker = {
                     creep.actOrMoveTo("withdraw",storage,job.resource_type);
                 }
             }
-            if(job.action=='empty'){
+            if(job.action==='empty'){
                 
                 if(creep.carryingAtleast(1,job.resource_type)){
                     

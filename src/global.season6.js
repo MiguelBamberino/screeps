@@ -14,6 +14,19 @@ global.season6 = {
             }
         }
     },
+    clearObjectMetaOfFrozenRooms:function (){
+        let objects = objectMeta.all();
+        logs.startCPUTracker('clearObjectMetaOfFrozenRooms')
+        for(let id in objects){
+
+            if( this.isRoomFroze(objects[id].roomName) ){
+                console.log("objectMeta:Froze roomName >> ",id,objects[id].roomName);
+                objectMeta.delete(id)
+            }
+
+        }
+        logs.stopCPUTracker('clearObjectMetaOfFrozenRooms',true)
+    },
     freezeDateFor(roomName){
         const startDate = new Date(this.startDate);
         const date = new Date(startDate);

@@ -135,18 +135,18 @@ class LabComplex extends AbstractComplex{
                 // if the lab is empty of all resources, AND we aiming to fill this lab, then set a job
                 // not we don't want to do this for 'emoty' job types, because there is an edge case where
                 // we keep emptying qty 5
-                if(!stored_type && directionType=='fill'){
+                if(!stored_type && directionType==='fill'){
                     
                     this.setHaulerJob(lab,expectedResource,'fill')
                     
-                }else if(stored_type && stored_type!=expectedResource){
+                }else if(stored_type && stored_type!==expectedResource){
                     
                     this.setHaulerJob(lab,stored_type,'empty')
                     
                 }
                 return ERR_NOT_ENOUGH_RESOURCES;
             }
-            else if( (space >= this.fillerSize && directionType=='fill') || (this.fillerSize<=storedAmount && directionType=='empty') ){
+            else if( (space >= this.fillerSize && directionType==='fill') || (this.fillerSize<=storedAmount && directionType==='empty') ){
                 this.setHaulerJob(lab,expectedResource,directionType)
                 return OK;
             }
@@ -164,9 +164,9 @@ class LabComplex extends AbstractComplex{
      */ 
     checkAllLabsForHaulJob(){
         
-        let reverse = (this.mode=='split');
+        let reverse = (this.mode==='split');
         let ingredients = this.getIngredients(this.makingResource);
-        if(ingredients.length==0){
+        if(ingredients.length===0){
             return ERR_INVALID_ARGS;
         }
         
@@ -181,6 +181,7 @@ class LabComplex extends AbstractComplex{
             let lab = Game.getObjectById(feederIDs[f]);
             if(lab){
                 let dir = reverse?'empty':'fill';
+                //if(this.mode==='empty')dir='empty';
                 if(this.checkLabForHaulerJob(lab,ingredients[f],dir)===OK)return OK;
             }
         }
@@ -189,6 +190,7 @@ class LabComplex extends AbstractComplex{
             let reactor = Game.getObjectById(id);
             if(reactor){
                 let dir = reverse?'fill':'empty';
+               // if(this.mode==='empty')dir='empty';
                if(this.checkLabForHaulerJob(reactor,this.makingResource,dir)===OK)return OK;
             }
         }
@@ -376,7 +378,8 @@ class LabComplex extends AbstractComplex{
         // Tier 3 
         
         if(product===RESOURCE_CATALYZED_GHODIUM_ALKALIDE) return [RESOURCE_GHODIUM_ALKALIDE,RESOURCE_CATALYST]
-        
+        if(product===RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE) return [RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_CATALYST]
+
         return [];
     }
 }

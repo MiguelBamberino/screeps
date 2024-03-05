@@ -7,23 +7,39 @@ gui.nodeSrcStats = false;
 gui.nodeControllerStats =false;
 gui.showDropStats = false;
 logs.runRCLSpeedStats = false;
-mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W17S22','W16S22','W16S23','W17S23','W17S24','W16S24','W15S24','W14S24','W13S24'])
-mb.createMapRoute(['W21S22','W21S23','W21S24','W20S24','W20S25','W19S25','W18S25','W17S25','W17S26','W16S26','W15S26','W14S26','W14S27','W13S27','W13S26'])
-mb.createMapRoute(['W21S22','W21S23','W21S24','W20S24','W20S25','W20S26','W20S27','W19S27','W19S26'])
-mb.createMapRoute(['W21S22','W21S23','W21S24','W20S24','W20S25','W19S25'])
-mb.createMapRoute(['W21S22','W21S23','W21S24','W22S24','W22S25','W22S25','W22S26','W22S27','W22S28'])
-mb.createMapRoute(['W22S17','W23S17','W23S18','W24S18'])
-mb.createMapRoute(['W13S24','W12S24','W12S25','W11S25','W11S26','W10S26','W9S26','W8S26','W8S27','W7S27','W6S27','W5S27','W4S27','W3S27'])
-mb.createMapRoute(['W13S24','W12S24','W12S25','W11S25','W10S25','W10S24','W9S24','W8S24'])
-// harrass UncleDian
-mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21','W16S20','W15S20','W14S20','W13S20','W12S20'])
-mb.createMapRoute(['W21S22','W20S22','W19S22','W18S22','W18S21','W17S21','W16S21','W16S20','W15S20','W14S20','W13S20','W12S20','W11S20','W10S20','W9S20','W8S20','W7S20','W6S20','W5S20','W5S21','W4S21'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21','W4S21'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21','W4S21','W4S22'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20'])
 mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W11S20'])
+
+// From Kappa
+mb.createMapRoute(['E8S15','E9S15','E10S15','E11S15','E12S15','E13S15','E14S15','E15S15','E16S15','E17S15','E18S15','E18S14'])
+
+// From Alpha
+// From Epsilon
+mb.createMapRoute(['W8S24','W7S24','W6S24','W5S24','W5S23','W5S22','W5S21','W5S20','W4S20','W3S20','W2S20','W2S19','W1S19','W1S18'])
+mb.createMapRoute(['W8S24','W7S24','W6S24','W5S24','W5S23','W5S22','W5S21','W4S21'])
+mb.createMapRoute(['W8S24','W7S24','W6S24','W5S24','W5S23','W4S23','W4S22','W3S22','W2S22','W2S21','W2S20','W1S20','W0S20','E0S20','E1S20','E2S20','E2S19'])
+
+// from Zeta
+mb.createMapRoute(['W13S24','W12S24','W12S25','W11S25','W10S25','W9S25','W8S25','W8S24','W7S24','W6S24','W6S24','W5S23', 'W5S22','W5S21','W4S21'])
+//mb.createMapRoute(['E1S23','E2S23','E2S22','E3S22','E4S22','E4S21'])
+//mb.createMapRoute(['E1S23','E2S23','E3S23','E3S24','E3S25','E4S25','E5S25','E6S25','E7S25','E8S25','E8S26'])
+
+// from Theta
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E11S30','E12S30','E12S31'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E11S30','E12S30','E13S30','E14S30','E15S30','E15S31'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E11S30','E12S30','E13S30','E14S30','E15S30','E15S31','E15S32'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E10S31','E10S32','E10S33'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E10S31','E10S32','E10S33','E11S33'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E10S31','E10S32','E10S33','E11S33','E12S33'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E11S30','E12S30','E12S31','E12S32'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E11S30','E12S30','E12S31','E12S32','E13S32'])
+mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','E11S30','E12S30','E12S31','E12S32','E13S32','E14S32'])
+mb.createMapRoute(['E8S26','E8S27','E7S27','E7S28','E7S29','E7S30','E7S31','E7S32'])
+
 require('global.season6');
 
 module.exports = {
@@ -32,141 +48,207 @@ module.exports = {
     loadNodes(){
         return {
             a: new RoomNode('Alpha', {
-                retreatSpot:rp(25,25,'W21S22'),
-                anchor:rp(17,37,'W21S22'),spawnFacing:LEFT,armAnchor:rp(19,41,'W21S22'),
+                wallHeight:500000,
+                rampHeight:500000,
+                retreatSpot:rp(25,25,'E15S32'),
+                anchor:rp(33,7,'E15S32'),spawnFacing:TOP,
                 buildFast: false,
-                terminalEnergyCap:100000,
-                upgradeRate: RATE_VERY_SLOW,
-                makeResource:RESOURCE_GHODIUM,
-                //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_OXIDE,RESOURCE_ZYNTHIUM_HYDRIDE,RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_HYDRIDE],
+                //terminalEnergyCap:200000,
+                upgradeRate: RATE_VERY_FAST,
+               // makeResource:RESOURCE_HYDROXIDE,
+                //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ACID],
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE],
-                labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600,7),
+                //labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600,7),
                 imports:[
-                    {resource_type:RESOURCE_LEMERGIUM,storageCap:48000},
-                    {resource_type:RESOURCE_ZYNTHIUM,storageCap:48000},
-                    {resource_type:RESOURCE_KEANIUM,storageCap:48000},
-                    {resource_type:RESOURCE_UTRIUM,storageCap:48000},
-                    {resource_type:RESOURCE_HYDROGEN,storageCap:48000},
+                   // {resource_type:RESOURCE_OXYGEN,storageCap:500},
                 ],
                 exports:[
-                    {resource_type:RESOURCE_ENERGY,exportOver:20000,batchSize:10000},
+                    //{resource_type:RESOURCE_ENERGY,exportOver:20000,batchSize:10000},
                 ]
 
             }),
             b: new RoomNode('Beta', {
-                retreatSpot:rp(25,25,'W22S17'),
-                anchor:rp(13,15,'W22S17'),spawnFacing:LEFT,
+                wallHeight:500000,
+                rampHeight:500000,
+                retreatSpot:rp(25,25,'E7S32'),
+                anchor:rp(18,21,'E7S32'),spawnFacing:TOP,
                 buildFast: false,
-                upgradeRate: RATE_VERY_SLOW,
-                terminalEnergyCap:200000,
+                upgradeRate: RATE_VERY_FAST,
+                //terminalEnergyCap:200000,
                 imports:[
-                    /*{resource_type:RESOURCE_ENERGY,storageCap:100000},*/
+                  //  {resource_type:RESOURCE_ENERGY,storageCap:500000},
                 ],
 
                 exports:[
-                    {resource_type:RESOURCE_ENERGY,exportOver:40000,batchSize:10000},
-                    {resource_type:RESOURCE_LEMERGIUM,exportOver:0,batchSize:10000},
-                    {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:10000},
-                    {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
+                    //{resource_type:RESOURCE_ENERGY,exportOver:40000,batchSize:200000},
+                    //{resource_type:RESOURCE_LEMERGIUM,exportOver:0,batchSize:10000},
+                    //{resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:10000},
+                    //{resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
                 ]
 
             }),
             g: new RoomNode('Gamma', {
-                retreatSpot:rp(25,25,'W32S22'),
-                anchor:rp(6,14,'W32S22'),spawnFacing:TOP,
+                wallHeight:500000,
+                rampHeight:500000,
+                retreatSpot:rp(20,9,'E18S14'),
+                anchor:rp(20,39,'E18S14'),spawnFacing:LEFT,armFacing:RIGHT,armAnchor:rp(18,39,'W19S25'),
                 buildFast: false,
-                upgradeRate: RATE_VERY_SLOW,
-                surplusRequired:25000,
+                extractMineral:false,
+                upgradeRate: RATE_SLOW,
+                surplusRequired:5000,
                 terminalEnergyCap:200000,
-                imports:[
-                    {resource_type:RESOURCE_ENERGY,storageCap:100000},
+                upgradeBoostPlan:[
+                    /*{resource_type:RESOURCE_GHODIUM_ACID,lab_id:'65de7f3dc07674e00ab3db83'}*/
                 ],
+                imports:[
+                    //{resource_type:RESOURCE_ENERGY,storageCap:400000},
+                   // {resource_type:RESOURCE_GHODIUM_ACID,storageCap:12000},
 
+                ],
                 exports:[
-                   /* {resource_type:RESOURCE_ENERGY,exportOver:25000,batchSize:10000},*/
-                    {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
+                    {resource_type:RESOURCE_GHODIUM_ACID,exportOver:0,batchSize:6000},
+                    {resource_type:RESOURCE_ENERGY,exportOver:25000,batchSize:200000},
+                   /* {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
                     {resource_type:RESOURCE_UTRIUM,exportOver:0,batchSize:10000},
+                    {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:10000},*/
                 ]
             }),
             d: new RoomNode('Delta', {
-                retreatSpot:rp(40,36,'W25S22'),
-                anchor:rp(28,35,'W25S22'),spawnFacing:TOP,armFacing:RIGHT,armAnchor:rp(24,37,'W25S22'),
-                allowCPUShutdown:true,
-                buildTerminal: true,
-                extractMineral:true,
+                wallHeight:500000,
+                rampHeight:500000,
+                retreatSpot:rp(40,36,'E6S18'),
+                anchor:rp(25,20,'E6S18'),spawnFacing:TOP,
+
+                buildTerminal: false,
+                extractMineral:false,
                 buildFast: false,
                 upgradeRate: RATE_VERY_FAST,
+                terminalEnergyCap:50000,
+                //funnelRoomName:'W25S23',
                 imports:[
                     {resource_type:RESOURCE_ENERGY,storageCap:100000},
+
                 ],
                 exports:[
-                    {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:10000},
+                    //{resource_type:RESOURCE_ENERGY,exportOver:900000,batchSize:100000},
                 ],
                 surplusRequired:25000
             }),
             e: new RoomNode('Epsilon', {
+                wallHeight:500000,
+                rampHeight:500000,
                 retreatSpot:rp(20,21,'W8S24'),
                 anchor:rp(32,26,'W8S24'),spawnFacing:TOP,
                 allowCPUShutdown:true,
                 buildTerminal: true,
-                extractMineral:true,
-                buildFast: true,
-                upgradeRate: RATE_VERY_FAST,
+                extractMineral:false,
+                buildFast: false,
+                terminalEnergyCap:200000,
+                upgradeRate: RATE_FAST,
                 imports:[
-                    {resource_type:RESOURCE_ENERGY,storageCap:100000},
+                    //{resource_type:RESOURCE_ENERGY,storageCap:100000},
                 ],
                 exports:[
-                    {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:10000},
+                    {resource_type:RESOURCE_ENERGY,exportOver:50000,batchSize:200000},
+                    {resource_type:RESOURCE_CATALYST,exportOver:0,batchSize:10000},
                 ],
                 surplusRequired:25000
             }),
             z: new RoomNode('Zeta', {
+                wallHeight:500000,
+                rampHeight:500000,
                 retreatSpot:rp(20,21,'W13S24'),
                 anchor:rp(28,4,'W13S24'),spawnFacing:TOP,armFacing:RIGHT,armAnchor:rp(24,6,'W13S24'),
                 buildTerminal: true,
                 extractMineral:true,
                 buildFast: false,
-                upgradeRate: RATE_VERY_FAST,
+                upgradeRate: RATE_VERY_SLOW,
                 surplusRequired:25000,
+                terminalEnergyCap:200000,
+                makeResource:RESOURCE_UTRIUM_LEMERGITE,
                 labComplex:new LabComplex( rp( 30,9,'W13S24' ),TOP_LEFT,600,7),
                 imports:[
-                    {resource_type:RESOURCE_ENERGY,storageCap:100000},
+                    //{resource_type:RESOURCE_ENERGY,storageCap:100000},
                 ],
                 exports:[
-                    {resource_type:RESOURCE_UTRIUM,exportOver:0,batchSize:10000},
+                    {resource_type:RESOURCE_ENERGY,exportOver:50000,batchSize:200000},
+                    {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:100000},
+                    {resource_type:RESOURCE_KEANIUM,exportOver:0,batchSize:100000},
+                    {resource_type:RESOURCE_UTRIUM,exportOver:0,batchSize:100000},
+                    {resource_type:RESOURCE_LEMERGIUM,exportOver:0,batchSize:100000},
+                    {resource_type:RESOURCE_HYDROGEN,exportOver:0,batchSize:100000},
+                    {resource_type:RESOURCE_OXYGEN,exportOver:0,batchSize:100000},
+
+                    {resource_type:RESOURCE_HYDROXIDE,exportOver:0,batchSize:100000},
+
+                    {resource_type:RESOURCE_LEMERGIUM_OXIDE,exportOver:0,batchSize:12000},
+                    {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,exportOver:0,batchSize:12000},
+                    {resource_type:RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,exportOver:0,batchSize:12000},
                 ]
             }),
             t: new RoomNode('Theta', {
-                retreatSpot:rp(32,25,'W23S23'),
-                anchor:rp(24,29,'W23S23'),spawnFacing:TOP,
-                buildTerminal: false,
+                wallHeight:500000,
+                rampHeight:500000,
+                retreatSpot:rp(32,25,'E8S26'),
+                anchor:rp(19,28,'E8S26'),spawnFacing:TOP,
+                allowCPUShutdown:true,
+                buildTerminal: true,
                 extractMineral:false,
                 buildFast: false,
-                upgradeRate: RATE_VERY_FAST,
+                upgradeRate: RATE_FAST,
+                terminalEnergyCap:200000,
                 surplusRequired:10000,
+                makeResource:RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,
+                labComplex:new LabComplex( rp( 16,37,'E8S26' ),TOP_RIGHT,600,7),
                 imports:[
-                    {resource_type:RESOURCE_ENERGY,storageCap:100000},
+                    //{resource_type:RESOURCE_ENERGY,storageCap:50000},
+                    {resource_type:RESOURCE_CATALYST,storageCap:6000},
+                    {resource_type:RESOURCE_ZYNTHIUM,storageCap:6000},
+                    {resource_type:RESOURCE_UTRIUM,storageCap:48000},
+                    {resource_type:RESOURCE_LEMERGIUM,storageCap:60000},
+                    {resource_type:RESOURCE_LEMERGIUM_OXIDE,storageCap:90000},
+                    {resource_type:RESOURCE_LEMERGIUM_ALKALIDE,storageCap:90000},
+                    {resource_type:RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE,storageCap:90000},
+                    {resource_type:RESOURCE_KEANIUM,storageCap:6000},
+                    {resource_type:RESOURCE_OXYGEN,storageCap:60000},
+                    //{resource_type:RESOURCE_HYDROGEN,storageCap:48000},
+                    {resource_type:RESOURCE_ZYNTHIUM_HYDRIDE,storageCap:6000},
+                    {resource_type:RESOURCE_ZYNTHIUM_OXIDE,storageCap:6000},
+                    {resource_type:RESOURCE_ZYNTHIUM_ALKALIDE,storageCap:18000},
+                    {resource_type:RESOURCE_ZYNTHIUM_ACID,storageCap:18000},
                 ],
                 exports:[
-                    {resource_type:RESOURCE_KEANIUM,exportOver:0,batchSize:10000},
+                    {resource_type:RESOURCE_ENERGY,exportOver:200000,batchSize:200000},
+                    //{resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
+                    {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:12000},
+                    {resource_type:RESOURCE_ZYNTHIUM_KEANITE,exportOver:0,batchSize:12000},
                 ]
             }),
             i: new RoomNode('Iota', {
-                retreatSpot:rp(22,25,'W22S25'),
-                anchor:rp(22,30,'W22S25'),spawnFacing:LEFT,armFacing:RIGHT,armAnchor:rp(20,30,'W22S25'),
-                buildTerminal: false,
-                extractMineral:true,
+                wallHeight:500000,
+                rampHeight:500000,
+                retreatSpot:rp(28,8,'E2S19'),
+                anchor:rp(29,18,'E2S19'),spawnFacing:TOP,
+                armFacing:LEFT,armAnchor:rp(35,18,'E2S19'),
+                buildTerminal: true,
+                extractMineral:false,
                 buildFast: false,
-                upgradeRate: RATE_VERY_FAST,
+                upgradeRate: RATE_FAST,
                 surplusRequired:25000
             }),
             k: new RoomNode('Kappa', {
-                retreatSpot:rp(30,20,'E1S23'),
-                anchor:rp(10,37,'E1S23'),spawnFacing:LEFT,armFacing:TOP,armAnchor:rp(5,28,'E1S23'),
+                wallHeight:500000,
+                rampHeight:500000,
+                //online:false,
+                noWorkers:true,
+                retreatSpot:rp(30,20,'E8S15'),
+                anchor:rp(19,35,'E8S15'),spawnFacing:TOP,
                 buildTerminal: false,
-                extractMineral:true,
-                buildFast: true,
-                upgradeRate: RATE_VERY_FAST,
+                extractMineral:false,
+                buildFast: false,
+                allowCPUShutdown:true,
+               // online:false,
+                upgradeRate: RATE_VERY_SLOW,
                 surplusRequired:25000
             })
         }

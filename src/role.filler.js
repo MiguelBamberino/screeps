@@ -83,6 +83,23 @@ var role = {
         
         // if anything changes, lets reload 
         let container = Game.getObjectById(creep.memory.container_id);
+        let link = Game.getObjectById(creep.memory.link_id);
+        let terminal = Game.getObjectById(creep.memory.terminal_id);
+        let storage = Game.rooms[config.coreRoomName].storage
+
+        if(container && container.structureType===STRUCTURE_CONTAINER && storage && link && link.getMeta().relay!=='na'){
+            //link.setMetaAttr('relay',undefined)
+            if(link.getMeta().relay===undefined && link.pos.getRangeTo(storage)!==2){
+                return link.setMetaAttr('relay','na')
+            }
+            if(!container.isFull() && storage.storingAtLeast(2000)   ){
+                link.setMetaAttr('relay',true)
+            }else{
+                link.setMetaAttr('relay',false)
+            }
+        }
+
+
         if(Game.time % 1000 === 0 || !container){
            
             creep.memory.container_id=false;
@@ -97,7 +114,7 @@ var role = {
                     let ext = gob(id);
                     if(ext)ext.resetReservations()
                 }
-                creep.say('idle')
+                //creep.say('idle')
             }
         }
         
@@ -108,14 +125,14 @@ var role = {
             creep.memory.fillingInProgress=true;
         }
         if(spawn && !creep.memory.fillingInProgress  && !spawn.isFull(RESOURCE_ENERGY)){
-            creep.say('reset')
+            //creep.say('reset')
             creep.memory.fillingInProgress=true;
         }
         
         // if Game.time%2==0 && spawn.spawning
         //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawing');
          
-        if(Game.time%2==0 && !creep.memory.fillingInProgress && creep.memory.all_spawn_ids){
+        if(Game.time%2===0 && !creep.memory.fillingInProgress && creep.memory.all_spawn_ids){
            
             for(let sid of creep.memory.all_spawn_ids){
                 let sp = Game.getObjectById(sid);
@@ -138,6 +155,7 @@ var role = {
             //if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':spawn_id');
             if(creep.memory.fillingInProgress){
                 if(spawn){
+                    //creep.say('toSpwn')
                     let res = creep.act("transfer",spawn,RESOURCE_ENERGY);
                     if(res===OK){
                        return ;
@@ -145,7 +163,7 @@ var role = {
                 }
             }else{
                 if(drops.length>0){
-                    creep.say('stash')
+                    //creep.say('stash')
                     return creep.transfer(container,RESOURCE_ENERGY);
                 }
             }
@@ -156,6 +174,7 @@ var role = {
                 for(let id of creep.memory.extension_ids){
                     let extension = Game.getObjectById(id);
                     if(extension && creep.storingAtLeast(1,RESOURCE_ENERGY) && extension.haveSpaceFor(1,RESOURCE_ENERGY)){
+                        //creep.say('toExt')
                         if(creep.act("transfer",extension,RESOURCE_ENERGY)===OK){
                            return ;
                         }
@@ -175,6 +194,7 @@ var role = {
                 for(let id of creep.memory.tower_ids){
                     let tower = Game.getObjectById(id);
                     if(tower && tower.haveSpaceFor(creep.store.getCapacity())  ){
+                        //creep.say('toTow')
                         let res = creep.act("transfer",tower,RESOURCE_ENERGY);
                         if(res===OK){
                            return ;
@@ -186,14 +206,14 @@ var role = {
             
 
             
-            let link = Game.getObjectById(creep.memory.link_id);
-            let terminal = Game.getObjectById(creep.memory.terminal_id);
+
             
             // if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':terminal1');
             // manuall set to 50k, to keep 50k in the storage
             if(terminal && container.storingAtLeast(50000) && terminal.storingLessThan(config.terminalEnergyCap,RESOURCE_ENERGY)){
                 let resStatus = creep.reserveTransfer(terminal);
                 if( resStatus===OK){
+                    //creep.say('toTerm')
                     let r = creep.act("transferX",terminal,RESOURCE_ENERGY);
                     if(r===OK){
                        return ;
@@ -201,17 +221,26 @@ var role = {
                 }
             }
             //if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':terminal1',clogCPU);
-            
-            // if we have a link thats not empty || a terminal with an import, then lets try transfer into the container
-           // if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':link');
-            if(link && !link.isEmpty()){
-                let resStatus = creep.reserveTransfer(container);
-                if( resStatus===OK){
-                    let r = creep.act("transferX",container,RESOURCE_ENERGY);
-                    if(r===OK){
-                       return ;
+
+
+            // if(creep.name=='TFF0')logs.startCPUTracker(creep.name+':link');
+            if(link){
+                // if our container is a storage, and the other fast filler needs E, then relay over
+                if(link.getMeta().relay && container.structureType===STRUCTURE_STORAGE){
+                    //creep.say("relayT")
+                    return creep.transfer(link,RESOURCE_ENERGY)
+                }else if(!link.isEmpty()){
+                    // if we have a link thats not empty then lets try transfer into the container
+                    let resStatus = creep.reserveTransfer(container);
+                    if( resStatus===OK){
+                        //creep.say('toC_l')
+                        let r = creep.act("transferX",container,RESOURCE_ENERGY);
+                        if(r===OK){
+                            return ;
+                        }
                     }
                 }
+
             }
            // if(creep.name=='TFF0')logs.stopCPUTracker(creep.name+':link',clogCPU);
             
@@ -220,6 +249,7 @@ var role = {
             if(terminal && terminal.storingAtLeast(withdrawLimit,RESOURCE_ENERGY)){
                 let resStatus = creep.reserveTransfer(container);
                 if( resStatus===OK){
+                    //creep.say('toC_T')
                     let r = creep.act("transferX",container,RESOURCE_ENERGY);
                     if(r===OK){
                        return ;
@@ -233,26 +263,31 @@ var role = {
 
 
             if(drops.length>0){
-                creep.say('pickup')
+                //creep.say('pickup')
                 return creep.pickup(drops[0]);
             }
 
 
 
 	        if(container){
-	            
-	            let link = Game.getObjectById(creep.memory.link_id);
-                if(link && !link.isEmpty()){
+
+                let withdrawFromContainer = true;
+                if(link && link.getMeta().relay && creep.memory.fillingInProgress===false && container.structureType===STRUCTURE_CONTAINER)withdrawFromContainer=false;
+
+                if(link && !link.isEmpty() && (!link.getMeta().relay || container.structureType===STRUCTURE_CONTAINER) ){
+                    //creep.say('fromL')
                     return creep.act("withdraw",link,RESOURCE_ENERGY);
                 }
-                let terminal = Game.getObjectById(creep.memory.terminal_id);
+
                 let withdrawLimit = config.terminalEnergyCap+1+creep.store.getCapacity()
                
                 if(terminal && terminal.storingAtLeast(withdrawLimit,RESOURCE_ENERGY)){
+                    //creep.say('fromT')
                     return creep.act("withdraw",terminal,RESOURCE_ENERGY);
                 }
 	            
-	            if(creep.act("withdraw",container,RESOURCE_ENERGY)===OK){
+	            if(withdrawFromContainer && creep.act("withdraw",container,RESOURCE_ENERGY)===OK){
+                    //creep.say('fromC')
                     return;
                 }
 	        }

@@ -26,6 +26,17 @@ var roleHarvester = {
             return '2w1m'; // 300/300
     
     },
+    /**
+     *
+     * @param creep
+     * @param config
+     * @param config.coreRoomName
+     * @param config.inRecoveryMode
+     * @param config.upgradeRate
+     * @param config.controller
+     * @param config.wallHeight
+     * @returns {*}
+     */
     run: function(creep,config){
 
         if(creep.memory.spot){
@@ -100,6 +111,10 @@ var roleHarvester = {
                 return creep.transfer(target,RESOURCE_ENERGY);
             } 
         }
+
+        if(!config.inRecoveryMode && config.upgradeRate!==RATE_VERY_SLOW && config.controller.pos.getRangeTo(creep)<=3 && !creep.isEmpty())
+            creep.upgradeController(config.controller)
+
 
        return;
 

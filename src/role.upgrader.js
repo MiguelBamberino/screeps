@@ -22,7 +22,13 @@ var role = {
             return '15w3c4m';
 
         }
-        if(config.controller.level===7 && config.upgradeRate===RATE_VERY_FAST && budget >= 2450 ){
+
+        if(budget >= 3550 ){
+            // RCL 7 - 1600 + 200 + 250
+            return '30w3c8m';
+        }
+
+        if(budget >= 2450 ){
             // RCL 7 - 1600 + 200 + 250
             return '20w4c5m';
         }
@@ -61,8 +67,36 @@ var role = {
         let controller = config.controller;
 
         let container = controller.getContainer();
+        let standingSpot = controller.getStandingSpot()
         if(!container){
-            return creep.say("!cont")
+            if(standingSpot){
+                if(creep.pos.getRangeTo(standingSpot)<3){
+                    if(creep.isEmpty()){
+                        let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
+                        if(!drop){
+                            drop = standingSpot.lookForNearbyResource(RESOURCE_ENERGY,true);
+                        }
+                        if(drop){
+                            creep.actOrMoveTo("pickup",drop)
+                        }
+                    }else{
+                        let site = standingSpot.lookForConstruction()
+                        if(site)return creep.build(site);
+                    }
+
+                }else{
+                    return creep.moveToPos(standingSpot)
+                }
+
+            }
+            else
+                return creep.say("!setup")
+
+            return;// dont do logic below
+        }
+
+        if(creep.memory.boostPlans){
+            creep.runBoostPlan();return;
         }
 
         if(container){
@@ -101,7 +135,7 @@ var role = {
             creep.say("!spot")
             creep.moveToPos(container)
         }
-
+        if(!container)return;
         ////////////////////////////////////////////////////////////////////////////////////
         /// SWOOOSH spend energy
         ////////////////////////////////////////////////////////////////////////////////////

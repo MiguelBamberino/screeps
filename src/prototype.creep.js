@@ -94,7 +94,7 @@
 	                        if(res===ERR_NOT_ENOUGH_RESOURCES){
 	                            if(Game.time%2===0)this.say("OOR!");
 	                            else this.say("wait")
-	                            //plan.completed= true;
+	                            if(plan.dontWait)plan.completed= true;
 	                        }
 	                        if(res===ERR_NOT_FOUND){
 	                            clog(this.memory.boostPlans,"boost error:boostPlans")
@@ -530,14 +530,15 @@
         return closest;
         
 	}
-    Creep.prototype.getNearestSource=function(roomNames){
+    Creep.prototype.getNearestSource=function(roomNames, useStandingSpots = true){
 	    let source = Game.getObjectById(this.memory.source_id);
 	    if(source){
 	        return source;
 	    }
 	    source = mb.getNearestSource(this.pos,roomNames);
-	   
-	    if(source && source.haveFreeStandingSpot()){
+	   // useStandingSpots is a hack related to settting up new rooms where sources dont get standingspots set correctly
+        /// will come back to bite me. fix the bugs mate
+	    if(source && (!useStandingSpots || source.haveFreeStandingSpot()) ){
 	        this.memory.source_id = source.id;
 	        return source;
 	    }else{
@@ -674,12 +675,18 @@
 	    if(storage){
 	        return storage;
 	    }
-
+        let safeRooms =[];
+        for(let roomName of searchRooms){
+            if(Game.rooms[roomName]) {
+                if (Game.rooms[roomName].getInvaders().length === 0) safeRooms.push(roomName)
+                //else console.log(this.name, " avoding unsafe room : ", roomName,Game.rooms[roomName].getInvaders())
+            }
+        }
 	    let free =this.store.getFreeCapacity(RESOURCE_ENERGY);
 	    //if(this.name==='A-ta-5')clog(searchRooms,free)
 	     storage = mb.getFullestStructure(
                     [STRUCTURE_CONTAINER],
-                    searchRooms,
+                    safeRooms,
                     [
                         {attribute:'isMineStore',operator:'fn',value:[]},
                         {attribute:'canReserveWithdraw',operator:'fn',value:[free]}

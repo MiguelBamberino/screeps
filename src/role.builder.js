@@ -40,7 +40,7 @@ var role = {
             }
 
 	        // if we just built a rampart, lets repair before it fades. set it as our repair target
-    	   if(creep.memory.last_site_type==STRUCTURE_RAMPART && creep.memory.last_site_pos){
+    	   if(creep.memory.last_site_type===STRUCTURE_RAMPART && creep.memory.last_site_pos){
              // if(creep.name==='E-bu-0')clog("looking for ramp",Game.time)
                let lastSitePos = new RoomPosition(creep.memory.last_site_pos.x,creep.memory.last_site_pos.y,creep.pos.roomName)
                 let obj = lastSitePos.lookForStructure(STRUCTURE_RAMPART);
@@ -188,6 +188,12 @@ var role = {
 	    }else{
 	        structure = weakest;// no enemies, just heal lowest
 	    }
+        if(config.putExcessInToController){
+            if(structure.structureType===STRUCTURE_RAMPART && structure.hits > config.defenceIntel.rampHeight)structure= false;
+            else if(structure.structureType===STRUCTURE_WALL && structure.hits > config.defenceIntel.wallHeight)structure= false;
+        }
+
+
 	    return structure;
 	    
 	    // the below code was locking builders in the role forever and cheqing cpu on shard3. 

@@ -233,6 +233,18 @@ module.exports = function(){
             // let mpCM = mb.getCostMatrix(roomName);
 
             // if (mpCM) return mpCM; breaks base room, because builddings are now 0, not 255
+            if(roomName==='W6S23'){
+                costMatrix.set(6,49,255)
+                costMatrix.set(7,49,255)
+                costMatrix.set(8,49,255)
+                costMatrix.set(9,49,255)
+                costMatrix.set(10,49,255)
+                costMatrix.set(11,49,255)
+                costMatrix.set(12,49,255)
+                costMatrix.set(13,49,255)
+                costMatrix.set(14,49,255)
+
+            }
             if(roomName==='W35S21'){
                 costMatrix.set(26,19,100)
                 costMatrix.set(28,19,100)
@@ -242,18 +254,34 @@ module.exports = function(){
                 costMatrix.set(28,21,100)
 
             }
-            if(roomName==='W13S24'){
-                costMatrix.set(0,2,255)
-                costMatrix.set(0,3,255)
-                costMatrix.set(0,4,255)
-                costMatrix.set(0,5,255)
-                costMatrix.set(0,7,255)
-                costMatrix.set(1,2,255)
-                costMatrix.set(1,3,255)
-                costMatrix.set(1,4,255)
-                costMatrix.set(1,5,255)
-                costMatrix.set(1,7,255)
+            if(roomName==='W19S25'){
+                costMatrix.set(10,14,100)
+                costMatrix.set(11,14,100)
+                costMatrix.set(10,13,100)
+                costMatrix.set(11,13,100)
+                costMatrix.set(11,12,100)
+
             }
+            if(roomName==='E8S15'){
+                costMatrix.set(17,37,100)
+                costMatrix.set(18,36,100)
+                costMatrix.set(20,36,100)
+                costMatrix.set(18,38,100)
+                costMatrix.set(20,38,100)
+
+            }
+            if(roomName==='E10S30'){
+                for(let y=0; y<=20;y++){
+                    for(let x=30; x<49;x++){
+
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+
+
+            }
+
             if(roomName==='W35S25'){
                 costMatrix.set(49,43,255)
                 costMatrix.set(49,44,255)
@@ -274,11 +302,36 @@ module.exports = function(){
                 costMatrix.set(0,14,50)
                 costMatrix.set(0,15,50)
             }
+            if(roomName==='W8S24'){
+                costMatrix.set(31,27,50)
+                costMatrix.set(33,27,50)
+                costMatrix.set(31,29,50)
+                costMatrix.set(33,29,50)
+
+            }
             if(roomName==='W12S24'){
                 costMatrix.set(49,20,255)
                 costMatrix.set(49,21,255)
                 costMatrix.set(49,22,255)
                 costMatrix.set(49,23,255)
+            }
+            if(roomName==='E5S25'){
+                for(let y=0; y<=2;y++){
+                    for(let x=0; x<49;x++){
+
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+            }
+            if(roomName==='E3S24'){
+                for(let y=0; y<=25;y++){
+                    for(let x=48; x<=49;x++){
+
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
             }
             if(roomName==='W33S23'||roomName==='W33S24'||roomName==='W33S22'){
                 for(let y=0; y<=49;y++){
@@ -289,7 +342,7 @@ module.exports = function(){
                     }
                 }
             }
-            if (roomName==='W15S24' || roomName==='W14S23' || roomName==='W14S24') {
+            if (roomName==='W15S24') {
 
                 for(let y=47; y<=49;y++){
                     for(let x=0; x<=49;x++){
@@ -334,7 +387,9 @@ module.exports = function(){
         }
 
         // real hacky for now. Only runs if we're not a fighty boi
-        if(creep.pos.roomName!=='W16S24' && Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
+        let inSafeMode = Game.rooms[creep.pos.roomName].controller?Game.rooms[creep.pos.roomName].controller.safeMode:false;
+
+        if(!inSafeMode && creep.pos.roomName!=='W16S24' && Game.shard.name !=='shard3' && !this.memory.avoidEdges && hostileIDs.length>0 && Game.cpu.bucket>5000){
 
             opts.reusePath=2;
 
@@ -372,22 +427,21 @@ module.exports = function(){
                 if (!room ) return costMatrix;
 
                 if(roomName==='W13S24'){
-                    costMatrix.set(0,2,255)
-                    costMatrix.set(0,3,255)
-                    costMatrix.set(0,4,255)
-                    costMatrix.set(0,5,255)
-                    costMatrix.set(0,7,255)
-                    costMatrix.set(1,2,255)
-                    costMatrix.set(1,3,255)
-                    costMatrix.set(1,4,255)
-                    costMatrix.set(1,5,255)
-                    costMatrix.set(1,7,255)
+
                     costMatrix.set(26,6,255)
                     costMatrix.set(27,7,100)
                     costMatrix.set(29,7,100)
                     costMatrix.set(28,6,255)
                 }
+                if(roomName==='E5S25'){
+                    for(let y=0; y<=2;y++){
+                        for(let x=0; x<49;x++){
 
+                            costMatrix.set(x, y, 255);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                        }
+                    }
+                }
                if (roomName==='W15S24' || roomName==='W14S23') {
 
                         for(let y=47; y<=49;y++){

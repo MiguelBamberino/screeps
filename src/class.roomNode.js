@@ -7,11 +7,11 @@ var creepRoles ={
     rkeeper:require('./role.rkeeper'),
     harvester:require('./role.harvester'),
     builder:require('./role.builder'),
-    fixer:require('./role.fixer'),
+   // fixer:require('./role.fixer'),
     tanker:require('./role.tanker'),
     filler:require('./role.filler'),
     //claimer:require('role.claimer'),
-    reserver:require('./role.reserver'),
+    //reserver:require('./role.reserver'),
     upgrader:require('./role.upgrader'),
     recycle:require('./role.recycle'),
     };
@@ -92,7 +92,11 @@ class RoomNode{
         this.retreatSpot = options.retreatSpot===undefined?rp(this.anchor.x-3,this.anchor.y-2,this.anchor.roomName):options.retreatSpot;
         this.upgradeRate = options.upgradeRate===undefined?RATE_SLOW:options.upgradeRate;
         this.buildFast = options.buildFast===undefined?false:options.buildFast;
-        
+        // instruct workers to put extra energy to controller. For builders this is instead of putting it into the walls
+        this.putExcessInToController = options.putExcessInToController===undefined?true:options.putExcessInToController;
+        // a short term prototype for moving core repair from work to tower
+        this.noWorkers = options.noWorkers===undefined?false:options.noWorkers;
+
         this.remoteRoomNames = options.remoteRoomNames===undefined?[]:options.remoteRoomNames;
         this.funnelRoomName = options.funnelRoomName===undefined?false:options.funnelRoomName;
         
@@ -108,6 +112,7 @@ class RoomNode{
         this.makeResource = options.makeResource===undefined?undefined:options.makeResource;
         this.splitResource = options.splitResource===undefined?undefined:options.splitResource;
         this.boostResources = options.boostResources===undefined?[]:options.boostResources;
+        this.upgradeBoostPlan = options.upgradeBoostPlan===undefined?[]:options.upgradeBoostPlan;
         this.exports = options.exports===undefined?[]:options.exports;
         this.imports = options.imports===undefined?[]:options.imports;
         
@@ -134,7 +139,10 @@ class RoomNode{
             }else if(this.splitResource){
 				this.labComplex.turnOn();
                 this.labComplex.split(this.splitResource);
-            }  
+            }else{
+                this.labComplex.turnOn();
+                this.labComplex.mode ='empty';
+            }
         }
             
         
@@ -175,13 +183,13 @@ class RoomNode{
     }
     loadInCurrentWorkForce(){
         this.workforce_quota={
-                worker:{count:0,required:0},
-                rkeeper:{count:0,required:0},
-                harvester:{count:0,required:0},
-                tanker:{count:0,required:0},
-                builder:{count:0,required:0},
-                fixer:{count:0,required:0},
-                upgrader:{count:0,required:0}
+                worker:{count:0,active:0,required:0},
+                rkeeper:{count:0,active:0,required:0},
+                harvester:{count:0,active:0,required:0},
+                tanker:{count:0,active:0,required:0},
+                builder:{count:0,active:0,required:0},
+                //fixer:{count:0,active:0,required:0},
+                upgrader:{count:0,active:0,required:0}
             };
             
         for(const cname of this.creepNames){
@@ -344,10 +352,10 @@ class RoomNode{
     
            
             // shoot small NPCs at max range
-            if(hostileIds.length<4 && enemy.owner.username==='Invader'){
+           /* if(hostileIds.length<4 && ){
                target= enemy;break;
-            }
-            if(rangeToTower<=15 ){
+            }*/
+            if(rangeToTower<=15 || (enemy.owner.username==='Invader' && hostileIds.length<3)){
                 
                if(enemy.hits < enemy.hitsMax){
                    target= enemy;break;// prioritise something we are already shooting
@@ -373,13 +381,15 @@ class RoomNode{
                 let structure = gob(id);
                 if(!structure){
                     // somethings been destroyed
-                    Memory.safemode_reason="lost spawn/storage/terminal";
-                    this.controller().activateSafeMode();break;
+                    let res = this.controller().activateSafeMode();
+                    Memory.safemode_reason=this.name+":"+Game.time+":lost spawn/storage/terminal="+res;
+                    break;
                 }
                 if(structure.hits<structure.hitsMax){
                    // somethings is being destroyed
-                    Memory.safemode_reason="took dmg on spawn/storage/terminal";
-                    this.controller().activateSafeMode();break; 
+                    let res = this.controller().activateSafeMode();
+                    Memory.safemode_reason=this.name+":"+Game.time+":took dmg on spawn/storage/terminal="+res;
+                    break;
                 }
             }
             
@@ -388,13 +398,15 @@ class RoomNode{
         
         if(this.controller().level < 4 && enemyNearCoreSpawn ){
             // likely we will lose spawn if enemy is this close at low level
-            Memory.safemode_reason="RCL<4 enemyNearCoreSpawn";
-            this.controller().activateSafeMode();
+            let res = this.controller().activateSafeMode();
+            Memory.safemode_reason=this.name+":"+Game.time+":RCL<4 enemyNearCoreSpawn="+res;
+
         }
         
         if(claimAttackDetected){
-            Memory.safemode_reason="claimAttackDetected";
-            this.controller().activateSafeMode();
+            let res = this.controller().activateSafeMode();
+            Memory.safemode_reason=this.name+":"+Game.time+":claimAttackDetected="+res;
+
         }
         
         
@@ -452,6 +464,7 @@ class RoomNode{
         
         for(let roleName in this.workforce_quota){
             this.workforce_quota[roleName].count = 0;
+            this.workforce_quota[roleName].active = 0;
         }
         
         let stillAlive = [];
@@ -463,24 +476,31 @@ class RoomNode{
                // clog(cname,"Creep went missing/died."); 
                 continue;
             }
-                
-            if(!creepRoles[ creep.getRole() ]){
-                clog(creep.getRole(),"No role code for "+creep.name); continue;
+            let role = creep.getRole();
+            if(!creepRoles[ role ]){
+                clog(role,"No role code for "+creep.name); continue;
             }
             
             stillAlive.push(cname)
             
-            if(this.workforce_quota[creep.getRole()])this.workforce_quota[creep.getRole()].count++;
-            
+            if(this.workforce_quota[role]){
+                this.workforce_quota[role].count++;
+
+                if(this.isCreepActive(role,creep)){
+                    this.workforce_quota[role].active++;
+                }
+
+            }
+
             if(!creep.spawning){
                 
-                if(playerAttackers.length>0 && creep.getRole()=='upgrader'){
+                if(playerAttackers.length>0 && role==='upgrader'){
                     // this broke on botarena for some reason
                     //creep.setRole("builder")
                 }
-                if(['rkeeper','worker','builder','upgrader'].includes( creep.getRole() ) )logs.startCPUTracker(creep.name);
-                creepRoles[ creep.getRole() ].run(creep,this.getConfig());
-                if(['rkeeper','worker','builder','upgrader'].includes( creep.getRole() ) )logs.stopCPUTracker(creep.name,false);
+                //if(['rkeeper','worker','builder','upgrader'].includes( role ) )logs.startCPUTracker(creep.name);
+                creepRoles[ role ].run(creep,this.getConfig());
+                //if(['rkeeper','worker','builder','upgrader'].includes( role ) )logs.stopCPUTracker(creep.name,false);
                 
             }
                     
@@ -488,6 +508,13 @@ class RoomNode{
         
         
         this.creepNames = stillAlive;
+    }
+    isCreepActive(role,creep){
+        if(role==='upgrader'){
+            return (creep.memory.spot_index!==undefined && creep.memory.spot_index>0)
+        }else{
+            return !creep.spawning
+        }
     }
     runLinkSend2(){
         if(this.controller().level<5)return;
@@ -863,8 +890,10 @@ class RoomNode{
                     terminalEnergyCap:this.terminalEnergyCap,
                     surplusRequired:this.surplusRequired,
                     towersBuildWalls:this.towersBuildWalls,
+                    putExcessInToController:this.putExcessInToController,
 
                     labComplex:this.labComplex,
+                    upgradeBoostPlan:this.upgradeBoostPlan,
                     coreComplex:this.coreComplex,
 
                     imports:this.imports,
@@ -899,38 +928,40 @@ class RoomNode{
                // clog("need "+roleName+ " count: "+role.count+" / "+role.required)
      
                 let bodyPlan = creepRoles[ roleName ].getParts(budget,config);
+                let mem = {role:roleName};
+                if(roleName==='upgrader' && this.upgradeBoostPlan.length>0){
+                    mem.boostPlans = [];
+                    // we need to recreate object to avoid pass by ref bugs
+                    for(let plan of this.upgradeBoostPlan)mem.boostPlans.push({lab_id:plan.lab_id,resource_type:plan.resource_type,completed:false,dontWait:true})
+                }
+
                 let cname = ERR_BUSY; 
-                if(Game.spawns[this.name])
-                    cname = Game.spawns[this.name].createCreep(bodyPlan,{role:roleName},false,this.getMainSpawnSpots());
-                    
+                if(Game.spawns[this.name]){
+                    cname = Game.spawns[this.name].createCreep(bodyPlan,mem,false,this.getMainSpawnSpots());
+                }
 
                 if(Game.spawns[this.name+'-2'] && cname===ERR_BUSY){
-
-                    cname = Game.spawns[this.name+'-2'].createCreep(bodyPlan,{role:roleName},false);
-               
-                } 
+                    cname = Game.spawns[this.name+'-2'].createCreep(bodyPlan,mem,false);
+                }
                 if(Game.spawns[this.name+'-3'] && cname===ERR_BUSY){
-
-                    cname = Game.spawns[this.name+'-3'].createCreep(bodyPlan,{role:roleName},false);
-   
-                } 
+                    cname = Game.spawns[this.name+'-3'].createCreep(bodyPlan,mem,false);
+                }
                
                 if(typeof cname ==='string'){
                     this.creepNames.push(cname);
                     return;
                 }
+         
             }
         }
-         
     }
-
     decideWorkforceQuotas(){
 
         let controller = this.controller();
         let playerAttackers = Game.rooms[this.coreRoomName].getEnemyPlayerFighters();
 
 
-        this.workforce_quota.worker.required = this.allSourcesBuilt?1:0;
+        this.workforce_quota.worker.required = this.allSourcesBuilt && !this.noWorkers?1:0;
         // we dont need need the workers, but trying it out if the extra worker helps clean up dropped E efficiency
         if(controller.level>1 && controller.level<5 && (this.buildFast || (this.upgradeRate===RATE_FAST|| this.upgradeRate===RATE_VERY_FAST) ))
             this.workforce_quota.worker.required++;
@@ -999,61 +1030,64 @@ class RoomNode{
                 350, // RCL2
                 600, // RCL3
                 750, // RCL4
-                750, // RCL5
-                750, // RCL6
-                750, // RCL7
-                2750 // RCL8 >>> we switch to 1k carry at this point
+                1000, // RCL5 >>> we switch to 800 carry at this point
+                2000, // RCL6 >>> we switch to 1k carry at this point
+                2500, // RCL7, bit higher, so we don't spawn too many too quick
+                2750 // RCL8
                 ];
         let tankersPerX = tankerPerXSurplus_PerRCL[controller.level];
+        // if we are upgrading Vfast, then we're using smaller haulers, of 600c
+        if(this.upgradeRate===RATE_VERY_FAST)tankersPerX=750;
+
         // bit of a patch, to try accomodate for RCL7. When we have 7 or more remotes, the distances
         // will be bigger, therefore we'll need more haulers
-        if(this.remoteRoomNames.length>=7 && this.totalEnergyAtSources>15000)tankersPerX-=50;
-        if(this.remoteRoomNames.length>=7 && this.totalEnergyAtSources>20000)tankersPerX-=50;
+        if(this.remoteRoomNames.length>=7 && this.upgradeRate!==RATE_VERY_FAST){
+            if(this.totalEnergyAtSources>15000)tankersPerX-=200;
+            if(this.totalEnergyAtSources>20000)tankersPerX-=200;
+            if(this.totalEnergyAtSources>25000)tankersPerX-=200;
+
+        }
 
         this.workforce_quota.tanker.required = Math.floor( this.totalEnergyAtSources/tankersPerX )
         if(this.workforce_quota.tanker.required>50)
             this.workforce_quota.tanker.required=50;
 
-        if(this.workforce_quota.rkeeper.required===0 && this.workforce_quota.tanker.required ===0){
+        if(this.workforce_quota.harvester.count>0 && this.workforce_quota.rkeeper.required===0 && this.workforce_quota.tanker.required ===0){
             // at low RCL we always need 1 to do filling
             this.workforce_quota.tanker.required = 1;
         }
 
         let tankerGap = this.workforce_quota.tanker.required - this.workforce_quota.tanker.count;
         let upgraderGap = this.workforce_quota.upgrader.required - this.workforce_quota.upgrader.count;
-        if(this.energyAtController>2000 && this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.tanker.count>1 && upgraderGap>3 && tankerGap<=5 ){
+        if(this.energyAtController>2000 && this.upgradeRate===RATE_VERY_FAST && this.workforce_quota.tanker.count>1 && upgraderGap>0 && tankerGap<=5 ){
             // paused tanker spawn spam to spawn some consumption. stop e piling up at controller
             this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
         }
-        if(upgraderGap>2 && this.energyAtController>4000){
+        if(this.energyAtController>4000){
             // stop spamming tankers and start consuming all the E piling up
             this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
         }
 
         this.workforce_quota.upgrader.required = 0;
         if(controller.haveContainer()){
-            if(this.upgradeRate===RATE_VERY_FAST && Game.cpu.bucket>5000){
+            if(this.upgradeRate===RATE_VERY_FAST || this.upgradeRate===RATE_FAST){
 
-                let thresholds= {
-                    999999:9,
-                    4000:8,
-                    3000:7,
-                    2000:6,
-                    1800:5,
-                    1500:4,
-                    1000:3,
-                    500:2,
-                    0:1
-                };
-                for(let energy in thresholds){
-                    if( this.energyAtController <= energy){
-                        this.workforce_quota.upgrader.required = thresholds[energy];
-                        break;
-                    }
+                this.workforce_quota.upgrader.required = this.workforce_quota.upgrader.count;
+
+                let maxUpgraders = this.upgradeRate===RATE_VERY_FAST?9:5;
+                // how much energy has piled up at controller before we request another upgrader ?
+                let needMoreThreshold = this.upgradeRate===RATE_VERY_FAST?1700:1000;
+
+                // if we're maintaining high energy at controller, add one more and wait to consumption change
+                if(this.workforce_quota.upgrader.count===this.workforce_quota.upgrader.active && this.energyAtController>needMoreThreshold){
+                    this.workforce_quota.upgrader.required = this.workforce_quota.upgrader.count+1;
                 }
-                if(this.controller().level>=4 &&this.workforce_quota.upgrader.required===9){
+                // dont go bust
+                if(this.workforce_quota.upgrader.required>maxUpgraders)this.workforce_quota.upgrader.required=maxUpgraders;
+
+                if(this.controller().level>=4 && this.workforce_quota.upgrader.required===9){
                     // need to leave open space to container for rkeeper
-                    this.workforce_quota.upgrader.required=8;
+                    this.workforce_quota.upgrader.required=(maxUpgraders-1);
                 }
                 // if we are below our rainy day fund and the energy at the controller is drying out, then calm down
                 if(this.storage() && this.energySurplus<this.surplusRequired && this.energyAtController < 2500){
@@ -1061,28 +1095,16 @@ class RoomNode{
                 }
 
             }
-
-            else if(this.upgradeRate===RATE_FAST && Game.cpu.bucket>3000){
-                let thresholds= {
-                    999999:5,
-                    2000:5,
-                    1800:4,
-                    1000:3,
-                    500:2,
-                    0:1,
-                };
-                for(let energy in thresholds){
-                    if( this.energyAtController <= energy){
-                        this.workforce_quota.upgrader.required = thresholds[energy];
-                        break;
-                    }
-                }
-            }
-
-            else if(this.upgradeRate===RATE_SLOW && this.energySurplus>25000 && Game.cpu.bucket>3000){
+            else if(this.upgradeRate===RATE_SLOW && this.energySurplus>25000){
                 this.workforce_quota.upgrader.required = 1;
             }
-            else if(this.upgradeRate===RATE_VERY_SLOW && controller.ticksToDowngrade<100000){
+
+            // CPU safety breaker
+            if(Game.cpu.bucket<4000 && this.workforce_quota.upgrader.required>0){
+                this.workforce_quota.upgrader.required = 0;
+            }
+            // do this check after cpu breaker, because we dont want to lose an RCL
+            if(this.upgradeRate===RATE_VERY_SLOW && controller.ticksToDowngrade<100000){
                 this.workforce_quota.upgrader.required = 1;
             }
         }
@@ -1092,9 +1114,14 @@ class RoomNode{
         //////////////////////////////////////////////////////////////////////////////////
         // Safety overrides
         //////////////////////////////////////////////////////////////////////////////////
+        if(this.workforce_quota.upgrader.required>1 && controller.level===4 && !this.haveStorage){
+            // pause the spamming to get the storage built
+            this.workforce_quota.upgrader.required = 1;
+        }
         if(this.inRecoveryMode || playerAttackers.length>0 || this.upgradeRate==RATE_OFF){
             this.workforce_quota.upgrader.required = 0;
         }
+
         if(playerAttackers.length>2){
             this.workforce_quota.builder.required = 6;
         }else if(playerAttackers.length>1){

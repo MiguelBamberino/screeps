@@ -13,7 +13,7 @@ let _memHak = require('_memHak');
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Constants
 /////////////////////////////////////////////////////////////////////////////////////////////////
-global.BOT_ALLIES = ['Kalgen','WhiteTurbine'];
+global.BOT_ALLIES = ['Kalgen','WhiteTurbine','Dakryolith'];
 global. _SERVER_CONFIG = false;
 global.RATE_VERY_FAST='very-fast';
 global.RATE_FAST='fast';
@@ -74,6 +74,14 @@ for(let n in nodes){
     for(let exp of nodes[n].exports){
         trader.offerExport( exp.resource_type, nodes[n].coreRoomName );
     }
+}
+
+for(let name in Game.creeps){
+    let n = name.charAt(0).toLowerCase();
+    // ignore creeps not part of a home room, using role system
+    if(!Game.creeps[name].memory || !Game.creeps[name].memory.role)continue;
+
+    if(nodes[n] && !nodes[n].creepNames.includes(name))nodes[n].creepNames.push(name);
 }
 
 module.exports.loop = function () {

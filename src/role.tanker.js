@@ -4,29 +4,31 @@ var roleTanker = {
 
     getParts: function(budget,config){
 
-        // smaller faster gives better throughput
-        if(budget>1300 && config.upgradeRate===RATE_VERY_FAST)
-            budget=1300;
-
-        if(config.controller.level===8){
+        if(config.controller.level<=6 && budget>900){
+            // bigger than this seems to choke up too much spawn time at low RCL
+            // smaller faster gives better throughput
+            budget=900;
+        }
+        if(budget>1200  && config.upgradeRate===RATE_VERY_FAST){
+            // force slightly smaller, to balance throughput with cpu usage
+            budget = 1200;
+        }
+        if(budget >= 1500 ){ // RCL 6/7/8
             // we can afford the spawn time delays, to make bigger creeps, to reduce CPU
             // we aren't going to be upgrading fast either, so no need to for high throughput
             return '10*2c1m';
         }
-
-        if(budget >= 1500 ){ // RCL 5 - 1000 + 500 = 1500/1800 30 ext
-            //return '10*2c1m';
-            return '6*2c1m'; // big than this seems to choke up too much spawn time
-
+        else if(budget >= 1200 ){ // RCL 5 - 1000 + 500 = 1500/1800 30 ext
+            return '8*2c1m';
         }
-        else if(budget >= 1300 ){ // RCL 4 - 600 + 300 = 900/1300 20 ext
+        else if(budget >= 900 ){ // RCL 4 - 600 + 300 = 900/1300 20 ext
             return '6*2c1m';
 
         }
-        else if(budget >= 800 ){ // RCL 3 - 400 + 200 = 600/800 10 ext
+        else if(budget >= 600 ){ // RCL 3 - 400 + 200 = 600/800 10 ext
             return '4*2c1m';
         }
-        else if(budget >= 550 ){ // RCL 2 - 300 + 150 = 450/550 5 ext
+        else if(budget >= 450 ){ // RCL 2 - 300 + 150 = 450/550 5 ext
             return '3*2c1m';
 
         }
@@ -179,7 +181,7 @@ var roleTanker = {
 
             if(!target){
 
-                if( !config.controller.haveContainer() ){
+                if( !config.controller.haveContainer() || (config.controller.level===4 && !creep.room.storage) ){
 
                     let site = mb.getNearestConstruction( Game.spawns[config.name].pos,[config.coreRoomName]);
 
@@ -224,6 +226,9 @@ var roleTanker = {
                 if(storage && storage.storingAtLeast(config.surplusRequired)){
                     //console.log(creep.name,"funneling")
                     target = creep.reserveTransferToStorage(config.funnelRoomName);
+                    if(!target){
+                        target = creep.reserveTransferToTerminal(config.funnelRoomName);
+                    }
                 }
             }
 
