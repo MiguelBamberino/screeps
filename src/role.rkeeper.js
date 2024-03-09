@@ -205,7 +205,8 @@ var roleTanker = {
             for(let exportConf of config.exports){
                 let a = exportConf.exportOver===0?1:exportConf.exportOver+creepSpace;
 
-                if( 
+                if(
+                    terminal &&
                     storage.storingAtLeast( a, exportConf.resource_type )
                     && terminal.storingLessThan( exportConf.batchSize, exportConf.resource_type )
                     && terminal.haveSpaceFor( creepSpace, exportConf.resource_type )

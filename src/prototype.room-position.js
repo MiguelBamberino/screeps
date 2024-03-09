@@ -1,3 +1,37 @@
+
+RoomPosition.prototype.onLeftRoomEdge = function(){
+    return (this.x===0);
+}
+RoomPosition.prototype.nearLeftRoomEdge = function(){
+    return (this.x===1);
+}
+
+RoomPosition.prototype.onRightRoomEdge = function(){
+    return (this.x===49);
+}
+RoomPosition.prototype.nearRightRoomEdge = function(){
+    return (this.x===48);
+}
+
+RoomPosition.prototype.onTopRoomEdge = function(){
+    return (this.y===0);
+}
+RoomPosition.prototype.nearTopRoomEdge = function(){
+    return (this.y===1);
+}
+
+RoomPosition.prototype.onBottomRoomEdge = function(){
+    return (this.y===49);
+}
+RoomPosition.prototype.nearBottomRoomEdge = function(){
+    return (this.y===48);
+}
+/**
+ * Get direction in opposite direction to the target object
+ * for example, if obj was LEFT, this would return RIGHT
+ * @param RoomPosition|RoomObject obj
+ * @returns Number 0-8 Screeps Direction constant
+ */
 RoomPosition.prototype.getReverseDirectionTo = function(obj){
     let dir = this.getDirectionTo(obj);
     if(dir===TOP)return BOTTOM;
@@ -8,6 +42,15 @@ RoomPosition.prototype.getReverseDirectionTo = function(obj){
     if(dir===BOTTOM_LEFT)return TOP_RIGHT;
     if(dir===LEFT)return RIGHT;
     if(dir===TOP_LEFT)return BOTTOM_RIGHT;
+}
+/**
+ * Given a direction, return the adjacent position in that direction
+ * If this would be a room edge, return false
+ * @param dir
+ * @param RoomPosition|false
+ */
+RoomPosition.prototype.getPositionByDir = function(dir){
+
 }
 RoomPosition.prototype.getPosAtDistanceAndAngle = function(distance, angle) {
     // Adjust the angle for the game's coordinate system

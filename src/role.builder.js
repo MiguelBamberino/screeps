@@ -5,6 +5,9 @@ var role = {
         if(budget >=2750){
             return '10w20c15m';
         }
+        if(budget >=2000){
+            return '10w10c10m';
+        }
         else if(budget >= 1300 ){ // RCL 4 - 600 + 300 + 300 = 1200/1300 20 ext
             return [WORK,WORK,WORK,WORK,WORK,WORK, CARRY,CARRY,CARRY,CARRY,CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE]; 
         }
@@ -33,6 +36,18 @@ var role = {
     
 	    if( creep.isWorking()) {
 
+            let structure = this.targetDefenceToRepair(creep,config);
+
+            if(structure && playerAttackers.length>0){
+                for(let id of playerAttackers){
+                    let hostile = gob(id);
+                    if(!hostile)continue;
+                    if(creep.pos.getRangeTo(hostile)<4)creep.moveTo(config.coreComplex.anchor);
+                }
+                return creep.actOrMoveTo("repair",structure);
+            }
+
+
             if(config.energyAtController>4000) {
                 creep.say("bsssh")
                 // too much E at controller, go pile in the praise
@@ -58,15 +73,7 @@ var role = {
 	        
 	        
 	        
-	       let structure = false;
-	      // if(creep.name==cpuCreep)logs.startCPUTracker(creep.name+':targetToRepair');
-	       
-	       if(!creep.memory.construction_site_id){
-                structure = this.targetDefenceToRepair(creep,config);
-                if(structure && structure.hits < 10000 && playerAttackers.length>0){
-                    return creep.actOrMoveTo("repair",structure);
-                }
-	       }
+
           // if(creep.name==cpuCreep) logs.stopCPUTracker(creep.name+':targetToRepair',true);
             
               //  if(creep.name==cpuCreep)logs.startCPUTracker(creep.name+':siteToBuild');
@@ -112,6 +119,11 @@ var role = {
 	    
 	    else if(creep.isCollecting()){
 
+            if(playerAttackers.length>0){
+                // dont go picking up drops in dangerous places
+                return creep.getEnergy([config.coreRoomName]);
+            }
+
             if(config.energyAtController>4000) {
                 let drop = creep.getDroppedEnergy(25);
                 if(drop)return creep.actOrMoveTo("pickup",drop);
@@ -128,7 +140,9 @@ var role = {
 	        if(config.controller.level <=3 ) {
                 drop = creep.getDropFromLocalSources(25);
             }
-            if(!drop){
+            // this is RCL locked because builds keep wandering to go pick up E from dead haulers, far out at higher RCL
+            // it wastes lots of time.
+            if(!drop && config.controller.level<5){
                 drop = creep.getDroppedEnergy(25);
             }
 
@@ -188,7 +202,7 @@ var role = {
 	    }else{
 	        structure = weakest;// no enemies, just heal lowest
 	    }
-        if(config.putExcessInToController){
+        if(structure && config.putExcessInToController && creep.room.getEnemyPlayerFighters().length===0){
             if(structure.structureType===STRUCTURE_RAMPART && structure.hits > config.defenceIntel.rampHeight)structure= false;
             else if(structure.structureType===STRUCTURE_WALL && structure.hits > config.defenceIntel.wallHeight)structure= false;
         }

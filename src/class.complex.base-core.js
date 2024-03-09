@@ -18,7 +18,8 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
     runComplex(){
         if(!this.config)return;
 
-        this.runTowerRepairs()
+        if(this.room().getDangerousCreeps().length===0)
+            this.runTowerRepairs()
 
 
         if(this.config.spawnFastFillerReady){
@@ -70,7 +71,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                             repairedSomething = repairTower.repair(structure);
                             break;
                         }
-                        else if( structure.hits < this.config.defenceIntel.rampHeight ){
+                        else if(structure.structureType===STRUCTURE_RAMPART && structure.hits < this.config.defenceIntel.rampHeight ){
                             repairedSomething = repairTower.repair(structure);
                             break;
                         }
@@ -240,8 +241,6 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
         if(facing===TOP){
             plans = [
                 // ---------- RCL 0 --------------------------------------------------
-                //{type:STRUCTURE_CONTAINER,offset:{x:2,y:2},rcl:0,replacedAtRCL:2},
-                //{type:STRUCTURE_CONTAINER,offset:{x:-2,y:2},rcl:0,replacedAtRCL:2},
                 {type:STRUCTURE_CONTAINER,offset:{x:0,y:2},rcl:0,replacedAtRCL:4},
                 // ---------- RCL 1 --------------------------------------------------
                 //{type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name},
@@ -310,7 +309,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 {type:STRUCTURE_LINK,offset:{x:0,y:2},rcl:5,replace:STRUCTURE_EXTENSION},
                 // ---------- RCL 6 --------------------------------------------------
                 // ---------- RCL 7 --------------------------------------------------
-                {type:STRUCTURE_SPAWN,offset:{x:0,y:4},rcl:7,name:(this.name+'-2') }
+                {type:STRUCTURE_SPAWN,offset:{x:0,y:4},rcl:7,name:(this.name+'-2'),requireRamp:true }
             ];
             if(this.buildTerminal)
                 plans.push({type:STRUCTURE_TERMINAL,offset:{x:2,y:1},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true})
@@ -388,7 +387,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 {type:STRUCTURE_LINK,offset:{x:2,y:0},rcl:5,replace:STRUCTURE_EXTENSION},
                 // ---------- RCL 6 --------------------------------------------------
                 // ---------- RCL 7 --------------------------------------------------
-                {type:STRUCTURE_SPAWN,offset:{x:4,y:0},rcl:7,name:(this.name+'-2')},
+                {type:STRUCTURE_SPAWN,offset:{x:4,y:0},rcl:7,name:(this.name+'-2'),requireRamp:true},
             ];
             if(this.buildTerminal)
                 plans.push({type:STRUCTURE_TERMINAL,offset:{x:1,y:-2},rcl:6,replace:STRUCTURE_EXTENSION,requireRamp:true})
@@ -396,6 +395,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
 
         if(this.name)
             plans.push({type:STRUCTURE_SPAWN,offset:{x:0,y:0},rcl:1,name:this.name});
+
         return plans;
     }
 }

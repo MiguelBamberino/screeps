@@ -107,7 +107,7 @@ module.exports = function(){
         }
         else if( this.nearTopRoomEdge() ){
             return true;
-            
+
         }
         else if( this.nearRightRoomEdge() ){
             return true;
@@ -124,21 +124,21 @@ module.exports = function(){
     Creep.prototype.nearLeftRoomEdge = function(){
         return (this.pos.x==1);
     }
-    
+
     Creep.prototype.onRightRoomEdge = function(){
         return (this.pos.x==49);
     }
     Creep.prototype.nearRightRoomEdge = function(){
         return (this.pos.x==48);
     }
-    
+
     Creep.prototype.onTopRoomEdge = function(){
         return (this.pos.y==0);
     }
     Creep.prototype.nearTopRoomEdge = function(){
         return (this.pos.y==1);
     }
-    
+
     Creep.prototype.onBottomRoomEdge = function(){
         return (this.pos.y==49);
     }
@@ -253,6 +253,13 @@ module.exports = function(){
                 costMatrix.set(26,21,100)
                 costMatrix.set(28,21,100)
 
+            }
+            if(roomName==='E8S15'){
+
+                costMatrix.set(18,36,100)
+                costMatrix.set(18,38,100)
+                costMatrix.set(20,36,100)
+                costMatrix.set(20,38,100)
             }
             if(roomName==='W19S25'){
                 costMatrix.set(10,14,100)
@@ -409,9 +416,16 @@ module.exports = function(){
                     ){
                     // if the creep is too close, then flee, before repathing
                     let r = target.pos?target.pos.roomName:target.roomName;
-                    target = new RoomPosition(25,25,r);
+                    // if we're in a home room, flee to the base, not centre of the room.
+                    if(Game.rooms[r] && Game.rooms[r].storage){
+                        target = Game.rooms[r].storage.pos;
+                    }
+                    else{
+                        target = new RoomPosition(25,25,r);
+                    }
+
                     creep.memory.fleeZoneOfControl = true;
-                    creep.say('flee')
+                    creep.say('flee2')
                     //clog(hostile.name+" stronger than "+creep.name ,'fleeing')
                 }
 
@@ -433,6 +447,14 @@ module.exports = function(){
                     costMatrix.set(29,7,100)
                     costMatrix.set(28,6,255)
                 }
+                if(roomName==='E8S15'){
+
+                    costMatrix.set(18,36,100)
+                    costMatrix.set(18,38,100)
+                    costMatrix.set(20,36,100)
+                    costMatrix.set(20,38,100)
+                }
+
                 if(roomName==='E5S25'){
                     for(let y=0; y<=2;y++){
                         for(let x=0; x<49;x++){
@@ -472,7 +494,7 @@ module.exports = function(){
                          // ally list
                         && !BOT_ALLIES.includes(hostile.owner.username)
                         // if we are avoiding SKs, then add them to the avoid list
-                        || (creep.memory.avoidSkeepers && hostile.owner.username=='Source Keeper')
+                        || (creep.memory.avoidSkeepers && hostile.owner.username==='Source Keeper')
                         ){
                         // changed to dist 5 because if crep & enemy diagonally move closer on same tick, they can move in range 3
                         if(hostile.partCount(RANGED_ATTACK)>0)range=5;
@@ -482,7 +504,13 @@ module.exports = function(){
                         let avoids = hostile.pos.getPositionsInRange(range);
                        //clog(hostile.name+" stronger than "+creep.name ,'avoiding')
                         for(let a of avoids){
-                            costMatrix.set(a.x, a.y, 255);
+                            // avoid walking into SKspace
+                            // otherwise likely a moving target and we want builders to
+                            // still path to ramps to heal in seige
+                            if(hostile.owner.username==='Source Keeper')
+                                costMatrix.set(a.x, a.y, 255);
+                            else
+                                costMatrix.set(a.x, a.y, 200);
                             //a.colourIn("orange");
                         }
                     }

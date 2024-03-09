@@ -317,103 +317,108 @@ class RoomNode{
         // safety repair, in case some event kills normal repair creeps and room is collapsing
         let repairTypes =[];
         let repairTarget=false;
-    
+
         if(playerFighters.length>1 || this.towersBuildWalls){
-            
+
             repairTarget = Game.getObjectById(this.defenceIntel.weakest_structure.id);
 
-        }else if(Game.time%100==0){
-            
+        }else if(Game.time%100===0){
+
             let decay_structs = mb.getStructures({roomNames:[this.coreRoomName], types:[STRUCTURE_CONTAINER],filters:[{attribute:'hits',operator:'<',value:[200000]}]});
             if(decay_structs.length>0)
                 repairTarget=decay_structs[0];
-                
+
         }
-        
-        
+
+
     	let target = false;
     	let claimAttackDetected = false;
     	let enemyNearCoreSpawn = false;
+        let rangeToCoreSpawn = 99;
 
         for(var id of hostileIds){
             let enemy = Game.getObjectById(id);
             if(!enemy)continue;
-            
+
             let rangeToTower = towers.length>0?towers[0].pos.getRangeTo(enemy):99;
-            let rangeToCoreSpawn = this.anchor.getRangeTo(enemy);
-            
+            rangeToCoreSpawn = this.anchor.getRangeTo(enemy);
+
             if( (enemy.isFighter() || enemy.isDismantler()) && rangeToCoreSpawn<=2){
                 enemyNearCoreSpawn=true;
             }
-            
+
             if(!claimAttackDetected && enemy.partCount(CLAIM)>0 && enemy.pos.getRangeTo(this.controller().pos)===2 ){
                 claimAttackDetected=true;
             }
-    
-           
+
+
             // shoot small NPCs at max range
            /* if(hostileIds.length<4 && ){
                target= enemy;break;
             }*/
             if(rangeToTower<=15 || (enemy.owner.username==='Invader' && hostileIds.length<3)){
-                
+
                if(enemy.hits < enemy.hitsMax){
                    target= enemy;break;// prioritise something we are already shooting
-               }  
+               }
                if(enemy.isHealer()){
                    target= enemy;break;// break because we want to prioritise healers
-               } 
+               }
                target= enemy;
-            } 
+            }
         }
-        
+
         //////////////////////////////////////////////////////////////////////
         // Safe-mode checks
         //////////////////////////////////////////////////////////////////////
-        if(playerFighters.length>1){
-            
-            let criticalStructureIDs = mb.getStructures({
-                roomNames:[this.coreRoomName],
-                type:[STRUCTURE_SPAWN,STRUCTURE_STORAGE,STRUCTURE_TERMINAL],
-                justIDs:true
-            });
-            for(let id of criticalStructureIDs){
-                let structure = gob(id);
-                if(!structure){
-                    // somethings been destroyed
-                    let res = this.controller().activateSafeMode();
-                    Memory.safemode_reason=this.name+":"+Game.time+":lost spawn/storage/terminal="+res;
-                    break;
+
+        if(!this.controller().safemode) {
+            // if this attack is a duo or quad. its serious.
+            if (playerFighters.length > 1) {
+
+                let criticalStructureIDs = mb.getStructures({
+                    roomNames: [this.coreRoomName],
+                    type: [STRUCTURE_SPAWN, STRUCTURE_STORAGE, STRUCTURE_TERMINAL],
+                    justIDs: true
+                });
+                for (let id of criticalStructureIDs) {
+                    let structure = gob(id);
+                    if (!structure) {
+                        // somethings been destroyed
+                        let res = this.controller().activateSafeMode();
+                        Memory.safemode_reason = this.name + ":" + Game.time + ":lost spawn/storage/terminal=" + res;
+                        break;
+                    }
+                    if (structure.hits < 10000 && rangeToCoreSpawn < 4) {
+                        // somethings is being destroyed
+                        let res = this.controller().activateSafeMode();
+                        Memory.safemode_reason = this.name + ":" + Game.time + ":Ramps <10k on spawn/storage/terminal=" + res;
+                        break;
+                    }
                 }
-                if(structure.hits<structure.hitsMax){
-                   // somethings is being destroyed
-                    let res = this.controller().activateSafeMode();
-                    Memory.safemode_reason=this.name+":"+Game.time+":took dmg on spawn/storage/terminal="+res;
-                    break;
-                }
+
+
             }
-            
-            
-        }
-        
-        if(this.controller().level < 4 && enemyNearCoreSpawn ){
-            // likely we will lose spawn if enemy is this close at low level
-            let res = this.controller().activateSafeMode();
-            Memory.safemode_reason=this.name+":"+Game.time+":RCL<4 enemyNearCoreSpawn="+res;
+            // before we have 2 towers, we're vulnerable
+            if (this.controller().level < 4 && enemyNearCoreSpawn) {
+                // likely we will lose spawn if enemy is this close at low level
+                let res = this.controller().activateSafeMode();
+                Memory.safemode_reason = this.name + ":" + Game.time + ":RCL<4 enemyNearCoreSpawn=" + res;
 
-        }
-        
-        if(claimAttackDetected){
-            let res = this.controller().activateSafeMode();
-            Memory.safemode_reason=this.name+":"+Game.time+":claimAttackDetected="+res;
+            }
 
+            if (claimAttackDetected) {
+                let res = this.controller().activateSafeMode();
+                Memory.safemode_reason = this.name + ":" + Game.time + ":claimAttackDetected=" + res;
+
+            }
         }
         
         
         //////////////////////////////////////////////////////////////////////////////////////
         // Real Tower Code
         //////////////////////////////////////////////////////////////////////////////////////
-        if(towers.length==0)return;
+        if(towers.length===0)return;
         
 	    let healTarget = false;
 	    for(const cname of this.creepNames){
@@ -429,7 +434,10 @@ class RoomNode{
         if(target || healTarget || repairTarget){
     	    for(var tower of  towers){
                 
-	            if(target.name==='bob')continue;
+	            if(target.name==='bob'){
+                    console.log(this.name,"test-shoot",tower.pos)
+                    continue;
+                }
     	        
                 if(target.hits < 600){
                     
@@ -1005,12 +1013,16 @@ class RoomNode{
                 let dividePerX = buildersPerXSurplus_PerRCL[controller.level];
                  // for every extra 500e lets spawn more builders. Too many builders drains the sources and the builders waste time ping ponging
                 this.workforce_quota.builder.required = Math.floor( this.energySurplus/dividePerX );
-                //this.workforce_quota.builder.required += extras;
-                if(this.workforce_quota.builder.required>10)this.workforce_quota.builder.required=10;
-                
+
+                if(this.workforce_quota.builder.required>10){
+                    // quick patch for now, but needs more thought how to stop builder spam at higher level
+                    // only really need 10 builds at RCL 2 and 3 on a cold boot.
+                    this.workforce_quota.builder.required=controller.level>4?4:10;
+                }
+
 
             }else{
-                this.workforce_quota.builder.required = (this.energySurplus > 5000)?1:0;
+                this.workforce_quota.builder.required = (this.energySurplus > 5000 || !this.haveStorage)?1:0;
             } 
         }
         
@@ -1078,8 +1090,10 @@ class RoomNode{
                 // how much energy has piled up at controller before we request another upgrader ?
                 let needMoreThreshold = this.upgradeRate===RATE_VERY_FAST?1700:1000;
 
+
+
                 // if we're maintaining high energy at controller, add one more and wait to consumption change
-                if(this.workforce_quota.upgrader.count===this.workforce_quota.upgrader.active && this.energyAtController>needMoreThreshold){
+                if(this.workforce_quota.upgrader.count===this.workforce_quota.upgrader.active && this.energyAtController>=needMoreThreshold){
                     this.workforce_quota.upgrader.required = this.workforce_quota.upgrader.count+1;
                 }
                 // dont go bust
@@ -1093,6 +1107,11 @@ class RoomNode{
                 if(this.storage() && this.energySurplus<this.surplusRequired && this.energyAtController < 2500){
                     this.workforce_quota.upgrader.required=1;
                 }
+                // quick patch because this bugs out at low RCL for RAT_FAST
+                if(this.workforce_quota.upgrader.count===0 && !this.storage() && this.energySurplus>500){
+                    this.workforce_quota.upgrader.required=1;
+                }
+
 
             }
             else if(this.upgradeRate===RATE_SLOW && this.energySurplus>25000){
@@ -1118,13 +1137,16 @@ class RoomNode{
             // pause the spamming to get the storage built
             this.workforce_quota.upgrader.required = 1;
         }
-        if(this.inRecoveryMode || playerAttackers.length>0 || this.upgradeRate==RATE_OFF){
+        if(this.inRecoveryMode || playerAttackers.length>0 || this.upgradeRate===RATE_OFF){
             this.workforce_quota.upgrader.required = 0;
+        }
+        if( playerAttackers.length>0){
+            this.workforce_quota.tanker.required = 0;
         }
 
         if(playerAttackers.length>2){
             this.workforce_quota.builder.required = 6;
-        }else if(playerAttackers.length>1){
+        }else if(playerAttackers.length>0){
             this.workforce_quota.builder.required = 4;
         }
 

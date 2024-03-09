@@ -90,6 +90,19 @@ global.mb = {
         this.createNoExitCostMatrix()
         
     },
+    minutesUntilOpen(roomName){
+        const startDate = new Date(); // today
+        let state = Game.map.getRoomStatus(roomName);
+        if(!state)return 0;
+        if(state.status==='normal')return 0;
+        //if(state.status!=='closed')return ERR_INVALID_ARGS;
+        const thawDate = new Date(state.timestamp);
+
+        // Calculate the difference in milliseconds
+        const differenceInMilliseconds = thawDate - startDate  ;
+        // Convert milliseconds to hours
+        return  Math.ceil(differenceInMilliseconds / (1000 * 60  ));
+    },
     hoursUntilOpen(roomName){
         const startDate = new Date(); // today
         let state = Game.map.getRoomStatus(roomName);

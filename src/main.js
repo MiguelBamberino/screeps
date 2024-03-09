@@ -13,7 +13,7 @@ let _memHak = require('_memHak');
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Constants
 /////////////////////////////////////////////////////////////////////////////////////////////////
-global.BOT_ALLIES = ['Kalgen','WhiteTurbine','Dakryolith'];
+global.BOT_ALLIES = ['Kalgen','WhiteTurbine','Dakryolith','FR4C74LH3X'];
 global. _SERVER_CONFIG = false;
 global.RATE_VERY_FAST='very-fast';
 global.RATE_FAST='fast';
@@ -91,7 +91,9 @@ module.exports.loop = function () {
     util.detectRespawn();
 
     //Game.rooms['E7N5']._debugSetEnemies('dangerousCreeps',['bob']);Game.rooms['E7N5']._debugSetEnemies('nonallies',['bob']);Game.rooms['E7N5']._debugSetEnemies('enemyPlayerFighters',['bob'])
-    //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E7N5']._debugSetEnemies(['bob']);
+    //if(Game.creeps['bob'] && Game.creeps['bob'].ticksToLive < 1450) Game.rooms['E8S15']._debugSetEnemies(['bob']);
+    //tempCode.scoutRoom('Kappa','bob','E8S15',{x:31,y:25},[],'1r1m')
+
     try {
         logs.mainLoopStarted();
         logs.startCPUTracker('rb.runTick');
@@ -108,7 +110,7 @@ module.exports.loop = function () {
                 if (nodes[n].online) nodes[n].runTick();
             } catch (e) {
                 console.log("ERROR:", nodes[n].name);
-                console.log(e);
+                console.log(e,e.stack);
                 if (util.throwErrors) throw e;
             }
             logs.stopCPUTracker(nodes[n].name, false);
