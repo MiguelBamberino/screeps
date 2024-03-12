@@ -71,6 +71,9 @@ var role = {
         if(!container){
             if(standingSpot){
                 if(creep.pos.getRangeTo(standingSpot)<3){
+                    // don+'t stand on the standing spot, when terminal/storage need to be placed
+                    if(creep.pos.isEqualTo(standingSpot))creep.moveToPos(controller);
+
                     if(creep.isEmpty()){
                         let drop = creep.pos.lookForNearbyResource(RESOURCE_ENERGY,true);
                         if(!drop){

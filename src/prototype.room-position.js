@@ -1,26 +1,61 @@
+RoomPosition.prototype.isRoomEdge = function(){
 
-RoomPosition.prototype.onLeftRoomEdge = function(){
+    if( this.isLeftRoomEdge() ){
+        return true;
+    }
+    else if( this.isTopRoomEdge() ){
+        return true;
+
+    }
+    else if( this.isRightRoomEdge() ){
+        return true;
+    }
+    else if( this.isBottomRoomEdge() ){
+        return true;
+    }else{
+        return false;
+    }
+}
+RoomPosition.prototype.nearRoomEdge = function(){
+
+    if( this.nearLeftRoomEdge() ){
+        return true;
+    }
+    else if( this.nearTopRoomEdge() ){
+        return true;
+
+    }
+    else if( this.nearRightRoomEdge() ){
+        return true;
+    }
+    else if( this.nearBottomRoomEdge() ){
+        return true;
+    }else{
+        return false;
+    }
+}
+RoomPosition.prototype.isLeftRoomEdge = function(){
     return (this.x===0);
 }
 RoomPosition.prototype.nearLeftRoomEdge = function(){
     return (this.x===1);
 }
 
-RoomPosition.prototype.onRightRoomEdge = function(){
+RoomPosition.prototype.isRightRoomEdge = function(){
     return (this.x===49);
 }
 RoomPosition.prototype.nearRightRoomEdge = function(){
     return (this.x===48);
 }
 
-RoomPosition.prototype.onTopRoomEdge = function(){
+RoomPosition.prototype.isTopRoomEdge = function(){
     return (this.y===0);
 }
 RoomPosition.prototype.nearTopRoomEdge = function(){
     return (this.y===1);
 }
 
-RoomPosition.prototype.onBottomRoomEdge = function(){
+RoomPosition.prototype.isBottomRoomEdge = function(){
     return (this.y===49);
 }
 RoomPosition.prototype.nearBottomRoomEdge = function(){
@@ -49,8 +84,16 @@ RoomPosition.prototype.getReverseDirectionTo = function(obj){
  * @param dir
  * @param RoomPosition|false
  */
-RoomPosition.prototype.getPositionByDir = function(dir){
-
+RoomPosition.prototype.getPosInDirection = function(dir){
+    if(this.isRoomEdge())return false;
+    if(dir===TOP_LEFT)return new RoomPosition(this.x-1,this.y-1,this.roomName);
+    if(dir===TOP)return new RoomPosition(this.x,this.y-1,this.roomName);
+    if(dir===TOP_RIGHT)return new RoomPosition(this.x+1,this.y-1,this.roomName);
+    if(dir===LEFT)return new RoomPosition(this.x-1,this.y,this.roomName);
+    if(dir===RIGHT)return new RoomPosition(this.x+1,this.y,this.roomName);
+    if(dir===BOTTOM_LEFT)return new RoomPosition(this.x-1,this.y+1,this.roomName);
+    if(dir===BOTTOM)return new RoomPosition(this.x,this.y+1,this.roomName);
+    if(dir===BOTTOM_RIGHT)return new RoomPosition(this.x+1,this.y+1,this.roomName);
 }
 RoomPosition.prototype.getPosAtDistanceAndAngle = function(distance, angle) {
     // Adjust the angle for the game's coordinate system

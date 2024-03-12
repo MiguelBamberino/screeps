@@ -47,8 +47,9 @@ var role = {
                 return creep.actOrMoveTo("repair",structure);
             }
 
-
-            if(config.energyAtController>4000) {
+            let container = config.controller.getContainer();
+            // dont bother if the container is a terminal or storage, because there will be loads of E
+            if(config.energyAtController>4000 && (!container || container.structureType===STRUCTURE_CONTAINER)) {
                 creep.say("bsssh")
                 // too much E at controller, go pile in the praise
                 return creep.actOrMoveTo("upgradeController",config.controller);

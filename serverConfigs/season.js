@@ -17,7 +17,9 @@ mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21
 // From Kappa
 mb.createMapRoute(['E8S15','E9S15','E10S15','E11S15','E12S15','E13S15','E14S15','E15S15','E16S15','E17S15','E18S15','E18S14'])
 
-// From Alpha
+// From Delta
+mb.createMapRoute(['E6S18','E7S18','E8S18','E9S18','E9S19','E9S20','E10S20','E11S20','E12S20','E13S20','E13S21','E13S22']);
+
 // From Epsilon
 mb.createMapRoute(['W8S24','W7S24','W6S24','W5S24','W5S23','W5S22','W5S21','W5S20','W4S20','W3S20','W2S20','W2S19','W1S19','W1S18'])
 mb.createMapRoute(['W8S24','W7S24','W6S24','W5S24','W5S23','W5S22','W5S21','W4S21'])
@@ -41,6 +43,9 @@ mb.createMapRoute(['E8S26','E8S27','E9S27','E10S27','E10S28','E10S29','E10S30','
 mb.createMapRoute(['E8S26','E8S27','E7S27','E7S28','E7S29','E7S30','E7S31','E7S32'])
 mb.createMapRoute(['E8S26','E9S26','E10S26','E10S25','E10S24','E11S24','E12S24','E13S24','E14S24','E14S23','E13S23','E13S22'])
 mb.createMapRoute(['E8S26','E9S26','E10S26','E10S25','E10S24','E11S24','E12S24','E13S24','E14S24','E14S23','E15S23','E16S23','E17S23','E18S23','E18S22'])
+mb.createMapRoute(['E8S26','E9S26','E10S26','E10S25','E10S24','E11S24','E12S24','E13S24','E14S24','E14S23','E15S23','E16S23','E17S23','E18S23','E18S22','E18S21','E18S20','E19S20','E20S20'])
+mb.createMapRoute(['E8S26','E9S26','E10S26','E10S25','E10S24','E11S24','E12S24','E13S24','E14S24','E14S23','E15S23','E16S23','E17S23','E18S23','E18S22',
+    'E18S21','E18S20','E19S20','E20S20','E20S19','E20S18','E19S18'])
 
 require('global.season6');
 
@@ -57,13 +62,13 @@ module.exports = {
                 buildFast: false,
                 extractMineral:false,
                 //terminalEnergyCap:200000,
-                upgradeRate: RATE_VERY_FAST,
-               // makeResource:RESOURCE_HYDROXIDE,
+                upgradeRate: RATE_SLOW,
+                // makeResource:RESOURCE_HYDROXIDE,
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ACID],
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE],
                 //labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600,7),
                 imports:[
-                   // {resource_type:RESOURCE_OXYGEN,storageCap:500},
+                    {resource_type:RESOURCE_ENERGY,storageCap:200000},
                 ],
                 exports:[
                     //{resource_type:RESOURCE_ENERGY,exportOver:20000,batchSize:10000},
@@ -79,7 +84,7 @@ module.exports = {
                 upgradeRate: RATE_SLOW,
                 terminalEnergyCap:50000,
                 imports:[
-                  //  {resource_type:RESOURCE_ENERGY,storageCap:500000},
+                    //  {resource_type:RESOURCE_ENERGY,storageCap:500000},
                 ],
 
                 exports:[
@@ -90,16 +95,17 @@ module.exports = {
                 ]
 
             }),
-            g: new RoomNode('Gamma', {
-                online:false,
+            m: new RoomNode('Mu', {
+                online:true,
                 wallHeight:500000,
                 rampHeight:500000,
-                retreatSpot:rp(22,31,'E13S24'),
-                anchor:rp(28,21,'E13S24'),spawnFacing:LEFT,
+                retreatSpot:rp(22,31,'E28S21'),
+                anchor:rp(9,25,'E28S21'),spawnFacing:LEFT,
+                armFacing:TOP,armAnchor:rp(17,24,'E28S21'),
                 buildFast: false,
                 extractMineral:false,
                 towersBuildWalls:false,
-                upgradeRate: RATE_SLOW,
+                upgradeRate: RATE_VERY_FAST,
                 surplusRequired:5000,
                 terminalEnergyCap:50000,
                 upgradeBoostPlan:[
@@ -107,15 +113,15 @@ module.exports = {
                 ],
                 imports:[
                     //{resource_type:RESOURCE_ENERGY,storageCap:400000},
-                   // {resource_type:RESOURCE_GHODIUM_ACID,storageCap:12000},
+                    // {resource_type:RESOURCE_GHODIUM_ACID,storageCap:12000},
 
                 ],
                 exports:[
                     {resource_type:RESOURCE_GHODIUM_ACID,exportOver:0,batchSize:6000},
                     {resource_type:RESOURCE_ENERGY,exportOver:50000,batchSize:50000},
-                   /* {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
-                    {resource_type:RESOURCE_UTRIUM,exportOver:0,batchSize:10000},
-                    {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:10000},*/
+                    /* {resource_type:RESOURCE_ZYNTHIUM,exportOver:0,batchSize:10000},
+                     {resource_type:RESOURCE_UTRIUM,exportOver:0,batchSize:10000},
+                     {resource_type:RESOURCE_UTRIUM_LEMERGITE,exportOver:0,batchSize:10000},*/
                 ]
             }),
             d: new RoomNode('Delta', {
@@ -131,7 +137,7 @@ module.exports = {
                 terminalEnergyCap:50000,
                 //funnelRoomName:'W25S23',
                 imports:[
-                   // {resource_type:RESOURCE_ENERGY,storageCap:100000},
+                    // {resource_type:RESOURCE_ENERGY,storageCap:100000},
 
                 ],
                 exports:[
@@ -139,7 +145,8 @@ module.exports = {
                 ],
                 surplusRequired:25000
             }),
-            e: new RoomNode('Epsilon', {
+            /*e: new RoomNode('Epsilon', {
+                online:false,
                 wallHeight:500000,
                 rampHeight:500000,
                 retreatSpot:rp(35,27,'E27S21'),
@@ -148,26 +155,27 @@ module.exports = {
                 buildTerminal: false,
                 extractMineral:false,
                 buildFast: false,
+                noWorkers:true,
                 terminalEnergyCap:200000,
                 surplusRequired:10000,
-                upgradeRate: RATE_VERY_FAST,
+                upgradeRate: RATE_VERY_SLOW,
                 imports:[
                     //{resource_type:RESOURCE_ENERGY,storageCap:100000},
                 ],
                 exports:[
-                   // {resource_type:RESOURCE_ENERGY,exportOver:10000,batchSize:200000},
+                    // {resource_type:RESOURCE_ENERGY,exportOver:10000,batchSize:200000},
                 ],
                 surplusRequired:25000
-            }),
+            }),*/
             z: new RoomNode('Zeta', {
-                wallHeight:500000,
-                rampHeight:500000,
+                wallHeight:1000000,
+                rampHeight:1000000,
                 retreatSpot:rp(20,21,'E13S22'),
                 anchor:rp(23,33,'E13S22'),spawnFacing:TOP,
-                buildTerminal: true,
+                buildTerminal: false,
                 extractMineral:false,
-                buildFast: true,
-                upgradeRate: RATE_VERY_FAST,
+                buildFast: false,
+                upgradeRate: RATE_VERY_SLOW,
                 surplusRequired:50000,
                 imports:[
                 ],
@@ -180,7 +188,7 @@ module.exports = {
                 rampHeight:500000,
                 retreatSpot:rp(32,25,'E8S26'),
                 anchor:rp(19,28,'E8S26'),spawnFacing:TOP,
-                allowCPUShutdown:true,
+                allowCPUShutdown:false,
                 buildTerminal: true,
                 extractMineral:false,
                 buildFast: false,
@@ -231,9 +239,10 @@ module.exports = {
                 buildTerminal: true,
                 extractMineral:false,
                 buildFast: false,
-                upgradeRate: RATE_SLOW,
+                upgradeRate: RATE_VERY_SLOW,
                 terminalEnergyCap:50000,
                 surplusRequired:25000,
+                allowCPUShutdown:false,
                 exports:[
                     {resource_type:RESOURCE_ENERGY,exportOver:50000,batchSize:50000},
                     {resource_type:RESOURCE_OXYGEN,exportOver:0,batchSize:10000},
@@ -246,22 +255,27 @@ module.exports = {
                 //noWorkers:true,
                 retreatSpot:rp(30,20,'E8S15'),
                 anchor:rp(19,35,'E8S15'),spawnFacing:TOP,
-                buildTerminal: false,
+                buildTerminal: true,
+                terminalAtController:true,
                 extractMineral:false,
                 buildFast: false,
-                allowCPUShutdown:true,
-               // online:false,
-                upgradeRate: RATE_VERY_FAST,
-                surplusRequired:25000
+                allowCPUShutdown:false,
+                // online:false,
+                upgradeRate: RATE_FAST,
+                surplusRequired:25000,
+                imports:[
+                     {resource_type:RESOURCE_ENERGY,storageCap:100000,allowEnergy:true},
+
+                ],
             }),
             l: new RoomNode('Lambda', {
                 wallHeight:500000,
                 rampHeight:500000,
                 retreatSpot:rp(20,21,'E18S22'),
                 anchor:rp(34,18,'E18S22'),spawnFacing:TOP,
-                buildTerminal: true,
+                buildTerminal: false,
                 extractMineral:false,
-                buildFast: true,
+                buildFast: false,
                 upgradeRate: RATE_VERY_FAST,
                 surplusRequired:50000,
                 imports:[

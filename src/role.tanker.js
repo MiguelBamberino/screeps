@@ -185,12 +185,16 @@ var roleTanker = {
 
                     let site = mb.getNearestConstruction( Game.spawns[config.name].pos,[config.coreRoomName]);
 
+                    // weird edge case where we want terminal at controller, so tankers were draining room
+                    // and not putting any into storage
+                    if(creep.room.storage && creep.room.storage.storingLessThan(10000))site=false;
+
                     if(site && site.structureType!==STRUCTURE_ROAD){
                         creep.memory.dropAt = site.pos;
                         creep.memory.giveToType = 'builder'
                         return creep.moveToPos(site)
                     }
-                }else{
+                }
 
                     // if we dont have a storage yet and we want to upgrade quickly, then all this extra E needs to get dumped at the controller.
                     // we hope there is ugraders there to use it
@@ -218,7 +222,7 @@ var roleTanker = {
                     let fillController = (!storage || storage && storage.storingAtLeast(config.surplusRequired))
                     if(fillController)target = creep.getUpgradeStoreToFill(roomNames);
 
-                }
+
 
             }
 

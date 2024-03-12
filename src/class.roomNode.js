@@ -25,6 +25,7 @@ class RoomNode{
             armAnchor:false         >> Where to place the 3rd spawn fast filler rect
             armFacing:TOP           >> which way to face the 3rd spawn fast filler rect
             buildTerminal:true      >> whether to build the terminal
+            terminalAtController:false >> whether to build the terminal
 
             extraFastFillSpots:[]   >> any extra positions to sfend fast filler creeps
             logger:undefined        >> an object that allows this object to report messages to a log
@@ -81,6 +82,7 @@ class RoomNode{
         
         // options
         this.buildTerminal = options.buildTerminal===undefined?true:options.buildTerminal;
+        this.terminalAtController = options.terminalAtController===undefined?false:options.terminalAtController;
         this.spawnFacing = options.spawnFacing===undefined?TOP:options.spawnFacing;
         this.armFacing = options.armFacing===undefined?TOP:options.armFacing;
         this.armAnchor = options.armAnchor===undefined?rp(this.anchor.x,this.anchor.y+6,this.anchor.roomName):options.armAnchor;
@@ -123,7 +125,7 @@ class RoomNode{
         }
 
         this.coreComplex = new BaseCoreComplex(this.anchor,this.name,this.spawnFacing)
-        this.coreComplex.buildTerminal = this.buildTerminal;
+        this.coreComplex.buildTerminal = (!this.terminalAtController && this.buildTerminal);
         this.coreComplex.turnOn();
         this.armComplex = new ArmCoreComplex(this.armAnchor,this.name,this.armFacing)
         this.armComplex.turnOn();
@@ -609,14 +611,6 @@ class RoomNode{
      */ 
     checkCache(){
 
-        if(Game.time%20===0){
-            if(!this.controller().haveContainer()){
-                let container = this.controller().getStandingSpot().lookForStructure(STRUCTURE_CONTAINER)
-                this.controller().setContainer(container)
-            }
-        }
-
-
         //// Storage Cache /////////////////////////////////////////////////////
         if(Game.time%50==0){
             this.haveStorage = undefined;
@@ -632,7 +626,7 @@ class RoomNode{
         //// Spawn Fast Filler Ready ////////////////////////////////////////////
         // Check if main spawn is ready to use fast filler
         // this should stay cached once true, because it shouldn't change unless the room is invaded and destroyed
-        if(Game.time%10===0 && this.spawnFastFillerReady==false)this.spawnFastFillerReady=undefined;
+        if(Game.time%10===0 && this.spawnFastFillerReady===false)this.spawnFastFillerReady=undefined;
         if(this.spawnFastFillerReady===undefined){
             let structures = mb.getStructures({roomNames:[this.coreRoomName],types:[STRUCTURE_CONTAINER,STRUCTURE_STORAGE]});
 
@@ -648,11 +642,32 @@ class RoomNode{
 
         }
 
-
         //// Controller Cache /////////////////////////////////////////////////////
-        if(this.spawnFastFillerReady && Game.time%10===0 && !this.controller().haveContainer()) {
-            let exts = mb.getStructures({ roomNames:[this.coreRoomName], types:[STRUCTURE_EXTENSION] });
-            if(exts.length>=5)mb.addConstruction(this.controller().getStandingSpot(), STRUCTURE_CONTAINER);
+        let controller = this.controller();
+        if(Game.time%20===0){
+            if(!controller.haveContainer()){
+                let container=false;
+                if(this.terminalAtController && this.buildTerminal && controller.level>=6 ){
+                    container =  controller.getStandingSpot().lookForStructure(STRUCTURE_TERMINAL)
+                }else{
+                    container = controller.getStandingSpot().lookForStructure(STRUCTURE_CONTAINER)
+                }
+                controller.setContainer(container)
+            }
+        }
+
+        // at RCL we just wait for builders/workers to upgrade, then we'll build the container
+        if(Game.time%10===0 && controller.level > 1 ) {
+            // not really the best place for this code? doing construction during cache check.
+            if(this.terminalAtController && this.buildTerminal && controller.level>=6 ){
+                let container = controller.getContainer();
+                if(container && container.structureType===STRUCTURE_CONTAINER)container.destroy();
+                if(!container)mb.addConstruction(controller.getStandingSpot(), STRUCTURE_TERMINAL);
+            }else{
+                if(!controller.haveContainer())
+                    mb.addConstruction(controller.getStandingSpot(), STRUCTURE_CONTAINER);
+            }
+
         }
         if(Game.time%20===0){
             this.energyAtController=undefined
@@ -1011,6 +1026,7 @@ class RoomNode{
                     15000 // RCL8
                     ];
                 let dividePerX = buildersPerXSurplus_PerRCL[controller.level];
+                if(controller.level===4 && !this.haveStorage)dividePerX=1000;
                  // for every extra 500e lets spawn more builders. Too many builders drains the sources and the builders waste time ping ponging
                 this.workforce_quota.builder.required = Math.floor( this.energySurplus/dividePerX );
 
@@ -1078,6 +1094,10 @@ class RoomNode{
         if(this.energyAtController>4000){
             // stop spamming tankers and start consuming all the E piling up
             this.workforce_quota.tanker.required = this.workforce_quota.tanker.count;
+        }
+        if(this.remoteRoomNames.length===0){
+            // dont spawn too many tankers when room is on its own
+            this.workforce_quota.tanker.required = this.workforce_quota.harvester.required - this.workforce_quota.rkeeper.required;
         }
 
         this.workforce_quota.upgrader.required = 0;

@@ -13,7 +13,7 @@ let _memHak = require('_memHak');
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Global Constants
 /////////////////////////////////////////////////////////////////////////////////////////////////
-global.BOT_ALLIES = ['Kalgen','WhiteTurbine','Dakryolith','FR4C74LH3X'];
+global.BOT_ALLIES = ['Kalgen','WhiteTurbine','Dakryolith','FR4C74LH3X','Tigga','joethebarber'];
 global. _SERVER_CONFIG = false;
 global.RATE_VERY_FAST='very-fast';
 global.RATE_FAST='fast';

@@ -129,18 +129,21 @@ var roleTanker = {
             let target = false;
             // only fill when empty, when upgrading Vfast. this seems counter-intuitive, but
             // wen upgRate==Vfast, there is lots of none reservation-book transfers flying
-            if(config.upgradeRate===RATE_VERY_FAST){
-                if(container.isEmpty())target = container;
-            }else if(container.canReserveTransfer(creepSpace)){
-                target = container;
+            if(container){
+                if(config.upgradeRate===RATE_VERY_FAST){
+                    if(container.isEmpty())target = container;
+                }else if(container.canReserveTransfer(creepSpace)){
+                    target = container;
+                }
             }
+
            
             if(target && target.reserveTransfer(creep.name,creepSpace)===OK){
                 creep.memory.job = {target_id:target.id,resource_type:RESOURCE_ENERGY,action:'fill'}
             }
         }
         
-        if(!creep.memory.job  && Game.time%50==0 && energyInStorage>=creepSpace){
+        if(!creep.memory.job  && Game.time%50===0 && energyInStorage>=creepSpace){
             let towerSpace = creepSpace>=1000?500:creepSpace;
             let tower = mb.getNearestStructure(creep.pos,[STRUCTURE_TOWER],[config.coreRoomName],[{attribute:'canReserveTransfer',operator:'fn',value:[towerSpace]}])
             if(tower){
@@ -189,7 +192,7 @@ var roleTanker = {
         if(!creep.memory.job){
             for(let importConf of config.imports){
                 // 
-                if(importConf.resource_type===RESOURCE_ENERGY)continue;
+                if(importConf.resource_type===RESOURCE_ENERGY && !importConf.allowEnergy)continue;
                 
                 if( terminal.storingAtLeast(1,importConf.resource_type) && storage.haveSpaceFor(creepSpace,importConf.resource_type) ){
 
@@ -244,8 +247,8 @@ var roleTanker = {
         if(!creep.memory.job){
 
             let drop = creep.getDroppedEnergy(25);
-            // while bored, go clean up. Make sure not to pick energy up from controller pile
-            if(drop && (drop.pos.getRangeTo(config.controller)>5 || config.controller.level ===8)){
+            // while bored, go clean up. Make sure not to pick energy up from controller pile, if we're going brrr
+            if(drop && (drop.pos.getRangeTo(config.controller)>5 || config.upgradeRate !==RATE_VERY_FAST)){
                 return creep.actOrMoveTo('pickup',drop);
             }else{
                 return creep.moveToPos(parkSpot)
