@@ -318,6 +318,7 @@ RoomPosition.prototype.isWalkable = function(checkForCreeps = false,checkForStru
     return true;
 }
 RoomPosition.prototype.canBuild = function(structureType,allowWalls=false) {
+
     // Get the terrain for the room
     const terrain = new Room.Terrain(this.roomName);
 
