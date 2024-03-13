@@ -35,18 +35,56 @@ module.exports = {
 
 
         try{
-            //  this.setupNode('Epsilon','Mu',{workerBody:'4*1w1c1m',workerCount:6,defend:false})
 
-            //this.haulResources('Epsilon','Etx1','8c8m',gob('65edaa673332ecf8149213c0'),{id:'drop',pos:nodes.m.anchor},[RESOURCE_ENERGY])
+            //this.drainRoomBounce('Iota','I-dr-0', rp(25,48,'E4S20'), '3*1t1m + 6*1h1m',[],true)
+            //this.drainRoomBounce('Iota','I-dr-1', rp(26,48,'E4S20'), '3*1t1m + 6*1h1m',[],true)
+            //this.drainRoomBounce('Iota','I-dr-2', rp(27,48,'E4S20'), '3*1t1m + 6*1h1m',[],true)
+            let ts = ['65d6eb355bd252cf89cc1ee3','65da14f9179abc505c7c5283','65d825b7334c572f4b2a9681','65d5ef60d96e926b3e362f84','65da09539fca9109f248241a'];
+            this.breakStructures('Iota','I-br-0','23w25m2h','E4S21',[],ts,rp(25,25,'E4S20'),false)
+            this.breakStructures('Iota','I-br-1','23w25m2h','E4S21',[],ts,rp(25,25,'E4S20'),false)
+            this.breakStructures('Iota','I-br-2','23w25m2h','E4S21',[],ts,rp(25,25,'E4S20'),false)
+            this.breakStructures('Iota','I-br-3','23w25m2h','E4S21',[],ts,rp(25,25,'E4S20'),false)
+            this.breakStructures('Iota','I-br-4','23w25m2h','E4S21',[],ts,rp(25,25,'E4S20'),false)
+            //  this.setupNode('Epsilon','Mu',{workerBody:'4*1w1c1m',workerCount:6,defend:false})
+            let resources = [RESOURCE_HYDROGEN,RESOURCE_KEANIUM,RESOURCE_ZYNTHIUM,RESOURCE_LEMERGIUM,RESOURCE_CATALYST,RESOURCE_GHODIUM_OXIDE];
+             this.haulResources('Iota','Itx1','20*1c1m',{id:'65d5c3d45bd252fc28cbb031',pos:{x:25,y:25,roomName:'E4S21'}}, nodes.i.terminal(),resources)
+             this.haulResources('Iota','Itx2','20*1c1m',{id:'65d5c3d45bd252fc28cbb031',pos:{x:25,y:25,roomName:'E4S21'}}, nodes.i.terminal(),resources)
+             this.haulResources('Iota','Itx3','20*1c1m',{id:'65d5c3d45bd252fc28cbb031',pos:{x:25,y:25,roomName:'E4S21'}}, nodes.i.terminal(),resources)
+
             //this.haulResources('Epsilon','Etx2','8c8m',gob('65edaa673332ecf8149213c0'),{id:'drop',pos:nodes.m.anchor},[RESOURCE_ENERGY])
 
             //this.haulResources('Epsilon','Etx3','8c8m',gob('65edaa673332ecf8149213c0'),{id:'drop',pos:nodes.m.anchor},[RESOURCE_ENERGY])
-            if(mb.minutesUntilOpen('E31S19')<15)
+
+            if(mb.minutesUntilOpen('E31S19')<1){
+                this.startupNewRoomWithVision('E3S19', 'Iota',{workerBody:'15*1w1c1m',workerCount:3,harvesterBody:'12w1c6m',defend:false})
+            }else{
+                this.startupNewRoomWithVision('E1S18', 'Iota',{workerBody:'15*1w1c1m',workerCount:3,harvesterBody:'12w1c6m',defend:false})
+                this.startupNewRoomWithVision('E1S17', 'Iota',{workerBody:'15*1w1c1m',workerCount:3,harvesterBody:'12w1c6m',defend:false})
+            }
+
+            if(mb.minutesUntilOpen('E31S19')<15){
                 this.startupNewRoomWithVision('E31S19', 'Mu',{workerCount:2,workerBody:'5*1w1c1m',harvestSources:false,swampy:false,defend:false})
+            }
+
+            if(mb.minutesUntilOpen('E31S19')<45){
+                this.attackMission('Theta','E20S20','25m20r5h','T5-guard',{
+                    spawnPriority:true,
+                    waitSpot:rp(28,22,'E20S20'),
+                    stopIfKilled:false
+                },850,true)
+
+            }
+            if(mb.minutesUntilOpen('E31S31')<45){
+                this.attackMission('Alpha','E30S30','25m20r5h','A1-guard',{
+                    spawnPriority:true,
+                    waitSpot:rp(20,20,'E30S30'),
+                    stopIfKilled:false
+                },850,true)
+
+            }
 
             // if(!Game.rooms['E27S21'] || Game.rooms['E27S21'].controller.level===0){
-             this.startupNewRoomWithVision('E1S18', 'Iota',{workerBody:'15*1w1c1m',workerCount:2,harvesterBody:'12w1c6m',defend:false})
-             this.startupNewRoomWithVision('E1S17', 'Iota',{workerBody:'15*1w1c1m',workerCount:2,harvesterBody:'12w1c6m',defend:false})
+
 
             ///////////// E11S27 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // this.startupNewRoomWithVision('E11S27','Theta',{workerBody:'15*1w1c1m',workerCount:4,defend:false,requireMap:false})
@@ -75,12 +113,6 @@ module.exports = {
         }catch (e) {
             console.log("Set-up error",e,e.stack)
         }
-        /*this.attackMission('Theta','E20S20','25m20r5h','T5-guard',{
-            spawnPriority:true,
-            attackStructures:false,
-            waitSpot:rp(28,22,'E20S20'),
-            stopIfKilled:false
-        },850,true)*/
 
         this.attackMission('Delta','E13S22','1a19r25m5h','D4-guard',{
             spawnPriority:true,
@@ -125,7 +157,7 @@ module.exports = {
 
 
 
-        this.crudeCookingList(nodes.t,[RESOURCE_GHODIUM,RESOURCE_HYDROXIDE,RESOURCE_CATALYZED_ZYNTHIUM_ACID],10000)
+        this.crudeCookingList(nodes.t,[RESOURCE_GHODIUM_OXIDE,RESOURCE_CATALYZED_ZYNTHIUM_ACID,RESOURCE_LEMERGIUM_ALKALIDE],10000)
 
 
         /*this.attackMission2('Epsilon',['W8S26','W8S25','W9S25','W7S25'],'1a1m','Ex1',{
@@ -187,18 +219,22 @@ module.exports = {
 
 
 
-        if(nodes.k.controller().level<8)
-            this.massTerminalFunnel(nodes.k,[nodes.b,nodes.i,nodes.d,nodes.t,nodes.a],20000,100,RATE_FAST);
 
-        if(nodes.d.controller().level<8){
-           // this.selfBoostHaulController(nodes.d,rp(13,25,nodes.d.coreRoomName))
+
+        if(nodes.z.controller().level<7){
+            nodes.k.upgradeRate= RATE_SLOW;
+            nodes.z.upgradeRate= RATE_FAST;
+            this.selfBoostHaulController(nodes.z,rp(28,38,nodes.z.coreRoomName))
             //this.selfBoostHaulController(nodes.a,rp(40,13,nodes.a.coreRoomName))
-            //this.massTerminalFunnel(nodes.d,[nodes.b,nodes.i],20000,100);
-        }else if(nodes.b.controller().level<8){
-           // this.selfBoostHaulController(nodes.b,rp(9,34,nodes.b.coreRoomName),'20c10m')
-           // this.massTerminalFunnel(nodes.b,[nodes.d,nodes.i],20000,100);
+            if(nodes.z.terminal())this.massTerminalFunnel(nodes.z,[nodes.b,nodes.d,nodes.t],20000,100,RATE_FAST);
 
+        }else  if(nodes.k.controller().level<8){
+            this.massTerminalFunnel(nodes.k,[nodes.b,nodes.i,nodes.d,nodes.t,nodes.z],20000,100,RATE_FAST);
         }
+
+
+        // this.selfBoostHaulController(nodes.b,rp(9,34,nodes.b.coreRoomName),'20c10m')
+
         // this function broke last freeze. needs freeze protection
         // this.parentBoostHaulController('Alpha','Delta',rp(40,36,'W25S22'),2,'15*2c1m')
         if( !season6.isRoomFroze('W8S25')){
@@ -233,6 +269,7 @@ module.exports = {
 
         // nodes.a.manual_addRooms=['W23S22','W23S21','W22S24'];
         nodes.b.manual_addRooms=['E9S32'];
+        nodes.m.manual_addRooms=['E28S22'];
         //nodes.g.manual_ignoreRooms=['W19S27'];
         //nodes.e.manual_addRooms=['W6S24','W6S23'];
         nodes.i.maxRemotes = 3;

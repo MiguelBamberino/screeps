@@ -183,27 +183,7 @@ module.exports = function(){
             // let mpCM = mb.getCostMatrix(roomName);
 
             // if (mpCM) return mpCM; breaks base room, because builddings are now 0, not 255
-            if(roomName==='W6S23'){
-                costMatrix.set(6,49,255)
-                costMatrix.set(7,49,255)
-                costMatrix.set(8,49,255)
-                costMatrix.set(9,49,255)
-                costMatrix.set(10,49,255)
-                costMatrix.set(11,49,255)
-                costMatrix.set(12,49,255)
-                costMatrix.set(13,49,255)
-                costMatrix.set(14,49,255)
 
-            }
-            if(roomName==='W35S21'){
-                costMatrix.set(26,19,100)
-                costMatrix.set(28,19,100)
-                costMatrix.set(27,20,100)
-                costMatrix.set(27,22,100)
-                costMatrix.set(26,21,100)
-                costMatrix.set(28,21,100)
-
-            }
             if(roomName==='E8S15'){
 
                 costMatrix.set(18,36,100)
@@ -211,12 +191,18 @@ module.exports = function(){
                 costMatrix.set(20,36,100)
                 costMatrix.set(20,38,100)
             }
-            if(roomName==='W19S25'){
-                costMatrix.set(10,14,100)
-                costMatrix.set(11,14,100)
-                costMatrix.set(10,13,100)
-                costMatrix.set(11,13,100)
-                costMatrix.set(11,12,100)
+            if(roomName==='E13S22'){
+                costMatrix.set(22,34,100)
+                costMatrix.set(22,36,100)
+                costMatrix.set(24,34,100)
+                costMatrix.set(24,36,100)
+
+            }
+            if(roomName==='E18S22'){
+                costMatrix.set(33,19,100)
+                costMatrix.set(35,19,100)
+                costMatrix.set(33,21,100)
+                costMatrix.set(35,21,100)
 
             }
             if(roomName==='E8S15'){

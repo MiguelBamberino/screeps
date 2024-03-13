@@ -7,12 +7,7 @@ gui.nodeSrcStats = false;
 gui.nodeControllerStats =false;
 gui.showDropStats = false;
 logs.runRCLSpeedStats = false;
-mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21','W4S21'])
-mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21','W4S21','W4S22'])
-mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20','W8S20','W7S20','W6S20','W6S21','W5S21'])
-mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20'])
-mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W9S20'])
-mb.createMapRoute(['W13S24','W12S24','W12S23','W11S23','W11S22','W10S22','W10S21','W10S20','W11S20'])
+
 
 // From Kappa
 mb.createMapRoute(['E8S15','E9S15','E10S15','E11S15','E12S15','E13S15','E14S15','E15S15','E16S15','E17S15','E18S15','E18S14'])
@@ -66,7 +61,7 @@ module.exports = {
                 // makeResource:RESOURCE_HYDROXIDE,
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ACID],
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE],
-                //labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600,7),
+                labComplex:new LabComplex( rp( 29,10,'E15S32' ),TOP_RIGHT,600,7),
                 imports:[
                     //{resource_type:RESOURCE_ENERGY,storageCap:200000},
                 ],
@@ -172,7 +167,7 @@ module.exports = {
                 rampHeight:1000000,
                 retreatSpot:rp(20,21,'E13S22'),
                 anchor:rp(23,33,'E13S22'),spawnFacing:TOP,
-                buildTerminal: false,
+                buildTerminal: true,
                 extractMineral:false,
                 buildFast: false,
                 upgradeRate: RATE_SLOW,
@@ -195,7 +190,7 @@ module.exports = {
                 upgradeRate: RATE_VERY_SLOW,
                 terminalEnergyCap:50000,
                 surplusRequired:10000,
-                makeResource:RESOURCE_GHODIUM_HYDRIDE,
+                makeResource:RESOURCE_GHODIUM_OXIDE,
                // boostResources:[RESOURCE_LEMERGIUM_OXIDE],
                 labComplex:new LabComplex( rp( 16,37,'E8S26' ),TOP_RIGHT,600,7),
                 imports:[
