@@ -61,17 +61,17 @@ module.exports = {
                 anchor:rp(33,7,'E15S32'),spawnFacing:TOP,
                 buildFast: false,
                 extractMineral:false,
-                //terminalEnergyCap:200000,
+                terminalEnergyCap:50000,
                 upgradeRate: RATE_SLOW,
                 // makeResource:RESOURCE_HYDROXIDE,
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ACID],
                 //boostResources:[RESOURCE_LEMERGIUM_ALKALIDE,RESOURCE_ZYNTHIUM_ALKALIDE],
                 //labComplex:new LabComplex( rp( 14,37,'W21S22' ),TOP_RIGHT,600,7),
                 imports:[
-                    {resource_type:RESOURCE_ENERGY,storageCap:200000},
+                    //{resource_type:RESOURCE_ENERGY,storageCap:200000},
                 ],
                 exports:[
-                    //{resource_type:RESOURCE_ENERGY,exportOver:20000,batchSize:10000},
+                    {resource_type:RESOURCE_ENERGY,exportOver:50000,batchSize:50000},
                 ]
 
             }),
@@ -175,7 +175,7 @@ module.exports = {
                 buildTerminal: false,
                 extractMineral:false,
                 buildFast: false,
-                upgradeRate: RATE_VERY_SLOW,
+                upgradeRate: RATE_SLOW,
                 surplusRequired:50000,
                 imports:[
                 ],
@@ -196,7 +196,7 @@ module.exports = {
                 terminalEnergyCap:50000,
                 surplusRequired:10000,
                 makeResource:RESOURCE_GHODIUM_HYDRIDE,
-                boostResources:[RESOURCE_LEMERGIUM_OXIDE],
+               // boostResources:[RESOURCE_LEMERGIUM_OXIDE],
                 labComplex:new LabComplex( rp( 16,37,'E8S26' ),TOP_RIGHT,600,7),
                 imports:[
                     //{resource_type:RESOURCE_ENERGY,storageCap:50000},

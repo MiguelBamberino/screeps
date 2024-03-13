@@ -41,11 +41,12 @@ module.exports = {
             //this.haulResources('Epsilon','Etx2','8c8m',gob('65edaa673332ecf8149213c0'),{id:'drop',pos:nodes.m.anchor},[RESOURCE_ENERGY])
 
             //this.haulResources('Epsilon','Etx3','8c8m',gob('65edaa673332ecf8149213c0'),{id:'drop',pos:nodes.m.anchor},[RESOURCE_ENERGY])
-            //if(!season6.isRoomFroze('W13S23'))
-            this.startupNewRoomWithVision('E13S22', 'Theta',{workerCount:2,workerBody:'15*1w1c1m',harvestSources:false,swampy:false,defend:false})
+            if(mb.minutesUntilOpen('E31S19')<15)
+                this.startupNewRoomWithVision('E31S19', 'Mu',{workerCount:2,workerBody:'5*1w1c1m',harvestSources:false,swampy:false,defend:false})
 
             // if(!Game.rooms['E27S21'] || Game.rooms['E27S21'].controller.level===0){
-            // this.startupRoomNoVision('Delta', 'E8S15',{workerBody:'8*1w1c1m',workerCount:2,harvesterBody:'6w1c6m',haulToController:false,defend:true})
+             this.startupNewRoomWithVision('E1S18', 'Iota',{workerBody:'15*1w1c1m',workerCount:2,harvesterBody:'12w1c6m',defend:false})
+             this.startupNewRoomWithVision('E1S17', 'Iota',{workerBody:'15*1w1c1m',workerCount:2,harvesterBody:'12w1c6m',defend:false})
 
             ///////////// E11S27 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // this.startupNewRoomWithVision('E11S27','Theta',{workerBody:'15*1w1c1m',workerCount:4,defend:false,requireMap:false})
@@ -74,16 +75,16 @@ module.exports = {
         }catch (e) {
             console.log("Set-up error",e,e.stack)
         }
-        this.attackMission('Theta','E20S20','25m20r5h','T5-guard',{
+        /*this.attackMission('Theta','E20S20','25m20r5h','T5-guard',{
             spawnPriority:true,
             attackStructures:false,
             waitSpot:rp(28,22,'E20S20'),
             stopIfKilled:false
-        },850,true)
+        },850,true)*/
 
         this.attackMission('Delta','E13S22','1a19r25m5h','D4-guard',{
             spawnPriority:true,
-            keepSpawning:(!Game.rooms['E13S22'].controller.safeMode),
+            keepSpawning:false,
             reckless:true,
             renewSpawn:'Zeta',
             renewAt:1000,
@@ -102,7 +103,7 @@ module.exports = {
             stopIfKilled:false
         },650,true)
 
-        this.attackMission('Delta','E18S22','1a19r25m5h','L-gu-D1',{
+        /*this.attackMission('Delta','E18S22','1a19r25m5h','L-gu-D1',{
             spawnPriority:true,
             keepSpawning:(!Game.rooms['E18S22'].controller.safeMode),
             reckless:true,
@@ -110,7 +111,7 @@ module.exports = {
             renewAt:1000,
             attackStructures:false,
             stopIfKilled:false
-        },750,false)
+        },750,false)*/
         this.attackMission('Theta','E18S22','1a19r25m5h','L-gu-T1',{
             spawnPriority:true,
             keepSpawning:(!Game.rooms['E18S22'].controller.safeMode),
@@ -186,7 +187,8 @@ module.exports = {
 
 
 
-        if(nodes.k.controller().level<8)this.massTerminalFunnel(nodes.k,[nodes.b,nodes.i],20000,100,RATE_FAST);
+        if(nodes.k.controller().level<8)
+            this.massTerminalFunnel(nodes.k,[nodes.b,nodes.i,nodes.d,nodes.t,nodes.a],20000,100,RATE_FAST);
 
         if(nodes.d.controller().level<8){
            // this.selfBoostHaulController(nodes.d,rp(13,25,nodes.d.coreRoomName))
@@ -232,11 +234,11 @@ module.exports = {
         // nodes.a.manual_addRooms=['W23S22','W23S21','W22S24'];
         nodes.b.manual_addRooms=['E9S32'];
         //nodes.g.manual_ignoreRooms=['W19S27'];
-        //nodes.g.manual_ignoreRooms=['E17S14','E17S13','E18S13','E19S13','E17S15'];
         //nodes.e.manual_addRooms=['W6S24','W6S23'];
-        nodes.i.maxRemotes = 4;
+        nodes.i.maxRemotes = 3;
+        nodes.d.maxRemotes = 5;
+        nodes.a.maxRemotes = 5;
         nodes.a.manual_ignoreRooms=['E14S31'];
-        nodes.z.manual_ignoreRooms=['W12S24'];
         nodes.t.manual_addRooms=['E8S28']
         nodes.i.manual_addRooms=['E1S19','E4S19','E1S17']
 
@@ -245,8 +247,7 @@ module.exports = {
             if(n==='b' && Game.cpu.bucket<4000)continue;
             if(n==='i' && Game.cpu.bucket<5000)continue;
             if(nodes[n].pauseRemotes)continue;
-            if(n==='g' )continue;
-            if(n==='e' )continue;
+
             if(nodes[n].online)this.fullAutomateRoomNode(nodes[n]);
             logs.stopCPUTracker('fullAutomateRoomNode-'+n,false);
 
@@ -4393,6 +4394,8 @@ module.exports = {
         }
         if(Game.creeps[cname] && !Game.creeps[cname].spawning){
             let creep = Game.creeps[cname];
+            let waitingPosition = rp(config.waitSpot.x,config.waitSpot.y,targetRoom);
+
 
             creep.memory.avoidSkeepers = config.avoidSkeepers;
 
@@ -4410,14 +4413,19 @@ module.exports = {
                 }
                 if(creep.memory.renewing && creep.room.energyAvailable >= 800 ){
                     creep.say('renew')
-                    if(creep.pos.isNearTo(Game.spawns[config.renewSpawn]))Game.spawns[config.renewSpawn].renewCreep(creep);
+
+                    Game.spawns[config.renewSpawn].pauseSpawningUntil(Game.time+2);
+                    if(creep.pos.isNearTo(Game.spawns[config.renewSpawn])) {
+
+                        if(Game.spawns[config.renewSpawn].spawning)creep.moveToPos(waitingPosition)
+                        else Game.spawns[config.renewSpawn].renewCreep(creep);
+                    }
                     else creep.moveToPos(Game.spawns[config.renewSpawn]);
 
                     return;
                 }
             }
 
-            let waitingPosition = rp(config.waitSpot.x,config.waitSpot.y,targetRoom);
 
             if(creep.memory.flee_from_id){
                 let hostile = gob(creep.memory.flee_from_id);

@@ -7,7 +7,7 @@
 
 Creep.prototype.partCount=function(partType){
     
-    if(this.hits!=this.hitsMax){
+    if(this.hits!==this.hitsMax){
         // if we are not at full HP then we might have broken parts
         return this._countUpBodyParts(false).partCounts[partType];
     }
@@ -15,7 +15,7 @@ Creep.prototype.partCount=function(partType){
 }
 Creep.prototype.boostCount=function(resourceType,refresh=false){
     let res=0;
-    if(this.hits!=this.hitsMax || refresh){
+    if(this.hits!==this.hitsMax || refresh){
         // if we are not at full HP then we might have broken parts
         res= this._countUpBodyParts(false).boostCounts[resourceType];
         return res===undefined?0:res;
@@ -60,7 +60,7 @@ Creep.prototype.isScout = function(){
     return (this.partCount(MOVE)===this.body.length)
 }
 Creep.prototype.isCivilian = function(){
-    return (this.partCount(ATTACK)==0&&this.partCount(RANGED_ATTACK)===0)
+    return (this.partCount(ATTACK)===0&&this.partCount(RANGED_ATTACK)===0)
 }
 Creep.prototype.isMorePunchyThan = function(creep){
     return  this.getPunchyness() > creep.getPunchyness()
