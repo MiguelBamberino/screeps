@@ -124,10 +124,11 @@ class RoomNode{
             this.orders = this.trader.getOrderIDsByRoomName(this.coreRoomName);
         }
 
-        this.coreComplex = new BaseCoreComplex(this.anchor,this.name,this.spawnFacing)
+        let draft = !this.online;
+        this.coreComplex = new BaseCoreComplex(this.anchor,this.name,this.spawnFacing,8,draft)
         this.coreComplex.buildTerminal = (!this.terminalAtController && this.buildTerminal);
         this.coreComplex.turnOn();
-        this.armComplex = new ArmCoreComplex(this.armAnchor,this.name,this.armFacing)
+        this.armComplex = new ArmCoreComplex(this.armAnchor,this.name,this.armFacing,8,draft)
         this.armComplex.turnOn();
 
         if(this.labComplex){
@@ -146,8 +147,8 @@ class RoomNode{
                 this.labComplex.mode ='empty';
             }
         }
-            
-        
+
+        this.spawningBiigAttackUntil = false;
         
         
         this.readInStore();
@@ -426,7 +427,7 @@ class RoomNode{
 	    for(const cname of this.creepNames){
             let creep = Game.creeps[cname];
             
-            if(creep.hits < creep.hitsMax){
+            if(creep.hits < creep.hitsMax && creep.pos.getRangeTo(this.anchor)<15 ){
                 healTarget = creep;
             }
         }
@@ -741,7 +742,6 @@ class RoomNode{
             types:[STRUCTURE_WALL,STRUCTURE_RAMPART],
             filters:[{attribute:'isNotMarkedForDismantle',operator:'fn',value:[]}],
             orderBy:{attr:'hits'}
-            
         })
         //logs.stopCPUTracker(this.name+' surveyDefences-query',true);
         
@@ -906,6 +906,7 @@ class RoomNode{
                     spawnFastFillerReady:this.spawnFastFillerReady,
                     defenceIntel:this.defenceIntel,
 					armNuke:this.armNuke,
+                    spawningBiigAttackUntil:this.spawningBiigAttackUntil,
 
                     retreatSpot:this.retreatSpot,
                     funnelRoomName:this.funnelRoomName,
@@ -963,10 +964,10 @@ class RoomNode{
                     cname = Game.spawns[this.name].createCreep(bodyPlan,mem,false,this.getMainSpawnSpots());
                 }
 
-                if(Game.spawns[this.name+'-2'] && cname===ERR_BUSY){
+                if(Game.spawns[this.name+'-2'] && (cname===ERR_BUSY || cname===-60)){
                     cname = Game.spawns[this.name+'-2'].createCreep(bodyPlan,mem,false);
                 }
-                if(Game.spawns[this.name+'-3'] && cname===ERR_BUSY){
+                if(Game.spawns[this.name+'-3'] && (cname===ERR_BUSY || cname===-60)){
                     cname = Game.spawns[this.name+'-3'].createCreep(bodyPlan,mem,false);
                 }
                
@@ -1098,6 +1099,10 @@ class RoomNode{
         if(this.remoteRoomNames.length===0){
             // dont spawn too many tankers when room is on its own
             this.workforce_quota.tanker.required = this.workforce_quota.harvester.required - this.workforce_quota.rkeeper.required;
+        }
+
+        if(this.spawningBiigAttackUntil && this.workforce_quota.tanker.required>1){
+            this.workforce_quota.tanker.required = 1;
         }
 
         this.workforce_quota.upgrader.required = 0;

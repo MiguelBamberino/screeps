@@ -10,7 +10,7 @@ module.exports = function(){
         this.memory.pausedUntil= gameTime;
     }
     
-    StructureSpawn.prototype.createCreep = function(parts,memory,nameOveride,directions=[]){
+    StructureSpawn.prototype.createCreep = function(parts,memory,nameOveride,directions=[],highPriority=false){
        // if(this.name=='Delta'){clog(nameOveride,'createCreep'+Game.time);clog(directions,'directions')}
         if(this.spawningStarted!==false){
             return -50;
@@ -37,7 +37,7 @@ module.exports = function(){
         delete Memory.creeps[name]; // clear out old crap
         let opts = {memory:memory}
         if(directions.length>0)opts.directions=directions
-        let result = this.spawnCreepX(parts, name, opts);
+        let result = this.spawnCreepX(parts, name, opts,highPriority);
         this.memory.spawn_result = name+": "+result;
         if(result ===OK){
             

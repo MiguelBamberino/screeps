@@ -124,7 +124,7 @@ module.exports = class BaseCoreComplex extends AbstractComplex{
                 bodyPlan.push(MOVE);
             }
 
-             Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs);
+             Game.spawns[spawnName].createCreep(bodyPlan,{role:'filler'},creepName,dirs,true);
 
         }
         if(Game.creeps[creepName] && !Game.creeps[creepName].spawning){

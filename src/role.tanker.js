@@ -165,12 +165,12 @@ var roleTanker = {
             let target = Game.getObjectById(creep.memory.reserve_id);
 
             // before storage and rkeeper, the tankers fill this role, then after they just fetch from remotes
-            if(!storage){
+            if(!storage || config.spawningBiigAttackUntil){
                 if(!target){
                     target = creep.getFillerStationToFill([config.coreRoomName]);
                 }
 
-                if(!target && creep.pos.roomName == config.coreRoomName){
+                if(!target && creep.pos.roomName === config.coreRoomName){
                     target = creep.getExtensionToCharge([config.coreRoomName]);
                 }
 

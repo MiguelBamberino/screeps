@@ -116,6 +116,38 @@ global.mb = {
         // Convert milliseconds to hours
         return  Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 ));
     },
+    isClosed(roomName){
+        const startDate = new Date(); // today
+        let state = Game.map.getRoomStatus(roomName);
+        if(!state)return true;
+        return(state.status!=='normal');
+    },
+    minutesUntilClose(roomName){
+        const startDate = new Date(); // today
+        let state = Game.map.getRoomStatus(roomName);
+        if(!state)return 0;
+        if(state.status!=='normal')return 0;
+        //if(state.status!=='closed')return ERR_INVALID_ARGS;
+        const thawDate = new Date(state.timestamp);
+
+        // Calculate the difference in milliseconds
+        const differenceInMilliseconds = thawDate - startDate  ;
+        // Convert milliseconds to hours
+        return  Math.ceil(differenceInMilliseconds / (1000 * 60  ));
+    },
+    hoursUntilClose(roomName){
+        const startDate = new Date(); // today
+        let state = Game.map.getRoomStatus(roomName);
+        if(!state)return 0;
+        if(state.status!=='normal')return 0;
+        //if(state.status!=='closed')return ERR_INVALID_ARGS;
+        const thawDate = new Date(state.timestamp);
+
+        // Calculate the difference in milliseconds
+        const differenceInMilliseconds = thawDate - startDate  ;
+        // Convert milliseconds to hours
+        return  Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 ));
+    },
     scanRoom: function(roomName){
         
         if(Game.rooms[roomName]){

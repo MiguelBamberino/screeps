@@ -46,7 +46,7 @@ class AbstractComplex{
         
 
         
-        if(Game.time % DETECT_STRUCTURES_INTERVAL===0 || Game.rooms[this.anchor.roomName].controller.level!=this.rcl || this.replaceHapped){
+        if(Game.time % DETECT_STRUCTURES_INTERVAL===0 || Game.rooms[this.anchor.roomName].controller.level!==this.rcl || this.replaceHapped){
             
             this.rcl=Game.rooms[this.anchor.roomName].controller.level;
             logs.startCPUTracker('detectExistingStructures');
@@ -61,7 +61,7 @@ class AbstractComplex{
         
         this.lastResult = this.runComplex();
 
-		if(this.windDownTimer!=RUN_FOREVER && this.windDownTimer>0)this.windDownTimer--;
+		if(this.windDownTimer!==RUN_FOREVER && this.windDownTimer>0)this.windDownTimer--;
 
         return this.lastResult;
     }
@@ -89,7 +89,7 @@ class AbstractComplex{
     /**
      * Use the layout plan to find any existing structures and load them in local lookups
      */ 
-    detectExistingStructures(placeEarlyUntilRCL=0){
+    detectExistingStructures(){
         if(!Game.rooms[this.anchor.roomName])return;
 
         this.allRequiredStructuresBuilt=true;
@@ -111,7 +111,7 @@ class AbstractComplex{
             if(plan.group && this.groupLookup[plan.group]===undefined){
                 this.groupLookup[plan.group]=[];
             }
-            if(this.rcl>=plan.rcl || (placeEarlyUntilRCL>=plan.rcl)){
+            if(this.rcl>=plan.rcl){
                 let struct = plan.pos.lookForStructure(plan.type)
                 if(struct){
                     this.structureLookup[plan.type].push(struct.id);

@@ -184,12 +184,10 @@ module.exports = function(){
 
             // if (mpCM) return mpCM; breaks base room, because builddings are now 0, not 255
 
-            if(roomName==='E8S15'){
+            if(roomName==='E28S21'){
 
-                costMatrix.set(18,36,100)
-                costMatrix.set(18,38,100)
-                costMatrix.set(20,36,100)
-                costMatrix.set(20,38,100)
+                costMatrix.set(10,26,255)
+                costMatrix.set(12,26,255)
             }
             if(roomName==='E13S22'){
                 costMatrix.set(22,34,100)
@@ -213,20 +211,46 @@ module.exports = function(){
                 costMatrix.set(20,38,100)
 
             }
-            if(roomName==='E10S30'){
-                for(let y=0; y<=20;y++){
-                    for(let x=30; x<49;x++){
+            if(roomName==='E34S17'){
+
+                for(let y=0; y<=1;y++){
+                    for(let x=0; x<=49;x++){
 
                         costMatrix.set(x, y, 255);
                         if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
                     }
                 }
+            }
+            if(roomName==='E15S32'){
+                for(let y=0; y<=1;y++){
+                    for(let x=17; x<=25;x++){
 
+                        costMatrix.set(x, y, 10);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
 
             }
+            if(roomName==='E15S33'){
+                for(let y=4; y<=8;y++){
+                    for(let x=31; x<=34;x++){
 
-            if(roomName==='E5S25'){
-                for(let y=0; y<=2;y++){
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+            }
+            if(roomName==='E29S30'){
+                for(let y=0; y<=1;y++){
+                    for(let x=7; x<23;x++){
+
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+            }
+            if(roomName==='E29S30'){
+                for(let y=0; y<=1;y++){
                     for(let x=0; x<49;x++){
 
                         costMatrix.set(x, y, 255);
@@ -234,16 +258,49 @@ module.exports = function(){
                     }
                 }
             }
-            if(roomName==='E3S24'){
-                for(let y=0; y<=25;y++){
-                    for(let x=48; x<=49;x++){
+
+            if(roomName==='E20S30'){
+                for(let y=30; y<=49;y++){
+                    for(let x=30; x<49;x++){
 
                         costMatrix.set(x, y, 255);
                         if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
                     }
                 }
             }
+            if(roomName==='E30S30'){
+                for(let y=0; y<=20;y++){
+                    for(let x=30; x<=49;x++){
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
 
+            }
+            if (roomName==='E28S35') {
+                for(let y=48; y<=49;y++){
+                    for(let x=19; x<=29;x++){
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+            }
+            if (roomName==='E30S22') {
+                for(let y=0; y<=49;y++){
+                    for(let x=30; x<=49;x++){
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+            }
+            if (roomName==='E30S23') {
+                for(let y=0; y<=49;y++){
+                    for(let x=30; x<=49;x++){
+                        costMatrix.set(x, y, 255);
+                        if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                    }
+                }
+            }
             if (roomName==='E14S24') {
                 for(let y=0; y<=49;y++){
                     for(let x=47; x<=49;x++){
@@ -311,6 +368,55 @@ module.exports = function(){
                     costMatrix.set(20,38,100)
                 }
 
+                if(roomName==='E29S30'){
+                    for(let y=0; y<=1;y++){
+                        for(let x=7; x<23;x++){
+
+                            costMatrix.set(x, y, 255);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                        }
+                    }
+                }
+
+                if(roomName==='E29S30'){
+                    for(let y=0; y<=1;y++){
+                        for(let x=0; x<49;x++){
+
+                            costMatrix.set(x, y, 255);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                        }
+                    }
+                }
+
+                if(roomName==='E34S17'){
+
+                    for(let y=0; y<=1;y++){
+                        for(let x=0; x<=49;x++){
+
+                            costMatrix.set(x, y, 255);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                        }
+                    }
+                }
+                if(roomName==='E15S32'){
+
+                    for(let y=0; y<=1;y++){
+                        for(let x=17; x<=25;x++){
+
+                            costMatrix.set(x, y, 10);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                        }
+                    }
+                }
+                if(roomName==='E15S33'){
+                    for(let y=4; y<=8;y++){
+                        for(let x=31; x<=34;x++){
+
+                            costMatrix.set(x, y, 255);
+                            if(Game.rooms[roomName])rp(x,y,roomName).colourIn("blue");
+                        }
+                    }
+                }
                 if(roomName==='E5S25'){
                     for(let y=0; y<=2;y++){
                         for(let x=0; x<49;x++){

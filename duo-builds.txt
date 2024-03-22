@@ -1,0 +1,13 @@
+RCL7 - budget 5600e
+    7m21h - cost 5600e
+        - LH02 heal:756, absorb: 700
+        - XLHO2 heal:1008, absorb: 700
+
+    7t9m20h - cost 5520e
+        - LHO2 heal 720 absorb 1600
+        - XLHO2 heal 1008 absorb 1600
+        - GO,LHO2 heal 720 absorb 1600, 600>>420, 1200>>840
+        - GHO2,LHO2 heal 720 absorb 1600, 600>>300, 1200>>600, 1800>>900
+        - XGHO2,LHO2 heal 720 absorb 1600, 600>>180, 1200>>360, 1800>>540
+        - XGHO2,XLHO2 heal 1008 absorb 1600, 600>>180, 1200>>360, 1800>>540, 2250>>675;
+
